@@ -10,7 +10,7 @@ class sCPU{
     public:
     sCPU();
 
-    void LoadInstructions();
+    uint8_t LoadInstructions();
 
     void SetPC(uint32_t pc);
 
@@ -18,7 +18,10 @@ class sCPU{
 
     uint32_t pc_;
     uint32_t pc_willwrite;
-    uint32_t regs_[16];
+    uint32_t regs_[32];
 
     uint8_t mem_[MEM_SIZE];
+
+    private:
+    void mem_intf(uint8_t lsu_act, uint32_t addr, uint32_t rd);
 };
