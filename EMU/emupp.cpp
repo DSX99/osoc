@@ -6,7 +6,7 @@
 #include <string>
 #include <cstdint>
 
-#define ILL_INST 2<<16
+#define ILL_opcode 2<<16
 #define JUMP 1
 #define NOJUMP 0
 
@@ -40,6 +40,15 @@
 #define ADDPC 16 // add pc is a PC + rs2
 #define USEIMM 32 //changes rs2 to imm
 
+struct decoder_ctrl{
+    uint32_t ret_alu;
+    uint32_t idk;
+    uint32_t rs1;
+    uint32_t rs2;
+    uint32_t rd;
+    uint32_t imm;
+};
+
 sCPU::sCPU(){
     pc_ = ROM_OFFSET;
     for(int i=0; i<16; i++) {
@@ -49,7 +58,7 @@ sCPU::sCPU(){
 
 void sCPU::LoadInstructions(){
 
-    std::ifstream file("./codes/code.bin", std::ios::binary);
+    std::ifstream file("../codes/codes.bin", std::ios::binary);
     if (!file) {
         std::cerr << "Cannot open file!" << std::endl;
     }
@@ -66,37 +75,47 @@ void sCPU::LoadInstructions(){
     file.close();
 }
 
+void sCPU::SetPC(uint32_t pc){
+    pc_ = pc;
+}
+
 uint64_t alu(uint32_t opcode, uint32_t reg_1, uint32_t reg_2, uint32_t pc, uint32_t imm){
     /*
         simple alu sim
         31 bits useless, 1 bit branch ctrl, 32 bits out
     */
-    uint32_t out, ctrl;
+    uint32_t out = 0, ctrl = 0, reg_1_val = reg_1, reg_2_val = reg_2;
 
     if (opcode & USEIMM) reg_2 = imm;
     if (opcode & ADDPC) reg_1 = pc;
 
-    switch(opcode){
+    switch(opcode&0xf){
         case ADD:
             out = reg_1 + reg_2; break;
         case SUB:
             out = reg_1 - reg_2; break;
         case BEQ:
-            if(reg_1 == reg_2) ctrl=1;
+            out = reg_1 + reg_2;
+            if(reg_1_val == reg_2_val) ctrl=1;
             else ctrl = 0; break;
         case BNE:
-            if(reg_1 != reg_2) ctrl=1;
+            out = reg_1 + reg_2;
+            if(reg_1_val != reg_2_val) ctrl=1;
             else ctrl = 0; break;
         case BLT:
+            out = reg_1 + reg_2;
             if((int32_t)reg_1 < (int32_t)reg_2) ctrl=1;
             else ctrl = 0; break;
         case BGE:
+            out = reg_1 + reg_2;
             if((int32_t)reg_1 >= (int32_t)reg_2) ctrl=1;
             else ctrl = 0; break;
         case BLTU:
+            out = reg_1 + reg_2;
             if(reg_1 < reg_2) ctrl=1;
             else ctrl = 0; break;
         case BGEU:
+            out = reg_1 + reg_2;
             if(reg_1 >= reg_2) ctrl=1;
             else ctrl = 0; break;
         case SLT:
@@ -118,58 +137,63 @@ uint64_t alu(uint32_t opcode, uint32_t reg_1, uint32_t reg_2, uint32_t pc, uint3
         case SRA:
             out = (int32_t)reg_1 >> reg_2; break;
     }
+    return ((uint64_t)ctrl<<32)+out;
 }
 
-uint64_t decode(uint32_t opcode){
+decoder_ctrl decode(uint32_t opcode){
     /*
-    used 32bits: 5:ALUop, 12:idk , 5:rs1, 5:rs2, 5:rd, 32:imm
+    used 32bits: 6:ALUop, 11:idk , 5:rs1, 5:rs2, 5:rd, 32:imm
 
-    idk: 2:write to jump|pc|lsu|regs, 1 save from pc+4, 3save/load, 6errors
+    idk: 2:write to jump|pc|lsu|regs, 1 save from pc+4, 3save/load, 5errors
     */
 
-    uint64_t operation, rd, func3, rs1, rs2, imm, sign;
-    uint64_t imm_I,imm_S,imm_U,imm_B,imm_J, ret, conn, ret_imm, ret_alu, idk, loads;
+    uint64_t sign;
+    uint32_t operation, rd, func3, rs1, rs2, imm;
+    uint32_t conn, ret_imm, ret_alu, idk, loads;
     
     operation = opcode & ((1<<7)-1);
-    rd = (opcode>>7) & ((1<<6)-1);
-    func3 = (opcode>>12) & ((1<<4)-1);
-    rs1 = (opcode>>15) & ((1<<6)-1);
-    rs2 = (opcode>>20) & ((1<<6)-1);
+    rd = (opcode>>7) & ((1<<5)-1);
+    func3 = (opcode>>12) & ((1<<3)-1);
+    rs1 = (opcode>>15) & ((1<<5)-1);
+    rs2 = (opcode>>20) & ((1<<5)-1);
     imm = (opcode>>25) & ((1<<7)-1);
 
     sign = imm&(1<<6);
-    imm_I = ((sign<<32)-1 - ((sign<<11)-1)) + (imm<<5) + rs2;
-    imm_S = ((sign<<32)-1 - ((sign<<11)-1)) + (imm<<5) + rd;
-    imm_U = ((imm<<13) + (rs2<<8) + (rs1<<3) + func3)<<12;
-    imm_B = ((sign<<32)-1 - ((sign<<12)-1)) + ((imm&(1<<6))<<6)+((rd&1)<<11)+((imm&((1<<6)-1))<<5)+ ((rd&((1<<5)-2))<<1);
-    imm_J = ((sign<<32)-1 - ((sign<<20)-1)) + (rs1<<15) + (func3<<12) + ((rs2&1)<<11) + ((imm&((1<<7)-1))<<5) + (rs2&((1<<5)-2)<<1);
-
+    int32_t imm_I = ((int32_t)opcode) >> 20;
+    int32_t imm_S = (((int32_t)opcode >> 25) << 5) | ((opcode >> 7) & 0x1F);
+    imm_S = (imm_S<<20)>>20;
+    int32_t imm_U = opcode & 0xFFFFF000;
+    int32_t imm_B = (((opcode >> 31) & 0x1) << 12) | (((opcode >> 7)  & 0x1) << 11) | (((opcode >> 25) & 0x3F) << 5) |  (((opcode >> 8)  & 0xF) << 1);
+    imm_B = (imm_B << 19) >> 19;
+    int32_t imm_J = (((opcode >> 31) & 0x1) << 20) | (((opcode >> 12) & 0xFF) << 12) | (((opcode >> 20) & 0x1) << 11) | (((opcode >> 21) & 0x3F) << 1);
+    imm_J = (imm_J << 11) >> 11;
+    
     switch(operation){
         case 0b0110111: //LUI
             ret_imm = imm_U;
             ret_alu = ADD;
-            idk = 0<<10; break;
+            idk = 0<<9; break;
         case 0b0010111: //AUIPC
             ret_imm = imm_U;
             ret_alu = ADDPC + USEIMM;
-            idk = 0<<10; break;
+            idk = 0<<9; break;
         case 0b1101111: //JAL
             ret_imm =  imm_J;
             ret_alu = ADDPC + USEIMM;
-            idk = 3<<10; break;
+            idk = 3<<9; break;
         case 0b1100111: //JALR
             switch(func3){
                 case 0:
                     ret_imm =  imm_I;
                     ret_alu = ADD + USEIMM;
-                    idk = 3<<10; break;
+                    idk = 3<<9; break;
                 default:
-                    idk += ILL_INST; break;
+                    idk += ILL_opcode; break;
             } break;
         case 0b1100011: //branches
             ret_imm =  imm_B;
-            ret_alu = ADD + USEIMM;
-            idk = 2<<10;
+            ret_alu = ADDPC + USEIMM;
+            idk = 2<<9;
             switch(func3){
                 case 0b000: //BEQ
                     ret_alu += BEQ; break;
@@ -184,39 +208,39 @@ uint64_t decode(uint32_t opcode){
                 case 0b111: //BGEU
                     ret_alu += BGEU; break; 
                 default:
-                    idk += ILL_INST;
+                    idk += ILL_opcode;
             } break;
         case 0b0000011: //loads
             ret_imm =  imm_I;
             ret_alu = ADD + USEIMM;
-            idk = 1<<10;
+            idk = 1<<9;
             switch(func3){
                 case 0b000: //LB
-                    idk += 0<<6; break;
+                    idk += 0<<5; break;
                 case 0b001: //LH
-                    idk += 1<<6; break;
+                    idk += 1<<5; break;
                 case 0b010: //LW
-                    idk += 2<<6; break;
+                    idk += 2<<5; break;
                 case 0b100: //LBU
-                    idk += 3<<6; break;
+                    idk += 3<<5; break;
                 case 0b101: //LHU
-                    idk += 4<<6; break;
+                    idk += 4<<5; break;
                 default:
-                    idk += ILL_INST;
+                    idk += ILL_opcode;
             } break;
         case 0b0100011: //saves
             ret_imm =  imm_S;
             ret_alu = ADD + USEIMM;
-            idk = 1<<10;   
+            idk = 1<<9;   
             switch(func3){
                 case 0b000: //SB
-                    idk += 5<<6; break;
+                    idk += 5<<5; break;
                 case 0b001: //SH
-                    idk += 6<<6; break;
+                    idk += 6<<5; break;
                 case 0b010: //SW
-                    idk += 7<<6; break;
+                    idk += 7<<5; break;
                 default:
-                    idk += ILL_INST;
+                    idk += ILL_opcode;
             } break;
         case 0b0010011: //math opers with imms
             ret_imm = imm_I;
@@ -240,7 +264,7 @@ uint64_t decode(uint32_t opcode){
                     else ret_alu = SRA + USEIMM; //SRAI 
                     break;
                 default:
-                    idk += ILL_INST;
+                    idk += ILL_opcode;
             } break;
         case 0b0110011: //math opers between regs
             switch(func3){
@@ -263,45 +287,59 @@ uint64_t decode(uint32_t opcode){
                     else ret_alu = SRA; //SRA 
                     break;
                 default:
-                    idk += ILL_INST;
+                    idk += ILL_opcode;
             } break;
         default:
-            idk += ILL_INST;
+            idk += ILL_opcode;
     }
-    return ((ret_alu<<59) + (idk<<47) + (rs1<<42) + (rs2<<37) + (rd<<32) + (ret_imm));  
+    decoder_ctrl ret;
+    ret.idk = idk & 0x7ff;
+    ret.ret_alu = ret_alu & 0x3f;
+    ret.rs1 = rs1 & 0x1f;
+    ret.rs2 = rs2 & 0x1f;
+    ret.rd = rd & 0x1f;
+    ret.imm = ret_imm & 0xffffffff;
+    return ret;
 }
 
-int sCPU::do_step(){
-    uint32_t code, imm, aluop, rs1, rs2, idk, rd;
-    uint64_t recv;
+uint8_t sCPU::do_step(){
+    uint32_t code, imm, aluop, rs1, rs2, idk, rd, value;
+    uint64_t recv_alu;
 
-    code = (mem_[pc_+3]<<24)+(mem_[pc_+2]<<16)+(mem_[pc_+1]<<8)+mem_[pc_];
+    pc_ = pc_willwrite;
 
+    printf("%d, %d, %d, %d\n",mem_[pc_+3],mem_[pc_+2],mem_[pc_+1],mem_[pc_]);
+    code = (mem_[pc_]<<24)+(mem_[pc_+1]<<16)+(mem_[pc_+2]<<8)+mem_[pc_+3];
+    printf("%b\n",code);
     if(code == 0b00000000000100000000000001110011){
-        return 0;
+        return 1;
     }
 
-    recv = decode(code);
-    aluop = (recv>>59)&0x1f;
-    idk = (recv>>47)&0xfff;
-    rs1 = (recv>>42)&0x1f;
-    rs2 = (recv>>37)&0x1f;
-    rd  = (recv>>32)&0x1f;
-    imm = recv & 0xffffffff;
+    decoder_ctrl recv = decode(code);
+    aluop = recv.ret_alu & 0x3f;
+    idk = recv.idk & 0x7ff;
+    rs1 = recv.rs1 & 0x1f;
+    rs2 = recv.rs2 & 0x1f;
+    rd  = recv.rd & 0x1f;
+    imm = recv.imm & 0xffffffff;
     
-    recv = alu(aluop, regs_[rs1],regs_[rs2],pc_, imm);
+    recv_alu = alu(aluop, regs_[rs1],regs_[rs2],pc_, imm);
+    value = recv_alu & 0xffffffff;
+    //idk: 2:write to jump|pc|lsu|regs_, 1 save from pc+4, 3save/load, 5errors
     
-    //idk: 2:write to jump|pc|lsu|regs_, 1 save from pc+4, 3save/load, 6errors
-    
-    if(idk&0xc00 == 0){
-        regs_[rd] = recv&0xffffffff;
-        pc_ = pc_+4;
-    }else if(idk&0xc00 == 1){
+    if(((idk&0xc00)>>10) == 0){
+        regs_[rd] = value;
+        pc_willwrite = pc_+4;
+    }else if(((idk&0xc00)>>9) == 1){
         //there should be call to memory
-    }else if(idk&0xc00 == 2){
-        pc_ = recv&0xffffffff;
-    }else{
-        pc_ = recv&0xffffffff;
+    }else if(((idk&0xc00)>>9) == 2){
+        if(recv_alu&(1ULL << 32)) pc_willwrite = value;
+        else pc_willwrite+=4;
+    }else if(((idk&0xc00)>>9) == 3){
+        pc_willwrite = value;
         regs_[rd] = pc_+4;
+    }else{
+        return 1;
     }
+    return 0;
 }
