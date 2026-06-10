@@ -54,7 +54,8 @@ static int cmd_q(char *args) {
 
 static int cmd_si(char *args) {
   char *endptr;
-  if(*args != '\0' || isspace(args)){ 
+
+  if(args == NULL){ 
     cpu_exec(1);  
     return 0;
   }else{
