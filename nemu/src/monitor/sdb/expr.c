@@ -101,6 +101,7 @@ static bool make_token(char *e) {
           return 0;
         }
         strcpy(tokens[nr_token].str,substr_start);
+        nr_token++;
 
         /* TODO: Now a new token is recognized with rules[i]. Add codes
          * to record the token in the array `tokens'. For certain types
@@ -130,7 +131,7 @@ word_t expr(char *e, bool *success) {
     *success = false;
     return 0;
   }
-  printf("idk");
+  printf("idk\n");
   for(int i=0; i<nr_token; i++){
     printf("%d,%s \n",tokens[i].type,tokens[i].str);
   }
