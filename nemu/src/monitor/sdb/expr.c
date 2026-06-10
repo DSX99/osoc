@@ -179,7 +179,7 @@ u_int32_t eval(int p, int q) {
     switch (tokens[op].type) {
       case '+': return val1 + val2;
       case '-': return val1 - val2;
-      case '*': return val1 * val2;
+      case '*': return (u_int32_t)((long long)val1 * (long long)val2);
       case '/': return val1 / val2;
       default: assert(0);
     }
