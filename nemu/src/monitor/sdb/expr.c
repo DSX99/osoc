@@ -125,6 +125,65 @@ static bool make_token(char *e) {
   return true;
 }
 
+int check_parentheses(int p, int q){
+  if(tokens[p].type=='('){
+    if(tokens[q].type==')'){
+      int count=0;
+      for(int i=p+1;i<q;i++){
+        if(tokens[i].type=='(') count++;
+        if(tokens[i].type==')') count--;
+        if(count<0) return 0;
+      }
+    }else{
+      return 0;
+    }
+  }else{
+    return 0;
+  }
+  return 1;
+}
+
+int eval(int p, int q) {
+  if (p > q) {
+    assert(0);
+  }
+  else if (p == q) {
+    return atoi(tokens[p].str);
+  }
+  else if (check_parentheses(p, q) == true) {
+    /* The expression is surrounded by a matched pair of parentheses.
+     * If that is the case, just throw away the parentheses.
+     */
+    return eval(p + 1, q - 1);
+  }
+  else {
+    char arr[4] = {'+','-','*','/'};
+    int count=0, op=0;
+    for(int j=0;j<4;j++){
+      count=0;      
+      for(int i=p; i<q; i++){
+        if(tokens[i].type=='(') count++;
+        if(tokens[i].type==')') count--;
+        if(tokens[i].type == arr[j] && count==0){
+          op = i;
+          break;
+        }
+      }
+      if(op!=0) break;
+    }
+    int val1 = eval(p, op - 1);
+    int val2 = eval(op + 1, q);
+
+    switch (tokens[op].type) {
+      case '+': return val1 + val2;
+      case '-': return val1 - val2;
+      case '*': return val1 * val2;
+      case '/': return val1 / val2;
+      default: assert(0);
+    }
+  }
+  return 0;
+}
 
 word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
