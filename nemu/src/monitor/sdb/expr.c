@@ -100,7 +100,7 @@ static bool make_token(char *e) {
           printf("too big expression: %s\nuse smaller, anyway it is bigger than uin32_t",substr_start);
           return 0;
         }
-        strcpy(tokens[nr_token].str,substr_start);
+        strncpy(tokens[nr_token].str,substr_start,substr_len);
         nr_token++;
 
         /* TODO: Now a new token is recognized with rules[i]. Add codes
