@@ -113,6 +113,12 @@ static int cmd_x(char *args) {
   }
 }
 
+static int cmd_e(char *args) {
+  bool *ret=0;
+  expr(args,ret);
+  return *ret;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -126,6 +132,7 @@ static struct {
   { "si", " si N Lets the program pause after executing N instructions using single step execution, when N is not given, the default is 1", cmd_si },
   { "info", " info SUBCMD info r:Print register status info w:Print watchpoint information", cmd_info },
   { "x", " x N EXPR Finds the value of the expression EXPR, uses the result as the starting memory address, and outputs consecutive N 4 bytes in hexadecimal.", cmd_x },
+  { "e", " e EXPR evaluate expression EXPR", cmd_e },
   // { "p", " p EXPR Find the value of the expression EXPR, for EXPR supported operations", cmd_p },
   // { "w", " w EXPR Suspend program execution when the value of expression EXPR changes.", cmd_w },
   // { "d", " d N Deletes the watchpoint with ID N.", cmd_d }
