@@ -97,7 +97,7 @@ static bool make_token(char *e) {
 
         tokens[nr_token].type = rules[i].token_type;
         if(substr_len>31){
-          printf("too big expression: %s\nuse smaller, anyway it is bigger than uin32_t",substr_start);
+          printf("too big expression: %.*s\nuse smaller, anyway it is bigger than uin32_t\n", substr_len, substr_start);
           return 0;
         }
         strncpy(tokens[nr_token].str,substr_start,substr_len);
