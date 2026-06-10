@@ -103,7 +103,7 @@ static int cmd_x(char *args) {
       return 0;
     }
     for(int i=0; i<size; i++){
-      printf("mem[%x]=%d\n",(uint32_t)(val+size),paddr_read(val+i*4,4));
+      printf("mem[%x]=%d\n",(uint32_t)(val+i*4),paddr_read(val+i*4,4));
     }
     return 0;
   }
