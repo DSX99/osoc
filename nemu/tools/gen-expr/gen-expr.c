@@ -48,10 +48,10 @@ static char gen_rand_op(){
 
 static void gen_rand_expr(char **point) {
   int i = rand()%3;
-  if(*point - buf > 20) i=0;
+  if(*point - buf > 6000) i=0;
   switch (i) {
     case 0: 
-      *point+=sprintf(*point,"%d",(unsigned)(rand()+1)); 
+      *point+=sprintf(*point,"%u",(unsigned)(rand()+1)); 
         break;
     case 1: 
       *point+=sprintf(*point,"%c",'(');
