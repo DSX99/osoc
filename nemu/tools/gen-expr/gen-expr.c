@@ -19,7 +19,6 @@
 #include <time.h>
 #include <assert.h>
 #include <string.h>
-#include <random.h>
 
 // this should be enough
 static char buf[65536] = {};
@@ -33,25 +32,37 @@ static char *code_format =
 "}";
 
 static char gen_rand_op(){
-  int i = rand()%4;
-  switch (i)
+  switch (rand()%4)
   {
   case 0:
-    return "+" break;
+    return '+'; break;
   case 1:
-    return "-" break;
+    return '-'; break;
   case 2:
-    return "*" break;
+    return '*'; break;
   case 3:
-    return "/" break;
+    return '/'; break;
   }
+  return '+';
 }
 
-static void gen_rand_expr() {
-  switch (choose(3)) {
-    case 0: rand(); break;
-    case 1: gen('('); gen_rand_expr(); gen(')'); break;
-    default: gen_rand_expr(); gen_rand_op(); gen_rand_expr(); break;
+static void gen_rand_expr(char **point) {
+  int i = rand()%3;
+  if(*point - buf > 60000) i=0;
+  switch (i) {
+    case 0: 
+      *point+=sprintf(*point,"%d",rand()+1); 
+        break;
+    case 1: 
+      *point+=sprintf(*point,"%c",'(');
+      gen_rand_expr(point);
+      *point+=sprintf(*point,"%c",')');
+      break;
+    default: 
+      gen_rand_expr(point); 
+      *point+=sprintf(*point,"%c",gen_rand_op()); 
+      gen_rand_expr(point); 
+      break;
   }
 }
 
@@ -64,7 +75,8 @@ int main(int argc, char *argv[]) {
   }
   int i;
   for (i = 0; i < loop; i ++) {
-    gen_rand_expr();
+    char *point = buf;
+    gen_rand_expr(&point);
 
     sprintf(code_buf, code_format, buf);
 
