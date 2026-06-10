@@ -145,7 +145,7 @@ int check_parentheses(int p, int q){
   return 1;
 }
 
-int eval(int p, int q) {
+unsigned eval(int p, int q) {
   if (p > q) {
     assert(0);
   }
@@ -173,8 +173,8 @@ int eval(int p, int q) {
       }
       if(op!=0) break;
     }
-    int val1 = eval(p, op - 1);
-    int val2 = eval(op + 1, q);
+    unsigned val1 = eval(p, op - 1);
+    unsigned val2 = eval(op + 1, q);
 
     switch (tokens[op].type) {
       case '+': return val1 + val2;
