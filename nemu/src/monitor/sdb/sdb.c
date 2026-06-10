@@ -52,6 +52,22 @@ static int cmd_q(char *args) {
   return -1;
 }
 
+static int cmd_si(char *args) {
+  char *endptr;
+  if(*args != '\0' || isspace(args)){ 
+    cpu_exec(1);  
+    return 0;
+  }else{
+    long val = strtol(args, &endptr, 0);
+    if(*endptr != '\0'){
+      printf("Correct use si N , where N is an integer");
+      return 0;
+    }
+    cpu_exec(val);
+    return 0;
+  }
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -62,9 +78,12 @@ static struct {
   { "help", "Display information about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
-
-  /* TODO: Add more commands */
-
+  { "si", " si N Lets the program pause after executing N instructions using single step execution, when N is not given, the default is 1", cmd_si },
+  // { "info", " info SUBCMD info r:Print register status info w:Print watchpoint information", cmd_info },
+  // { "x", " x N EXPR Finds the value of the expression EXPR, uses the result as the starting memory address, and outputs consecutive N 4 bytes in hexadecimal.", cmd_x },
+  // { "p", " p EXPR Find the value of the expression EXPR, for EXPR supported operations", cmd_p },
+  // { "w", " w EXPR Suspend program execution when the value of expression EXPR changes.", cmd_w },
+  // { "d", " d N Deletes the watchpoint with ID N.", cmd_d }
 };
 
 #define NR_CMD ARRLEN(cmd_table)
