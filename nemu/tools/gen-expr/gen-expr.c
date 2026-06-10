@@ -51,7 +51,7 @@ static void gen_rand_expr(char **point) {
   if(*point - buf > 20) i=0;
   switch (i) {
     case 0: 
-      *point+=sprintf(*point,"%d",rand()+1); 
+      *point+=sprintf(*point,"%d",(unsigned)(rand()+1)); 
         break;
     case 1: 
       *point+=sprintf(*point,"%c",'(');
