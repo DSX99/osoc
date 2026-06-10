@@ -145,7 +145,7 @@ int check_parentheses(int p, int q){
   return 1;
 }
 
-u_int32_t eval(int p, int q) {
+int eval(int p, int q) {
   if (p > q) {
     assert(0);
   }
@@ -173,13 +173,13 @@ u_int32_t eval(int p, int q) {
       }
       if(op!=0) break;
     }
-    u_int32_t val1 = eval(p, op - 1);
-    u_int32_t val2 = eval(op + 1, q);
+    int val1 = eval(p, op - 1);
+    int val2 = eval(op + 1, q);
 
     switch (tokens[op].type) {
       case '+': return val1 + val2;
       case '-': return val1 - val2;
-      case '*': return (u_int32_t)((long long)val1 * (long long)val2);
+      case '*': return val1 * val2;
       case '/': return val1 / val2;
       default: assert(0);
     }
