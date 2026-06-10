@@ -114,7 +114,8 @@ static int cmd_x(char *args) {
 }
 
 static int cmd_e(char *args) {
-  bool *ret=0;
+  bool *ret;
+  ret=0;
   expr(args,ret);
   return *ret;
 }
