@@ -14,7 +14,7 @@
 ***************************************************************************************/
 
 #include <isa.h>
-
+#include <string.h>
 /* We use the POSIX regex functions to process regular expressions.
  * Type 'man regex' for more information about POSIX regex functions.
  */
@@ -95,6 +95,13 @@ static bool make_token(char *e) {
 
         position += substr_len;
 
+        tokens[nr_token].type = rules[i].token_type;
+        if(substr_len>31){
+          printf("too big expression: %s\nuse smaller, anyway it is bigger than uin32_t",substr_start);
+          return 0;
+        }
+        strcpy(tokens[nr_token].str,substr_start);
+
         /* TODO: Now a new token is recognized with rules[i]. Add codes
          * to record the token in the array `tokens'. For certain types
          * of tokens, some extra actions should be performed.
@@ -103,7 +110,7 @@ static bool make_token(char *e) {
         // switch (rules[i].token_type) {
         //   default: TODO();
         // }
-
+          
         break;
       }
     }
@@ -122,6 +129,9 @@ word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
     *success = false;
     return 0;
+  }
+  for(int i=0; i<nr_token; i++){
+    printf("%d,%s",tokens[i].type,tokens[i].str);
   }
 
   /* TODO: Insert codes to evaluate the expression. */
