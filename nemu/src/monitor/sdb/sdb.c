@@ -97,6 +97,10 @@ static int cmd_x(char *args) {
     return 0;
   }else{
     long size = strtol(size_str, &endptr_size, 0);
+    if(size < 0x80000000){
+      printf("Calling not a memory space");
+      return 0;
+    }
     long val = strtol(args, &endptr_val, 0);
     if(*endptr_val != '\0' || *endptr_size != '\0'){
       printf("Correct use x N ECPR , where N is an integer and EXPR is a expression.\n");
