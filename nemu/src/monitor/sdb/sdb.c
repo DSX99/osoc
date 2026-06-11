@@ -120,6 +120,13 @@ static int cmd_e(char *args) {
   return ret;
 }
 
+static int cmd_ev(char *args) {
+  bool ret=0;
+  bool *p=&ret;
+  printf("%d",expr(args,p));
+  return ret;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -134,6 +141,7 @@ static struct {
   { "info", " info SUBCMD info r:Print register status info w:Print watchpoint information", cmd_info },
   { "x", " x N EXPR Finds the value of the expression EXPR, uses the result as the starting memory address, and outputs consecutive N 4 bytes in hexadecimal.", cmd_x },
   { "e", " e EXPR evaluate expression EXPR", cmd_e },
+  { "ev", " ev EXPR evaluate expression EXPR and prints", cmd_ev },
   // { "p", " p EXPR Find the value of the expression EXPR, for EXPR supported operations", cmd_p },
   // { "w", " w EXPR Suspend program execution when the value of expression EXPR changes.", cmd_w },
   // { "d", " d N Deletes the watchpoint with ID N.", cmd_d }
