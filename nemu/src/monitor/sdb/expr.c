@@ -165,7 +165,7 @@ unsigned eval(int p, int q, bool *success) {
     char *endptr_val;
     switch(tokens[p].type){
       case 'v':
-        return atoi(tokens[p].str+1); break;
+        return atoi(tokens[p].str); break;
       case 'h':
         int val = strtol(tokens[p].str,&endptr_val,0);
         if(*endptr_val!='\0'){
@@ -175,7 +175,7 @@ unsigned eval(int p, int q, bool *success) {
           return val;
         }
       case 'r':
-        return isa_reg_str2val(tokens[p].str, success);
+        return isa_reg_str2val(tokens[p].str+1, success);
     }
   }
   else if (check_parentheses(p, q) == true) {
