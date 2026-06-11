@@ -165,7 +165,7 @@ unsigned eval(int p, int q, bool *success) {
     char *endptr_val;
     switch(tokens[p].type){
       case 'v':
-        return atoi(tokens[p].str); break;
+        return atoi(tokens[p].str+1); break;
       case 'h':
         int val = strtol(tokens[p].str,&endptr_val,0);
         if(*endptr_val!='\0'){
