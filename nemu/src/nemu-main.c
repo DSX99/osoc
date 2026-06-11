@@ -25,6 +25,7 @@ word_t expr(char *e, bool *success);
 
 int main(int argc, char *argv[]) {
   init_monitor(argc, argv);
+  int count=0;
   char s[1024*16];
   char *ptr = s;
   FILE *fp = fopen("/home/dsx99/osoc/ysyx-workbench/nemu/tools/gen-expr/input_3", "r");
@@ -43,6 +44,7 @@ int main(int argc, char *argv[]) {
     if(atoi(cmd)-val != 0){
       printf("%s %u %u %u\n\n",ptr, atoi(cmd), val,atoi(cmd)-val);
     }
+    printf("%d",count++);
   }
   /* Initialize the monitor. */
 // #ifdef CONFIG_TARGET_AM
