@@ -40,7 +40,10 @@ int main(int argc, char *argv[]) {
     ptr = ptr + strlen(cmd) + 1;
     bool check=0;
     int val = expr(ptr,&check);
-    printf("%u %u: %u \n", atoi(cmd), val, atoi(cmd)-val);
+    // printf("%u %u: %u \n", atoi(cmd), val, atoi(cmd)-val);
+    if(atoi(cmd)-val != 0){
+      printf("%s %d",s, atoi(cmd)-val);
+    }
   }
   return 0;
   /* Initialize the monitor. */
