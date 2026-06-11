@@ -31,6 +31,19 @@ static char *code_format =
 "  return 0; "
 "}";
 
+static void add_u_suffixes(const char *src, char *dst) {
+  while (*src) {
+    if (*src >= '0' && *src <= '9') {
+      while (*src >= '0' && *src <= '9') {
+        *dst++ = *src++;
+      }
+      *dst++ = 'u'; // Inject unsigned suffix
+    } else {
+      *dst++ = *src++;
+    }
+  }
+  *dst = '\0';
+}
 static char gen_rand_op(){
   switch (rand()%4)
   {
@@ -77,8 +90,8 @@ int main(int argc, char *argv[]) {
   for (i = 0; i < loop; i ++) {
     char *point = buf;
     gen_rand_expr(&point);
-
-    // strcpy(point, "1/0");
+    char gcc_buf[131072] = {}; 
+    add_u_suffixes(buf, gcc_buf);
 
     sprintf(code_buf, code_format, buf);
 
