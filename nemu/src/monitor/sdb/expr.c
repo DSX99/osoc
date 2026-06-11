@@ -22,6 +22,7 @@
 #include <regex.h>
 
 word_t paddr_read(paddr_t addr, int len);
+word_t isa_reg_str2val(const char *s, bool *success);
 
 enum {
   TK_NOTYPE = 256, TK_EQ,TK_NEQ,DEREF,
@@ -154,6 +155,9 @@ int check_parentheses(int p, int q){
 }
 
 unsigned eval(int p, int q, bool *success) {
+  if(*success==false){
+    return 0;
+  }
   if (p > q) {
     assert(0);
   }
@@ -170,6 +174,8 @@ unsigned eval(int p, int q, bool *success) {
         }else{
           return val;
         }
+      case 'r':
+        return isa_reg_str2val(tokens[p].str, success);
     }
   }
   else if (check_parentheses(p, q) == true) {
