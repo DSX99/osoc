@@ -183,7 +183,7 @@ unsigned eval(int p, int q, bool *success) {
       printf("Calling not a memory space");
       *success = false;
     }else{
-      return paddr_read(val,1);
+      return paddr_read(val,4);
     }
   }
   else {
