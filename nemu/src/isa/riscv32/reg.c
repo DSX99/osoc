@@ -36,11 +36,12 @@ void isa_reg_display() {
 word_t isa_reg_str2val(const char *s, bool *success) {
   printf("%s\n",s);
   for(int i=0;i<32;i++){
-    if(strcmp(s,regs[i])){
+    if(strcmp(s,regs[i])==0){
       printf("got reg %d\n",i);
       return gpr(i);
     }
   }
+
   printf("please input a correct reg name\n");
   *success=false;
   return 0;
