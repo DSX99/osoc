@@ -177,7 +177,7 @@ unsigned eval(int p, int q, bool *success) {
      * If that is the case, just throw away the parentheses.
      */
     return eval(p + 1, q - 1,success);
-  } else if (p + 1 == q && tokens[p].type==DEREF && tokens[q].type=='v'){
+  } else if (p + 1 == q && tokens[p].type==DEREF && (tokens[q].type!='v' || tokens[q].type!='h' || tokens[q].type!='r')){
     unsigned val = eval(p+1,q,success);
     if(val < 0x80000000){
       printf("Calling not a memory space");
