@@ -33,6 +33,8 @@ int main(int argc, char *argv[]) {
     exit(EXIT_FAILURE);
   }
   while (fgets(s, sizeof(s), fp) != NULL) {
+    char buf[1024*16];
+    strcpy(buf, s);
     ptr = s;
     char *cmd = strtok(ptr, " ");
     if (cmd == NULL) { return 1; }
@@ -41,7 +43,7 @@ int main(int argc, char *argv[]) {
     int val = expr(ptr,&check);
     // printf("%u %u: %u \n", atoi(cmd), val, atoi(cmd)-val);
     if(atoi(cmd)-val != 0){
-      printf("%s %u\n",s, atoi(cmd)-val);
+      printf("%s %u\n",buf, atoi(cmd)-val);
     }
   }
   return 0;
