@@ -24,6 +24,7 @@ int is_exit_status_bad();
 word_t expr(char *e, bool *success);
 
 int main(int argc, char *argv[]) {
+  init_monitor(argc, argv);
   char s[1024*16];
   char *ptr = s;
   FILE *fp = fopen("/home/dsx99/osoc/ysyx-workbench/nemu/tools/gen-expr/input_2", "r");
