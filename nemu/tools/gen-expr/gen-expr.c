@@ -44,6 +44,7 @@ static void add_u_suffixes(const char *src, char *dst) {
   }
   *dst = '\0';
 }
+
 static char gen_rand_op(){
   switch (rand()%4)
   {
