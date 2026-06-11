@@ -33,8 +33,6 @@ int main(int argc, char *argv[]) {
     exit(EXIT_FAILURE);
   }
   while (fgets(s, sizeof(s), fp) != NULL) {
-    char buf[1024*16];
-    strcpy(buf, s);
     ptr = s;
     char *cmd = strtok(ptr, " ");
     if (cmd == NULL) { return 1; }
