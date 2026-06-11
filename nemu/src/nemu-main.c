@@ -14,13 +14,33 @@
 ***************************************************************************************/
 
 #include <common.h>
-
+#include <stdio.h>
+#include <stdlib.h>
 void init_monitor(int, char *[]);
 void am_init_monitor();
 void engine_start();
 int is_exit_status_bad();
 
+word_t expr(char *e, bool *success);
+
 int main(int argc, char *argv[]) {
+  char s[1024*16];
+  FILE *fp = popen("/home/dsx99/osoc/ysyx-workbench/nemu/tools/gen-expr/input_2", "r");
+  if (fp == NULL){
+    printf("No file");
+    exit(EXIT_FAILURE);
+  }
+  char *ret = fgets(s,1024*16,fp);
+  if(ret == NULL){
+    printf("No file");
+    exit(EXIT_FAILURE);
+  }
+  char *cmd = strtok(s, " ");
+  if (cmd == NULL) { return 1; }
+  bool check=0;
+  int val = expr(s,&check);
+  printf("%d %d: %d", atoi(cmd), val, atoi(cmd)-val);
+  return 0;
   /* Initialize the monitor. */
 #ifdef CONFIG_TARGET_AM
   am_init_monitor();
