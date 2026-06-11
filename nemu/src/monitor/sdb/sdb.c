@@ -116,7 +116,7 @@ static int cmd_x(char *args) {
 static int cmd_p(char *args) {
   bool ret=0;
   bool *p=&ret;
-  printf("%u",expr(args,p));
+  printf("%u\n",expr(args,p));
   return ret;
 }
 

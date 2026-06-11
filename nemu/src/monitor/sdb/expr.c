@@ -163,7 +163,7 @@ unsigned eval(int p, int q) {
     return eval(p + 1, q - 1);
   }
   else {
-    char arr[4] = {'+','-','*','/'};
+    char arr[4] = {'+','-','/','*'};
     int count=0, op=0;
     for(int j=0;j<4;j++){
       count=0;      
