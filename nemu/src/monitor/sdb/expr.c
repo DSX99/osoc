@@ -105,9 +105,6 @@ static bool make_token(char *e) {
           return 0;
         }
         strncpy(tokens[nr_token].str,substr_start,substr_len);
-        if(tokens[nr_token].type == 'v' && tokens[nr_token].str[substr_len]=='u'){
-          tokens[nr_token].str[substr_len]='\0';
-        }
         tokens[nr_token].str[substr_len] = '\0';
         nr_token++;
 
