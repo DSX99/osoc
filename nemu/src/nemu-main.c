@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
   if (cmd == NULL) { return 1; }
   bool check=0;
   int val = expr(s,&check);
-  printf("%d %d: %d", atoi(cmd), val, atoi(cmd)-val);
+  printf("%u %u: %u", atoi(cmd), val, atoi(cmd)-val);
   return 0;
   /* Initialize the monitor. */
 #ifdef CONFIG_TARGET_AM
