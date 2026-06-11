@@ -33,6 +33,7 @@ int main(int argc, char *argv[]) {
     exit(EXIT_FAILURE);
   }
   while (fgets(s, sizeof(s), fp) != NULL) {
+    s[strcspn(s, "\r\n")] = '\0';
     char *cmd = strtok(ptr, " ");
     if (cmd == NULL) { return 1; }
     ptr = ptr + strlen(cmd) + 1;
