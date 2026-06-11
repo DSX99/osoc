@@ -225,12 +225,13 @@ unsigned eval(int p, int q, bool *success) {
           }
         }
       }
-      if(op_prec == 99 && tokens[p].type == DEREF && (tokens[p+1].type=='v'||tokens[p+1].type=='h'||tokens[p+1].type=='r'||(tokens[p+1].type=='('&&tokens[q].type==')'))){
+    }
+
+    if(op_prec == 99 && tokens[p].type == DEREF && (tokens[p+1].type=='v'||tokens[p+1].type=='h'||tokens[p+1].type=='r'||(tokens[p+1].type=='('&&tokens[q].type==')'))){
         return paddr_read(eval(p+1,q,success),4);
-      }else{
+    }else{
         *success=false;
         return 0;
-      }
     }
 
     unsigned val1 = eval(p, op - 1, success);
