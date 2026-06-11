@@ -51,7 +51,7 @@ static void gen_rand_expr(char **point) {
   if(*point - buf > 6000) i=0;
   switch (i) {
     case 0: 
-      *point+=sprintf(*point,"%u",(unsigned)(rand()+1)); 
+      *point+=sprintf(*point,"%uu",(unsigned)(rand()+1)); 
         break;
     case 1: 
       *point+=sprintf(*point,"%c",'(');
@@ -76,9 +76,9 @@ int main(int argc, char *argv[]) {
   int i;
   for (i = 0; i < loop; i ++) {
     char *point = buf;
-    // gen_rand_expr(&point);
+    gen_rand_expr(&point);
 
-    strcpy(point, "1/0");
+    // strcpy(point, "1/0");
 
     sprintf(code_buf, code_format, buf);
 
