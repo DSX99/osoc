@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
     if(atoi(cmd)-val != 0){
       printf("%s %u %u %u\n\n",ptr, atoi(cmd), val,atoi(cmd)-val);
     }
-    printf("%d",count++);
+    printf("%d \n",count++);
   }
   /* Initialize the monitor. */
 // #ifdef CONFIG_TARGET_AM
