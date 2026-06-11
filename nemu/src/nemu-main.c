@@ -25,6 +25,7 @@ word_t expr(char *e, bool *success);
 
 int main(int argc, char *argv[]) {
   char s[1024*16];
+  char *ptr = s;
   FILE *fp = fopen("/home/dsx99/osoc/ysyx-workbench/nemu/tools/gen-expr/input_2", "r");
   if (fp == NULL){
     printf("No file");
@@ -35,7 +36,8 @@ int main(int argc, char *argv[]) {
     printf("No file");
     exit(EXIT_FAILURE);
   }
-  char *cmd = strtok(s, " ");
+  char *cmd = strtok(ptr, " ");
+  ptr = ptr + strlen(cmd) + 1;
   if (cmd == NULL) { return 1; }
   bool check=0;
   int val = expr(s,&check);
