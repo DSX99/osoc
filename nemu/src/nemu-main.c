@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
   init_monitor(argc, argv);
   char s[1024*16];
   char *ptr = s;
-  FILE *fp = fopen("/home/dsx99/osoc/ysyx-workbench/nemu/tools/gen-expr/input_2", "r");
+  FILE *fp = fopen("/home/dsx99/osoc/ysyx-workbench/nemu/tools/gen-expr/input_3", "r");
   if (fp == NULL){
     printf("No file");
     exit(EXIT_FAILURE);
