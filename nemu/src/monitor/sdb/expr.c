@@ -163,20 +163,44 @@ unsigned eval(int p, int q) {
     return eval(p + 1, q - 1);
   }
   else {
-    char arr[4] = {'+','-','/','*'};
-    int count=0, op=0;
-    for(int j=0;j<4;j++){
-      count=0;      
-      for(int i=q; i>p; i--){
-        if(tokens[i].type==')') count++;
-        if(tokens[i].type=='(') count--;
-        if(tokens[i].type == arr[j] && count==0){
-          op = i;
-          break;
+    int op = -1;
+    int op_prec = 99;
+    int count = 0;
+
+    for(int i=p;i<q;i++){
+      if (tokens[i].type == '(') {
+        count++;
+      }
+      else if (tokens[i].type == ')') {
+        count--;
+      }
+      else if (count == 0) {
+        int prec = -1;
+        switch (tokens[i].type) {
+          case TK_EQ:
+          case TK_NEQ:
+            prec = 1;
+            break;
+          case '+':
+          case '-':
+            prec = 2;
+            break;
+          case '*':
+          case '/':
+            prec = 3;
+            break;
+          default:
+            break;
+        }
+        if (prec != -1) {
+          if (prec <= op_prec) {
+            op = i;
+            op_prec = prec;
+          }
         }
       }
-      if(op!=0) break;
     }
+
     unsigned val1 = eval(p, op - 1);
     unsigned val2 = eval(op + 1, q);
 
