@@ -14,19 +14,44 @@
 ***************************************************************************************/
 
 #include <common.h>
-
+#include <stdio.h>
+#include <stdlib.h>
 void init_monitor(int, char *[]);
 void am_init_monitor();
 void engine_start();
 int is_exit_status_bad();
 
+word_t expr(char *e, bool *success);
+
 int main(int argc, char *argv[]) {
-  /* Initialize the monitor. */
-#ifdef CONFIG_TARGET_AM
-  am_init_monitor();
-#else
   init_monitor(argc, argv);
-#endif
+  int count=0;
+  char s[1024*16];
+  char *ptr = s;
+  FILE *fp = fopen("/home/dsx99/osoc/ysyx-workbench/nemu/tools/gen-expr/input_3", "r");
+  if (fp == NULL){
+    printf("No file");
+    exit(EXIT_FAILURE);
+  }
+  while (fgets(s, sizeof(s), fp) != NULL) {
+    ptr = s;
+    char *cmd = strtok(ptr, " ");
+    if (cmd == NULL) { return 1; }
+    ptr = ptr + strlen(cmd) + 1;
+    bool check=0;
+    int val = expr(ptr,&check);
+    // printf("%u %u: %u \n", atoi(cmd), val, atoi(cmd)-val);
+    if(atoi(cmd)-val != 0){
+      printf("%s %u %u %u\n\n",ptr, atoi(cmd), val,atoi(cmd)-val);
+    }
+    printf("%d \n",count++);
+  }
+  /* Initialize the monitor. */
+// #ifdef CONFIG_TARGET_AM
+//   am_init_monitor();
+// #else
+//   init_monitor(argc, argv);
+// #endif
 
   /* Start engine. */
   engine_start();
