@@ -86,7 +86,8 @@ static int cmd_info(char *args) {
 }
 
 static int cmd_x(char *args) {
-  char *endptr_val ,*endptr_size;
+  char *endptr_size;
+  bool success = 1;
   if(args == NULL){ 
     printf("Correct use x N EXPR , where N is an integer and EXPR is a expression.\n");
     return 0;
@@ -98,12 +99,12 @@ static int cmd_x(char *args) {
     return 0;
   }else{
     long size = strtol(size_str, &endptr_size, 0);
-    long val = strtol(args, &endptr_val, 0);
+    long val = expr(args,&success);
     if(val < 0x80000000){
       printf("Calling not a memory space\n");
       return 0;
     }
-    if(*endptr_val != '\0' || *endptr_size != '\0'){
+    if( !(success) || *endptr_size != '\0'){
       printf("Correct use x N ECPR , where N is an integer and EXPR is a expression.\n");
       return 0;
     }

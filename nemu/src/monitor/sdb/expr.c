@@ -231,8 +231,8 @@ unsigned eval(int p, int q, bool *success) {
       if(tokens[p].type == DEREF && (tokens[p+1].type=='v'||tokens[p+1].type=='h'||tokens[p+1].type=='r'||(tokens[p+1].type=='('&&tokens[q].type==')'))){
         return paddr_read(eval(p+1,q,success),4);
       }else{
-          *success=false;
-          return 0;
+        *success=false;
+        return 0;
       }
     }
 
