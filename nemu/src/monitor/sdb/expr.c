@@ -15,10 +15,13 @@
 
 #include <isa.h>
 #include <string.h>
+#include <stdlib.h>
 /* We use the POSIX regex functions to process regular expressions.
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
+
+word_t paddr_read(paddr_t addr, int len);
 
 enum {
   TK_NOTYPE = 256, TK_EQ,TK_NEQ,DEREF,
@@ -39,9 +42,12 @@ static struct rule {
   {"^ +", TK_NOTYPE},    // spaces
   {"^\\n", TK_NOTYPE},    // EOL
   {"^\\0", TK_NOTYPE},    // EOS
+  {"^&&", '&'},    
   {"^\\(", '('},
   {"^\\)", ')'},
-  {"^[\\$0-9asrpt]+", 'v'},
+  {"^\\$[0-9asrpt]+", 'r'},
+  {"^0x[\\$0-9]+", 'h'},
+  {"^[\\$0-9]+", 'v'},
   {"^\\+", '+'},         // plus
   {"^==", TK_EQ},        // equal
   {"^!=", TK_NEQ},        // notequal
@@ -99,12 +105,11 @@ static bool make_token(char *e) {
         //     i, rules[i].regex, position, substr_len, substr_len, substr_start);
 
         position += substr_len;
-
-        tokens[nr_token].type = rules[i].token_type;
         if(substr_len>31){
           printf("too big expression: %.*s\nuse smaller, anyway it is bigger than uin32_t\n", substr_len, substr_start);
           return 0;
         }
+        tokens[nr_token].type = rules[i].token_type;
         strncpy(tokens[nr_token].str,substr_start,substr_len);
         tokens[nr_token].str[substr_len+1] = '\0';
         nr_token++;
@@ -149,18 +154,38 @@ int check_parentheses(int p, int q){
   return 1;
 }
 
-unsigned eval(int p, int q) {
+unsigned eval(int p, int q, bool *success) {
   if (p > q) {
     assert(0);
   }
   else if (p == q) {
-    return atoi(tokens[p].str);
+    char *endptr_val;
+    switch(tokens[p].type){
+      case 'v':
+        return atoi(tokens[p].str); break;
+      case 'h':
+        int val = strtol(tokens[p].str,&endptr_val,0);
+        if(*endptr_val!='\0'){
+          printf("please use correct hex form\n");
+          *success=false;
+        }else{
+          return val;
+        }
+    }
   }
   else if (check_parentheses(p, q) == true) {
     /* The expression is surrounded by a matched pair of parentheses.
      * If that is the case, just throw away the parentheses.
      */
-    return eval(p + 1, q - 1);
+    return eval(p + 1, q - 1,success);
+  } else if (p + 1 == q && tokens[p].type==DEREF && tokens[q].type=='v'){
+    unsigned val = eval(p+1,q,success);
+    if(val < 0x80000000){
+      printf("Calling not a memory space");
+      *success = false;
+    }else{
+      return paddr_read(val,1);
+    }
   }
   else {
     int op = -1;
@@ -201,20 +226,20 @@ unsigned eval(int p, int q) {
       }
     }
 
-    unsigned val1 = eval(p, op - 1);
-    unsigned val2 = eval(op + 1, q);
+    unsigned val1 = eval(p, op - 1, success);
+    unsigned val2 = eval(op + 1, q, success);
 
     switch (tokens[op].type) {
-      case '+': return val1 + val2;
-      case '-': return val1 - val2;
-      case '*': return val1 * val2;
+      case '+': return val1 + val2; break;
+      case '-': return val1 - val2; break;
+      case '*': return val1 * val2; break;
       case '/': 
         if(val2 == 0){
           return 0;
         }
         return val1/val2;
         break;
-      default: assert(0);
+      default: *success = false;
     }
   }
   return 0;
@@ -226,10 +251,15 @@ word_t expr(char *e, bool *success) {
     return 0;
   }
 
-  unsigned val = eval(0,nr_token-1);
-  
-  /* TODO: Insert codes to evaluate the expression. */
-  // TODO();
+  for(int i=0;i<nr_token;i++){
+    if (tokens[i].type == '+' && tokens[i-1].type!='v'){
+      tokens[i].type=DEREF;
+    }
+  }
+
   *success = true;
+
+  unsigned val = eval(0,nr_token-1,success);
+  
   return val;
 }

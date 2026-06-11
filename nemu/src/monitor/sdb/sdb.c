@@ -18,7 +18,8 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
-#include "../../../include/memory/paddr.h"
+
+word_t paddr_read(paddr_t addr, int len);
 
 static int is_batch_mode = false;
 
@@ -87,13 +88,13 @@ static int cmd_info(char *args) {
 static int cmd_x(char *args) {
   char *endptr_val ,*endptr_size;
   if(args == NULL){ 
-    printf("Correct use x N ECPR , where N is an integer and EXPR is a expression.\n");
+    printf("Correct use x N EXPR , where N is an integer and EXPR is a expression.\n");
     return 0;
   }
   char *size_str = strtok(args, " ");
   args = args + strlen(size_str) + 1;
   if(size_str == NULL || args == NULL){ 
-    printf("Correct use x N ECPR , where N is an integer and EXPR is a expression.\n");
+    printf("Correct use x N EXPR , where N is an integer and EXPR is a expression.\n");
     return 0;
   }else{
     long size = strtol(size_str, &endptr_size, 0);
