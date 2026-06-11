@@ -94,7 +94,7 @@ int main(int argc, char *argv[]) {
     char gcc_buf[131072] = {}; 
     add_u_suffixes(buf, gcc_buf);
 
-    sprintf(code_buf, code_format, buf);
+    sprintf(code_buf, code_format, gcc_buf);
 
     FILE *fp = fopen("/tmp/.code.c", "w");
     assert(fp != NULL);
