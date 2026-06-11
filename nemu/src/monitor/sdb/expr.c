@@ -105,7 +105,7 @@ static bool make_token(char *e) {
           return 0;
         }
         strncpy(tokens[nr_token].str,substr_start,substr_len);
-        tokens[nr_token].str[substr_len] = '\0';
+        tokens[nr_token].str[substr_len+1] = '\0';
         nr_token++;
 
         /* TODO: Now a new token is recognized with rules[i]. Add codes
