@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
     int val = expr(ptr,&check);
     // printf("%u %u: %u \n", atoi(cmd), val, atoi(cmd)-val);
     if(atoi(cmd)-val != 0){
-      printf("%s %d\n",s, atoi(cmd)-val);
+      printf("%s %u\n",s, atoi(cmd)-val);
     }
   }
   return 0;
