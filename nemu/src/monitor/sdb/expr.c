@@ -251,7 +251,7 @@ word_t expr(char *e, bool *success) {
   }
 
   for(int i=0;i<nr_token;i++){
-    if (tokens[i].type == '+' && tokens[i-1].type!='v'){
+    if (tokens[i].type == '*' && tokens[i-1].type!='v'){
       tokens[i].type=DEREF;
     }
   }
