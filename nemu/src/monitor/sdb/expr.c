@@ -37,6 +37,7 @@ static struct rule {
    */
 
   {"^ +", TK_NOTYPE},    // spaces
+  {"^\\n", TK_NOTYPE},    // EOL
   {"^\\(", '('},
   {"^\\)", ')'},
   {"^[\\$0-9asrpt]+", 'v'},
