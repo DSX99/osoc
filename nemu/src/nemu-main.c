@@ -32,17 +32,14 @@ int main(int argc, char *argv[]) {
     printf("No file");
     exit(EXIT_FAILURE);
   }
-  char *ret = fgets(s,1024*16,fp);
-  if(ret == NULL){
-    printf("No file");
-    exit(EXIT_FAILURE);
+  while (fgets(s, sizeof(s), fp) != NULL) {
+    char *cmd = strtok(ptr, " ");
+    if (cmd == NULL) { return 1; }
+    ptr = ptr + strlen(cmd) + 1;
+    bool check=0;
+    int val = expr(ptr,&check);
+    printf("%u %u: %u \n", atoi(cmd), val, atoi(cmd)-val);
   }
-  char *cmd = strtok(ptr, " ");
-  if (cmd == NULL) { return 1; }
-  ptr = ptr + strlen(cmd) + 1;
-  bool check=0;
-  int val = expr(ptr,&check);
-  printf("%u %u: %u \n", atoi(cmd), val, atoi(cmd)-val);
   return 0;
   /* Initialize the monitor. */
 #ifdef CONFIG_TARGET_AM
