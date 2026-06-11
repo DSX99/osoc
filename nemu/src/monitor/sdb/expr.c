@@ -182,16 +182,9 @@ unsigned eval(int p, int q, bool *success) {
     /* The expression is surrounded by a matched pair of parentheses.
      * If that is the case, just throw away the parentheses.
      */
+    if(q==p+1){ printf("do not write empty parentheses\n"); *success=false; return 0; }
     return eval(p + 1, q - 1,success);
-  } else if (p + 1 == q && tokens[p].type==DEREF && (tokens[q].type!='v' || tokens[q].type!='h' || tokens[q].type!='r')){
-    unsigned val = eval(p+1,q,success);
-    if(val < 0x80000000){
-      printf("Calling not a memory space");
-      *success = false;
-    }else{
-      return paddr_read(val,4);
-    }
-  }
+  } 
   else {
     int op = -1;
     int op_prec = 99;
@@ -231,6 +224,12 @@ unsigned eval(int p, int q, bool *success) {
             op_prec = prec;
           }
         }
+      }
+      if(op_prec == 99 && tokens[p].type == DEREF && (tokens[p+1].type=='v'||tokens[p+1].type=='h'||tokens[p+1].type=='r'||(tokens[p+1].type=='('&&tokens[q].type==')'))){
+        return paddr_read(eval(p+1,q,success),4);
+      }else{
+        *success=false;
+        return 0;
       }
     }
 
