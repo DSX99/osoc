@@ -201,6 +201,9 @@ unsigned eval(int p, int q, bool *success) {
       else if (count == 0) {
         int prec = -1;
         switch (tokens[i].type) {
+          case '&':
+            prec=0;
+            break;
           case TK_EQ:
           case TK_NEQ:
             prec = 1;
@@ -238,6 +241,9 @@ unsigned eval(int p, int q, bool *success) {
         }
         return val1/val2;
         break;
+      case TK_EQ: return val1 == val2; break;
+      case TK_NEQ: return val1 != val2; break;
+      case '&': return val1 && val2; break;
       default: *success = false;
     }
   }
