@@ -74,6 +74,7 @@ WP *new_wp()
     }
     head_wp->next = first_free;
     free_ = first_free->next;
+    first_free->next = NULL;
     return first_free;
   }
 }
@@ -81,17 +82,24 @@ WP *new_wp()
 void free_wp(WP *wp)
 {
   WP *head_wp = head;
-  while (head_wp->next != wp)
+  if (wp == head_wp)
   {
-    head_wp = head_wp->next;
-  }
-  if (wp->next == NULL)
-  {
-    head_wp->next = NULL;
+    head = head->next;
   }
   else
   {
-    head_wp->next = wp->next;
+    while (head_wp->next != wp)
+    {
+      head_wp = head_wp->next;
+    }
+    if (wp->next == NULL)
+    {
+      head_wp->next = NULL;
+    }
+    else
+    {
+      head_wp->next = wp->next;
+    }
   }
 
   WP *first_free = free_->next;
@@ -105,37 +113,57 @@ void free_wp(WP *wp)
   return;
 }
 
-void create_wp(char *s){
-  bool success=1;
+void create_wp(char *s)
+{
+  bool success = 1;
   WP *wp = new_wp();
-  strcpy(wp->expr,s);
-  wp->value = expr(s,&success);
-  if(!success){
+  strcpy(wp->expr, s);
+  wp->value = expr(s, &success);
+  if (!success)
+  {
     printf("Error in evaluating starting val for wp");
     free_wp(wp);
     return;
   }
-  printf("Added wp with id:%d, and EXPR:%s",wp->NO, s);
+  printf("Added wp with id:%d, and EXPR:%s", wp->NO, s);
   return;
 }
 
-bool check_wp(WP *wp){
-  bool success=1;
-  uint32_t val = expr(wp->expr,&success);
-  if(!success){
+bool check_wp(WP *wp, bool *success)
+{
+  uint32_t val = expr(wp->expr, success);
+  if (!*success)
+  {
     printf("Error in evaluating starting val for wp");
     free_wp(wp);
-    return 1;
+    *success = false;
+    return 0;
   }
-  if(val == wp->value){
-    return 1;
+  *success = true;
+  if (val != wp->value)
+  {
+    return val;
   }
   return 0;
 }
 
-bool check_watchpoints(){
-  while(head->next!=NULL){
-    
+bool check_watchpoints()
+{
+  bool success;
+  uint32_t val;
+  WP *head_wp = head;
+  while (head_wp->next != NULL)
+  {
+    if ((val = check_wp(head_wp, &success)))
+    {
+      printf("Triggered watchpoint %d with expr %s with value %u", head_wp->NO, head_wp->expr, val);
+      return 1;
+    }
+    if (success == false)
+    {
+      printf("Error evaluating watchpoint %d with expr %s", head_wp->NO, head_wp->expr);
+    }
+    head_wp = head_wp->next;
   }
   return 0;
 }
