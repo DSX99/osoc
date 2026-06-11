@@ -132,9 +132,9 @@ int check_parentheses(int p, int q){
   if(tokens[p].type=='('){
     if(tokens[q].type==')'){
       int count=0;
-      for(int i=q;i>p;i--){
-        if(tokens[i].type==')') count++;
-        if(tokens[i].type=='(') count--;
+      for(int i=p+1;i<q;i++){
+        if(tokens[i].type=='(') count++;
+        if(tokens[i].type==')') count--;
         if(count<0) return 0;
       }
     }else{
@@ -164,9 +164,9 @@ unsigned eval(int p, int q) {
     int count=0, op=0;
     for(int j=0;j<4;j++){
       count=0;      
-      for(int i=p; i<q; i++){
-        if(tokens[i].type=='(') count++;
-        if(tokens[i].type==')') count--;
+      for(int i=q; i>p; i--){
+        if(tokens[i].type==')') count++;
+        if(tokens[i].type=='(') count--;
         if(tokens[i].type == arr[j] && count==0){
           op = i;
           break;
