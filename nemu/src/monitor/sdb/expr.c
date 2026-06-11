@@ -132,7 +132,7 @@ int check_parentheses(int p, int q){
   if(tokens[p].type=='('){
     if(tokens[q].type==')'){
       int count=0;
-      for(int i=p+1;i<q;i++){
+      for(int i=q;i>p;i--){
         if(tokens[i].type=='(') count++;
         if(tokens[i].type==')') count--;
         if(count<0) return 0;

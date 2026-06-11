@@ -25,9 +25,8 @@ static char buf[65536] = {};
 static char code_buf[65536 + 128] = {}; // a little larger than `buf`
 static char *code_format =
 "#include <stdio.h>\n"
-"#include <stdint.h>\n"
 "int main() { "
-"  uint32_t result = %s; "
+"  unsigned result = %s; "
 "  printf(\"%%u\", result); "
 "  return 0; "
 "}";
@@ -52,7 +51,7 @@ static void gen_rand_expr(char **point) {
   if(*point - buf > 6000) i=0;
   switch (i) {
     case 0: 
-      *point+=sprintf(*point,"%u",(uint32_t)(rand()+1)); 
+      *point+=sprintf(*point,"%u",(unsigned)(rand()+1)); 
         break;
     case 1: 
       *point+=sprintf(*point,"%c",'(');
@@ -77,7 +76,9 @@ int main(int argc, char *argv[]) {
   int i;
   for (i = 0; i < loop; i ++) {
     char *point = buf;
-    gen_rand_expr(&point);
+    // gen_rand_expr(&point);
+
+    strcpy(point, "1/0");
 
     sprintf(code_buf, code_format, buf);
 
@@ -86,8 +87,10 @@ int main(int argc, char *argv[]) {
     fputs(code_buf, fp);
     fclose(fp);
 
-    int ret = system("gcc /tmp/.code.c -o /tmp/.expr");
+    int ret = system("gcc /tmp/.code.c -o /tmp/.expr -Werror -Wno-overflow");
     if (ret != 0) continue;
+
+    
 
     fp = popen("/tmp/.expr", "r");
     assert(fp != NULL);
