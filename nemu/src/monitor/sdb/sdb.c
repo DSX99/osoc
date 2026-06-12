@@ -25,6 +25,8 @@ static int is_batch_mode = false;
 
 void init_regex();
 void init_wp_pool();
+void create_wp(char *s);
+bool delete_wp(int n);
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
@@ -116,10 +118,33 @@ static int cmd_x(char *args) {
 }
 
 static int cmd_p(char *args) {
-  bool ret=0;
+  bool ret=1;
   bool *p=&ret;
   printf("%u\n",expr(args,p));
   return ret;
+}
+
+static int cmd_w(char *args) {
+  create_wp(args);
+  return 0;
+}
+
+static int cmd_d(char *args) {
+  bool ret=1;
+  char *endptr;
+
+  if(args == NULL){ 
+    printf("insert ID of watchpoint to delete\n");
+    return 0;
+  }else{
+    long val = strtol(args, &endptr, 0);
+    if(*endptr != '\0'){
+      printf("Correct use d N , where N is an integer.\n");
+      return 0;
+    }
+    delete_wp(val);
+    return ret;
+  }
 }
 
 static int cmd_help(char *args);
@@ -136,8 +161,8 @@ static struct {
   { "info", " info SUBCMD info r:Print register status info w:Print watchpoint information", cmd_info },
   { "x", " x N EXPR Finds the value of the expression EXPR, uses the result as the starting memory address, and outputs consecutive N 4 bytes in hexadecimal.", cmd_x },
   { "p", " p EXPR Find the value of the expression EXPR, for EXPR supported operations", cmd_p },
-  // { "w", " w EXPR Suspend program execution when the value of expression EXPR changes.", cmd_w },
-  // { "d", " d N Deletes the watchpoint with ID N.", cmd_d }
+  { "w", " w EXPR Suspend program execution when the value of expression EXPR changes.", cmd_w },
+  { "d", " d N Deletes the watchpoint with ID N.", cmd_d }
 };
 
 #define NR_CMD ARRLEN(cmd_table)

@@ -15,7 +15,7 @@
 
 #include "sdb.h"
 
-#define NR_WP 64
+#define NR_WP 6
 
 typedef struct token
 {
@@ -54,7 +54,7 @@ WP *new_wp()
 
   if (free_->next == NULL)
   {
-    printf("No more free WP");
+    printf("No more free WP\n");
   }
 
   WP *first_free = free_;
@@ -121,11 +121,11 @@ void create_wp(char *s)
   wp->value = expr(s, &success);
   if (!success)
   {
-    printf("Error in evaluating starting val for wp");
+    printf("Error in evaluating starting value for wp\n");
     free_wp(wp);
     return;
   }
-  printf("Added wp with id:%d, and EXPR:%s", wp->NO, s);
+  printf("Added wp with id:%d, and EXPR:%s\n", wp->NO, s);
   return;
 }
 
@@ -134,7 +134,7 @@ bool check_wp(WP *wp, bool *success)
   uint32_t val = expr(wp->expr, success);
   if (!*success)
   {
-    printf("Error in evaluating starting val for wp");
+    printf("Error in evaluating starting val for wp with id:%d and EXPR:%s\n", wp->NO, wp->expr);
     free_wp(wp);
     *success = false;
     return 0;
@@ -156,16 +156,30 @@ bool check_watchpoints()
   {
     if ((val = check_wp(head_wp, &success)))
     {
-      printf("Triggered watchpoint %d with expr %s with value %u", head_wp->NO, head_wp->expr, val);
+      printf("Triggered watchpoint %d with expr %s with value %u\n", head_wp->NO, head_wp->expr, val);
       return 1;
     }
     if (success == false)
     {
-      printf("Error evaluating watchpoint %d with expr %s", head_wp->NO, head_wp->expr);
+      printf("Error evaluating watchpoint %d with expr %s\n", head_wp->NO, head_wp->expr);
     }
     head_wp = head_wp->next;
   }
   return 0;
 }
 
-/* TODO: Implement the functionality of watchpoint */
+bool delete_wp(int n){
+  WP *head_wp = head;
+  if(head_wp==NULL){
+    printf("No watchpoints were initialized\n");
+  }
+  while(head_wp->NO != n){
+    if(head_wp->next==NULL){
+      printf("No active watchpoint with this ID\n");
+      return 0;
+    }
+    head_wp=head->next;
+  }
+  free(head_wp);
+  return 0;
+}

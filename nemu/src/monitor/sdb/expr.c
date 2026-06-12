@@ -222,7 +222,7 @@ unsigned eval(int p, int q, bool *success)
     /* The expression is surrounded by a matched pair of parentheses.
      * If that is the case, just throw away the parentheses.
      */
-    if (q == p + 1)
+    if (p + 1 == q)
     {
       printf("do not write empty parentheses\n");
       *success = false;
@@ -352,9 +352,9 @@ word_t expr(char *e, bool *success)
       }
     }
   }
-
-  *success = true;
-
+  if(!*success){
+    return 0;
+  }
   unsigned val = eval(0, nr_token - 1, success);
 
   return val;
