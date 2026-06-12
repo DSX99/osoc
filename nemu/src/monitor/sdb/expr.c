@@ -284,7 +284,13 @@ unsigned eval(int p, int q, bool *success)
     {
       if (tokens[p].type == DEREF && (tokens[p + 1].type == 'v' || tokens[p + 1].type == 'h' || tokens[p + 1].type == 'r' || (tokens[p + 1].type == '(' && tokens[q].type == ')')))
       {
-        return paddr_read(eval(p + 1, q, success), 4);
+        uint32_t addr = eval(p + 1, q, success);
+        if(addr < 0x80000000){
+          printf("Calling not physical memory\n");
+          *success = false;
+          return 0;
+        }
+        return paddr_read(addr, 4);
       }
       else
       {
