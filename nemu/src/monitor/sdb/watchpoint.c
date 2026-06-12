@@ -63,6 +63,7 @@ WP *new_wp()
   {
     head = first_free;
     free_ = first_free->next;
+    first_free->next = NULL;
     return first_free;
   }
   else
