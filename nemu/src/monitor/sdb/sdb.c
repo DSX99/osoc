@@ -123,7 +123,7 @@ static int cmd_p(char *args) {
   char *size_str = strtok(args, " ");
   if(*size_str == 'h'){
     args = args + strlen(size_str) + 1;
-    printf("0x%x\n",expr(args,p));
+    printf("0x%08x\n",expr(args,p));
   }else{
     printf("%u\n",expr(args,p));
   }
