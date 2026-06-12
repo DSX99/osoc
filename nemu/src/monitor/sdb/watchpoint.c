@@ -96,7 +96,8 @@ void free_wp(WP *wp)
     head_wp->next = wp->next;
   }
 
-  if(free_ == NULL){
+  if (free_ == NULL)
+  {
     free_ = wp;
     return;
   }
@@ -110,10 +111,13 @@ void free_wp(WP *wp)
     first_free = first_free->next;
   }
 
-  if(second_free == NULL){
+  if (second_free == NULL)
+  {
     free_ = wp;
     wp->next = first_free;
-  }else{
+  }
+  else
+  {
     second_free->next = wp;
     wp->next = first_free;
   }
@@ -131,14 +135,17 @@ void create_wp(char *s)
   {
     printf("Error in evaluating starting value for wp\n");
     printf("Keep the wp? y or n\n");
-    while(true){
-      input=getchar();
-      if(input=='y' || input=='n'){
+    while (true)
+    {
+      input = getchar();
+      if (input == 'y' || input == 'n')
+      {
         break;
       }
       printf("please enter y or n.\n");
     }
-    if(input =='n'){
+    if (input == 'n')
+    {
       free_wp(wp);
     }
     return;
@@ -164,7 +171,7 @@ bool check_wp(WP *wp, bool *success)
 
 bool check_watchpoints()
 {
-  bool success=1;
+  bool success = 1;
   uint32_t val;
   WP *head_wp = head;
   while (head_wp != NULL)
@@ -178,27 +185,45 @@ bool check_watchpoints()
     {
       printf("Error evaluating watchpoint %d with expr %s\n", head_wp->NO, head_wp->expr);
     }
-    if(head_wp->next!=NULL){
+    if (head_wp->next != NULL)
+    {
       head_wp = head_wp->next;
-    }else{
+    }
+    else
+    {
       break;
     }
   }
   return 0;
 }
 
-bool delete_wp(int n){
+bool delete_wp(int n)
+{
   WP *head_wp = head;
-  if(head_wp==NULL){
+  if (head_wp == NULL)
+  {
     printf("No watchpoints were initialized\n");
   }
-  while(head_wp->NO != n){
-    if(head_wp->next==NULL){
+  while (head_wp->NO != n)
+  {
+    if (head_wp->next == NULL)
+    {
       printf("No active watchpoint with this ID\n");
       return 0;
     }
-    head_wp=head->next;
+    head_wp = head->next;
   }
   free_wp(head_wp);
   return 0;
+}
+
+void info_wp()
+{
+  printf("Current active watchpoints:\n");
+  WP *head_wp = head;
+  while (head_wp != NULL)
+  {
+    printf("Error evaluating watchpoint %d with expr %s\n", head_wp->NO, head_wp->expr);
+    head_wp = head_wp->next;
+  }
 }
