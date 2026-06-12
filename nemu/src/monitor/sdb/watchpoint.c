@@ -122,13 +122,24 @@ void free_wp(WP *wp)
 void create_wp(char *s)
 {
   bool success = 1;
+  char input;
   WP *wp = new_wp();
   strcpy(wp->expr, s);
   wp->value = expr(s, &success);
   if (!success)
   {
     printf("Error in evaluating starting value for wp\n");
-    free_wp(wp);
+    printf("Keep the wp? y or n\n");
+    while(true){
+      input=getchar();
+      if(input=='y' || input=='n'){
+        break;
+      }
+      printf("please enter y or n.\n");
+    }
+    if(input =='n'){
+      free_wp(wp);
+    }
     return;
   }
   printf("Added wp with id:%d, and EXPR:%s\n", wp->NO, s);
@@ -140,7 +151,7 @@ bool check_wp(WP *wp, bool *success)
   uint32_t val = expr(wp->expr, success);
   if (!*success)
   {
-    printf("Error in evaluating starting val for wp with id:%d and EXPR:%s\n", wp->NO, wp->expr);
+    printf("Error in evaluating val for wp with id:%d and EXPR:%s\n", wp->NO, wp->expr);
     return 0;
   }
   if (val != wp->value)
