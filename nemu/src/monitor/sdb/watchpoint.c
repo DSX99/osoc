@@ -155,7 +155,7 @@ bool check_watchpoints()
   bool success=1;
   uint32_t val;
   WP *head_wp = head;
-  while (head_wp->next != NULL)
+  while (head_wp != NULL)
   {
     if ((val = check_wp(head_wp, &success)))
     {
@@ -166,7 +166,11 @@ bool check_watchpoints()
     {
       printf("Error evaluating watchpoint %d with expr %s\n", head_wp->NO, head_wp->expr);
     }
-    head_wp = head_wp->next;
+    if(head_wp->next!=NULL){
+      head_wp = head_wp->next;
+    }else{
+      break;
+    }
   }
   return 0;
 }
