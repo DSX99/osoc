@@ -92,24 +92,30 @@ void free_wp(WP *wp)
     {
       head_wp = head_wp->next;
     }
-    if (wp->next == NULL)
-    {
-      head_wp->next = NULL;
-    }
-    else
-    {
-      head_wp->next = wp->next;
-    }
+    head_wp->next = wp->next;
   }
 
-  WP *first_free = free_->next;
+  if(free_ == NULL){
+    free_ = wp;
+    return;
+  }
 
-  while ((wp->NO < first_free->NO))
+  WP *first_free = free_;
+  WP *second_free = NULL;
+
+  while ((wp->NO > first_free->NO))
   {
+    second_free = first_free;
     first_free = first_free->next;
   }
-  free_ = wp;
-  wp->next = first_free;
+
+  if(second_free == NULL){
+    free_ = wp;
+    wp->next = first_free;
+  }else{
+    second_free->next = wp;
+    wp->next = first_free;
+  }
   return;
 }
 
@@ -135,11 +141,8 @@ bool check_wp(WP *wp, bool *success)
   if (!*success)
   {
     printf("Error in evaluating starting val for wp with id:%d and EXPR:%s\n", wp->NO, wp->expr);
-    free_wp(wp);
-    *success = false;
     return 0;
   }
-  *success = true;
   if (val != wp->value)
   {
     return val;
@@ -149,7 +152,7 @@ bool check_wp(WP *wp, bool *success)
 
 bool check_watchpoints()
 {
-  bool success;
+  bool success=1;
   uint32_t val;
   WP *head_wp = head;
   while (head_wp->next != NULL)
