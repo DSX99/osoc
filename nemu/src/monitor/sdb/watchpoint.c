@@ -223,7 +223,7 @@ void info_wp()
   WP *head_wp = head;
   while (head_wp != NULL)
   {
-    printf("Error evaluating watchpoint %d with expr %s\n", head_wp->NO, head_wp->expr);
+    printf("Watchpoint %d with expr %s with value %u\n", head_wp->NO, head_wp->expr, head_wp->value);
     head_wp = head_wp->next;
   }
 }
