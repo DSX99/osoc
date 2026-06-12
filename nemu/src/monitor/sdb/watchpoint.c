@@ -183,6 +183,6 @@ bool delete_wp(int n){
     }
     head_wp=head->next;
   }
-  free(head_wp);
+  free_wp(head_wp);
   return 0;
 }
