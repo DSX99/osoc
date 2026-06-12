@@ -18,12 +18,15 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
-#include "../../../include/memory/paddr.h"
+
+word_t paddr_read(paddr_t addr, int len);
 
 static int is_batch_mode = false;
 
 void init_regex();
 void init_wp_pool();
+void create_wp(char *s);
+bool delete_wp(int n);
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
@@ -85,24 +88,25 @@ static int cmd_info(char *args) {
 }
 
 static int cmd_x(char *args) {
-  char *endptr_val ,*endptr_size;
+  char *endptr_size;
+  bool success = 1;
   if(args == NULL){ 
-    printf("Correct use x N ECPR , where N is an integer and EXPR is a expression.\n");
+    printf("Correct use x N EXPR , where N is an integer and EXPR is a expression.\n");
     return 0;
   }
   char *size_str = strtok(args, " ");
   args = args + strlen(size_str) + 1;
   if(size_str == NULL || args == NULL){ 
-    printf("Correct use x N ECPR , where N is an integer and EXPR is a expression.\n");
+    printf("Correct use x N EXPR , where N is an integer and EXPR is a expression.\n");
     return 0;
   }else{
     long size = strtol(size_str, &endptr_size, 0);
-    if(size < 0x80000000){
-      printf("Calling not a memory space");
+    long val = expr(args,&success);
+    if(val < 0x80000000){
+      printf("Calling not a memory space\n");
       return 0;
     }
-    long val = strtol(args, &endptr_val, 0);
-    if(*endptr_val != '\0' || *endptr_size != '\0'){
+    if( !(success) || *endptr_size != '\0'){
       printf("Correct use x N ECPR , where N is an integer and EXPR is a expression.\n");
       return 0;
     }
@@ -114,10 +118,39 @@ static int cmd_x(char *args) {
 }
 
 static int cmd_p(char *args) {
-  bool ret=0;
+  bool ret=1;
   bool *p=&ret;
-  printf("%u\n",expr(args,p));
+  char *size_str = strtok(args, " ");
+  if(*size_str == 'h' || *size_str == 'H'){
+    args = args + strlen(size_str) + 1;
+    printf("0x%08x\n",expr(args,p));
+  }else{
+    printf("%u\n",expr(args,p));
+  }
   return ret;
+}
+
+static int cmd_w(char *args) {
+  create_wp(args);
+  return 0;
+}
+
+static int cmd_d(char *args) {
+  bool ret=1;
+  char *endptr;
+
+  if(args == NULL){ 
+    printf("insert ID of watchpoint to delete\n");
+    return 0;
+  }else{
+    long val = strtol(args, &endptr, 0);
+    if(*endptr != '\0'){
+      printf("Correct use d N , where N is an integer.\n");
+      return 0;
+    }
+    delete_wp(val);
+    return ret;
+  }
 }
 
 static int cmd_help(char *args);
@@ -133,9 +166,9 @@ static struct {
   { "si", " si N Lets the program pause after executing N instructions using single step execution, when N is not given, the default is 1", cmd_si },
   { "info", " info SUBCMD info r:Print register status info w:Print watchpoint information", cmd_info },
   { "x", " x N EXPR Finds the value of the expression EXPR, uses the result as the starting memory address, and outputs consecutive N 4 bytes in hexadecimal.", cmd_x },
-  { "p", " p EXPR Find the value of the expression EXPR, for EXPR supported operations", cmd_p },
-  // { "w", " w EXPR Suspend program execution when the value of expression EXPR changes.", cmd_w },
-  // { "d", " d N Deletes the watchpoint with ID N.", cmd_d }
+  { "p", " p EXPR Find the value of the expression EXPR, for EXPR supported operations also  p h EXPR valid for hex out", cmd_p },
+  { "w", " w EXPR Suspend program execution when the value of expression EXPR changes.", cmd_w },
+  { "d", " d N Deletes the watchpoint with ID N.", cmd_d }
 };
 
 #define NR_CMD ARRLEN(cmd_table)
