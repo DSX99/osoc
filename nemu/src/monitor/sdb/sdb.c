@@ -132,7 +132,7 @@ static int cmd_p(char *args) {
     printf("Correct use p EXPR Find the value of the expression EXPR.\n");
     return 0;
   }
-  if(strcmp(flag_str,"h") || strcmp(flag_str,"H")){
+  if(strcmp(flag_str,"h")==0 || strcmp(flag_str,"H")==0){
     args = args + strlen(flag_str);
     printf("0x%08x\n",expr(args,&success));
   }else{
