@@ -22,6 +22,7 @@
 word_t paddr_read(paddr_t addr, int len);
 
 static int is_batch_mode = false;
+static char prev_cmd[128];
 
 void init_regex();
 void init_wp_pool();
@@ -207,7 +208,13 @@ void sdb_mainloop() {
     return;
   }
 
-  for (char *str; (str = rl_gets()) != NULL; ) {
+  for (char *str; (str = rl_gets()) || true; ) {
+
+    if(str == NULL && *prev_cmd!='\0'){
+      str = prev_cmd;
+    }else{
+      continue;
+    }
     char *str_end = str + strlen(str);
 
     /* extract the first token as the command */
@@ -241,7 +248,12 @@ void sdb_mainloop() {
       }
     }
 
-    if (i == NR_CMD) { printf("Unknown command '%s'\n", cmd); }
+    if (i == NR_CMD) { printf("Unknown command '%s'\n", cmd); continue;}
+    
+    if (str != prev_cmd) {
+      strncpy(prev_cmd, str, sizeof(prev_cmd) - 1);
+      prev_cmd[sizeof(prev_cmd) - 1] = '\0';
+    }
   }
 }
 
