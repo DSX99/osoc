@@ -122,14 +122,14 @@ static int cmd_x(char *args) {
 static int cmd_p(char *args) {
   bool ret=1;
   bool *p=&ret;
-  char *size_str = strtok(args, " ");
-  if(*size_str == 'h' || *size_str == 'H'){
-    args = args + strlen(size_str) + 1;
+  int init_size = strlen(args);
+  char *extra_param_str = strtok(args, " ");
+  if(*extra_param_str == 'h' || *extra_param_str == 'H'){
+    args = args + strlen(extra_param_str) + 1;
     printf("0x%08x\n",expr(args,p));
   }else{
-    if(size_str!=NULL){
-      size_str=args + strlen(size_str);
-      *size_str = ' ';
+    if(strlen(extra_param_str)<init_size){
+      *(extra_param_str+strlen(extra_param_str))=' ';
     }
     printf("%u\n",expr(args,p));
   }
