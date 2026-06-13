@@ -129,7 +129,7 @@ static bool make_token(char *e)
         }
         tokens[nr_token].type = rules[i].token_type;
         if(rules[i].token_type=='v'){
-          substr_len--;
+          substr_len= substr_len-1;
         }
         strncpy(tokens[nr_token].str, substr_start, substr_len);
         tokens[nr_token].str[substr_len + 1] = '\0';
