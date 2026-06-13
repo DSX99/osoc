@@ -127,8 +127,10 @@ static int cmd_p(char *args) {
     args = args + strlen(size_str) + 1;
     printf("0x%08x\n",expr(args,p));
   }else{
-    size_str=args + strlen(size_str);
-    *size_str = ' ';
+    if(size_str!=NULL){
+      size_str=args + strlen(size_str);
+      *size_str = ' ';
+    }
     printf("%u\n",expr(args,p));
   }
   return ret;
