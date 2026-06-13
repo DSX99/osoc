@@ -52,7 +52,7 @@ static struct rule
     {"^\\)", ')'},
     {"^\\$[0-9asrptc]+", 'r'},
     {"^0x[\\$0-9abcdef]+", 'h'},
-    {"^[0-9]+", 'v'},
+    {"^[0-9u]+", 'v'},
     {"^\\+", '+'},   // plus
     {"^==", TK_EQ},  // equal
     {"^!=", TK_NEQ}, // notequal
