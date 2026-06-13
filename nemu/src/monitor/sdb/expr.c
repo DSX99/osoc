@@ -128,9 +128,9 @@ static bool make_token(char *e)
           return 0;
         }
         tokens[nr_token].type = rules[i].token_type;
-        if(tokens[nr_token].type == 'v'){
-          substr_len--;
-        }
+        // if(tokens[nr_token].type == 'v'){
+        //   substr_len--;
+        // }
         strncpy(tokens[nr_token].str, substr_start, substr_len);
         tokens[nr_token].str[substr_len + 1] = '\0';
         nr_token++;
