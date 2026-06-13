@@ -52,7 +52,7 @@ static struct rule
     {"^\\)", ')'},
     {"^\\$[0-9asrptc]+", 'r'},
     {"^0x[\\$0-9abcdef]+", 'h'},
-    {"^[0-9]+", 'v'},
+    {"^[0-9u]+", 'v'},
     {"^\\+", '+'},   // plus
     {"^==", TK_EQ},  // equal
     {"^!=", TK_NEQ}, // notequal
@@ -124,10 +124,13 @@ static bool make_token(char *e)
         position += substr_len;
         if (substr_len > 31)
         {
-          printf("too big expression: %.*s\nuse smaller, anyway it is bigger than uin32_t\n", substr_len, substr_start);
+          printf("too big expression: %.*s\nuse smaller, anyway it is bigger than uint32_t\n", substr_len, substr_start);
           return 0;
         }
         tokens[nr_token].type = rules[i].token_type;
+        if(tokens[nr_token].type == 'v'){
+          substr_len--;
+        }
         strncpy(tokens[nr_token].str, substr_start, substr_len);
         tokens[nr_token].str[substr_len + 1] = '\0';
         nr_token++;
