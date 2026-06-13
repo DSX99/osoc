@@ -218,6 +218,11 @@ void sdb_mainloop() {
       }
     }
 
+    if (str != prev_cmd) {
+      strncpy(prev_cmd, str, sizeof(prev_cmd) - 1);
+      prev_cmd[sizeof(prev_cmd) - 1] = '\0';
+    }
+
     char *str_end = str + strlen(str);
 
     /* extract the first token as the command */
@@ -251,12 +256,7 @@ void sdb_mainloop() {
       }
     }
 
-    if (i == NR_CMD) { printf("Unknown command '%s'\n", cmd); continue;}
-    
-    if (str != prev_cmd) {
-      strncpy(prev_cmd, str, sizeof(prev_cmd) - 1);
-      prev_cmd[sizeof(prev_cmd) - 1] = '\0';
-    }
+    if (i == NR_CMD) { printf("Unknown command '%s'\n", cmd);}
   }
 }
 
