@@ -104,7 +104,7 @@ static int decode_exec(Decode *s) {
   
   
   INSTPAT("0000001 ????? ????? 000 ????? 01100 11", mul    , R, R(rd) = BITS(src1 * src2, 31, 0));
-  INSTPAT("0000001 ????? ????? 001 ????? 01100 11", mulh   , R, R(rd) = BITS((int64_t)src1 * (int64_t)src2, 63, 32));
+  INSTPAT("0000001 ????? ????? 001 ????? 01100 11", mulh   , R, R(rd) = BITS((long long)((int32_t)src1) * (long long)((int32_t)src2), 63, 32));
   INSTPAT("0000001 ????? ????? 010 ????? 01100 11", mulhsu , R, R(rd) = BITS((int64_t)src1 * (uint64_t)src2, 63, 32));  //not tested(didnt see in the tests)
   INSTPAT("0000001 ????? ????? 011 ????? 01100 11", mulhu  , R, R(rd) = BITS((uint64_t)src1 * (uint64_t)src2, 63, 32)); //not tested(didnt see in the tests)
   INSTPAT("0000001 ????? ????? 100 ????? 01100 11", div    , R, if(src2==0){ R(rd) = UINT32_MAX; }else if(src1==(1<<31) && src2==UINT32_MAX){ R(rd) = src1; }else{ R(rd) = (sword_t)src1 / (sword_t)src2; });
