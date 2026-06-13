@@ -127,7 +127,7 @@ static int cmd_p(char *args) {
     args = args + strlen(size_str) + 1;
     printf("0x%08x\n",expr(args,p));
   }else{
-    printf("%u\n",expr(args,p));
+    printf("%u\n",expr(size_str,p));
   }
   return ret;
 }
@@ -155,6 +155,14 @@ static int cmd_d(char *args) {
   }
 }
 
+static int cmd_sir(char *args) {
+
+  cpu_exec(1);  
+  isa_reg_display();
+  
+  return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -170,7 +178,8 @@ static struct {
   { "x", " x N EXPR Finds the value of the expression EXPR, uses the result as the starting memory address, and outputs consecutive N 4 bytes in hexadecimal.", cmd_x },
   { "p", " p EXPR Find the value of the expression EXPR, for EXPR supported operations also  p h EXPR valid for hex out", cmd_p },
   { "w", " w EXPR Suspend program execution when the value of expression EXPR changes.", cmd_w },
-  { "d", " d N Deletes the watchpoint with ID N.", cmd_d }
+  { "d", " d N Deletes the watchpoint with ID N.", cmd_d },
+  { "sir", " si 1 + info r.", cmd_sir }
 };
 
 #define NR_CMD ARRLEN(cmd_table)
