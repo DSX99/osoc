@@ -25,6 +25,7 @@ static int is_batch_mode = false;
 
 void init_regex();
 void init_wp_pool();
+void info_wp();
 void create_wp(char *s);
 bool delete_wp(int n);
 
@@ -80,7 +81,7 @@ static int cmd_info(char *args) {
   if((*args) == 'r'){
     isa_reg_display();
   }else if ((*args) == 'w'){
-    ;
+    info_wp();
   }else{
     printf("Correct use info SUBCMD , where SUBCMD is r for register info or w for watchpoint info.\n");
   }
@@ -227,9 +228,15 @@ void sdb_mainloop() {
 #endif
 
     int i;
+    int hand;
     for (i = 0; i < NR_CMD; i ++) {
       if (strcmp(cmd, cmd_table[i].name) == 0) {
-        if (cmd_table[i].handler(args) < 0) { return; }
+        if ((hand = cmd_table[i].handler(args)) < 0) { 
+          if(hand == -1){
+            nemu_state.state = NEMU_QUIT;
+          }
+          return; 
+        }
         break;
       }
     }
