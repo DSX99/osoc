@@ -120,20 +120,25 @@ static int cmd_x(char *args) {
 }
 
 static int cmd_p(char *args) {
-  bool ret=1;
-  bool *p=&ret;
-  int init_size = strlen(args);
-  char *extra_param_str = strtok(args, " ");
-  if(*extra_param_str == 'h' || *extra_param_str == 'H'){
-    args = args + strlen(extra_param_str) + 1;
-    printf("0x%08x\n",expr(args,p));
-  }else{
-    if(strlen(extra_param_str)<init_size){
-      *(extra_param_str+strlen(extra_param_str))=' ';
-    }
-    printf("%u\n",expr(args,p));
+  if(args==NULL){
+    printf("Correct use p EXPR Find the value of the expression EXPR.\n");
+    return 0;
   }
-  return ret;
+  bool success=1;
+  char save_str[256];
+  strcpy(save_str, args);
+  char *flag_str = strtok(args, " ");
+  if(flag_str == NULL){
+    printf("Correct use p EXPR Find the value of the expression EXPR.\n");
+    return 0;
+  }
+  if(strcmp(flag_str,"h") || strcmp(flag_str,"H")){
+    args = args + strlen(flag_str);
+    printf("0x%08x\n",expr(args,&success));
+  }else{
+    printf("%u\n",expr(save_str,&success));
+  }
+  return success;
 }
 
 static int cmd_w(char *args) {
