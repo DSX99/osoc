@@ -133,7 +133,7 @@ static int cmd_p(char *args) {
     return 0;
   }
   if(strcmp(flag_str,"h")==0 || strcmp(flag_str,"H")==0){
-    args = args + strlen(flag_str);
+    args = args + strlen(flag_str) + 1;
     printf("0x%08x\n",expr(args,&success));
   }else{
     printf("%u\n",expr(save_str,&success));
