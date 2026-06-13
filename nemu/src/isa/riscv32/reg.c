@@ -27,7 +27,7 @@ void isa_reg_display() {
   printf("Regs values:\n");
   for(int i = 0; i<4; i++){
     for(int j = 0; j<8; j++){
-      printf("%s(%d):%08x   ", regs[8*i+j],8*i+j,gpr(8*i+j));
+      printf("%s(%02d):%08x   ", regs[8*i+j],8*i+j,gpr(8*i+j));
     }
     printf("\n");
   }
