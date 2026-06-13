@@ -22,6 +22,7 @@
 word_t paddr_read(paddr_t addr, int len);
 
 static int is_batch_mode = false;
+static char prev_cmd[128];
 
 void init_regex();
 void init_wp_pool();
@@ -119,16 +120,25 @@ static int cmd_x(char *args) {
 }
 
 static int cmd_p(char *args) {
-  bool ret=1;
-  bool *p=&ret;
-  char *size_str = strtok(args, " ");
-  if(*size_str == 'h' || *size_str == 'H'){
-    args = args + strlen(size_str) + 1;
-    printf("0x%08x\n",expr(args,p));
-  }else{
-    printf("%u\n",expr(args,p));
+  if(args==NULL){
+    printf("Correct use p EXPR Find the value of the expression EXPR.\n");
+    return 0;
   }
-  return ret;
+  bool success=1;
+  char save_str[256];
+  strcpy(save_str, args);
+  char *flag_str = strtok(args, " ");
+  if(flag_str == NULL){
+    printf("Correct use p EXPR Find the value of the expression EXPR.\n");
+    return 0;
+  }
+  if(strcmp(flag_str,"h")==0 || strcmp(flag_str,"H")==0){
+    args = args + strlen(flag_str) + 1;
+    printf("0x%08x\n",expr(args,&success));
+  }else{
+    printf("%u\n",expr(save_str,&success));
+  }
+  return success;
 }
 
 static int cmd_w(char *args) {
@@ -154,6 +164,14 @@ static int cmd_d(char *args) {
   }
 }
 
+static int cmd_sir(char *args) {
+
+  cpu_exec(1);  
+  isa_reg_display();
+  
+  return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -169,7 +187,8 @@ static struct {
   { "x", " x N EXPR Finds the value of the expression EXPR, uses the result as the starting memory address, and outputs consecutive N 4 bytes in hexadecimal.", cmd_x },
   { "p", " p EXPR Find the value of the expression EXPR, for EXPR supported operations also  p h EXPR valid for hex out", cmd_p },
   { "w", " w EXPR Suspend program execution when the value of expression EXPR changes.", cmd_w },
-  { "d", " d N Deletes the watchpoint with ID N.", cmd_d }
+  { "d", " d N Deletes the watchpoint with ID N.", cmd_d },
+  { "sir", " si 1 + info r.", cmd_sir }
 };
 
 #define NR_CMD ARRLEN(cmd_table)
@@ -207,7 +226,21 @@ void sdb_mainloop() {
     return;
   }
 
-  for (char *str; (str = rl_gets()) != NULL; ) {
+  for (char *str; (str = rl_gets()) || true; ) {
+
+    if(*str == '\0'){
+      if(*prev_cmd!='\0'){
+        str = prev_cmd;
+      }else{
+        continue;
+      }
+    }
+
+    if (str != prev_cmd && str!=NULL) {
+      strncpy(prev_cmd, str, sizeof(prev_cmd) - 1);
+      prev_cmd[sizeof(prev_cmd) - 1] = '\0';
+    }
+
     char *str_end = str + strlen(str);
 
     /* extract the first token as the command */
@@ -232,16 +265,13 @@ void sdb_mainloop() {
     for (i = 0; i < NR_CMD; i ++) {
       if (strcmp(cmd, cmd_table[i].name) == 0) {
         if ((hand = cmd_table[i].handler(args)) < 0) { 
-          if(hand == -1){
-            nemu_state.state = NEMU_QUIT;
-          }
           return; 
         }
         break;
       }
     }
 
-    if (i == NR_CMD) { printf("Unknown command '%s'\n", cmd); }
+    if (i == NR_CMD) { printf("Unknown command '%s'\n", cmd);}
   }
 }
 

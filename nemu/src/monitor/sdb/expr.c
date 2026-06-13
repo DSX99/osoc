@@ -52,7 +52,7 @@ static struct rule
     {"^\\)", ')'},
     {"^\\$[0-9asrptc]+", 'r'},
     {"^0x[\\$0-9abcdef]+", 'h'},
-    {"^[0-9]+", 'v'},
+    {"^[0-9u]+", 'v'},
     {"^\\+", '+'},   // plus
     {"^==", TK_EQ},  // equal
     {"^!=", TK_NEQ}, // notequal
@@ -91,7 +91,7 @@ typedef struct token
   char str[32];
 } Token;
 
-static Token tokens[64] __attribute__((used)) = {};
+static Token tokens[16*1024] __attribute__((used)) = {};
 static int nr_token __attribute__((used)) = 0;
 
 static bool make_token(char *e)
@@ -128,6 +128,9 @@ static bool make_token(char *e)
           return 0;
         }
         tokens[nr_token].type = rules[i].token_type;
+        if(rules[i].token_type=='v'){
+          substr_len= substr_len-1;
+        }
         strncpy(tokens[nr_token].str, substr_start, substr_len);
         tokens[nr_token].str[substr_len + 1] = '\0';
         nr_token++;
@@ -352,7 +355,7 @@ word_t expr(char *e, bool *success)
       {
         tokens[i].type = DEREF;
       }
-      if (tokens[i - 1].type != 'v' || tokens[i - 1].type != 'h' || tokens[i - 1].type != 'r')
+      if (tokens[i - 1].type != 'v' && tokens[i - 1].type != 'h' && tokens[i - 1].type != 'r' && tokens[i - 1].type != ')')
       {
         tokens[i].type = DEREF;
       }
