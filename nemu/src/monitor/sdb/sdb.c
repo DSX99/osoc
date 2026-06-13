@@ -210,11 +210,14 @@ void sdb_mainloop() {
 
   for (char *str; (str = rl_gets()) || true; ) {
 
-    if(str == NULL && *prev_cmd!='\0'){
-      str = prev_cmd;
-    }else{
-      continue;
+    if(str == NULL){
+      if(*prev_cmd!='\0'){
+        str = prev_cmd;
+      }else{
+        continue;
+      }
     }
+
     char *str_end = str + strlen(str);
 
     /* extract the first token as the command */
