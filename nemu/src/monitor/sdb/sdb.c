@@ -210,7 +210,7 @@ void sdb_mainloop() {
 
   for (char *str; (str = rl_gets()) || true; ) {
 
-    if(str == NULL){
+    if(*str == '\0'){
       if(*prev_cmd!='\0'){
         str = prev_cmd;
       }else{
@@ -218,7 +218,7 @@ void sdb_mainloop() {
       }
     }
 
-    if (str != prev_cmd) {
+    if (str != prev_cmd && str!=NULL) {
       strncpy(prev_cmd, str, sizeof(prev_cmd) - 1);
       prev_cmd[sizeof(prev_cmd) - 1] = '\0';
     }
