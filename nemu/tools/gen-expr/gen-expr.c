@@ -31,20 +31,6 @@ static char *code_format =
 "  return 0; "
 "}";
 
-static void add_u_suffixes(const char *src, char *dst) {
-  while (*src) {
-    if (*src >= '0' && *src <= '9') {
-      while (*src >= '0' && *src <= '9') {
-        *dst++ = *src++;
-      }
-      *dst++ = 'u'; // Inject unsigned suffix
-    } else {
-      *dst++ = *src++;
-    }
-  }
-  *dst = '\0';
-}
-
 static char gen_rand_op(){
   switch (rand()%4)
   {
@@ -60,21 +46,40 @@ static char gen_rand_op(){
   return '+';
 }
 
+char *get_random_spaces(char c){
+  int val1 = rand()%3;
+  int val2 = rand()%3;
+  static char str[7];
+  int point=0;
+  for(int i=0;i<val1;i++){
+    str[point]=' ';
+    point++;
+  }
+  str[point]=c;
+  point++;
+  for(int i=0;i<val2;i++){
+    str[point]=' ';
+    point++;
+  }
+  str[point]='\0';
+  return str;
+}
+
 static void gen_rand_expr(char **point) {
   int i = rand()%3;
-  if(*point - buf > 6000) i=0;
+  if(*point - buf > 40000) i=0;
   switch (i) {
     case 0: 
-      *point+=sprintf(*point,"%u",(unsigned)(rand()+1)); 
+      *point+=sprintf(*point,"%uu",(unsigned)(rand()+1)); 
         break;
     case 1: 
-      *point+=sprintf(*point,"%c",'(');
+      *point+=sprintf(*point,"%s",get_random_spaces('('));
       gen_rand_expr(point);
-      *point+=sprintf(*point,"%c",')');
+      *point+=sprintf(*point,"%s",get_random_spaces(')'));
       break;
     default: 
       gen_rand_expr(point); 
-      *point+=sprintf(*point,"%c",gen_rand_op()); 
+      *point+=sprintf(*point,"%s",get_random_spaces(gen_rand_op())); 
       gen_rand_expr(point); 
       break;
   }
@@ -91,10 +96,8 @@ int main(int argc, char *argv[]) {
   for (i = 0; i < loop; i ++) {
     char *point = buf;
     gen_rand_expr(&point);
-    char gcc_buf[131072] = {}; 
-    add_u_suffixes(buf, gcc_buf);
 
-    sprintf(code_buf, code_format, gcc_buf);
+    sprintf(code_buf, code_format, buf);
 
     FILE *fp = fopen("/tmp/.code.c", "w");
     assert(fp != NULL);
