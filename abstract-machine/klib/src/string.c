@@ -37,7 +37,8 @@ char *strncpy(char *dst, const char *src, size_t n) {
 }
 
 char *strcat(char *dst, const char *src) {
-  return strcpy(dst + strlen(dst), src);
+  strcpy(dst + strlen(dst), src);
+  return dst;
 }
 
 int strcmp(const char *s1, const char *s2) {
