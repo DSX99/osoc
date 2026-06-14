@@ -90,7 +90,7 @@ int memcmp(const void *s1, const void *s2, size_t n) {
   unsigned char *p = (unsigned char *)s1;
   unsigned char *q = (unsigned char *)s2;
   size_t i=0;
-  if(i==n){
+  if(n==0){
       return 0;
   }
   while(p[i]==q[i]){
