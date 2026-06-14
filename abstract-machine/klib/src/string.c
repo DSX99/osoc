@@ -78,8 +78,8 @@ void *memmove(void *dst, const void *src, size_t n) {
 }
 
 void *memcpy(void *out, const void *in, size_t n) {
-  unsigned char *p = (unsigned char *)in;
-  unsigned char *q = (unsigned char *)out;
+  unsigned char *p = (unsigned char *)out;
+  unsigned char *q = (unsigned char *)in;
   for(size_t i=0;i<n;i++){
     p[i]=q[i];
   }
