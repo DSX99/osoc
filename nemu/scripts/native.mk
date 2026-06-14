@@ -39,7 +39,7 @@ run: run-env
 
 runb: run-env
 	$(call git_commit, "run NEMU")
-	$(NEMU_EXEC) -b
+	$(NEMU_EXEC) --help
 
 gdb: run-env
 	$(call git_commit, "gdb NEMU")
