@@ -36,6 +36,10 @@ typedef struct watchpoint
 static WP wp_pool[NR_WP] = {};
 static WP *head = NULL, *free_ = NULL;
 
+void zero_print(){
+  printf(" ");
+}
+
 void init_wp_pool()
 {
   int i;
@@ -164,6 +168,7 @@ bool check_wp(WP *wp, bool *success)
   }
   if (val != wp->value)
   {
+    zero_print();
     return val;
   }
   return 0;
