@@ -61,7 +61,7 @@ static char *diff_so_file = NULL;
 static char *img_file = NULL;
 static char *elf_file = NULL;
 static int difftest_port = 1234;
-static char ftrace[100][16];
+static char ftrace[64][128];
 int lead_space=0;
 int ftrace_count=0;
 
@@ -148,10 +148,10 @@ void record_ftrace(vaddr_t dnpc, int reg1){
           printf("IDK how you managed to return from nothing but okay\n");
           return;
         }
-        sprintf(ftrace[ftrace_count],"%*s retn[%s]@0x%08x", lead_space-2, "", func[count].name, dnpc);
+        sprintf(ftrace[ftrace_count],"%*s retn[%s]@0x%08x\n", lead_space-2, "", func[count].name, dnpc);
         lead_space=lead_space-2;
       }else{
-        sprintf(ftrace[ftrace_count],"%*s call[%s]@0x%08x", lead_space+2, "", func[count].name, dnpc);
+        sprintf(ftrace[ftrace_count],"%*s call[%s]@0x%08x\n", lead_space+2, "", func[count].name, dnpc);
         lead_space=lead_space+2;
       }
       ftrace_count++;
