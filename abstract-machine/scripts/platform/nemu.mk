@@ -26,9 +26,6 @@ image: image-dep
 	@echo + OBJCOPY "->" $(IMAGE_REL).bin
 	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $(IMAGE).elf $(IMAGE).bin
 
-runb: insert-arg
-	$(MAKE) -C $(NEMU_HOME) ISA=$(ISA) runb ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin
-
 run: insert-arg
 ifeq ($(B),)
 		$(MAKE) -C $(NEMU_HOME) ISA=$(ISA) runb ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin
