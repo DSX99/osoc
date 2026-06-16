@@ -218,4 +218,8 @@ config WATCHPOINT
   bool "Enable watchpoints"
   default n
 
+config MEM_TRACE
+  bool "Enable tracing memory"
+  default n
+
 endmenu
