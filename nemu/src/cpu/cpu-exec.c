@@ -108,9 +108,9 @@ void print_itrace(){
   if(buffer_slot<0) buffer_slot+=16;
   for(int i=15; i>=0; i--){
     if(i==0){
-      printf("-->");
+      printf("--> ");
     }else{
-      printf("   ");
+      printf("    ");
     }
     if(i>buffer_slot){
       puts(buffer[buffer_slot-i+16]);
