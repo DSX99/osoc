@@ -255,7 +255,7 @@ void sdb_mainloop() {
     }
 
     if (str != prev_cmd && str!=NULL) {
-      strncpy(prev_cmd, str, sizeof(prev_cmd) - 1);
+      strncpy(prev_cmd, str, sizeof(prev_cmd));
       prev_cmd[sizeof(prev_cmd) - 1] = '\0';
     }
 
