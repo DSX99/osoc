@@ -248,15 +248,15 @@ void sdb_mainloop() {
 
     if(*str == '\0'){
       if(*prev_cmd!='\0'){
-        strcpy(str,prev_cmd);
+        str = prev_cmd;
       }else{
         continue;
       }
     }
 
     if (str != prev_cmd && str!=NULL) {
-      strncpy(prev_cmd, str, sizeof(prev_cmd));
-      prev_cmd[sizeof(prev_cmd) - 1] = '\0';
+      strncpy(prev_cmd, str, strlen(str));
+      prev_cmd[sizeof(str)] = '\0';
     }
 
     char *str_end = str + strlen(str);
