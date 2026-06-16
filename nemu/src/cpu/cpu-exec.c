@@ -104,6 +104,7 @@ static void statistic() {
 }
 
 void print_itrace(){
+  buffer_slot = (buffer_slot-1)%16;
   for(int i=15; i>=0; i--){
     if(i==0){
       printf("-->");
