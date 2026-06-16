@@ -263,10 +263,10 @@ void sdb_mainloop() {
       prev_cmd[sizeof(str)] = '\0';
     }
 
-    char *str_end = str + strlen(str);
+    char *str_end = curr_cmd + strlen(curr_cmd);
 
     /* extract the first token as the command */
-    char *cmd = strtok(str, " ");
+    char *cmd = strtok(curr_cmd, " ");
     if (cmd == NULL) { continue; }
 
     /* treat the remaining string as the arguments,
