@@ -18,6 +18,9 @@
 #include <difftest-def.h>
 #include <memory/paddr.h>
 
+#define WRITE 1
+#define READ 0
+
 __EXPORT void difftest_memcpy(paddr_t addr, void *buf, size_t n, bool direction) {
   assert(0);
 }
