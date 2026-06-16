@@ -246,12 +246,16 @@ void sdb_mainloop() {
 
   for (char *str; (str = rl_gets()) || true; ) {
 
+    char curr_cmd[128];
+
     if(*str == '\0'){
       if(*prev_cmd!='\0'){
-        str = prev_cmd;
+        strcpy(curr_cmd, prev_cmd);
       }else{
         continue;
       }
+    } else {
+      strcpy(curr_cmd, str);
     }
 
     if (str != prev_cmd && str!=NULL) {
