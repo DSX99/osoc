@@ -222,4 +222,9 @@ config MEM_TRACE
   bool "Enable tracing memory"
   default n
 
+config FTRACE
+  bool "Enable function call tracing"
+  default n
+
+
 endmenu

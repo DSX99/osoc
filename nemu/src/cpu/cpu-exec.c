@@ -35,11 +35,7 @@ static char buffer[16][129];
 static int buffer_slot=0;
 #endif
 
-#ifdef CONFIG_FTRACE
-static char fbuffer[16][129];
-static int fbuffer_slot=0;
-#endif
-
+void record_ftrace(vaddr_t dnpc);
 void device_update();
 bool check_watchpoints();
 
@@ -61,7 +57,9 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
   }
 #endif
 #ifdef CONFIG_FTRACE
-  
+  if(dnpc - _this->pc !=4){
+    record_ftrace(dnpc);
+  }
 #endif
 }
 

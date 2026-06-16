@@ -61,6 +61,11 @@ static char *diff_so_file = NULL;
 static char *img_file = NULL;
 static char *elf_file = NULL;
 static int difftest_port = 1234;
+static char ftrace[100][16];
+int lead_space=0;
+int ftrace_count=0;
+
+#ifdef CONFIG_FTRACE
 
 size_t extract_elf_functions(const void *elf_base, FunctionInfo *functions, size_t max_funcs) {
     if (!elf_base || !functions || max_funcs == 0) return 0;
@@ -132,6 +137,36 @@ void load_elf(){
   size_t extracted = extract_elf_functions(elf_memory, func, 99);
   func[extracted].name=NULL;
 }
+
+void record_ftrace(vaddr_t dnpc, int reg1){
+  int count=0;
+  while(func[count].name!=NULL){
+    if( dnpc >= func[count].address && dnpc < (func[count].address + func[count].size)){
+      if(dnpc==reg1){
+        if(lead_space==0){
+          printf("IDK how you managed to return from nothing but okay\n");
+          return;
+        }
+        int lead_space = strspn(func[count-1].name, "");
+        sprintf(ftrace[ftrace_count],"%*s retn[%s]@0x%08x", lead_space-2, "", func[count].name, dnpc);
+        lead_space=lead_space-2;
+      }else{
+        sprintf(ftrace[ftrace_count],"%*s call[%s]@0x%08x", lead_space+2, "", func[count].name, dnpc);
+        lead_space=lead_space+2;
+      }
+      ftrace_count++;
+    }
+  }
+}
+
+void print_ftrace(){
+  int count =0;
+  while(count<ftrace_count){
+    printf("%s\n",ftrace[count]);
+    count++;
+  }
+}
+#endif
 
 static long load_img() {
   if (img_file == NULL) {
