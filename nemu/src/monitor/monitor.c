@@ -155,6 +155,7 @@ void record_ftrace(vaddr_t dnpc, int reg1){
         lead_space=lead_space+2;
       }
       ftrace_count++;
+      if(ftrace_count==256) ftrace_count=0;
       break;
     }
     count++;
