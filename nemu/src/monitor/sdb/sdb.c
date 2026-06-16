@@ -29,6 +29,7 @@ void init_wp_pool();
 void info_wp();
 void create_wp(char *s);
 bool delete_wp(int n);
+void print_itrace();
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
@@ -172,6 +173,14 @@ static int cmd_sir(char *args) {
   return 0;
 }
 
+static int cmd_itrace(char *args) {
+
+  print_itrace();
+
+  return 0;
+}
+
+
 static int cmd_help(char *args);
 
 static struct {
@@ -188,7 +197,8 @@ static struct {
   { "p", " p EXPR Find the value of the expression EXPR, for EXPR supported operations also  p h EXPR valid for hex out", cmd_p },
   { "w", " w EXPR Suspend program execution when the value of expression EXPR changes.", cmd_w },
   { "d", " d N Deletes the watchpoint with ID N.", cmd_d },
-  { "sir", " si 1 + info r.", cmd_sir }
+  { "sir", " si 1 + info r.", cmd_sir },
+  { "itrace", " print trace of 16 last instructions ", cmd_itrace }
 };
 
 #define NR_CMD ARRLEN(cmd_table)
