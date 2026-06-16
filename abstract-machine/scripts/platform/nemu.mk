@@ -30,7 +30,7 @@ run: insert-arg
 ifeq ($(B),)
 		$(MAKE) -C $(NEMU_HOME) ISA=$(ISA) runb ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin ELF=$(IMAGE).elf
 else
-		$(MAKE) -C $(NEMU_HOME) ISA=$(ISA) run ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin ELF=$(IMAGE).elf
+		$(MAKE) -C $(NEMU_HOME) ISA=$(ISA) run ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin -e $(IMAGE).elf
 endif
 
 gdb: insert-arg
