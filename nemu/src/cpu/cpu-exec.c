@@ -29,8 +29,16 @@ CPU_state cpu = {};
 uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
 static bool g_print_step = false;
+
+#ifdef CONFIG_ITRACE
 static char buffer[16][129];
 static int buffer_slot=0;
+#endif
+
+#ifdef CONFIG_FTRACE
+static char fbuffer[16][129];
+static int fbuffer_slot=0;
+#endif
 
 void device_update();
 bool check_watchpoints();
@@ -40,19 +48,18 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
   if (ITRACE_COND) { log_write("%s\n", _this->logbuf); }
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
+#ifdef CONFIG_ITRACE
   strncpy(buffer[buffer_slot], _this->logbuf, 128);
   buffer[buffer_slot][128]='\0';
   buffer_slot++;
   if(buffer_slot==16) buffer_slot=0;
+#endif
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
 #ifdef CONFIG_WATCHPOINT
   if(check_watchpoints()){
     nemu_state.state = NEMU_STOP;
   }
 #endif
-// #ifdef CONFIG_FTRACE
-  // if()
-// #endif
 }
 
 static void exec_once(Decode *s, vaddr_t pc) {
