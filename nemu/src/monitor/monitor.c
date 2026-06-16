@@ -120,6 +120,7 @@ size_t extract_elf_functions(const void *elf_base, FunctionInfo *functions, size
 }
 
 void load_elf(){
+  Log("Loading ELF");
   if (elf_file == NULL) {
     Log("No ELF is given. No meaningful ftrace");
     func[0].name=NULL;
