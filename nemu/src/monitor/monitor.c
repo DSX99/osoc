@@ -148,10 +148,10 @@ void record_ftrace(vaddr_t dnpc, int reg1){
           printf("IDK how you managed to return from nothing but okay\n");
           return;
         }
-        sprintf(ftrace[ftrace_count],"%*s retn[%s]@0x%08x", lead_space-2, "", func[count].name, dnpc);
+        snprintf(ftrace[ftrace_count], 256,"%*s retn[%s]@0x%08x", lead_space-2, "", func[count].name, dnpc);
         lead_space=lead_space-2;
       }else{
-        sprintf(ftrace[ftrace_count],"%*s call[%s]@0x%08x", lead_space+2, "", func[count].name, dnpc);
+        snprintf(ftrace[ftrace_count], 256,"%*s call[%s]@0x%08x", lead_space+2, "", func[count].name, dnpc);
         lead_space=lead_space+2;
       }
       ftrace_count++;
