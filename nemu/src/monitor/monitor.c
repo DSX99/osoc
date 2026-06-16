@@ -148,7 +148,6 @@ void record_ftrace(vaddr_t dnpc, int reg1){
           printf("IDK how you managed to return from nothing but okay\n");
           return;
         }
-        int lead_space = strspn(func[count-1].name, "");
         sprintf(ftrace[ftrace_count],"%*s retn[%s]@0x%08x", lead_space-2, "", func[count].name, dnpc);
         lead_space=lead_space-2;
       }else{
@@ -156,7 +155,9 @@ void record_ftrace(vaddr_t dnpc, int reg1){
         lead_space=lead_space+2;
       }
       ftrace_count++;
+      break;
     }
+    count++;
   }
 }
 
