@@ -30,6 +30,7 @@ void info_wp();
 void create_wp(char *s);
 bool delete_wp(int n);
 void print_itrace();
+void print_ftrace();
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
@@ -180,12 +181,12 @@ static int cmd_itrace(char *args) {
   return 0;
 }
 
-// static int cmd_ftrace(char *args) {
+static int cmd_ftrace(char *args) {
 
-//   print_ftrace();
+  print_ftrace();
 
-//   return 0;
-// }
+  return 0;
+}
 
 
 static int cmd_help(char *args);
@@ -206,7 +207,7 @@ static struct {
   { "d", " d N Deletes the watchpoint with ID N.", cmd_d },
   { "sir", " si 1 + info r.", cmd_sir },
   { "itrace", " print trace of 16 last instructions ", cmd_itrace },
-  // { "ftrace", " print trace of 16 last function calls ", cmd_ftrace }
+  { "ftrace", " print trace of 16 last function calls ", cmd_ftrace }
 };
 
 #define NR_CMD ARRLEN(cmd_table)
