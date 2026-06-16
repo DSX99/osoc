@@ -248,7 +248,7 @@ void sdb_mainloop() {
 
     if(*str == '\0'){
       if(*prev_cmd!='\0'){
-        str = prev_cmd;
+        strcpy(str,prev_cmd);
       }else{
         continue;
       }
