@@ -50,6 +50,9 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
     nemu_state.state = NEMU_STOP;
   }
 #endif
+// #ifdef CONFIG_FTRACE
+  // if()
+// #endif
 }
 
 static void exec_once(Decode *s, vaddr_t pc) {

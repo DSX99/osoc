@@ -180,6 +180,13 @@ static int cmd_itrace(char *args) {
   return 0;
 }
 
+// static int cmd_ftrace(char *args) {
+
+//   print_ftrace();
+
+//   return 0;
+// }
+
 
 static int cmd_help(char *args);
 
@@ -198,7 +205,8 @@ static struct {
   { "w", " w EXPR Suspend program execution when the value of expression EXPR changes.", cmd_w },
   { "d", " d N Deletes the watchpoint with ID N.", cmd_d },
   { "sir", " si 1 + info r.", cmd_sir },
-  { "itrace", " print trace of 16 last instructions ", cmd_itrace }
+  { "itrace", " print trace of 16 last instructions ", cmd_itrace },
+  // { "ftrace", " print trace of 16 last function calls ", cmd_ftrace }
 };
 
 #define NR_CMD ARRLEN(cmd_table)
