@@ -65,7 +65,7 @@ int main(int argc, char** argv) {
   Verilated::traceEverOn(true);
   VerilatedVcdC *tracep = new VerilatedVcdC;
   top->trace(tracep, 5);
-  tracep->open("$(NPC_HOME)/wave/waveform.vcd");
+  tracep->open("$NPC_HOME/wave/waveform.vcd");
 #elif CONFIG_FST
   Verilated::traceEverOn(true);
   VerilatedFstC *tracep = new VerilatedFstC;
