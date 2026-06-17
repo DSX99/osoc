@@ -70,8 +70,15 @@ int main(int argc, char** argv) {
 
   Vtop* const top = new Vtop{contextp};
 
+  if (top == nullptr || top->top == nullptr) {
+    fprintf(stderr, "Error: Simulation model instantiation failed!\n");
+    return -1;
+  }
 
   reset(top, 100);
+  top->rst=0;
+  top->clk=0;
+
   printf("Starting simu\n");
   if(batch){
     while (contextp->gotFinish()) {
