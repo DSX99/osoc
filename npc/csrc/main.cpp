@@ -48,10 +48,10 @@ static int parse_args(int argc, char *argv[]) {
 }
 
 int main(int argc, char** argv) {
-  printf("Parcing args");
+  printf("Parcing args\n");
   parse_args(argc, argv);
 
-  printf("Loading memory");
+  printf("Loading memory\n");
   loadmemory(img_file);
   
   
