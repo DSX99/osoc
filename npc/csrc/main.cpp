@@ -54,7 +54,7 @@ int main(int argc, char** argv) {
   printf("Loading memory\n");
   loadmemory(img_file);
   
-  printf("Starting simulating\n")
+  printf("Starting simulating\n");
   VerilatedContext* const contextp = new VerilatedContext;
     
     // contextp->threads(1); // can be used in future to increase speed
