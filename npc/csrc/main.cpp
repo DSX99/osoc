@@ -48,13 +48,10 @@ static int parse_args(int argc, char *argv[]) {
 }
 
 int main(int argc, char** argv) {
-  printf("Parcing args\n");
   parse_args(argc, argv);
 
   printf("Loading memory\n");
   loadmemory(img_file);
-  
-  printf("Starting simulating\n");
   VerilatedContext* const contextp = new VerilatedContext;
     
     // contextp->threads(1); // can be used in future to increase speed
@@ -70,7 +67,7 @@ int main(int argc, char** argv) {
 
   Vtop* const top = new Vtop{contextp};
 
-  if (top == nullptr || top->top == nullptr) {
+  if (top == NULL || top->top == NULL || *top == NULL) {
     fprintf(stderr, "Error: Simulation model instantiation failed!\n");
     return -1;
   }
