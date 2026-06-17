@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <assert.h>
+#include "dpi.h"
 
 #define ROM_OFFSET 0x80000000
 #define MEM_SIZE 1024*1024

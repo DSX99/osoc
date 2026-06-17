@@ -39,11 +39,11 @@ void Vtop_top___ico_sequent__TOP__top__0(Vtop_top* vlSelf) {
                                             & (IData)(vlSelfRef.__PVT__alu_op))
                                             ? vlSelfRef.__PVT__pc
                                             : vlSymsp->TOP__top__reg_mod.__PVT__data_rs1);
+    vlSelfRef.__PVT__branch = 0U;
     if ((0U != (3U & ((IData)(vlSelfRef.__PVT__alu_op) 
                       >> 4U)))) {
         if ((1U == (3U & ((IData)(vlSelfRef.__PVT__alu_op) 
                           >> 4U)))) {
-            vlSelfRef.__PVT__branch = 0U;
             if ((0U == (7U & (IData)(vlSelfRef.__PVT__alu_op)))) {
                 vlSelfRef.__PVT__branch = (vlSymsp->TOP__top__reg_mod.__PVT__data_rs1 
                                            == vlSymsp->TOP__top__reg_mod.__PVT__data_rs2);
