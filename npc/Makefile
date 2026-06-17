@@ -1,3 +1,5 @@
+include ../Makefile
+
 VERILOG_SRC = vsrc/*.sv
 CPP_SRC = csrc/*.cpp csrc/*.c 
 
@@ -10,6 +12,6 @@ sim:
 	@echo "Write this Makefile by your self."
 
 _default:
-	verilator --lint-only -Wall $(VERILOG_SRC) -Wno-EOFNEWLINE
+	verilator --lint-only -Wall $(VERILOG_SRC) -Wno-EOFNEWLINE --top-module top
 
-include ../Makefile
+
