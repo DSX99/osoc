@@ -127,7 +127,7 @@ void execute(uint32_t n){
     inst[3] = (top->top->opcode >> 24) && 0xff;
 
     if(n<10){
-      disassemble(str, 128, top->top->pc , inst , 4)
+      disassemble(str, 128, top->top->pc , inst , 4);
     }
   
     if(contextp->gotFinish()){
@@ -154,12 +154,12 @@ void isa_reg_display() {
     }
     printf("\n");
   }
-  printf("pc(pc):0x%08x\n",cpu.pc);
+  printf("pc(pc):0x%08x\n",top->top->pc);
 }
 
 uint32_t isa_reg_str2val(const char *s, bool *success) {
   if(strcmp(s,"pc")==0){
-    return cpu.pc;
+    return top->top->pc;
   }
   for(int i=0;i<32;i++){
     if(strcmp(s,regs[i])==0){
