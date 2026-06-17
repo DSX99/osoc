@@ -65,7 +65,7 @@ int main(int argc, char** argv) {
   Verilated::traceEverOn(true);
   VerilatedVcdC *tracep = new VerilatedVcdC;
   top->trace(tracep, 5);
-  tracep->open("../wave/waveform.vcd");
+  tracep->open("$(NPC_HOME)/wave/waveform.vcd");
 #elif CONFIG_FST
   Verilated::traceEverOn(true);
   VerilatedFstC *tracep = new VerilatedFstC;
@@ -90,7 +90,7 @@ int main(int argc, char** argv) {
         break;
       }
       if(!((contextp->time()) % 1000)){
-        printf("time:%d\n", contextp->time());
+        printf("time:%lu\n", contextp->time());
       }
       
       contextp->timeInc(1);
