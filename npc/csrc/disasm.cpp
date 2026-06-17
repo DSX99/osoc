@@ -14,7 +14,7 @@
 ***************************************************************************************/
 
 #include <dlfcn.h>
-#include <capstone/capstone.h>
+#include "capstone.h"
 #include <common.h>
 
 #define CS_LIB_SUFFIX "so.5"
