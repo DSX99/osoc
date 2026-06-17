@@ -27,11 +27,11 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop_top final {
     CData/*1:0*/ __PVT__mux_select;
     CData/*0:0*/ __PVT__branch;
     CData/*0:0*/ __PVT__lsu_we;
+    IData/*31:0*/ __PVT__opcode;
+    IData/*31:0*/ pc;
     IData/*31:0*/ __PVT__to_regs;
-    IData/*31:0*/ __PVT__pc;
     IData/*31:0*/ __PVT__alu_out;
     IData/*31:0*/ __PVT__lsu_out;
-    IData/*31:0*/ __PVT__opcode;
     IData/*31:0*/ __PVT__imm;
     IData/*31:0*/ __PVT__pc_mod__DOT__next_pc;
     IData/*31:0*/ __PVT__lsu_mod__DOT__A;

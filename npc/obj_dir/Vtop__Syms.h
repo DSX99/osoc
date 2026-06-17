@@ -36,6 +36,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop__Syms final : public VerilatedSyms {
     Vtop_regs                      TOP__top__reg_mod;
 
     // SCOPE NAMES
+    VerilatedScope* __Vscopep_top;
     VerilatedScope* __Vscopep_top__reg_mod;
 
     // CONSTRUCTORS

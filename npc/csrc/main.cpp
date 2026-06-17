@@ -102,6 +102,8 @@ int main(int argc, char** argv) {
 }
 
 void execute(uint32_t n){
+  char str[128];
+  uint8_t inst[4];
   while(n>0){
 
     #ifdef CONFIG_FST
@@ -119,8 +121,13 @@ void execute(uint32_t n){
     top->clk=!top->clk;
     top->eval();
 
+    inst[0] = top->top->opcode && 0xff;
+    inst[1] = (top->top->opcode >> 8) && 0xff;
+    inst[2] = (top->top->opcode >> 16) && 0xff;
+    inst[3] = (top->top->opcode >> 24) && 0xff;
+
     if(n<10){
-      disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte)
+      disassemble(str, 128, top->top->pc , inst , 4)
     }
   
     if(contextp->gotFinish()){

@@ -11,7 +11,7 @@ Vtop__Syms::Vtop__Syms(VerilatedContext* contextp, const char* namep, Vtop* mode
     , TOP{this, namep}
 {
     // Check resources
-    Verilated::stackCheck(456);
+    Verilated::stackCheck(480);
     // Setup sub module instances
     TOP__top.ctor(this, "top");
     TOP__top__reg_mod.ctor(this, "top.reg_mod");
@@ -26,15 +26,18 @@ Vtop__Syms::Vtop__Syms(VerilatedContext* contextp, const char* namep, Vtop* mode
     TOP__top.__Vconfigure(true);
     TOP__top__reg_mod.__Vconfigure(true);
     // Setup scopes
+    __Vscopep_top = new VerilatedScope{this, "top", "top", "<null>", 0, VerilatedScope::SCOPE_OTHER};
     __Vscopep_top__reg_mod = new VerilatedScope{this, "top.reg_mod", "reg_mod", "<null>", 0, VerilatedScope::SCOPE_OTHER};
     // Setup export functions - final: 0
     // Setup export functions - final: 1
     // Setup public variables
+    __Vscopep_top->varInsert("pc", &(TOP__top.pc), false, VLVT_UINT32, VLVD_NODIR|VLVF_PUB_RW|VLVF_CONTINUOUSLY, 0, 1 ,31,0);
     __Vscopep_top__reg_mod->varInsert("regs", &(TOP__top__reg_mod.regs), false, VLVT_UINT32, VLVD_NODIR|VLVF_PUB_RW, 1, 1 ,31,0 ,31,0);
 }
 
 Vtop__Syms::~Vtop__Syms() {
     // Tear down scopes
+    VL_DO_CLEAR(delete __Vscopep_top, __Vscopep_top = nullptr);
     VL_DO_CLEAR(delete __Vscopep_top__reg_mod, __Vscopep_top__reg_mod = nullptr);
     // Tear down sub module instances
     TOP__top__reg_mod.dtor();
