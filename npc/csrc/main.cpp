@@ -106,7 +106,7 @@ uint32_t execute(uint32_t n){
     #endif
     
     if(contextp->time() > MAX_SIM_TIME){
-      break;
+      return top->top->reg_mod->regs[10];
     }
     if(!((contextp->time()) % 1000)){
       printf("time:%lu\n", contextp->time());
