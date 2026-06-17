@@ -28,9 +28,8 @@ void init_wp_pool();
 void info_wp();
 void create_wp(char *s);
 bool delete_wp(int n);
-void print_itrace();
-void print_ftrace();
 int memread(uint32_t addr);
+void execute(uint32_t n);
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
