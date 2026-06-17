@@ -34,3 +34,12 @@ int memread(uint32_t addr){
     }
     return ((mem[addr-ROM_OFFSET+3]<<24)|(mem[addr-ROM_OFFSET+2]<<16)|(mem[addr-ROM_OFFSET+1]<<8)|(mem[addr-ROM_OFFSET]));
 }
+
+int instread(uint32_t addr){
+    if(addr>ROM_OFFSET){
+        printf("Illegal memory read (inst) access at addr:0x%08x\n",addr);
+        assert(0);
+    }
+    return ((mem[addr-ROM_OFFSET+3]<<24)|(mem[addr-ROM_OFFSET+2]<<16)|(mem[addr-ROM_OFFSET+1]<<8)|(mem[addr-ROM_OFFSET]));
+}
+
