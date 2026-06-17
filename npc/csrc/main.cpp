@@ -67,12 +67,12 @@ int main(int argc, char** argv) {
   Verilated::traceEverOn(true);
   VerilatedVcdC *tracep = new VerilatedVcdC;
   top->trace(tracep, 5);
-  tracep->open("../wave/waveform.vcd");
+  tracep->open("waveform.vcd");
 #elif CONFIG_FST
   Verilated::traceEverOn(true);
   VerilatedFstC *tracep = new VerilatedFstC;
   top->trace(tracep, 5);
-  tracep->open("../wave/waveform.fst");
+  tracep->open("waveform.fst");
 #endif
 
 
@@ -87,7 +87,7 @@ int main(int argc, char** argv) {
 
   if(batch){
     while (!contextp->gotFinish()) {
-      
+      tracep->dump(contextp->time());
       if(contextp->time() > MAX_SIM_TIME){
         break;
       }
@@ -100,7 +100,6 @@ int main(int argc, char** argv) {
       top->eval();
 
       #if defined(CONFIG_VCD) || defined(CONFIG_FST)
-      tracep->dump(contextp->time());
       #endif
     }
 
