@@ -365,24 +365,9 @@ typedef struct cs_opt_skipdata {
 } cs_opt_skipdata;
 
 
-#include "arm.h"
-#include "arm64.h"
-#include "m68k.h"
-#include "mips.h"
-#include "ppc.h"
-#include "sparc.h"
-#include "systemz.h"
-#include "x86.h"
-#include "xcore.h"
-#include "tms320c64x.h"
-#include "m680x.h"
-#include "evm.h"
+
 #include "riscv.h"
-#include "wasm.h"
-#include "mos65xx.h"
-#include "bpf.h"
-#include "sh.h"
-#include "tricore.h"
+
 
 #define MAX_IMPL_W_REGS 20
 #define MAX_IMPL_R_REGS 20
