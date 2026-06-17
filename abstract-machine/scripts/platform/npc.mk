@@ -27,6 +27,8 @@ image: image-dep
 
 ifeq ($(B),)
 NPCFLAG = "-b" 
+else
+NPCFLAG = ""
 endif
 
 run: insert-arg
