@@ -1,4 +1,4 @@
 #pragma once
 
 
-void loadmemory(char *img_file)
+void loadmemory(char *img_file);
