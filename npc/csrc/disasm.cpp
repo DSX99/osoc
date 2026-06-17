@@ -33,26 +33,36 @@ static void (*cs_free_dl)(cs_insn *insn, size_t count);
 static csh handle = 0;
 
 void init_disasm() {
-  void *dl_handle;
-  
-  const char *nemu_home = getenv("NEMU_HOME");
-  char lib_path[512];
-  
-  if (nemu_home) {
-    snprintf(lib_path, sizeof(lib_path), "%s/tools/capstone/repo/libcapstone." CS_LIB_SUFFIX, nemu_home);
-  } else {
-    snprintf(lib_path, sizeof(lib_path), "/home/dsx99/osoc/ysyx-workbench/nemu/tools/capstone/repo/libcapstone." CS_LIB_SUFFIX);
+  void *dl_handle = NULL;
+
+  // 1. First try loading the system's global Capstone library
+  // This version almost always has all architectures (including RISC-V) compiled in
+  dl_handle = dlopen("libcapstone.so.5", RTLD_LAZY);
+
+  if (!dl_handle) {
+    // Try without major version suffix just in case
+    dl_handle = dlopen("libcapstone.so", RTLD_LAZY);
   }
 
-  printf("Attempting to load Capstone from: %s\n", lib_path);
-  dl_handle = dlopen(lib_path, RTLD_LAZY);
-  
+  // 2. Fallback to the NEMU repository library only if the host system doesn't have it
   if (!dl_handle) {
-    fprintf(stderr, "dlopen failed with error: %s\n", dlerror());
+    const char *nemu_home = getenv("NEMU_HOME");
+    char lib_path[512];
+    if (nemu_home) {
+      snprintf(lib_path, sizeof(lib_path), "%s/tools/capstone/repo/libcapstone." CS_LIB_SUFFIX, nemu_home);
+    } else {
+      snprintf(lib_path, sizeof(lib_path), "/home/dsx99/osoc/ysyx-workbench/nemu/tools/capstone/repo/libcapstone." CS_LIB_SUFFIX);
+    }
+    printf("System Capstone not found. Falling back to NEMU path: %s\n", lib_path);
+    dl_handle = dlopen(lib_path, RTLD_LAZY);
+  }
+
+  if (!dl_handle) {
+    fprintf(stderr, "Fatal Error: Could not load any variant of libcapstone shared object file.\n");
     assert(dl_handle);
   }
 
-  // CHANGE: Declare the open function to accept a generic void** pointer for the handle
+  // Bind the library functions
   using cs_open_t = int (*)(int arch, int mode, void *handle_ptr);
   cs_open_t cs_open_dl = (cs_open_t)dlsym(dl_handle, "cs_open");
   assert(cs_open_dl);
@@ -63,11 +73,11 @@ void init_disasm() {
   cs_free_dl = (decltype(cs_free_dl))dlsym(dl_handle, "cs_free");
   assert(cs_free_dl);
 
-  // Pass the address of our handle directly as a void reference
+  // Initialize Capstone for RISC-V
   int ret = cs_open_dl(CS_ARCH_RISCV, CS_MODE_RISCV32, &handle);
   
   if (ret != CS_ERR_OK) {
-      fprintf(stderr, "Capstone cs_open failed with error code: %d\n", ret);
+      fprintf(stderr, "Capstone cs_open failed with error code: %d (CS_ERR_ARCH means no RISC-V support)\n", ret);
       assert(ret == CS_ERR_OK);
   }
 }
