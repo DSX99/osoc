@@ -89,7 +89,7 @@ int main(int argc, char** argv) {
       if(contextp->time() > MAX_SIM_TIME){
         break;
       }
-      if((contextp->time()) % 1000){
+      if(!((contextp->time()) % 1000)){
         printf("time:%d\n", contextp->time());
       }
       
