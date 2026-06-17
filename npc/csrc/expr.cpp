@@ -84,7 +84,7 @@ void init_regex()
     if (ret != 0)
     {
       regerror(ret, &re[i], error_msg, 128);
-      panic("regex compilation failed: %s\n%s", error_msg, rules[i].regex);
+      printf("regex compilation failed: %s\n%s", error_msg, rules[i].regex);
     }
   }
 }
