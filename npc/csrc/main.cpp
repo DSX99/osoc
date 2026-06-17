@@ -48,6 +48,7 @@ static int parse_args(int argc, char *argv[]) {
 }
 
 int main(int argc, char** argv) {
+  printf("Parcing args");
   parse_args(argc, argv);
 
   printf("Loading memory");
