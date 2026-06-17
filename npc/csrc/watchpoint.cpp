@@ -19,7 +19,7 @@
 
 #define NR_WP 6
 
-u_int32_t expr(char *e, bool *success);
+uint32_t expr(char *e, bool *success);
 
 typedef struct token
 {
