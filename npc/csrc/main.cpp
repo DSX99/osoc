@@ -14,6 +14,8 @@
 #include <verilated_fst_c.h>
 #endif
 
+#define CONFIG_VCD=1
+
 static bool batch=0;
 static char *img_file;
 
