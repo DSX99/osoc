@@ -39,6 +39,7 @@ void Vtop___024root___eval_ico(Vtop___024root* vlSelf) {
     // Body
     if ((1ULL & vlSelfRef.__VicoTriggered[0U])) {
         Vtop_regs___ico_sequent__TOP__top__reg_mod__0((&vlSymsp->TOP__top__reg_mod));
+        vlSelfRef.__Vm_traceActivity[1U] = 1U;
         Vtop_top___ico_sequent__TOP__top__0((&vlSymsp->TOP__top));
     }
 }
@@ -103,6 +104,7 @@ void Vtop___024root___eval_nba(Vtop___024root* vlSelf) {
     // Body
     if ((1ULL & vlSelfRef.__VnbaTriggered[0U])) {
         Vtop_regs___nba_sequent__TOP__top__reg_mod__0((&vlSymsp->TOP__top__reg_mod));
+        vlSelfRef.__Vm_traceActivity[2U] = 1U;
         Vtop_top___nba_sequent__TOP__top__0((&vlSymsp->TOP__top));
         Vtop_regs___ico_sequent__TOP__top__reg_mod__0((&vlSymsp->TOP__top__reg_mod));
         Vtop_top___ico_sequent__TOP__top__0((&vlSymsp->TOP__top));

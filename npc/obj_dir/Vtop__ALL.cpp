@@ -5,6 +5,7 @@
 #include "Vtop_top__0.cpp"
 #include "Vtop_regs__0.cpp"
 #include "Vtop__Dpi.cpp"
+#include "Vtop__Trace__0.cpp"
 #include "Vtop___024root__Slow.cpp"
 #include "Vtop___024root__0__Slow.cpp"
 #include "Vtop_top__Slow.cpp"
@@ -12,3 +13,5 @@
 #include "Vtop_regs__Slow.cpp"
 #include "Vtop_regs__0__Slow.cpp"
 #include "Vtop__Syms__Slow.cpp"
+#include "Vtop__Trace__0__Slow.cpp"
+#include "Vtop__TraceDecls__0__Slow.cpp"

@@ -219,12 +219,13 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
     if (vlSymsp->TOP.rst) {
         vlSelfRef.__PVT__pc = 0x80000000U;
     } else {
-        vlSelfRef.__PVT__pc = vlSelfRef.__PVT__next_pc;
+        vlSelfRef.__PVT__pc = vlSelfRef.__PVT__pc_mod__DOT__next_pc;
         if (vlSelfRef.__PVT__branch) {
             vlSelfRef.__PVT__pc = vlSelfRef.__PVT__alu_out;
         }
     }
-    vlSelfRef.__PVT__next_pc = ((IData)(4U) + vlSelfRef.__PVT__pc);
+    vlSelfRef.__PVT__pc_mod__DOT__next_pc = ((IData)(4U) 
+                                             + vlSelfRef.__PVT__pc);
     Vtop_top____Vdpiimwrap_lsu_mod__DOT__memread_TOP__top(vlSelfRef.__PVT__pc, vlSelfRef.__Vfunc_ifu_mod__DOT__memread__8__Vfuncout);
     vlSelfRef.__PVT__opcode = vlSelfRef.__Vfunc_ifu_mod__DOT__memread__8__Vfuncout;
     vlSelfRef.__PVT__rd = 0U;
