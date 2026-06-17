@@ -9,6 +9,7 @@
 #include "Vtop_regs.h"
 
 #define CONFIG_VCD = 1
+#define MAX_SIM_TIME 1024*1024
 
 #ifdef CONFIG_VCD
 #include <verilated_vcd_c.h>
@@ -51,8 +52,6 @@ static int parse_args(int argc, char *argv[]) {
 
 int main(int argc, char** argv) {
   parse_args(argc, argv);
-
-  printf("Loading memory\n");
   loadmemory(img_file);
   VerilatedContext* const contextp = new VerilatedContext;
     
@@ -75,23 +74,25 @@ int main(int argc, char** argv) {
 #endif
 
 
-  printf("Starting simu1\n");
-
-
   if (top == NULL || top->top == NULL) {
     fprintf(stderr, "Error: Simulation model instantiation failed!\n");
     return -1;
   }
 
-  printf("Starting simu2\n");
-
   reset(top, 100);
   top->rst=0;
   top->clk=0;
 
-  printf("Starting simu3\n");
   if(batch){
     while (!contextp->gotFinish()) {
+      
+      if(contextp->time() > MAX_SIM_TIME){
+        break;
+      }
+      if(contextp->time() % 1000){
+        printf("time:%d", contextp->time());
+      }
+      
       contextp->timeInc(1);
       top->clk=!top->clk;
       top->eval();
