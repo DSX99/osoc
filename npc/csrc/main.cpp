@@ -91,7 +91,7 @@ int main(int argc, char** argv) {
 
   printf("Starting simu3\n");
   if(batch){
-    while (contextp->gotFinish()) {
+    while (!contextp->gotFinish()) {
       contextp->timeInc(1);
       top->clk=!top->clk;
       top->eval();
