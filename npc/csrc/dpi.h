@@ -1,8 +1,15 @@
-#include <stdint.h>
-
 #pragma once
 
+#include <stdint.h>
+
+#ifdef __cplusplus
 extern "C" {
-    void loadmemory(char *img_file);
-    int memread(uint32_t addr);
+#endif
+
+void loadmemory(char *img_file);
+int memread(uint32_t addr);
+void memwrite(uint32_t addr, uint32_t data, uint32_t type);
+
+#ifdef __cplusplus
 }
+#endif
