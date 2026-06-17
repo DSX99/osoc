@@ -62,10 +62,13 @@ int main(int argc, char** argv) {
 #ifdef CONFIG_VCD
   Verilated::traceEverOn(true);
   VerilatedVcdC *tracep = new VerilatedVcdC;
+  tracep->open("../wave/waveform.vcd");
 #elif CONFIG_FST
   Verilated::traceEverOn(true);
   VerilatedFstC *tracep = new VerilatedFstC;
+  tracep->open("../wave/waveform.fst");
 #endif
+
 
   printf("Starting simu1\n");
 
