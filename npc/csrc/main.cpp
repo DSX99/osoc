@@ -67,7 +67,7 @@ int main(int argc, char** argv) {
 
   Vtop* const top = new Vtop{contextp};
 
-  if (top == NULL || top->top == NULL || *top == NULL) {
+  if (top == NULL || top->top == NULL) {
     fprintf(stderr, "Error: Simulation model instantiation failed!\n");
     return -1;
   }
