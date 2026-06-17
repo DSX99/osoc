@@ -4,7 +4,7 @@
 
 #include "Vtop__pch.h"
 
-void Vtop_top____Vdpiimwrap_ifu_mod__DOT__instread_TOP__top(IData/*31:0*/ addr, IData/*31:0*/ &instread__Vfuncrtn);
+void Vtop_top____Vdpiimwrap_lsu_mod__DOT__memread_TOP__top(IData/*31:0*/ addr, IData/*31:0*/ &memread__Vfuncrtn);
 
 VL_ATTR_COLD void Vtop_top___stl_sequent__TOP__top__0(Vtop_top* vlSelf) {
     VL_DEBUG_IF(VL_DBG_MSGF("+      Vtop_top___stl_sequent__TOP__top__0\n"); );
@@ -12,8 +12,8 @@ VL_ATTR_COLD void Vtop_top___stl_sequent__TOP__top__0(Vtop_top* vlSelf) {
     auto& vlSelfRef = std::ref(*vlSelf).get();
     // Body
     vlSelfRef.__PVT__next_pc = ((IData)(4U) + vlSelfRef.__PVT__pc);
-    Vtop_top____Vdpiimwrap_ifu_mod__DOT__instread_TOP__top(vlSelfRef.__PVT__pc, vlSelfRef.__Vfunc_ifu_mod__DOT__instread__8__Vfuncout);
-    vlSelfRef.__PVT__opcode = vlSelfRef.__Vfunc_ifu_mod__DOT__instread__8__Vfuncout;
+    Vtop_top____Vdpiimwrap_lsu_mod__DOT__memread_TOP__top(vlSelfRef.__PVT__pc, vlSelfRef.__Vfunc_ifu_mod__DOT__memread__8__Vfuncout);
+    vlSelfRef.__PVT__opcode = vlSelfRef.__Vfunc_ifu_mod__DOT__memread__8__Vfuncout;
     vlSelfRef.__PVT__rd = 0U;
     vlSelfRef.__PVT__mux_select = 0U;
     vlSelfRef.__PVT__lsu_oper = 0U;
@@ -394,5 +394,5 @@ VL_ATTR_COLD void Vtop_top___ctor_var_reset(Vtop_top* vlSelf) {
     vlSelf->__Vfunc_lsu_mod__DOT__memread__2__Vfuncout = 0;
     vlSelf->__Vfunc_lsu_mod__DOT__memread__3__Vfuncout = 0;
     vlSelf->__Vfunc_lsu_mod__DOT__memread__4__Vfuncout = 0;
-    vlSelf->__Vfunc_ifu_mod__DOT__instread__8__Vfuncout = 0;
+    vlSelf->__Vfunc_ifu_mod__DOT__memread__8__Vfuncout = 0;
 }
