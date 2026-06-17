@@ -57,22 +57,26 @@ int main(int argc, char** argv) {
   VerilatedContext* const contextp = new VerilatedContext;
     
     // contextp->threads(1); // can be used in future to increase speed
+    
+    Vtop* const top = new Vtop{contextp};
+
     // contextp->traceEverOn(true); // for vcd tracing
 
 #ifdef CONFIG_VCD
   Verilated::traceEverOn(true);
   VerilatedVcdC *tracep = new VerilatedVcdC;
+  top->trace(tracep, 5);
   tracep->open("../wave/waveform.vcd");
 #elif CONFIG_FST
   Verilated::traceEverOn(true);
   VerilatedFstC *tracep = new VerilatedFstC;
+  top->trace(tracep, 5);
   tracep->open("../wave/waveform.fst");
 #endif
 
 
   printf("Starting simu1\n");
 
-  Vtop* const top = new Vtop{contextp};
 
   if (top == NULL || top->top == NULL) {
     fprintf(stderr, "Error: Simulation model instantiation failed!\n");
