@@ -31,6 +31,8 @@ bool delete_wp(int n);
 int memread(uint32_t addr);
 void execute(uint32_t n);
 uint32_t expr(char *e, bool *success);
+void isa_reg_display();
+
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {

@@ -28,6 +28,7 @@ Vtop* top;
 void execute(uint32_t n);
 void init_sdb();
 void init_disasm();
+void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 
 void reset(Vtop *top,int n){
   top->rst=1;
@@ -117,10 +118,49 @@ void execute(uint32_t n){
     contextp->timeInc(1);
     top->clk=!top->clk;
     top->eval();
+
+    if(n<10){
+      disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte)
+    }
   
     if(contextp->gotFinish()){
       finished = 1;
       ret = top->top->reg_mod->regs[10];
     }
   }
+}
+
+
+
+const char *regs[] = {
+  "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
+  "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
+  "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
+  "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
+};
+
+void isa_reg_display() {
+  printf("Regs values:\n");
+  for(int i = 0; i<4; i++){
+    for(int j = 0; j<8; j++){
+      printf("%s(%02d):%08x   ", regs[8*i+j],8*i+j,top->top->reg_mod->regs[8*i+j]);
+    }
+    printf("\n");
+  }
+  printf("pc(pc):0x%08x\n",cpu.pc);
+}
+
+uint32_t isa_reg_str2val(const char *s, bool *success) {
+  if(strcmp(s,"pc")==0){
+    return cpu.pc;
+  }
+  for(int i=0;i<32;i++){
+    if(strcmp(s,regs[i])==0){
+      return top->top->reg_mod->regs[i];
+    }
+  }
+
+  printf("please input a correct reg name\n");
+  *success=false;
+  return 0;
 }

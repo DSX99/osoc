@@ -3,7 +3,9 @@ module top(
     input rst
 );
 
-logic [31:0] to_regs, data_rs1, data_rs2, pc, next_pc, alu_out, lsu_out, opcode, imm;
+logic [31:0] opcode,pc /* verilator public */;
+
+logic [31:0] to_regs, data_rs1, data_rs2, next_pc, alu_out, lsu_out, imm;
 logic [7:0] alu_op;
 logic [4:0] rs1, rs2, rd;
 logic [2:0] lsu_oper;
