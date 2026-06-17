@@ -63,11 +63,11 @@ int main(int argc, char** argv) {
     // contextp->traceEverOn(true); // for vcd tracing
 
 #ifdef CONFIG_VCD
-  printf("Starting with VCD\n");
+  printf("Starting with VCD\n\n");
   Verilated::traceEverOn(true);
   VerilatedVcdC *tracep = new VerilatedVcdC;
   top->trace(tracep, 5);
-  tracep->open("$NPC_HOME/wave/waveform.vcd");
+  tracep->open("waveform.vcd");
 #elif CONFIG_FST
   Verilated::traceEverOn(true);
   VerilatedFstC *tracep = new VerilatedFstC;
