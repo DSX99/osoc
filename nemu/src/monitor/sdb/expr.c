@@ -61,7 +61,7 @@ static struct rule
     {"^/", '/'},
 };
 
-#define NR_REGEX length(rules)
+#define NR_REGEX ARRLEN(rules)
 
 static regex_t re[NR_REGEX] = {};
 
