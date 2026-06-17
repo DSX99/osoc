@@ -14,4 +14,5 @@ sim:
 _default:
 	verilator --lint-only -Wall $(VERILOG_SRC) -Wno-EOFNEWLINE --top-module top
 
-
+clean:
+	rm -rf obj_dir
