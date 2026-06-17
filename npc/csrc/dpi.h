@@ -2,6 +2,7 @@
 
 #pragma once
 
-
-void loadmemory(char *img_file);
-int memread(uint32_t addr);
+extern "C" {
+    void loadmemory(char *img_file);
+    int memread(uint32_t addr);
+}
