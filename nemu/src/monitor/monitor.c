@@ -15,6 +15,15 @@
 
 #include <isa.h>
 #include <memory/paddr.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <string.h>
+#include <elf.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sys/mman.h>
 
 void init_rand();
 void init_log(const char *log_file);
@@ -39,10 +48,128 @@ static void welcome() {
 
 void sdb_set_batch_mode();
 
+typedef struct {
+    const char *name;
+    uintptr_t address;
+    size_t size;
+} FunctionInfo;
+
+FunctionInfo func[100];
+
 static char *log_file = NULL;
 static char *diff_so_file = NULL;
 static char *img_file = NULL;
+static char *elf_file = NULL;
 static int difftest_port = 1234;
+static char ftrace[256][256];
+int lead_space=0;
+int ftrace_count=0;
+
+#ifdef CONFIG_FTRACE
+
+size_t extract_elf_functions(const void *elf_base, FunctionInfo *functions, size_t max_funcs) {
+    if (!elf_base || !functions || max_funcs == 0) return 0;
+
+    const Elf32_Ehdr *ehdr = (const Elf32_Ehdr *)elf_base;
+
+    if (memcmp(ehdr->e_ident, ELFMAG, SELFMAG) != 0) {
+        printf("Error: Invalid ELF magic bytes.\n");
+        return 0;
+    }
+
+    if (ehdr->e_ident[EI_CLASS] != ELFCLASS32) {
+        printf("Error: This code is written for 32-bit ELF files.\n");
+        return 0;
+    }
+
+    const Elf32_Shdr *shdrs = (const Elf32_Shdr *)((const uint8_t *)elf_base + ehdr->e_shoff);
+
+    const Elf32_Shdr *symtab_shdr = NULL;
+    const Elf32_Shdr *strtab_shdr = NULL;
+
+    for (int i = 0; i < ehdr->e_shnum; i++) {
+        if (shdrs[i].sh_type == SHT_SYMTAB || shdrs[i].sh_type == SHT_DYNSYM) {
+            symtab_shdr = &shdrs[i];
+            strtab_shdr = &shdrs[symtab_shdr->sh_link]; 
+            break;
+        }
+    }
+
+    if (!symtab_shdr || !strtab_shdr) {
+        printf("Error: No symbol table found (file might be stripped).\n");
+        return 0;
+    }
+
+    const Elf32_Sym *syms = (const Elf32_Sym *)((const uint8_t *)elf_base + symtab_shdr->sh_offset);
+    const char *strtab = (const char *)elf_base + strtab_shdr->sh_offset;
+    
+    size_t num_syms = symtab_shdr->sh_size / symtab_shdr->sh_entsize;
+    size_t func_count = 0;
+
+    for (size_t i = 0; i < num_syms && func_count < max_funcs; i++) {
+        if (ELF32_ST_TYPE(syms[i].st_info) == STT_FUNC && syms[i].st_name != 0) {
+            functions[func_count].name = strtab + syms[i].st_name;
+            functions[func_count].address = syms[i].st_value;
+            functions[func_count].size = syms[i].st_size;
+            
+            func_count++;
+        }
+    }
+
+    return func_count;
+}
+
+void load_elf(){
+  Log("Loading ELF");
+  if (elf_file == NULL) {
+    Log("No ELF is given. No meaningful ftrace");
+    func[0].name=NULL;
+    return;
+  }
+  int fd = open(elf_file, O_RDONLY);
+  if (fd < 0) {
+    Log("Failed to open ELF file: %s", elf_file);
+    func[0].name = NULL;
+    return;
+  }
+  struct stat st; 
+  fstat(fd, &st);
+  void *elf_memory = mmap(NULL, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+  size_t extracted = extract_elf_functions(elf_memory, func, 99);
+  func[extracted].name=NULL;
+}
+
+void record_ftrace(vaddr_t dnpc, int reg1){
+  int count=0;
+  while(func[count].name!=NULL){
+    if( dnpc >= func[count].address && dnpc < (func[count].address + func[count].size)){
+      if(dnpc==reg1){
+        if(lead_space==0){
+          printf("IDK how you managed to return from nothing but okay\n");
+          return;
+        }
+        snprintf(ftrace[ftrace_count], 256,"%*s retn[%s]@0x%08x", lead_space-2, "", func[count].name, dnpc);
+        lead_space=lead_space-2;
+      }else{
+        snprintf(ftrace[ftrace_count], 256,"%*s call[%s]@0x%08x", lead_space+2, "", func[count].name, dnpc);
+        lead_space=lead_space+2;
+      }
+      ftrace_count++;
+      if(ftrace_count==256) ftrace_count=0;
+      break;
+    }
+    count++;
+  }
+}
+
+void print_ftrace(){
+  int count =0;
+  while(count<ftrace_count){
+    printf("%s\n",ftrace[count]);
+    count++;
+  }
+}
+#endif
 
 static long load_img() {
   if (img_file == NULL) {
@@ -73,15 +200,17 @@ static int parse_args(int argc, char *argv[]) {
     {"diff"     , required_argument, NULL, 'd'},
     {"port"     , required_argument, NULL, 'p'},
     {"help"     , no_argument      , NULL, 'h'},
+    {"elf"     , required_argument, NULL, 'e'},
     {0          , 0                , NULL,  0 },
   };
   int o;
-  while ( (o = getopt_long(argc, argv, "-bhl:d:p:", table, NULL)) != -1) {
+  while ( (o = getopt_long(argc, argv, "-bhl:d:p:e:", table, NULL)) != -1) {
     switch (o) {
       case 'b': sdb_set_batch_mode(); break;
       case 'p': sscanf(optarg, "%d", &difftest_port); break;
       case 'l': log_file = optarg; break;
       case 'd': diff_so_file = optarg; break;
+      case 'e': elf_file = optarg; break;
       case 1: img_file = optarg; return 0;
       default:
         printf("Usage: %s [OPTION...] IMAGE [args]\n\n", argv[0]);
@@ -89,6 +218,7 @@ static int parse_args(int argc, char *argv[]) {
         printf("\t-l,--log=FILE           output log to FILE\n");
         printf("\t-d,--diff=REF_SO        run DiffTest with reference REF_SO\n");
         printf("\t-p,--port=PORT          run DiffTest with port PORT\n");
+        printf("\t-e,--elf=FILE           run ftrace with funct from FILE\n");
         printf("\n");
         exit(0);
     }
@@ -116,6 +246,9 @@ void init_monitor(int argc, char *argv[]) {
 
   /* Perform ISA dependent initialization. */
   init_isa();
+
+  /*Loading elf for ftrace*/
+  load_elf();
 
   /* Load the image to memory. This will overwrite the built-in image. */
   long img_size = load_img();

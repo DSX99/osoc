@@ -27,7 +27,11 @@ image: image-dep
 	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $(IMAGE).elf $(IMAGE).bin
 
 run: insert-arg
-	$(MAKE) -C $(NEMU_HOME) ISA=$(ISA) runb ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin
+ifeq ($(B),)
+		$(MAKE) -C $(NEMU_HOME) ISA=$(ISA) runb ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin ELF=$(IMAGE).elf
+else
+		$(MAKE) -C $(NEMU_HOME) ISA=$(ISA) run ARGS="$(NEMUFLAGS) -e $(IMAGE).elf" IMG=$(IMAGE).bin
+endif
 
 gdb: insert-arg
 	$(MAKE) -C $(NEMU_HOME) ISA=$(ISA) gdb ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin

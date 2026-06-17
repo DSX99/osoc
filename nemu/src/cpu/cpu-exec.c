@@ -30,6 +30,12 @@ uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
 static bool g_print_step = false;
 
+#ifdef CONFIG_ITRACE
+static char buffer[16][129];
+static int buffer_slot=0;
+#endif
+
+void record_ftrace(vaddr_t dnpc, int reg1);
 void device_update();
 bool check_watchpoints();
 
@@ -38,10 +44,21 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
   if (ITRACE_COND) { log_write("%s\n", _this->logbuf); }
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
+#ifdef CONFIG_ITRACE
+  strncpy(buffer[buffer_slot], _this->logbuf, 128);
+  buffer[buffer_slot][128]='\0';
+  buffer_slot++;
+  if(buffer_slot==16) buffer_slot=0;
+#endif
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
 #ifdef CONFIG_WATCHPOINT
   if(check_watchpoints()){
     nemu_state.state = NEMU_STOP;
+  }
+#endif
+#ifdef CONFIG_FTRACE
+  if(dnpc - _this->pc !=4){
+    record_ftrace(dnpc, cpu.gpr[1]);
   }
 #endif
 }
@@ -95,6 +112,23 @@ static void statistic() {
   Log("total guest instructions = " NUMBERIC_FMT, g_nr_guest_inst);
   if (g_timer > 0) Log("simulation frequency = " NUMBERIC_FMT " inst/s", g_nr_guest_inst * 1000000 / g_timer);
   else Log("Finish running in less than 1 us and can not calculate the simulation frequency");
+}
+
+void print_itrace(){
+  buffer_slot = (buffer_slot-1);
+  if(buffer_slot<0) buffer_slot+=16;
+  for(int i=15; i>=0; i--){
+    if(i==0){
+      printf("--> ");
+    }else{
+      printf("    ");
+    }
+    if(i>buffer_slot){
+      puts(buffer[buffer_slot-i+16]);
+    }else{
+      puts(buffer[buffer_slot-i]);
+    }
+  }
 }
 
 void assert_fail_msg() {
