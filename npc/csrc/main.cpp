@@ -102,7 +102,7 @@ int main(int argc, char** argv) {
 
     return ret;
   } else{
-    printf("non batch mode is not yet implemented");
+    printf("non batch mode is not yet implemented\n");
     return 1;
   }
 }
