@@ -62,6 +62,7 @@ int main(int argc, char** argv) {
     // contextp->traceEverOn(true); // for vcd tracing
 
 #ifdef CONFIG_VCD
+  printf("Starting with VCD");
   Verilated::traceEverOn(true);
   VerilatedVcdC *tracep = new VerilatedVcdC;
   top->trace(tracep, 5);
