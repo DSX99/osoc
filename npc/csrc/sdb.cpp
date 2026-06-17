@@ -16,6 +16,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
+#include <cstdlib>
 
 #define ARRLEN(x) (sizeof(x) / sizeof((x)[0]))
 
