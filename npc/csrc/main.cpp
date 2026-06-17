@@ -51,6 +51,7 @@ static int parse_args(int argc, char *argv[]) {
 }
 
 int main(int argc, char** argv) {
+  printf("\n");
   parse_args(argc, argv);
   loadmemory(img_file);
   VerilatedContext* const contextp = new VerilatedContext;
@@ -62,7 +63,7 @@ int main(int argc, char** argv) {
     // contextp->traceEverOn(true); // for vcd tracing
 
 #ifdef CONFIG_VCD
-  printf("Starting with VCD");
+  printf("Starting with VCD\n");
   Verilated::traceEverOn(true);
   VerilatedVcdC *tracep = new VerilatedVcdC;
   top->trace(tracep, 5);
