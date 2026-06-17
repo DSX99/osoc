@@ -8,7 +8,7 @@
 #include "Vtop_top.h"
 #include "Vtop_regs.h"
 
-#define CONFIG_VCD=1
+#define CONFIG_VCD = 1
 
 #ifdef CONFIG_VCD
 #include <verilated_vcd_c.h>
