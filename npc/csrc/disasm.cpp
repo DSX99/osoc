@@ -71,7 +71,14 @@ void *dl_handle;
   cs_arch arch = CS_ARCH_RISCV;
   cs_mode mode = CS_MODE_RISCV32;
   int ret = cs_open_dl(arch, mode, &handle);
-  assert(ret == CS_ERR_OK);
+  
+  if (ret != CS_ERR_OK) {
+      fprintf(stderr, "Capstone cs_open failed with error code: %d\n", ret);
+      // Code 1 = CS_ERR_ARCH (Unsupported architecture)
+      // Code 2 = CS_ERR_HANDLE (Invalid handle)
+      // Code 3 = CS_ERR_KV (Unsupported mode)
+      assert(ret == CS_ERR_OK);
+  }
 }
 
 void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte) {
