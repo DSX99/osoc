@@ -15,8 +15,8 @@ module lsu(
     // SH 6
     // SW 7
 
-    import "DPI-C" function void write(int addr, int data, int idk);
-    import "DPI-C" function int read(int addr);
+    import "DPI-C" function void memwrite(int addr, int data, int idk);
+    import "DPI-C" function int memread(int addr);
 
     int A;
 
@@ -25,33 +25,33 @@ module lsu(
         if(we) begin
             case(oper)
                 0: begin //LB
-                    A = read(addr);
+                    A = memread(addr);
                     data_out = {{24{A[7]}},A[7:0]};
                 end 
                 1: begin //LH
-                    A = read(addr);
+                    A = memread(addr);
                     data_out = {{16{A[15]}},A[15:0]};
                 end 
                 2: begin //LW
-                    A = read(addr);
+                    A = memread(addr);
                     data_out = A[31:0];
                 end 
                 3: begin //LBU
-                    A = read(addr);
+                    A = memread(addr);
                     data_out = {24'b0,A[7:0]};
                 end 
                 4: begin //LHU
-                    A = read(addr);
+                    A = memread(addr);
                     data_out = {16'b0,A[15:0]};
                 end 
                 5: begin //SB
-                    write(addr, data_in, 0);
+                    memwrite(addr, data_in, 0);
                 end 
                 6: begin //SH
-                    write(addr, data_in, 1);
+                    memwrite(addr, data_in, 1);
                 end 
                 7: begin //SW
-                    write(addr, data_in, 2);
+                    memwrite(addr, data_in, 2);
                 end
             endcase
         end

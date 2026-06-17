@@ -3,10 +3,10 @@ module ifu(
     output logic [31:0] opcode
 );
 
-import "DPI-C" function int read(int addr);
+import "DPI-C" function int memread(int addr);
 
 always_comb begin
-    opcode = read(pc);
+    opcode = memread(pc);
 end
 
 endmodule

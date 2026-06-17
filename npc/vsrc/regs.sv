@@ -9,7 +9,7 @@ module regs (
     output logic [31:0] data_rs2     
 );
     
-    logic [31:0] regs [31:0];
+    logic [31:0] regs [31:0] /* verilator public */; 
 
     always_comb begin
         data_rs1 = regs[rs1];
