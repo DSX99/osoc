@@ -33,7 +33,7 @@ extern "C" {
     void memwrite(uint32_t addr, uint32_t data, uint32_t type){
         if(addr<ROM_OFFSET || addr>(ROM_OFFSET + MEM_SIZE)){
             printf("Illegal memory write access at addr:0x%08x\n",addr);
-            return 0;
+            return;
         }
         if(type ==0){
             mem[addr-ROM_OFFSET] = data & 0xFF;
