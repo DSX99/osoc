@@ -8,6 +8,10 @@ module pc(
     output logic [31:0] next_pc
 );
 
+    initial begin
+        pc = 32'h80000000;
+    end
+
     assign next_pc = pc + 4;
 
 

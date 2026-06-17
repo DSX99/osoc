@@ -113,6 +113,7 @@ module decode(
                 rs1    = rs1_val;
                 imm    = imm_i;
                 alu_op = {5'b11000, func3}; 
+                $finish();
             end
             default: ;
         endcase
