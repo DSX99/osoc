@@ -6,15 +6,13 @@
 
 #define CS_LIB_SUFFIX "so.5"
 
-// Enums needed for Capstone initialization parameters
 enum cs_arch { CS_ARCH_RISCV = 6 };
 enum cs_mode { CS_MODE_RISCV32 = 1 << 0 };
 enum cs_err  { CS_ERR_OK = 0 };
 
-// Use a plain unsigned long long to hold the handle value safely across 32/64-bit boundaries
-typedef unsigned long long csh;
+// Keep it as a simple 64-bit generic storage value for the rest of your file
+typedef uint64_t csh;
 
-// Our definitive local structure layout for the Capstone instruction data
 typedef struct cs_insn {
   unsigned int id;
   uint64_t address;
@@ -25,26 +23,16 @@ typedef struct cs_insn {
   void *detail; 
 } cs_insn;
 
-// Function pointers matching the primitive wide type
-static size_t (*cs_disasm_dl)(csh handle, const uint8_t *code,
-    size_t code_size, uint64_t address, size_t count, cs_insn **insn);
+static size_t (*cs_disasm_dl)(csh handle, const uint8_t *code, size_t code_size, uint64_t address, size_t count, cs_insn **insn);
 static void (*cs_free_dl)(cs_insn *insn, size_t count);
 
 static csh handle = 0;
+static bool disasm_ready = false;
 
 void init_disasm() {
-  void *dl_handle = NULL;
+  void *dl_handle = dlopen("libcapstone.so.5", RTLD_LAZY);
+  if (!dl_handle) dl_handle = dlopen("libcapstone.so", RTLD_LAZY);
 
-  // 1. First try loading the system's global Capstone library
-  // This version almost always has all architectures (including RISC-V) compiled in
-  dl_handle = dlopen("libcapstone.so.5", RTLD_LAZY);
-
-  if (!dl_handle) {
-    // Try without major version suffix just in case
-    dl_handle = dlopen("libcapstone.so", RTLD_LAZY);
-  }
-
-  // 2. Fallback to the NEMU repository library only if the host system doesn't have it
   if (!dl_handle) {
     const char *nemu_home = getenv("NEMU_HOME");
     char lib_path[512];
@@ -53,36 +41,49 @@ void init_disasm() {
     } else {
       snprintf(lib_path, sizeof(lib_path), "/home/dsx99/osoc/ysyx-workbench/nemu/tools/capstone/repo/libcapstone." CS_LIB_SUFFIX);
     }
-    printf("System Capstone not found. Falling back to NEMU path: %s\n", lib_path);
     dl_handle = dlopen(lib_path, RTLD_LAZY);
   }
 
   if (!dl_handle) {
-    fprintf(stderr, "Fatal Error: Could not load any variant of libcapstone shared object file.\n");
-    assert(dl_handle);
+    printf("[Disasm] Capstone library not found. Falling back to hex layout.\n");
+    return;
   }
 
-  // Bind the library functions
+  // Bind the functions
   using cs_open_t = int (*)(int arch, int mode, void *handle_ptr);
   cs_open_t cs_open_dl = (cs_open_t)dlsym(dl_handle, "cs_open");
-  assert(cs_open_dl);
-
   cs_disasm_dl = (decltype(cs_disasm_dl))dlsym(dl_handle, "cs_disasm");
-  assert(cs_disasm_dl);
-
   cs_free_dl = (decltype(cs_free_dl))dlsym(dl_handle, "cs_free");
-  assert(cs_free_dl);
 
-  // Initialize Capstone for RISC-V
-  int ret = cs_open_dl(CS_ARCH_RISCV, CS_MODE_RISCV32, &handle);
+  if (!cs_open_dl || !cs_disasm_dl || !cs_free_dl) {
+    printf("[Disasm] Symbols binding failed. Falling back to hex layout.\n");
+    return;
+  }
+
+  // FIX: Use a local raw pointer. Capstone writes an internal memory address here.
+  void *local_handle = nullptr;
+  int ret = cs_open_dl(CS_ARCH_RISCV, CS_MODE_RISCV32, &local_handle);
   
-  if (ret != CS_ERR_OK) {
-      fprintf(stderr, "Capstone cs_open failed with error code: %d (CS_ERR_ARCH means no RISC-V support)\n", ret);
-      assert(ret == CS_ERR_OK);
+  if (ret == CS_ERR_OK) {
+      // Safely copy the pointer address bits directly into our global storage handle
+      handle = (csh)(uintptr_t)local_handle;
+      disasm_ready = true;
+      printf("[Disasm] Capstone initialized successfully for RISC-V.\n");
+  } else {
+      printf("[Disasm] Capstone open returned error %d. Falling back to hex layout.\n", ret);
   }
 }
 
 void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte) {
+  if (!disasm_ready) {
+    if (nbyte == 4) {
+      snprintf(str, size, "[hex] 0x%08x", *(uint32_t*)code);
+    } else {
+      snprintf(str, size, "[hex] unknown width");
+    }
+    return;
+  }
+
   cs_insn *insn;
   size_t count = cs_disasm_dl(handle, code, nbyte, pc, 0, &insn);
   assert(count == 1);
