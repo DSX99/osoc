@@ -17,6 +17,7 @@
 #include <readline/history.h>
 #include "sdb.h"
 #include <cstdlib>
+#include "dpi.h"
 
 #define ARRLEN(x) (sizeof(x) / sizeof((x)[0]))
 
@@ -28,7 +29,6 @@ void init_wp_pool();
 void info_wp();
 void create_wp(char *s);
 bool delete_wp(int n);
-int memread(uint32_t addr);
 void execute(uint32_t n);
 uint32_t expr(char *e, bool *success);
 void isa_reg_display();
