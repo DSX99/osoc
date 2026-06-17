@@ -8,7 +8,8 @@ CPP_SRC = csrc/*.cpp
 IMG ?= 
 ARGS ?= 
 
-VERILOG_FLAGS := -cc --exe -Wno-EOFNEWLINE --top-module top --trace-fst 
+LDFLAGS += -lreadline
+VERILOG_FLAGS := -cc --exe -Wno-EOFNEWLINE --top-module top --trace-fst -LDFLAGS "$(LDFLAGS)"
 
 
 sim:

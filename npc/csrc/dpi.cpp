@@ -6,30 +6,31 @@
 #define MEM_SIZE 1024*1024
 uint8_t mem[MEM_SIZE];
 
-void loadmemory(char *img_file) {
-  if (img_file == NULL) {
-    printf("No image is given.");
-    return; // built-in image size
-  }
-
-  FILE *fp = fopen(img_file, "rb");
-  if(!fp){
-    printf("Can not open '%s'", img_file);
-  }
-
-  fseek(fp, 0, SEEK_END);
-  long size = ftell(fp);
-
-  printf("The image is %s, size = %ld\n", img_file, size);
-
-  fseek(fp, 0, SEEK_SET);
-  int ret = fread(mem, size, 1, fp);
-  assert(ret == 1);
-
-  fclose(fp);
-}
 
 extern "C" {
+    void loadmemory(char *img_file) {
+        if (img_file == NULL) {
+            printf("No image is given.");
+            return; // built-in image size
+        }
+
+        FILE *fp = fopen(img_file, "rb");
+        if(!fp){
+            printf("Can not open '%s'", img_file);
+        }
+
+        fseek(fp, 0, SEEK_END);
+        long size = ftell(fp);
+
+        printf("The image is %s, size = %ld\n", img_file, size);
+
+        fseek(fp, 0, SEEK_SET);
+        int ret = fread(mem, size, 1, fp);
+        assert(ret == 1);
+
+        fclose(fp);
+    }
+
     void memwrite(uint32_t addr, uint32_t data, uint32_t type){
         if(addr<ROM_OFFSET || addr>(ROM_OFFSET + MEM_SIZE)){
             printf("Illegal memory write access at addr:0x%08x\n",addr);
