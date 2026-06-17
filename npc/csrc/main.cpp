@@ -5,7 +5,8 @@
 #include "Vtop.h"
 #include "dpi.cpp"
 #include "Vtop___024root.h"
-
+#include "Vtop_top.h"
+#include "Vtop_regs.h"
 
 #ifdef CONFIG_VCD
 #include <verilated_vcd_c.h>
@@ -73,14 +74,14 @@ int main(int argc, char** argv) {
       top->clk=!top->clk;
       top->eval();
 
-      #ifdef CONFIG_VCD || CONFIG_FST
+      #if defined(CONFIG_VCD) || defined(CONFIG_FST)
       tracep->dump(contextp->time());
       #endif
     }
 
-    int ret = top->rootp->top__DOT__reg_mod__DOT__regs[10];
+    int ret = top->top->reg_mod->regs[10];
 
-    #ifdef CONFIG_VCD || CONFIG_FST
+    #if defined(CONFIG_VCD) || defined(CONFIG_FST)
     tracep->close();
     #endif
     
