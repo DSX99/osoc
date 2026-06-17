@@ -23,6 +23,8 @@ module alu (
 
     always_comb begin
         data_out=0;
+        branch = 0;
+        
         if(alu_op[5:4]==2'b00) begin
             case(alu_op[2:0])
                 0: begin
@@ -42,7 +44,6 @@ module alu (
             endcase
         end else if(alu_op[5:4]==2'b01) begin
             data_out = val1 + val2;
-            branch = 0;
             case(alu_op[2:0])
                 0: branch = data_rs1 == data_rs2;
                 1: branch = data_rs1 != data_rs2;
