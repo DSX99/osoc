@@ -24,6 +24,8 @@ VerilatedContext *contextp;
 VerilatedFstC *tracep;
 Vtop* top; 
 
+uint32_t execute(uint32_t n);
+
 void reset(Vtop *top,int n){
   top->rst=1;
   for(int i=0; i<n; i++){
@@ -119,4 +121,5 @@ uint32_t execute(uint32_t n){
       return top->top->reg_mod->regs[10];
     }
   }
+  return NULL;
 }
