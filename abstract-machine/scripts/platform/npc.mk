@@ -30,7 +30,7 @@ NPCFLAG = "-b"
 endif
 
 run: insert-arg
-	$(MAKE) -C $(NEMU_HOME) run ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin
+	$(MAKE) -C $(NPC_HOME) run ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin
 		
 
 .PHONY: insert-arg
