@@ -65,6 +65,8 @@ int main(int argc, char** argv) {
   VerilatedFstC *tracep = new VerilatedFstC;
 #endif
 
+  printf("Starting simu1\n");
+
   Vtop* const top = new Vtop{contextp};
 
   if (top == NULL || top->top == NULL) {
@@ -72,11 +74,13 @@ int main(int argc, char** argv) {
     return -1;
   }
 
+  printf("Starting simu2\n");
+
   reset(top, 100);
   top->rst=0;
   top->clk=0;
 
-  printf("Starting simu\n");
+  printf("Starting simu3\n");
   if(batch){
     while (contextp->gotFinish()) {
       contextp->timeInc(1);
