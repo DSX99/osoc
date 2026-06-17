@@ -28,7 +28,7 @@ build: sim
 	@$(MAKE) -j -C obj_dir -f Vtop.mk
 
 run: build
-	@obj_dir/Vtop $(NPCFLAG) $(IMG)
+	@obj_dir/Vtop $(ARGS) $(IMG)
 
 clean:
 	rm -rf obj_dir
