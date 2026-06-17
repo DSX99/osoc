@@ -394,24 +394,7 @@ typedef struct cs_detail {
 
 	/// Architecture-specific instruction info
 	union {
-		cs_x86 x86;     ///< X86 architecture, including 16-bit, 32-bit & 64-bit mode
-		cs_arm64 arm64; ///< ARM64 architecture (aka AArch64)
-		cs_arm arm;     ///< ARM architecture (including Thumb/Thumb2)
-		cs_m68k m68k;   ///< M68K architecture
-		cs_mips mips;   ///< MIPS architecture
-		cs_ppc ppc;	    ///< PowerPC architecture
-		cs_sparc sparc; ///< Sparc architecture
-		cs_sysz sysz;   ///< SystemZ architecture
-		cs_xcore xcore; ///< XCore architecture
-		cs_tms320c64x tms320c64x;  ///< TMS320C64x architecture
-		cs_m680x m680x; ///< M680X architecture
-		cs_evm evm;	    ///< Ethereum architecture
-		cs_mos65xx mos65xx;	///< MOS65XX architecture (including MOS6502)
-		cs_wasm wasm;	///< Web Assembly architecture
-		cs_bpf bpf;	///< Berkeley Packet Filter architecture (including eBPF)
 		cs_riscv riscv; ///< RISCV architecture
-		cs_sh sh;        ///< SH architecture
-		cs_tricore tricore; ///< TriCore architecture
 	};
 } cs_detail;
 
