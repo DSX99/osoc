@@ -30,6 +30,18 @@ void Vtop_top____Vdpiimwrap_lsu_mod__DOT__memread_TOP__top(IData/*31:0*/ addr, I
     memread__Vfuncrtn = (memread__Vfuncrtn__Vcvt);
 }
 
+extern "C" int instread(int addr);
+
+void Vtop_top____Vdpiimwrap_ifu_mod__DOT__instread_TOP__top(IData/*31:0*/ addr, IData/*31:0*/ &instread__Vfuncrtn) {
+    VL_DEBUG_IF(VL_DBG_MSGF("+      Vtop_top____Vdpiimwrap_ifu_mod__DOT__instread_TOP__top\n"); );
+    // Body
+    int addr__Vcvt;
+    addr__Vcvt = addr;
+    int instread__Vfuncrtn__Vcvt;
+    instread__Vfuncrtn__Vcvt = instread(addr__Vcvt);
+    instread__Vfuncrtn = (instread__Vfuncrtn__Vcvt);
+}
+
 void Vtop_top___ico_sequent__TOP__top__0(Vtop_top* vlSelf) {
     VL_DEBUG_IF(VL_DBG_MSGF("+      Vtop_top___ico_sequent__TOP__top__0\n"); );
     Vtop__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
@@ -225,8 +237,8 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
         }
     }
     vlSelfRef.__PVT__next_pc = ((IData)(4U) + vlSelfRef.__PVT__pc);
-    Vtop_top____Vdpiimwrap_lsu_mod__DOT__memread_TOP__top(vlSelfRef.__PVT__pc, vlSelfRef.__Vfunc_ifu_mod__DOT__memread__8__Vfuncout);
-    vlSelfRef.__PVT__opcode = vlSelfRef.__Vfunc_ifu_mod__DOT__memread__8__Vfuncout;
+    Vtop_top____Vdpiimwrap_ifu_mod__DOT__instread_TOP__top(vlSelfRef.__PVT__pc, vlSelfRef.__Vfunc_ifu_mod__DOT__instread__8__Vfuncout);
+    vlSelfRef.__PVT__opcode = vlSelfRef.__Vfunc_ifu_mod__DOT__instread__8__Vfuncout;
     vlSelfRef.__PVT__rd = 0U;
     vlSelfRef.__PVT__mux_select = 0U;
     vlSelfRef.__PVT__lsu_oper = 0U;

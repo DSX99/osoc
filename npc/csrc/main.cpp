@@ -3,7 +3,7 @@
 #include <getopt.h>
 #include <verilated.h>
 #include "Vtop.h"
-#include "dpi.cpp"
+#include "dpi.h"
 #include "Vtop___024root.h"
 #include "Vtop_top.h"
 #include "Vtop_regs.h"
@@ -49,6 +49,7 @@ static int parse_args(int argc, char *argv[]) {
 
 int main(int argc, char** argv) {
   parse_args(argc, argv);
+  loadmemory(img_file);
   
   
   VerilatedContext* const contextp = new VerilatedContext;
