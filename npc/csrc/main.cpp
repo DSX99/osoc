@@ -8,7 +8,7 @@
 #include "Vtop_top.h"
 #include "Vtop_regs.h"
 
-#define CONFIG_VCD = 1
+#define CONFIG_VCD
 #define MAX_SIM_TIME 10*1024
 
 #ifdef CONFIG_VCD
