@@ -21,14 +21,14 @@ static const uint32_t img [] = {
 extern "C" {
     void loadmemory(char *img_file) {
         if (img_file == NULL) {
-            printf("No image is given.");
+            printf("No image is given.\n");
             memcpy(mem, img, sizeof(img));
             return; // built-in image size
         }
 
         FILE *fp = fopen(img_file, "rb");
         if(!fp){
-            printf("Can not open '%s'", img_file);
+            printf("Can not open '%s'\n", img_file);
         }
 
         fseek(fp, 0, SEEK_END);

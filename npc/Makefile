@@ -25,6 +25,10 @@ build: sim
 run: build
 	@obj_dir/Vtop $(ARGS) $(IMG)
 
+gdb: build
+	@--gdb -CFLAGS "-g"
+	@gdb --args obj_dir/Vtop $(ARGS) $(IMG)
+
 clean:
 	rm -rf obj_dir
 
