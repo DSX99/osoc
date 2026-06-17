@@ -64,7 +64,7 @@ int main(int argc, char** argv) {
   printf("\n");
   parse_args(argc, argv);
   loadmemory(img_file);
-  void init_disasm();
+  init_disasm();
   contextp = new VerilatedContext;
   // contextp->threads(1); // can be used in future to increase speed
 
