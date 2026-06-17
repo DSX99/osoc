@@ -8,13 +8,13 @@
 #include "Vtop_top.h"
 #include "Vtop_regs.h"
 
+#define CONFIG_VCD=1
+
 #ifdef CONFIG_VCD
 #include <verilated_vcd_c.h>
 #elif CONFIG_FST
 #include <verilated_fst_c.h>
 #endif
-
-#define CONFIG_VCD=1
 
 static bool batch=0;
 static char *img_file;
