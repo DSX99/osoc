@@ -72,6 +72,7 @@ int main(int argc, char** argv) {
 
 
   reset(top, 100);
+  printf("Starting simu\n");
   if(batch){
     while (contextp->gotFinish()) {
       contextp->timeInc(1);
