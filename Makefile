@@ -40,5 +40,5 @@ endef
 
 .clean_index:
 	rm -f $(WORK_INDEX)
-
+	
 .PHONY: .git_commit .clean_index _default
