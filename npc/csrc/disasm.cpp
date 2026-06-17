@@ -11,7 +11,7 @@ enum cs_arch { CS_ARCH_RISCV = 6 };
 enum cs_mode { CS_MODE_RISCV32 = 1 << 0 };
 enum cs_err  { CS_ERR_OK = 0 };
 
-typedef size_t csh;
+typedef uintptr_t csh;
 
 // Our definitive local structure layout for the Capstone instruction data
 typedef struct cs_insn {
@@ -29,7 +29,7 @@ static size_t (*cs_disasm_dl)(csh handle, const uint8_t *code,
     size_t code_size, uint64_t address, size_t count, cs_insn **insn);
 static void (*cs_free_dl)(cs_insn *insn, size_t count);
 
-static csh handle;
+static csh handle = 0;
 
 void init_disasm() {
 void *dl_handle;
