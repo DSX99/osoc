@@ -9,7 +9,7 @@
 #include "Vtop_regs.h"
 
 #define CONFIG_VCD = 1
-#define MAX_SIM_TIME 1024*1024
+#define MAX_SIM_TIME 10*1024
 
 #ifdef CONFIG_VCD
 #include <verilated_vcd_c.h>
@@ -90,7 +90,7 @@ int main(int argc, char** argv) {
         break;
       }
       if(contextp->time() % 1000){
-        printf("time:%d", contextp->time());
+        printf("time:%d\n", contextp->time());
       }
       
       contextp->timeInc(1);
