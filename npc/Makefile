@@ -8,13 +8,7 @@ CPP_SRC = csrc/*.cpp
 IMG ?= 
 ARGS ?= 
 
-VERILOG_FLAGS := -cc --exe -Wno-EOFNEWLINE --top-module top
-ifneq ($(VCD),)
-VERILOG_FLAGS += --trace
-endif
-ifneq ($(FST),)
-VERILOG_FLAGS += --trace-fst
-endif
+VERILOG_FLAGS := -cc --exe -Wno-EOFNEWLINE --top-module top --trace --trace-fst
 
 
 sim:
