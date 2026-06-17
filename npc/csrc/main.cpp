@@ -20,11 +20,14 @@
 bool batch=0;
 char *img_file;
 bool finished=0;
+uint32_t ret = 0;
 VerilatedContext *contextp;
 VerilatedFstC *tracep;
 Vtop* top; 
 
-uint32_t execute(uint32_t n);
+void execute(uint32_t n);
+void init_sdb();
+void init_disasm();
 
 void reset(Vtop *top,int n){
   top->rst=1;
@@ -60,6 +63,7 @@ int main(int argc, char** argv) {
   printf("\n");
   parse_args(argc, argv);
   loadmemory(img_file);
+  void init_disasm();
   contextp = new VerilatedContext;
   // contextp->threads(1); // can be used in future to increase speed
 
@@ -82,13 +86,11 @@ int main(int argc, char** argv) {
   top->rst=0;
   top->clk=0;
 
-  uint32_t ret=0;
-
   if(batch){
-    ret = execute(-1);
+    execute(-1);
   }else{
-    // ret = sdb_loop();
-    printf("still not implemented");
+    init_sdb();
+    sdb_mainloop();
   }
   
   #ifdef CONFIG_FST
@@ -98,7 +100,7 @@ int main(int argc, char** argv) {
   return ret;
 }
 
-uint32_t execute(uint32_t n){
+void execute(uint32_t n){
   while(n>0){
 
     #ifdef CONFIG_FST
@@ -106,7 +108,7 @@ uint32_t execute(uint32_t n){
     #endif
     
     if(contextp->time() > MAX_SIM_TIME){
-      return top->top->reg_mod->regs[10];
+      ret = top->top->reg_mod->regs[10];
     }
     if(!((contextp->time()) % 1000)){
       printf("time:%lu\n", contextp->time());
@@ -118,8 +120,7 @@ uint32_t execute(uint32_t n){
   
     if(contextp->gotFinish()){
       finished = 1;
-      return top->top->reg_mod->regs[10];
+      ret = top->top->reg_mod->regs[10];
     }
   }
-  return NULL;
 }

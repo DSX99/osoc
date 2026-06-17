@@ -13,16 +13,18 @@
  * See the Mulan PSL v2 for more details.
  ***************************************************************************************/
 
-#include <isa.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 /* We use the POSIX regex functions to process regular expressions.
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
 
-word_t paddr_read(paddr_t addr, int len);
-word_t isa_reg_str2val(const char *s, bool *success);
+#define ARRLEN(x) (sizeof(x) / sizeof((x)[0]))
+
+int memread(u_int32_t addr);
+u_int32_t isa_reg_str2val(const char *s, bool *success);
 
 enum
 {
@@ -61,7 +63,7 @@ static struct rule
     {"^/", '/'},
 };
 
-#define NR_REGEX length(rules)
+#define NR_REGEX ARRLEN(rules)
 
 static regex_t re[NR_REGEX] = {};
 
@@ -287,13 +289,13 @@ unsigned eval(int p, int q, bool *success)
     {
       if (tokens[p].type == DEREF && (tokens[p + 1].type == 'v' || tokens[p + 1].type == 'h' || tokens[p + 1].type == 'r' || (tokens[p + 1].type == '(' && tokens[q].type == ')')))
       {
-        uint32_t addr = eval(p + 1, q, success);
+        u_int32_t addr = eval(p + 1, q, success);
         if(addr < 0x80000000){
           printf("Calling not physical memory\n");
           *success = false;
           return 0;
         }
-        return paddr_read(addr, 4);
+        return memread(addr);
       }
       else
       {
@@ -339,7 +341,7 @@ unsigned eval(int p, int q, bool *success)
   return 0;
 }
 
-word_t expr(char *e, bool *success)
+u_int32_t expr(char *e, bool *success)
 {
   if (!make_token(e))
   {
