@@ -13,13 +13,12 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#include <isa.h>
-#include <cpu/cpu.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
 
-word_t paddr_read(paddr_t addr, int len);
+
+uint32_t paddr_read(paddr_t addr, int len);
 
 static int is_batch_mode = false;
 static char prev_cmd[128];

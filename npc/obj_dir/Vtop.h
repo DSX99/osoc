@@ -13,7 +13,7 @@
 
 class Vtop__Syms;
 class Vtop___024root;
-class VerilatedVcdC;
+class VerilatedFstC;
 class Vtop_top;
 
 
