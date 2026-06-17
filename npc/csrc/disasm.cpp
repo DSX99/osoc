@@ -2,6 +2,7 @@
 #include <cassert>
 #include <cstdio>
 #include <cstdint>
+#include <cstdlib>
 
 #define CS_LIB_SUFFIX "so.5"
 
