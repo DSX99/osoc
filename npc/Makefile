@@ -5,17 +5,21 @@ CONFIG_IQUEUE=y
 
 include $(NEMU_HOME)/src/utils/filelist.mk
 
-
 .DEFAULT_GOAL  := lint
 VERILATOR = verilator
 VERILOG_SRC = vsrc/*.sv
 CPP_SRC = csrc/*.cpp
 
+CPP_SRC += $(NEMU_HOME)/src/utils/disasm.c
+
 IMG ?= 
 ARGS ?= 
 
-VERILATOR_CFLAGS += -I$(NEMU_HOME)/tools/capstone/repo/include
+VERILATOR_CFLAGS += -I$(NEMU_HOME)/tools/capstone/repo/include -I$(NEMU_HOME)/include
 LDFLAGS += -lreadline -L$(NEMU_HOME)/tools/capstone/repo -lcapstone
+
+VERILATOR_CFLAGS += -DCONFIG_ISA_riscv32 
+
 VERILOG_FLAGS := -cc --exe -Wno-EOFNEWLINE --top-module top --trace-fst -LDFLAGS "$(LDFLAGS)" -CFLAGS "$(VERILATOR_CFLAGS)"
 
 LIBCAPSTONE = $(NEMU_HOME)/tools/capstone/repo/libcapstone.so.5
@@ -28,7 +32,7 @@ lint:
 
 build: sim 
 	@$(VERILATOR) -Wall $(VERILOG_SRC) $(VERILOG_FLAGS) $(CPP_SRC)
-	@$(MAKE) -j -C obj_dir -f Vtop.mk VM_USER_OBJS="$(NEMU_HOME)/build/obj-riscv32-nemu-interpreter/src/utils/disasm.o"
+	@$(MAKE) -j -C obj_dir -f Vtop.mk
 
 run: build
 	@obj_dir/Vtop $(ARGS) $(IMG)
