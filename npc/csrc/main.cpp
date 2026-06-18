@@ -64,7 +64,7 @@ static int parse_args(int argc, char *argv[]) {
 }
 
 int main(int argc, char** argv) {
-  printf("\n\033[1m\033[36mNPC\033[0m\n\n");
+  printf("\n\033[1m\033[44;1;31mNPC\033[0m\n\n");
   parse_args(argc, argv);
   loadmemory(img_file);
   init_disasm();
