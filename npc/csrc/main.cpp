@@ -89,11 +89,6 @@ int main(int argc, char** argv) {
   top->rst=0;
   top->clk=0;
 
-  tracep->dump(contextp->time());
-  contextp->timeInc(1);
-  top->clk=!top->clk;
-  top->eval();
-
   if(batch){
     execute(-1);
   }else{
