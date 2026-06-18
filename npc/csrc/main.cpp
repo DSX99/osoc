@@ -124,7 +124,7 @@ void execute(uint32_t n){
     }
 
     raw_inst = top->top->opcode;
-    disassemble(str, 128, top->top->pc, (uint8_t)&raw_inst, 4);
+    disassemble(str, 128, top->top->pc, (uint8_t *)&raw_inst, 4);
     
     printf("%s\n", str);
 
