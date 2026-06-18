@@ -139,9 +139,9 @@ void execute(uint32_t n){
       finished = 1;
       ret = top->top->reg_mod->regs[10];
       if(ret){
-        printf("\033[1m\033[31mNOT GOOD");
+        printf("\033[1m\033[31mNOT GOOD\033[0m\n");
       }else{
-        printf("\033[1m\033[010mGOOD");
+        printf("\033[1m\033[042mGOOD\033[0m\n");
       }
       break;
     }
