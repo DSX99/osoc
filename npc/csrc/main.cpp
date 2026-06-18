@@ -26,9 +26,8 @@ Vtop* top;
 
 void execute(uint32_t n);
 void init_sdb();
-extern "C"{
-void init_disasm();
-}
+extern "C" void init_disasm();
+
 void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 
 void reset(Vtop *top,int n){
