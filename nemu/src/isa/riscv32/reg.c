@@ -48,3 +48,15 @@ word_t isa_reg_str2val(const char *s, bool *success) {
   *success=false;
   return 0;
 }
+
+bool isa_reg_cmp(word_t *regs){
+  if(memcmp(regs, cpu.gpr, sizeof(cpu.gpr))==0){
+    return 0;
+  }else{
+    return 1;
+  }
+}
+
+uint32_t *isa_reg_p(){
+  return cpu.gpr;
+}

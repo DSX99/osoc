@@ -114,6 +114,8 @@ static void statistic() {
   else Log("Finish running in less than 1 us and can not calculate the simulation frequency");
 }
 
+
+#ifdef CONFIG_ITRACE
 void print_itrace(){
   buffer_slot = (buffer_slot-1);
   if(buffer_slot<0) buffer_slot+=16;
@@ -130,6 +132,7 @@ void print_itrace(){
     }
   }
 }
+#endif
 
 void assert_fail_msg() {
   isa_reg_display();
