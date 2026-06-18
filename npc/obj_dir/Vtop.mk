@@ -37,7 +37,7 @@ VM_PREFIX = Vtop
 VM_MODPREFIX = Vtop
 # User CFLAGS (from -CFLAGS on Verilator command line)
 VM_USER_CFLAGS = \
-  -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/capstone/repo/include -I/home/dsx99/osoc/ysyx-workbench/nemu/include -DCONFIG_ISA_riscv32 \
+  -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/capstone/repo/include -I/home/dsx99/osoc/ysyx-workbench/nemu/include -g -DCONFIG_ISA_riscv32 \
 
 # User LDLIBS (from -LDFLAGS on Verilator command line)
 VM_USER_LDLIBS = \
