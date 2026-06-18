@@ -26,6 +26,7 @@ Vtop* top;
 
 void execute(uint32_t n);
 void init_sdb();
+void sdb_mainloop();
 extern "C" void init_disasm();
 
 void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
@@ -90,7 +91,8 @@ int main(int argc, char** argv) {
   if(batch){
     execute(-1);
   }else{
-    execute(1);
+    init_sdb();
+    sdb_mainloop();
   }
   
   #ifdef CONFIG_FST
