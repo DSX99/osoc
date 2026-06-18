@@ -119,10 +119,10 @@ void execute(uint32_t n){
       printf("time:%lu\n", contextp->time());
     }
 
-    inst[0] = (top->top->opcode) && 0xff;
-    inst[1] = (top->top->opcode >> 8) && 0xff;
-    inst[2] = (top->top->opcode >> 16) && 0xff;
-    inst[3] = (top->top->opcode >> 24) && 0xff;
+    inst[0] = (top->top->opcode) & 0xff;
+    inst[1] = (top->top->opcode >> 8) & 0xff;
+    inst[2] = (top->top->opcode >> 16) & 0xff;
+    inst[3] = (top->top->opcode >> 24) & 0xff;
 
     disassemble(str, 128, top->top->pc, inst, 4);
     
