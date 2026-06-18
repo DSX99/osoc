@@ -22,9 +22,9 @@
 #include <cstdint>
 #include <cstdio>
 #include <assert.h>
+#include "dpi.h"
 
 uint32_t reg_str2val(const char *s, bool *success);
-int memread(uint32_t addr);
 
 enum
 {
