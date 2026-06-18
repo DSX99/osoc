@@ -143,6 +143,15 @@ void execute(uint32_t n){
     top->eval();
   
     if(contextp->gotFinish()){
+      if(!batch){
+        inst[0] = (top->top->opcode) & 0xff;
+        inst[1] = (top->top->opcode >> 8) & 0xff;
+        inst[2] = (top->top->opcode >> 16) & 0xff;
+        inst[3] = (top->top->opcode >> 24) & 0xff;
+        printf("0x%08x: %02x %02x %02x %02x ", top->top->pc, inst[3], inst[2], inst[1], inst[0]);
+        disassemble(str, 128, top->top->pc, inst, 4);
+        printf("%s\n", str);
+      }
       finished = 1;
       ret = top->top->reg_mod->regs[10];
       if(ret){
@@ -171,7 +180,7 @@ void reg_display() {
     }
     printf("\n");
   }
-  printf("pc(pc):0x%08x\n",top->top->pc);
+  printf("next pc:0x%08x\n",top->top->pc);
 }
 
 uint32_t reg_str2val(const char *s, bool *success) {
