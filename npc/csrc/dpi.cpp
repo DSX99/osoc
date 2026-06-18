@@ -18,10 +18,7 @@ static const uint32_t img [] = {
 
 
 
-#ifdef __cplusplus
 extern "C" {
-#endif
-
     void loadmemory(char *img_file) {
         if (img_file == NULL) {
             printf("No image is given.\n");
@@ -73,6 +70,4 @@ extern "C" {
         }
         return ((mem[addr-ROM_OFFSET+3]<<24)|(mem[addr-ROM_OFFSET+2]<<16)|(mem[addr-ROM_OFFSET+1]<<8)|(mem[addr-ROM_OFFSET]));
     }
-#ifdef __cplusplus
 }
-#endif

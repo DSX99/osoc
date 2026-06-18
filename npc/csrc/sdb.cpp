@@ -17,8 +17,7 @@
 #include <readline/history.h>
 #include <cstdlib>
 #include <cstdint>
-
-int memread(uint32_t addr);
+#include "dpi.h"
 
 static int is_batch_mode = false;
 static char prev_cmd[128];
