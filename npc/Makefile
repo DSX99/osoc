@@ -1,5 +1,11 @@
 include ../Makefile
 
+CONFIG_ITRACE=y
+CONFIG_IQUEUE=y
+
+include $(NEMU_HOME)/src/utils/filelist.mk
+
+
 .DEFAULT_GOAL  := lint
 VERILATOR = verilator
 VERILOG_SRC = vsrc/*.sv
@@ -8,8 +14,9 @@ CPP_SRC = csrc/*.cpp
 IMG ?= 
 ARGS ?= 
 
-LDFLAGS += -lreadline
-VERILOG_FLAGS := -cc --exe -Wno-EOFNEWLINE --top-module top --trace-fst -LDFLAGS "$(LDFLAGS)"
+VERILATOR_CFLAGS += -I$(NEMU_HOME)/tools/capstone/repo/include
+LDFLAGS += -lreadline -L$(NEMU_HOME)/tools/capstone/repo -lcapstone
+VERILOG_FLAGS := -cc --exe -Wno-EOFNEWLINE --top-module top --trace-fst -LDFLAGS "$(LDFLAGS)" -CFLAGS "$(VERILATOR_CFLAGS)"
 
 LIBCAPSTONE = $(NEMU_HOME)/tools/capstone/repo/libcapstone.so.5
 
@@ -19,12 +26,12 @@ sim:
 lint:
 	@$(VERILATOR) --lint-only -Wall $(VERILOG_SRC) -Wno-EOFNEWLINE --top-module top
 
-$(LIBCAPSTONE):
-	$(MAKE) -C $(NEMU_HOME)/tools/capstone
+disasm:
+	$(MAKE) -C $(NEMU_HOME)
 
-build: sim $(LIBCAPSTONE)
-	@$(VERILATOR) -Wall $(VERILOG_SRC) $(VERILOG_FLAGS) $(CPP_SRC)
-	@$(MAKE) -j -C obj_dir -f Vtop.mk
+build: sim disasm
+	@$(VERILATOR) -Wall $(VERILOG_SRC) $(VERILOG_FLAGS) $(CPP_SRC) $(NEMU_HOME)/src/utils/disasm.c
+	@$(MAKE) -j -C obj_dir -f Vtop.mk USER_CPPFLAGS="-I$(NEMU_HOME)/tools/capstone/repo/include"
 
 run: build
 	@obj_dir/Vtop $(ARGS) $(IMG)
@@ -36,4 +43,4 @@ gdb: build
 clean:
 	rm -rf obj_dir
 
-.PHONY: sim build run lint clean
+.PHONY: sim build run lint clean disasm
