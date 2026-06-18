@@ -10,7 +10,7 @@ VERILATOR = verilator
 VERILOG_SRC = vsrc/*.sv
 CPP_SRC = csrc/*.cpp
 
-CPP_SRC += $(NEMU_HOME)/src/utils/disasm.c
+DISASM_SRC = $(NEMU_HOME)/src/utils/disasm.c
 
 IMG ?= 
 ARGS ?= 
@@ -32,7 +32,8 @@ lint:
 
 build: sim 
 	@$(VERILATOR) -Wall $(VERILOG_SRC) $(VERILOG_FLAGS) $(CPP_SRC)
-	@$(MAKE) -j -C obj_dir -f Vtop.mk
+	@gcc -c $(VERILATOR_CFLAGS) -O2 $(DISASM_SRC) -o obj_dir/disasm.o
+	@$(MAKE) -j -C obj_dir -f Vtop.mk VM_USER_OBJS="disasm.o"
 
 run: build
 	@obj_dir/Vtop $(ARGS) $(IMG)
