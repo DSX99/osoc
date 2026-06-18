@@ -44,6 +44,7 @@ run: build
 	@LD_LIBRARY_PATH=$(NEMU_HOME)/tools/capstone/repo obj_dir/Vtop $(ARGS) $(IMG)
 
 gdb: build
+	VERILATOR_CFLAGS += -g
 	@--gdb -CFLAGS "-g"
 	@gdb --args obj_dir/Vtop $(ARGS) $(IMG)
 
