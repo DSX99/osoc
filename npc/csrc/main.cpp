@@ -9,7 +9,7 @@
 #include "dpi.h"
 
 #define CONFIG_FST
-#define MAX_SIM_TIME 10*1024
+#define MAX_SIM_TIME 1024*1024
 
 
 #ifdef CONFIG_FST
