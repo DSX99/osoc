@@ -1,5 +1,6 @@
 module lsu(
     input logic we,
+    input logic le,
     input logic [31:0] data_in,
     input logic [31:0] addr,
     input logic [2:0] oper,
