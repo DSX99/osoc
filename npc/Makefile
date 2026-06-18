@@ -22,7 +22,7 @@ lint:
 $(LIBCAPSTONE):
 	$(MAKE) -C $(NEMU_HOME)/tools/capstone
 
-build: sim disasm
+build: sim $(LIBCAPSTONE)
 	@$(VERILATOR) -Wall $(VERILOG_SRC) $(VERILOG_FLAGS) $(CPP_SRC)
 	@$(MAKE) -j -C obj_dir -f Vtop.mk
 
@@ -36,4 +36,4 @@ gdb: build
 clean:
 	rm -rf obj_dir
 
-.PHONY: sim build run lint clean disasm
+.PHONY: sim build run lint clean
