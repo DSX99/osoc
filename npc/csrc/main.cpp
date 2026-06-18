@@ -28,6 +28,7 @@ void execute(uint32_t n);
 void init_sdb();
 void sdb_mainloop();
 extern "C" void init_disasm();
+extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 
 void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 
