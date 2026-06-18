@@ -122,7 +122,7 @@ const char *regs[] = {
 void execute(uint32_t n){
 
   if(finished){
-    printf("Program finished");
+    printf("Program finished\n");
     return;
   }
   char str[128];
