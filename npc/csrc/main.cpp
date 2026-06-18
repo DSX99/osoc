@@ -134,14 +134,15 @@ void execute(uint32_t n){
     contextp->timeInc(1);
     top->clk=!top->clk;
     top->eval();
-
-    raw_inst = top->top->opcode;
-    disassemble(str, 128, top->top->pc, (uint8_t *)&raw_inst, 4);
-    printf("%s\n", str);
   
     if(contextp->gotFinish()){
       finished = 1;
       ret = top->top->reg_mod->regs[10];
+      if(ret){
+
+      }else{
+        printf("\033[033mGOOD")
+      }
       break;
     }
     n--;

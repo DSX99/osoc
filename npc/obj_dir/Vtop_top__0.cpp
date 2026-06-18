@@ -53,6 +53,7 @@ void Vtop_top___ico_sequent__TOP__top__0(Vtop_top* vlSelf) {
     vlSelfRef.__PVT__alu_op = 0U;
     vlSelfRef.__PVT__imm = 0U;
     vlSelfRef.__PVT__lsu_we = 0U;
+    vlSelfRef.__PVT__lsu_le = 0U;
     vlSelfRef.__PVT__mux_select = 0U;
     if ((0x00000040U & vlSelfRef.opcode)) {
         if ((0x00000020U & vlSelfRef.opcode)) {
@@ -76,7 +77,7 @@ void Vtop_top___ico_sequent__TOP__top__0(Vtop_top* vlSelf) {
                                     = (0x000000c0U 
                                        | (7U & (vlSelfRef.opcode 
                                                 >> 0x0000000cU)));
-                                VL_FINISH_MT("vsrc/decode.sv", 117, "");
+                                VL_FINISH_MT("vsrc/decode.sv", 118, "");
                             }
                         }
                     }
@@ -484,6 +485,7 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
     vlSelfRef.__PVT__alu_op = 0U;
     vlSelfRef.__PVT__imm = 0U;
     vlSelfRef.__PVT__lsu_we = 0U;
+    vlSelfRef.__PVT__lsu_le = 0U;
     vlSelfRef.__PVT__mux_select = 0U;
     if ((0x00000040U & vlSelfRef.opcode)) {
         if ((0x00000020U & vlSelfRef.opcode)) {
@@ -507,7 +509,7 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
                                     = (0x000000c0U 
                                        | (7U & (vlSelfRef.opcode 
                                                 >> 0x0000000cU)));
-                                VL_FINISH_MT("vsrc/decode.sv", 117, "");
+                                VL_FINISH_MT("vsrc/decode.sv", 118, "");
                             }
                         }
                     }
