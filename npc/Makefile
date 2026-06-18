@@ -31,7 +31,7 @@ disasm:
 
 build: sim disasm
 	@$(VERILATOR) -Wall $(VERILOG_SRC) $(VERILOG_FLAGS) $(CPP_SRC) $(NEMU_HOME)/src/utils/disasm.c
-	@$(MAKE) -j -C obj_dir -f Vtop.mk USER_CPPFLAGS="-I$(NEMU_HOME)/tools/capstone/repo/include"
+	@$(MAKE) -j -C obj_dir -f Vtop.mk VM_USER_OBJECTS="$(NEMU_HOME)/build/obj-riscv32-nemu-interpreter/src/utils/disasm.o"
 
 run: build
 	@obj_dir/Vtop $(ARGS) $(IMG)
