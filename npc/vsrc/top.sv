@@ -25,7 +25,7 @@ lsu lsu_mod(
 );
 
 decode decode_mod(
-    .inst(opcode), .imm(imm), .alu_op(alu_op), .rs1(rs1), .rs2(rs2), .rd(rd), .lsu_we(lsu_we), .lsu_;e(lsu_le), .mux_select(mux_select), .lsu_oper(lsu_oper)
+    .inst(opcode), .imm(imm), .alu_op(alu_op), .rs1(rs1), .rs2(rs2), .rd(rd), .lsu_we(lsu_we), .lsu_le(lsu_le), .mux_select(mux_select), .lsu_oper(lsu_oper)
 );
 
 alu alu_mod(
