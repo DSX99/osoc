@@ -36,7 +36,7 @@ module alu (
                 3: data_out = {31'b0,val1<val2};
                 4: data_out = val1^val2;
                 5: begin
-                    if(alu_op[3]) data_out = val1 >>> val2[4:0];
+                    if(alu_op[3]) data_out = $signed(val1) >>> val2[4:0];
                     else data_out = val1 >> val2[4:0];
                 end 
                 6: data_out = val1|val2;
