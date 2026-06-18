@@ -118,6 +118,7 @@ void execute(uint32_t n){
     
     if(contextp->time() > MAX_SIM_TIME){
       ret = top->top->reg_mod->regs[10];
+      break;
     }
     if(!((contextp->time()) % 1000)&&batch){
       printf("time:%lu\n", contextp->time());
