@@ -30,6 +30,7 @@ void sdb_mainloop();
 bool check_watchpoints();
 void difftest_init(int port);
 void difftest_exec(uint64_t n);
+void difftest_regcpy(uint32_t *regs, bool direction);
 extern "C" void init_disasm();
 extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 
@@ -118,6 +119,8 @@ void execute(uint32_t n){
   }
   char str[128];
   uint8_t inst[4];
+  uint32_t ref_regs[32];
+
   while(n>0){
 
     #ifdef CONFIG_FST
@@ -173,6 +176,15 @@ void execute(uint32_t n){
       break;
     }
     n--;
+
+    difftest_regcpy(ref_regs, 0);
+    for(int i=0;i<32;i++){
+      if(ref_regs[i]-top->top->reg_mod->regs[i]!=0){
+        printf("Difference with REF %s, should:%u, actually:%u\n", regs[i], ref_regs[i], top->top->reg_mod->regs[i]);
+        ret=1;
+        return;
+      }
+    }
   }
 }
 
