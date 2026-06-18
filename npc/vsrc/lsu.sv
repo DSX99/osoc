@@ -23,7 +23,7 @@ module lsu(
 
     always_comb begin
         data_out = 0;
-        if(we) begin
+        if(le) begin
             case(oper)
                 0: begin //LB
                     A = memread(addr);
@@ -47,7 +47,7 @@ module lsu(
                 end 
             endcase
         end
-        if(se) begin
+        if(we) begin
             case(oper)
                 0: begin //SB
                     memwrite(addr, data_in, 0);
