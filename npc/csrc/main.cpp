@@ -28,9 +28,11 @@ void execute(uint32_t n);
 void init_sdb();
 void sdb_mainloop();
 bool check_watchpoints();
+extern "C" {
 void difftest_init(int port);
 void difftest_exec(uint64_t n);
 void difftest_regcpy(uint32_t *regs, bool direction);
+}
 extern "C" void init_disasm();
 extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 
