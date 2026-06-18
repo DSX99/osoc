@@ -118,7 +118,7 @@ void Vtop_top___ico_sequent__TOP__top__0(Vtop_top* vlSelf) {
                                                    >> 0x0000000fU));
                         vlSelfRef.__PVT__rs2 = (0x0000001fU 
                                                 & (vlSelfRef.opcode 
-                                                   >> 0x00000014U));
+                                                   >> 0x0000000fU));
                         vlSelfRef.__PVT__imm = vlSelfRef.__PVT__decode_mod__DOT__imm_i;
                         vlSelfRef.__PVT__alu_op = 0x90U;
                         vlSelfRef.__PVT__mux_select = 2U;
@@ -553,7 +553,7 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
                                                    >> 0x0000000fU));
                         vlSelfRef.__PVT__rs2 = (0x0000001fU 
                                                 & (vlSelfRef.opcode 
-                                                   >> 0x00000014U));
+                                                   >> 0x0000000fU));
                         vlSelfRef.__PVT__imm = vlSelfRef.__PVT__decode_mod__DOT__imm_i;
                         vlSelfRef.__PVT__alu_op = 0x90U;
                         vlSelfRef.__PVT__mux_select = 2U;
