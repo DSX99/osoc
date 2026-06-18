@@ -16,11 +16,9 @@ ARGS ?=
 VERILATOR_CFLAGS += -I$(NEMU_HOME)/tools/capstone/repo/include -I$(NEMU_HOME)/include -g
 VERILATOR_CFLAGS += -DCONFIG_ISA_riscv32
 
-# FIX 1: Provide the exact absolute path to the object file we will compile
 DISASM_OBJ = $(abspath obj_dir/disasm.o)
 
-# FIX 2: Explicitly pass the object binary straight into the Linker flags
-LDFLAGS += -lreadline -L$(NEMU_HOME)/tools/capstone/repo -lcapstone $(DISASM_OBJ)
+LDFLAGS += -lreadline -L$(NEMU_HOME)/tools/capstone/repo -lcapstone $(DISASM_OBJ) $(NEMU_HOME)/build/riscv32-nemu-interpreter-so
 
 VERILOG_FLAGS := -cc --exe -Wno-EOFNEWLINE --top-module top --trace-fst -LDFLAGS "$(LDFLAGS)" -CFLAGS "$(VERILATOR_CFLAGS)"
 
@@ -37,7 +35,6 @@ build: sim
 	# FIX 3: Compile disasm.o BEFORE Verilator runs, so $(DISASM_OBJ) exists when linking
 	@gcc -c $(VERILATOR_CFLAGS) -O2 $(NEMU_HOME)/src/utils/disasm.c -o obj_dir/disasm.o
 	@$(VERILATOR) -Wall $(VERILOG_SRC) $(VERILOG_FLAGS) $(CPP_SRC)
-	# FIX 4: Call standard Make without the broken VM_USER_OBJS assignment
 	@$(MAKE) -j -C obj_dir -f Vtop.mk
 
 run: build
