@@ -162,7 +162,7 @@ void execute(uint32_t n){
       }
       break;
     }
-    if(check_watchpoints){
+    if(check_watchpoints()){
       break;
     }
     n--;
