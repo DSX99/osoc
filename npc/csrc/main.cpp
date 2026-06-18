@@ -192,13 +192,6 @@ void execute(uint32_t n){
     for(int i=0;i<32;i++){
       if(ref_regs[i]-top->top->reg_mod->regs[i]!=0){
         printf("Difference with REF %s, should:0x%08x, actually:0x%08x\n", regs[i], ref_regs[i], top->top->reg_mod->regs[i]);
-        inst[0] = (top->top->opcode) & 0xff;
-        inst[1] = (top->top->opcode >> 8) & 0xff;
-        inst[2] = (top->top->opcode >> 16) & 0xff;
-        inst[3] = (top->top->opcode >> 24) & 0xff;
-        printf("0x%08x: %02x %02x %02x %02x ", top->top->pc, inst[3], inst[2], inst[1], inst[0]);
-        disassemble(str, 128, top->top->pc, inst, 4);
-        printf("%s\n", str);
         ret=1;
         return;
       }
