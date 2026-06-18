@@ -23,8 +23,8 @@
 #include <cstdio>
 #include <assert.h>
 
-uint32_t paddr_read(uint32_t addr, int len);
 uint32_t reg_str2val(const char *s, bool *success);
+int memread(uint32_t addr);
 
 enum
 {
@@ -297,7 +297,7 @@ unsigned eval(int p, int q, bool *success)
           *success = false;
           return 0;
         }
-        return paddr_read(addr, 4);
+        return memread(addr);
       }
       else
       {
