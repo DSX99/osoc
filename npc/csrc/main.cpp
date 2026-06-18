@@ -120,7 +120,6 @@ const char *regs[] = {
 
 
 void execute(uint32_t n){
-  difftest_exec(n);
 
   if(finished){
     printf("Program finished");
@@ -153,6 +152,8 @@ void execute(uint32_t n){
       disassemble(str, 128, top->top->pc, inst, 4);
       printf("%s\n", str);
     }
+
+    difftest_exec(1);
 
     contextp->timeInc(1);
     top->clk=!top->clk;
