@@ -32,11 +32,9 @@ extern "C" {
 void difftest_init(int port);
 void difftest_exec(uint64_t n);
 void difftest_regcpy(uint32_t *regs, bool direction);
-}
-extern "C" void init_disasm();
-extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
-
+void init_disasm();
 void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
+}
 
 void reset(Vtop *top,int n){
   top->rst=1;

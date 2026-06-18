@@ -29,7 +29,7 @@ void init_wp_pool();
 void info_wp();
 void create_wp(char *s);
 bool delete_wp(int n);
-void print_itrace();
+// void print_itrace();
 void print_ftrace();
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
@@ -174,12 +174,12 @@ static int cmd_sir(char *args) {
   return 0;
 }
 
-static int cmd_itrace(char *args) {
+// static int cmd_itrace(char *args) {
 
-  print_itrace();
+//   print_itrace();
 
-  return 0;
-}
+//   return 0;
+// }
 
 static int cmd_ftrace(char *args) {
 
