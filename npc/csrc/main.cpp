@@ -104,6 +104,10 @@ int main(int argc, char** argv) {
 }
 
 void execute(uint32_t n){
+  if(finished){
+    printf("Program finished");
+    return;
+  }
   char str[128];
   uint8_t inst[4];
   while(n>0){
@@ -126,7 +130,7 @@ void execute(uint32_t n){
 
     disassemble(str, 128, top->top->pc, inst, 4);
     
-    printf("%s", str);
+    printf("%s\n", str);
 
     contextp->timeInc(1);
     top->clk=!top->clk;
