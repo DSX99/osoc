@@ -41,6 +41,7 @@ module decode(
         alu_op      = 8'b0;
         imm         = 32'b0;
         lsu_we      = 1'b0;
+        lsu_le      = 1'b0;
         mux_select  = 2'b0;
 
         case(inst[6:0])
