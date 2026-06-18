@@ -18,7 +18,7 @@ VERILATOR_CFLAGS += -DCONFIG_ISA_riscv32
 
 DISASM_OBJ = $(abspath obj_dir/disasm.o)
 
-LDFLAGS += -lreadline -L$(NEMU_HOME)/tools/capstone/repo -lcapstone $(DISASM_OBJ) $(NEMU_HOME)/build/riscv32-nemu-interpreter-so
+LDFLAGS += -lreadline -L$(NEMU_HOME)/tools/capstone/repo -lcapstone $(DISASM_OBJ) -L$(NEMU_HOME)/build/riscv32-nemu-interpreter-so
 
 VERILOG_FLAGS := -cc --exe -Wno-EOFNEWLINE --top-module top --trace-fst -LDFLAGS "$(LDFLAGS)" -CFLAGS "$(VERILATOR_CFLAGS)"
 
@@ -32,13 +32,12 @@ lint:
 
 build: sim 
 	@mkdir -p obj_dir
-	# FIX 3: Compile disasm.o BEFORE Verilator runs, so $(DISASM_OBJ) exists when linking
 	@gcc -c $(VERILATOR_CFLAGS) -O2 $(NEMU_HOME)/src/utils/disasm.c -o obj_dir/disasm.o
 	@$(VERILATOR) -Wall $(VERILOG_SRC) $(VERILOG_FLAGS) $(CPP_SRC)
 	@$(MAKE) -j -C obj_dir -f Vtop.mk
 
 run: build
-	@LD_LIBRARY_PATH=$(NEMU_HOME)/tools/capstone/repo obj_dir/Vtop $(ARGS) $(IMG)
+	@LD_LIBRARY_PATH=$(NEMU_HOME)/tools/capstone/repo:$(NEMU_HOME)/build obj_dir/Vtop $(ARGS) $(IMG)
 
 gdb: build
 	@--gdb -CFLAGS "-g"
