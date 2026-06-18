@@ -125,7 +125,9 @@ void execute(uint32_t n){
     if(contextp->gotFinish()){
       finished = 1;
       ret = top->top->reg_mod->regs[10];
+      break;
     }
+    n--;
   }
 }
 
