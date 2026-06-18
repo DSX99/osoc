@@ -11,7 +11,7 @@ ARGS ?=
 LDFLAGS += -lreadline
 VERILOG_FLAGS := -cc --exe -Wno-EOFNEWLINE --top-module top --trace-fst -LDFLAGS "$(LDFLAGS)"
 
-LIBCAPSTONE = $(NEMU_HOME)/src/utils
+LIBCAPSTONE = $(NEMU_HOME)/tools/capstone/repo/libcapstone.so.5
 
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
@@ -19,8 +19,8 @@ sim:
 lint:
 	@$(VERILATOR) --lint-only -Wall $(VERILOG_SRC) -Wno-EOFNEWLINE --top-module top
 
-disasm:
-	$(MAKE) -C $(NEMU_HOME)/src/utils/ -f filelist.mk
+$(LIBCAPSTONE):
+	$(MAKE) -C $(NEMU_HOME)/tools/capstone
 
 build: sim disasm
 	@$(VERILATOR) -Wall $(VERILOG_SRC) $(VERILOG_FLAGS) $(CPP_SRC)
