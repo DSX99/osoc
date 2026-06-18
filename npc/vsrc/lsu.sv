@@ -36,21 +36,25 @@ module lsu(
                     A = memread(addr);
                     data_out = A[31:0];
                 end 
-                3: begin //LBU
+                4: begin //LBU
                     A = memread(addr);
                     data_out = {24'b0,A[7:0]};
                 end 
-                4: begin //LHU
+                5: begin //LHU
                     A = memread(addr);
                     data_out = {16'b0,A[15:0]};
                 end 
-                5: begin //SB
+            endcase
+        end
+        if(se) begin
+            case(oper)
+                0: begin //SB
                     memwrite(addr, data_in, 0);
                 end 
-                6: begin //SH
+                1: begin //SH
                     memwrite(addr, data_in, 1);
                 end 
-                7: begin //SW
+                2: begin //SW
                     memwrite(addr, data_in, 2);
                 end
             endcase

@@ -10,7 +10,7 @@ logic [7:0] alu_op;
 logic [4:0] rs1, rs2, rd;
 logic [2:0] lsu_oper;
 logic [1:0] mux_select;
-logic branch, lsu_we;
+logic branch, lsu_we, lsu_le;
 
 regs reg_mod(
     .clk(clk), .rst(rst), .data_in(to_regs), .rs1(rs1), .rs2(rs2), .rd(rd), .data_rs1(data_rs1), .data_rs2(data_rs2)
@@ -21,11 +21,11 @@ pc pc_mod(
 );
 
 lsu lsu_mod(
-    .data_in(data_rs2), .addr(alu_out), .oper(lsu_oper), .we(lsu_we), .data_out(lsu_out)
+    .data_in(data_rs2), .addr(alu_out), .oper(lsu_oper), .we(lsu_we), .le(lsu_le), .data_out(lsu_out)
 );
 
 decode decode_mod(
-    .inst(opcode), .imm(imm), .alu_op(alu_op), .rs1(rs1), .rs2(rs2), .rd(rd), .lsu_we(lsu_we), .mux_select(mux_select), .lsu_oper(lsu_oper)
+    .inst(opcode), .imm(imm), .alu_op(alu_op), .rs1(rs1), .rs2(rs2), .rd(rd), .lsu_we(lsu_we), .lsu_;e(lsu_le), .mux_select(mux_select), .lsu_oper(lsu_oper)
 );
 
 alu alu_mod(

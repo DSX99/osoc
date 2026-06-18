@@ -6,6 +6,7 @@ module decode(
     output logic [4:0] rs2,
     output logic [4:0] rd,
     output logic lsu_we,
+    output logic lsu_le,
     output logic [1:0] mux_select,
     output logic [2:0] lsu_oper
 );
@@ -78,7 +79,7 @@ module decode(
                 imm      = imm_i;
                 alu_op   = 8'b10000000;          
                 lsu_oper = func3;
-                lsu_we       = 1'b1;
+                lsu_le       = 1'b1;
                 mux_select = 2'b01;
             end
             7'b0100011: begin // STORE (SB, SH, SW)
