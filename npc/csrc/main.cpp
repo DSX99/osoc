@@ -125,3 +125,36 @@ void execute(uint32_t n){
     }
   }
 }
+
+const char *regs[] = {
+  "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
+  "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
+  "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
+  "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
+};
+
+void reg_display() {
+  printf("Regs values:\n");
+  for(int i = 0; i<4; i++){
+    for(int j = 0; j<8; j++){
+      printf("%s(%02d):%08x   ", regs[8*i+j],8*i+j,top->top->reg_mod->regs[8*i+j]);
+    }
+    printf("\n");
+  }
+  printf("pc(pc):0x%08x\n",top->top->pc);
+}
+
+uint32_t reg_str2val(const char *s, bool *success) {
+  if(strcmp(s,"pc")==0){
+    return top->top->pc;
+  }
+  for(int i=0;i<32;i++){
+    if(strcmp(s,regs[i])==0){
+      return top->top->reg_mod->regs[i];
+    }
+  }
+
+  printf("please input a correct reg name\n");
+  *success=false;
+  return 0;
+}

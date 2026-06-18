@@ -24,7 +24,7 @@
 #include <assert.h>
 
 uint32_t paddr_read(uint32_t addr, int len);
-uint32_t isa_reg_str2val(const char *s, bool *success);
+uint32_t reg_str2val(const char *s, bool *success);
 
 enum
 {
@@ -221,7 +221,7 @@ unsigned eval(int p, int q, bool *success)
       }
     }
     case 'r':
-      return isa_reg_str2val(tokens[p].str + 1, success);
+      return reg_str2val(tokens[p].str + 1, success);
     }
   }
   else if (check_parentheses(p, q) == true)
