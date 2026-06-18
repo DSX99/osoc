@@ -131,9 +131,7 @@ static bool make_token(char *e)
           return 0;
         }
         tokens[nr_token].type = rules[i].token_type;
-        if(rules[i].token_type=='v'){
-          substr_len= substr_len-1;
-        }
+        
         strncpy(tokens[nr_token].str, substr_start, substr_len);
         tokens[nr_token].str[substr_len + 1] = '\0';
         nr_token++;
@@ -358,8 +356,7 @@ uint32_t expr(char *e, bool *success)
       if (i == 0)
       {
         tokens[i].type = DEREF;
-      }
-      if (tokens[i - 1].type != 'v' && tokens[i - 1].type != 'h' && tokens[i - 1].type != 'r' && tokens[i - 1].type != ')')
+      }else if (tokens[i - 1].type != 'v' && tokens[i - 1].type != 'h' && tokens[i - 1].type != 'r' && tokens[i - 1].type != ')')
       {
         tokens[i].type = DEREF;
       }
