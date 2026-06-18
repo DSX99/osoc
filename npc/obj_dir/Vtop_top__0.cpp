@@ -285,7 +285,7 @@ void Vtop_top___ico_sequent__TOP__top__1(Vtop_top* vlSelf) {
     Vtop__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     auto& vlSelfRef = std::ref(*vlSelf).get();
     // Body
-    vlSelfRef.__PVT__alu_mod__DOT__val1 = ((0x00000040U 
+    vlSelfRef.__PVT__alu_mod__DOT__val1 = ((0x00000080U 
                                             & (IData)(vlSelfRef.__PVT__alu_op))
                                             ? vlSelfRef.pc
                                             : vlSymsp->TOP__top__reg_mod.__PVT__data_rs1);
@@ -313,7 +313,7 @@ void Vtop_top___ico_sequent__TOP__top__1(Vtop_top* vlSelf) {
             }
         }
     }
-    vlSelfRef.__PVT__alu_mod__DOT__val2 = ((0x00000080U 
+    vlSelfRef.__PVT__alu_mod__DOT__val2 = ((0x00000040U 
                                             & (IData)(vlSelfRef.__PVT__alu_op))
                                             ? vlSelfRef.__PVT__imm
                                             : vlSymsp->TOP__top__reg_mod.__PVT__data_rs2);
