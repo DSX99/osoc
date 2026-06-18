@@ -13,7 +13,7 @@ CPP_SRC = csrc/*.cpp
 IMG ?= 
 ARGS ?= 
 
-VERILATOR_CFLAGS += -I$(NEMU_HOME)/tools/capstone/repo/include -I$(NEMU_HOME)/include
+VERILATOR_CFLAGS += -I$(NEMU_HOME)/tools/capstone/repo/include -I$(NEMU_HOME)/include -g
 VERILATOR_CFLAGS += -DCONFIG_ISA_riscv32
 
 # FIX 1: Provide the exact absolute path to the object file we will compile
@@ -44,7 +44,6 @@ run: build
 	@LD_LIBRARY_PATH=$(NEMU_HOME)/tools/capstone/repo obj_dir/Vtop $(ARGS) $(IMG)
 
 gdb: build
-	VERILATOR_CFLAGS += -g
 	@--gdb -CFLAGS "-g"
 	@gdb --args obj_dir/Vtop $(ARGS) $(IMG)
 
