@@ -13,13 +13,13 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+#include <isa.h>
+#include <cpu/cpu.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
-#include <cstdlib>
-#include "dpi.h"
 
-#define ARRLEN(x) (sizeof(x) / sizeof((x)[0]))
+uint32_t paddr_read(paddr_t addr, int len);
 
 static int is_batch_mode = false;
 static char prev_cmd[128];
@@ -29,10 +29,9 @@ void init_wp_pool();
 void info_wp();
 void create_wp(char *s);
 bool delete_wp(int n);
-void execute(uint32_t n);
-uint32_t expr(char *e, bool *success);
-void isa_reg_display();
-
+void print_itrace();
+void print_ftrace();
+void reg_display();
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
@@ -53,7 +52,7 @@ static char* rl_gets() {
 }
 
 static int cmd_c(char *args) {
-  execute(-1);
+  cpu_exec(-1);
   return 0;
 }
 
@@ -66,7 +65,7 @@ static int cmd_si(char *args) {
   char *endptr;
 
   if(args == NULL){ 
-    execute(1);  
+    cpu_exec(1);  
     return 0;
   }else{
     long val = strtol(args, &endptr, 0);
@@ -74,7 +73,7 @@ static int cmd_si(char *args) {
       printf("Correct use si N , where N is an integer.\n");
       return 0;
     }
-    execute(val);
+    cpu_exec(val);
     return 0;
   }
 }
@@ -84,7 +83,7 @@ static int cmd_info(char *args) {
     printf("Correct use info SUBCMD , where SUBCMD is r for register info or w for watchpoint info.\n");
   }
   if((*args) == 'r'){
-    isa_reg_display();
+    reg_display();
   }else if ((*args) == 'w'){
     info_wp();
   }else{
@@ -117,7 +116,7 @@ static int cmd_x(char *args) {
       return 0;
     }
     for(int i=0; i<size; i++){
-      printf("mem[%x]=%x\n",(uint32_t)(val+i*4),memread(val+i*4));
+      printf("mem[%x]=%x\n",(uint32_t)(val+i*4),paddr_read(val+i*4,4));
     }
     return 0;
   }
@@ -170,11 +169,26 @@ static int cmd_d(char *args) {
 
 static int cmd_sir(char *args) {
 
-  execute(1);  
-  isa_reg_display();
+  cpu_exec(1);  
+  reg_display();
   
   return 0;
 }
+
+static int cmd_itrace(char *args) {
+
+  print_itrace();
+
+  return 0;
+}
+
+static int cmd_ftrace(char *args) {
+
+  print_ftrace();
+
+  return 0;
+}
+
 
 static int cmd_help(char *args);
 
@@ -192,9 +206,13 @@ static struct {
   { "p", " p EXPR Find the value of the expression EXPR, for EXPR supported operations also  p h EXPR valid for hex out", cmd_p },
   { "w", " w EXPR Suspend program execution when the value of expression EXPR changes.", cmd_w },
   { "d", " d N Deletes the watchpoint with ID N.", cmd_d },
-  { "sir", " si 1 + info r.", cmd_sir }
+  { "sir", " si 1 + info r.", cmd_sir },
+  { "itrace", " print trace of 16 last instructions ", cmd_itrace },
+  { "ftrace", " print trace of 16 last function calls ", cmd_ftrace }
 };
 
+
+#define ARRLEN(x) sizeof(x)/sizeof(x[0])
 #define NR_CMD ARRLEN(cmd_table)
 
 static int cmd_help(char *args) {
@@ -262,6 +280,11 @@ void sdb_mainloop() {
     if (args >= str_end) {
       args = NULL;
     }
+
+#ifdef CONFIG_DEVICE
+    extern void sdl_clear_event_queue();
+    sdl_clear_event_queue();
+#endif
 
     int i;
     int hand;

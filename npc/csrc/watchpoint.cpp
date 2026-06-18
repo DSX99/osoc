@@ -14,12 +14,8 @@
  ***************************************************************************************/
 
 #include "sdb.h"
-#include <stdio.h>
-#include <cstring>
 
 #define NR_WP 6
-
-uint32_t expr(char *e, bool *success);
 
 typedef struct token
 {

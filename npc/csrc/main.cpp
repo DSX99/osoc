@@ -3,7 +3,6 @@
 #include <getopt.h>
 #include <verilated.h>
 #include "Vtop.h"
-#include "dpi.h"
 #include "Vtop___024root.h"
 #include "Vtop_top.h"
 #include "Vtop_regs.h"
@@ -90,8 +89,7 @@ int main(int argc, char** argv) {
   if(batch){
     execute(-1);
   }else{
-    init_sdb();
-    sdb_mainloop();
+    execute(1);
   }
   
   #ifdef CONFIG_FST
@@ -120,54 +118,10 @@ void execute(uint32_t n){
     contextp->timeInc(1);
     top->clk=!top->clk;
     top->eval();
-
-    inst[0] = top->top->opcode && 0xff;
-    inst[1] = (top->top->opcode >> 8) && 0xff;
-    inst[2] = (top->top->opcode >> 16) && 0xff;
-    inst[3] = (top->top->opcode >> 24) && 0xff;
-
-    if(n<10){
-      disassemble(str, 128, top->top->pc , inst , 4);
-    }
   
     if(contextp->gotFinish()){
       finished = 1;
       ret = top->top->reg_mod->regs[10];
     }
   }
-}
-
-
-
-const char *regs[] = {
-  "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
-  "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
-  "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
-  "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
-};
-
-void isa_reg_display() {
-  printf("Regs values:\n");
-  for(int i = 0; i<4; i++){
-    for(int j = 0; j<8; j++){
-      printf("%s(%02d):%08x   ", regs[8*i+j],8*i+j,top->top->reg_mod->regs[8*i+j]);
-    }
-    printf("\n");
-  }
-  printf("pc(pc):0x%08x\n",top->top->pc);
-}
-
-uint32_t isa_reg_str2val(const char *s, bool *success) {
-  if(strcmp(s,"pc")==0){
-    return top->top->pc;
-  }
-  for(int i=0;i<32;i++){
-    if(strcmp(s,regs[i])==0){
-      return top->top->reg_mod->regs[i];
-    }
-  }
-
-  printf("please input a correct reg name\n");
-  *success=false;
-  return 0;
 }

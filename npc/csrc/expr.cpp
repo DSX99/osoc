@@ -13,21 +13,19 @@
  * See the Mulan PSL v2 for more details.
  ***************************************************************************************/
 
+#include <isa.h>
 #include <string.h>
 #include <stdlib.h>
-#include <stdbool.h>
-#include <cstdio>
-#include <cassert>
-#include "dpi.h"
 /* We use the POSIX regex functions to process regular expressions.
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
+#include <cstdint>
+#include <cstdio>
+#include <assert.h>
 
-#define ARRLEN(x) (sizeof(x) / sizeof((x)[0]))
-
-int memread(u_int32_t addr);
-u_int32_t isa_reg_str2val(const char *s, bool *success);
+uint32_t paddr_read(uint32_t addr, int len);
+uint32_t isa_reg_str2val(const char *s, bool *success);
 
 enum
 {
@@ -66,6 +64,7 @@ static struct rule
     {"^/", '/'},
 };
 
+#define ARRLEN(x) sizeof(x)/sizeof(x[0])
 #define NR_REGEX ARRLEN(rules)
 
 static regex_t re[NR_REGEX] = {};
@@ -211,7 +210,6 @@ unsigned eval(int p, int q, bool *success)
       return atoi(tokens[p].str);
       break;
     case 'h':
-    {
       int val = strtol(tokens[p].str, &endptr_val, 0);
       if (*endptr_val != '\0')
       {
@@ -222,7 +220,6 @@ unsigned eval(int p, int q, bool *success)
       {
         return val;
       }
-    }
     case 'r':
       return isa_reg_str2val(tokens[p].str + 1, success);
     }
@@ -294,13 +291,13 @@ unsigned eval(int p, int q, bool *success)
     {
       if (tokens[p].type == DEREF && (tokens[p + 1].type == 'v' || tokens[p + 1].type == 'h' || tokens[p + 1].type == 'r' || (tokens[p + 1].type == '(' && tokens[q].type == ')')))
       {
-        u_int32_t addr = eval(p + 1, q, success);
+        uint32_t addr = eval(p + 1, q, success);
         if(addr < 0x80000000){
           printf("Calling not physical memory\n");
           *success = false;
           return 0;
         }
-        return memread(addr);
+        return paddr_read(addr, 4);
       }
       else
       {
@@ -346,7 +343,7 @@ unsigned eval(int p, int q, bool *success)
   return 0;
 }
 
-u_int32_t expr(char *e, bool *success)
+uint32_t expr(char *e, bool *success)
 {
   if (!make_token(e))
   {
