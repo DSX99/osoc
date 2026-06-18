@@ -60,3 +60,7 @@ bool isa_reg_cmp(word_t *regs){
 uint32_t *isa_reg_p(){
   return cpu.gpr;
 }
+
+uint32_t isa_pc(){
+  return cpu.pc;
+}

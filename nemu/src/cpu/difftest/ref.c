@@ -25,6 +25,7 @@ void pmem_cpy(paddr_t addr ,void *buf, int len);
 uint8_t *pmem_p();
 bool isa_reg_cmp(word_t *regs);
 uint32_t *isa_reg_p();
+uint32_t isa_pc();
 
 __EXPORT void difftest_memcpy(paddr_t addr, void *buf, size_t n, bool direction) {
   if(direction){
@@ -44,6 +45,10 @@ __EXPORT void difftest_regcpy(uint32_t *regs, bool direction) {
 
 __EXPORT void difftest_exec(uint64_t n) {
   cpu_exec(n);
+}
+
+__EXPORT uint32_t difftest_pc() {
+  return isa_pc();
 }
 
 __EXPORT void difftest_raise_intr(word_t NO) {

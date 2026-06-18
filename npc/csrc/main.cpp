@@ -28,6 +28,8 @@ void execute(uint32_t n);
 void init_sdb();
 void sdb_mainloop();
 bool check_watchpoints();
+void difftest_init(int port);
+void difftest_exec(uint64_t n);
 extern "C" void init_disasm();
 extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 
@@ -66,8 +68,11 @@ static int parse_args(int argc, char *argv[]) {
 int main(int argc, char** argv) {
   printf("\n\033[1m\033[36mNPC\033[0m\n\n");
   parse_args(argc, argv);
-  loadmemory(img_file);
+  loadmemory(img_file, batch);
   init_disasm();
+  if(!batch){
+    difftest_init(0);
+  }
   contextp = new VerilatedContext;
   // contextp->threads(1); // can be used in future to increase speed
 
@@ -105,6 +110,8 @@ int main(int argc, char** argv) {
 }
 
 void execute(uint32_t n){
+  difftest_exec(n);
+
   if(finished){
     printf("Program finished");
     return;
@@ -125,7 +132,7 @@ void execute(uint32_t n){
       printf("time:%lu\n", contextp->time());
     }
 
-    if(!batch){
+    if(!batch & n<10){
       inst[0] = (top->top->opcode) & 0xff;
       inst[1] = (top->top->opcode >> 8) & 0xff;
       inst[2] = (top->top->opcode >> 16) & 0xff;

@@ -6,7 +6,7 @@
 extern "C" {
 #endif
 
-void loadmemory(char *img_file);
+void loadmemory(char *img_file, bool batch);
 void init_disasm();
 int memread(uint32_t addr);
 void memwrite(uint32_t addr, uint32_t data, uint32_t type);

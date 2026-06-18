@@ -16,10 +16,10 @@ static const uint32_t img [] = {
   0xdeadbeef,  // some data
 };
 
-
+void difftest_memcpy(uint32_t addr, void *buf, size_t n, bool direction);
 
 extern "C" {
-    void loadmemory(char *img_file) {
+    void loadmemory(char *img_file, bool batch) {
         if (img_file == NULL) {
             printf("No image is given.\n");
             memcpy(mem, img, sizeof(img));
@@ -41,6 +41,10 @@ extern "C" {
         assert(ret == 1);
 
         fclose(fp);
+
+        if(!batch){
+            difftest_memcpy(0x80000000, mem, size, 1);
+        }
     }
 
     void memwrite(uint32_t addr, uint32_t data, uint32_t type){
