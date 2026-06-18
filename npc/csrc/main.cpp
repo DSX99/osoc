@@ -141,7 +141,7 @@ void execute(uint32_t n){
       if(ret){
         printf("\033[1m\033[31mNOT GOOD\033[0m\n");
       }else{
-        printf("\033[1m\033[042mGOOD\033[0m\n");
+        printf("\033[1m\033[032mGOOD\033[0m\n");
       }
       break;
     }
