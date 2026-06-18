@@ -135,6 +135,9 @@ void execute(uint32_t n){
     contextp->timeInc(1);
     top->clk=!top->clk;
     top->eval();
+    contextp->timeInc(1);
+    top->clk=!top->clk;
+    top->eval();
   
     if(contextp->gotFinish()){
       finished = 1;
