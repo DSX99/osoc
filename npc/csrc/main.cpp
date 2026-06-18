@@ -123,7 +123,7 @@ void execute(uint32_t n){
 
   if(finished){
     printf("Program finished\n");
-    difftest_exec(1);
+    if(!batch) difftest_exec(1);
     return;
   }
   char str[128];
@@ -154,7 +154,7 @@ void execute(uint32_t n){
       printf("%s\n", str);
     }
 
-    difftest_exec(1);
+    if(!batch) difftest_exec(1);
 
     contextp->timeInc(1);
     top->clk=!top->clk;
