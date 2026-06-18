@@ -123,6 +123,7 @@ void execute(uint32_t n){
 
   if(finished){
     printf("Program finished\n");
+    difftest_exec(1);
     return;
   }
   char str[128];
