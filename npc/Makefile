@@ -28,7 +28,7 @@ lint:
 
 build: sim 
 	@$(VERILATOR) -Wall $(VERILOG_SRC) $(VERILOG_FLAGS) $(CPP_SRC)
-	@$(MAKE) -j -C obj_dir -f Vtop.mk VM_USER_OBJECTS="$(NEMU_HOME)/build/obj-riscv32-nemu-interpreter/src/utils/disasm.o"
+	@$(MAKE) -j -C obj_dir -f Vtop.mk VM_USER_OBJS="$(NEMU_HOME)/build/obj-riscv32-nemu-interpreter/src/utils/disasm.o"
 
 run: build
 	@obj_dir/Vtop $(ARGS) $(IMG)
