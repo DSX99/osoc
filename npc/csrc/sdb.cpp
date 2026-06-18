@@ -18,7 +18,7 @@
 #include <cstdlib>
 #include <cstdint>
 
-uint32_t paddr_read(uint32_t addr, int len);
+int memread(uint32_t addr);
 
 static int is_batch_mode = false;
 static char prev_cmd[128];
@@ -117,7 +117,7 @@ static int cmd_x(char *args) {
       return 0;
     }
     for(int i=0; i<size; i++){
-      printf("mem[%x]=%x\n",(uint32_t)(val+i*4),paddr_read(val+i*4,4));
+      printf("mem[%x]=%x\n",(uint32_t)(val+i*4),memread(val+i*4));
     }
     return 0;
   }
