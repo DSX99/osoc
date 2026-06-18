@@ -37,14 +37,16 @@ VM_PREFIX = Vtop
 VM_MODPREFIX = Vtop
 # User CFLAGS (from -CFLAGS on Verilator command line)
 VM_USER_CFLAGS = \
+  -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/capstone/repo/include \
 
 # User LDLIBS (from -LDFLAGS on Verilator command line)
 VM_USER_LDLIBS = \
   -lz \
-  -lreadline \
+  -lreadline -L/home/dsx99/osoc/ysyx-workbench/nemu/tools/capstone/repo -lcapstone \
 
 # User .cpp files (from .cpp's on Verilator command line)
 VM_USER_CLASSES = \
+  disasm \
   dpi \
   expr \
   main \
@@ -54,6 +56,7 @@ VM_USER_CLASSES = \
 # User .cpp directories (from .cpp's on Verilator command line)
 VM_USER_DIR = \
   .. \
+  ../../nemu/src/utils \
   ../csrc \
 
 ### Default rules...
@@ -65,6 +68,8 @@ include $(VERILATOR_ROOT)/include/verilated.mk
 ### Executable rules... (from --exe)
 VPATH += $(VM_USER_DIR)
 
+disasm.o: /home/dsx99/osoc/ysyx-workbench/nemu/src/utils/disasm.c 
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 dpi.o: csrc/dpi.cpp 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 expr.o: csrc/expr.cpp 
