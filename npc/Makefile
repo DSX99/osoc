@@ -10,15 +10,14 @@ VERILATOR = verilator
 VERILOG_SRC = vsrc/*.sv
 CPP_SRC = csrc/*.cpp
 
-DISASM_SRC = $(NEMU_HOME)/src/utils/disasm.c
-
 IMG ?= 
 ARGS ?= 
 
 VERILATOR_CFLAGS += -I$(NEMU_HOME)/tools/capstone/repo/include -I$(NEMU_HOME)/include
-LDFLAGS += -lreadline -L$(NEMU_HOME)/tools/capstone/repo -lcapstone
+VERILATOR_CFLAGS += -DCONFIG_ISA_riscv32
 
-VERILATOR_CFLAGS += -DCONFIG_ISA_riscv32 
+DISASM_OBJ = $(abspath obj_dir/disasm.o)
+LDFLAGS += -lreadline -L$(NEMU_HOME)/tools/capstone/repo -lcapstone
 
 VERILOG_FLAGS := -cc --exe -Wno-EOFNEWLINE --top-module top --trace-fst -LDFLAGS "$(LDFLAGS)" -CFLAGS "$(VERILATOR_CFLAGS)"
 
@@ -31,12 +30,12 @@ lint:
 	@$(VERILATOR) --lint-only -Wall $(VERILOG_SRC) -Wno-EOFNEWLINE --top-module top
 
 build: sim 
+	@gcc -c $(VERILATOR_CFLAGS) -O2 $(NEMU_HOME)/src/utils/disasm.c -o obj_dir/disasm.o
 	@$(VERILATOR) -Wall $(VERILOG_SRC) $(VERILOG_FLAGS) $(CPP_SRC)
-	@gcc -c $(VERILATOR_CFLAGS) -O2 $(DISASM_SRC) -o obj_dir/disasm.o
 	@$(MAKE) -j -C obj_dir -f Vtop.mk VM_USER_OBJS="disasm.o"
 
 run: build
-	@obj_dir/Vtop $(ARGS) $(IMG)
+	@LD_LIBRARY_PATH=$(NEMU_HOME)/tools/capstone/repo obj_dir/Vtop $(ARGS) $(IMG)
 
 gdb: build
 	@--gdb -CFLAGS "-g"
