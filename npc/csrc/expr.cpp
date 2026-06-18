@@ -208,7 +208,7 @@ unsigned eval(int p, int q, bool *success)
     case 'v':
       return atoi(tokens[p].str);
       break;
-    case 'h':
+    case 'h':{
       int val = strtol(tokens[p].str, &endptr_val, 0);
       if (*endptr_val != '\0')
       {
@@ -219,6 +219,7 @@ unsigned eval(int p, int q, bool *success)
       {
         return val;
       }
+    }
     case 'r':
       return isa_reg_str2val(tokens[p].str + 1, success);
     }
