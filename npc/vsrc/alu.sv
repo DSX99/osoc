@@ -18,8 +18,8 @@ module alu (
 
     logic [31:0] val1, val2;
 
-    assign val1 = alu_op[6] ? pc : data_rs1;
-    assign val2 = alu_op[7] ? imm : data_rs2;
+    assign val1 = alu_op[7] ? pc : data_rs1;
+    assign val2 = alu_op[6] ? imm : data_rs2;
 
     always_comb begin
         data_out=0;
