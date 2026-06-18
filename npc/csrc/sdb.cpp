@@ -13,13 +13,12 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#include <isa.h>
-#include <cpu/cpu.h>
 #include <readline/readline.h>
 #include <readline/history.h>
-#include "sdb.h"
+#include <cstdlib>
+#include <cstdint>
 
-uint32_t paddr_read(paddr_t addr, int len);
+uint32_t paddr_read(uint32_t addr, int len);
 
 static int is_batch_mode = false;
 static char prev_cmd[128];
@@ -32,6 +31,8 @@ bool delete_wp(int n);
 void print_itrace();
 void print_ftrace();
 void reg_display();
+uint32_t expr(char *e, bool *success);
+void execute(uint32_t n);
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
@@ -52,7 +53,7 @@ static char* rl_gets() {
 }
 
 static int cmd_c(char *args) {
-  cpu_exec(-1);
+  execute(-1);
   return 0;
 }
 
@@ -65,7 +66,7 @@ static int cmd_si(char *args) {
   char *endptr;
 
   if(args == NULL){ 
-    cpu_exec(1);  
+    execute(1);  
     return 0;
   }else{
     long val = strtol(args, &endptr, 0);
@@ -73,7 +74,7 @@ static int cmd_si(char *args) {
       printf("Correct use si N , where N is an integer.\n");
       return 0;
     }
-    cpu_exec(val);
+    execute(val);
     return 0;
   }
 }
@@ -169,7 +170,7 @@ static int cmd_d(char *args) {
 
 static int cmd_sir(char *args) {
 
-  cpu_exec(1);  
+  execute(1);  
   reg_display();
   
   return 0;

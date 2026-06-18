@@ -13,9 +13,17 @@
  * See the Mulan PSL v2 for more details.
  ***************************************************************************************/
 
-#include "sdb.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <cstdio>
+#include <cstring>
 #define NR_WP 6
+
+
+
+uint32_t expr(char *e, bool *success);
+
 
 typedef struct token
 {

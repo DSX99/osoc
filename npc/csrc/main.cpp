@@ -6,7 +6,6 @@
 #include "Vtop___024root.h"
 #include "Vtop_top.h"
 #include "Vtop_regs.h"
-#include "sdb.h"
 
 #define CONFIG_FST
 #define MAX_SIM_TIME 10*1024
@@ -27,6 +26,7 @@ Vtop* top;
 void execute(uint32_t n);
 void init_sdb();
 void init_disasm();
+void loadmemory(char *img_file);
 void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 
 void reset(Vtop *top,int n){
