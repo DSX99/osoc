@@ -128,6 +128,7 @@ void execute(uint32_t n){
     inst[2] = (top->top->opcode >> 16) & 0xff;
     inst[3] = (top->top->opcode >> 24) & 0xff;
     printf("%08x: %02x %02x %02x %02x \n", top->top->pc, inst[3], inst[2], inst[1], inst[0]);
+    printf("%08x", memread(top->top->pc));
     disassemble(str, 128, top->top->pc, inst, 4);
     
     printf("%s\n", str);
