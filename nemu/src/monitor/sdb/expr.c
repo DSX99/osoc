@@ -351,8 +351,7 @@ word_t expr(char *e, bool *success)
       if (i == 0)
       {
         tokens[i].type = DEREF;
-      }
-      if (tokens[i - 1].type != 'v' && tokens[i - 1].type != 'h' && tokens[i - 1].type != 'r' && tokens[i - 1].type != ')')
+      }else if (tokens[i - 1].type != 'v' && tokens[i - 1].type != 'h' && tokens[i - 1].type != 'r' && tokens[i - 1].type != ')')
       {
         tokens[i].type = DEREF;
       }
