@@ -27,6 +27,7 @@ Vtop* top;
 void execute(uint32_t n);
 void init_sdb();
 void sdb_mainloop();
+bool check_watchpoints();
 extern "C" void init_disasm();
 extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 
@@ -141,7 +142,7 @@ void execute(uint32_t n){
     contextp->timeInc(1);
     top->clk=!top->clk;
     top->eval();
-  
+    
     if(contextp->gotFinish()){
       if(!batch){
         inst[0] = (top->top->opcode) & 0xff;
@@ -159,6 +160,9 @@ void execute(uint32_t n){
       }else{
         printf("\033[032mGOOD\033[0m\n");
       }
+      break;
+    }
+    if(check_watchpoints){
       break;
     }
     n--;
