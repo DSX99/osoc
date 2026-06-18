@@ -13,13 +13,11 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#include <isa.h>
-#include <cpu/cpu.h>
 #include <readline/readline.h>
 #include <readline/history.h>
-#include "sdb.h"
-
-word_t paddr_read(paddr_t addr, int len);
+#include <cstdlib>
+#include <cstdint>
+#include "dpi.h"
 
 static int is_batch_mode = false;
 static char prev_cmd[128];
@@ -29,8 +27,11 @@ void init_wp_pool();
 void info_wp();
 void create_wp(char *s);
 bool delete_wp(int n);
-// void print_itrace();
+void print_itrace();
 void print_ftrace();
+void reg_display();
+uint32_t expr(char *e, bool *success);
+void execute(uint32_t n);
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
@@ -41,7 +42,7 @@ static char* rl_gets() {
     line_read = NULL;
   }
 
-  line_read = readline("(nemu) ");
+  line_read = readline("(npc) ");
 
   if (line_read && *line_read) {
     add_history(line_read);
@@ -51,7 +52,7 @@ static char* rl_gets() {
 }
 
 static int cmd_c(char *args) {
-  cpu_exec(-1);
+  execute(-1);
   return 0;
 }
 
@@ -64,7 +65,7 @@ static int cmd_si(char *args) {
   char *endptr;
 
   if(args == NULL){ 
-    cpu_exec(1);  
+    execute(1);  
     return 0;
   }else{
     long val = strtol(args, &endptr, 0);
@@ -72,7 +73,7 @@ static int cmd_si(char *args) {
       printf("Correct use si N , where N is an integer.\n");
       return 0;
     }
-    cpu_exec(val);
+    execute(val);
     return 0;
   }
 }
@@ -82,7 +83,7 @@ static int cmd_info(char *args) {
     printf("Correct use info SUBCMD , where SUBCMD is r for register info or w for watchpoint info.\n");
   }
   if((*args) == 'r'){
-    isa_reg_display();
+    reg_display();
   }else if ((*args) == 'w'){
     info_wp();
   }else{
@@ -115,7 +116,7 @@ static int cmd_x(char *args) {
       return 0;
     }
     for(int i=0; i<size; i++){
-      printf("mem[%x]=%x\n",(uint32_t)(val+i*4),paddr_read(val+i*4,4));
+      printf("mem[%x]=%x\n",(uint32_t)(val+i*4),memread(val+i*4));
     }
     return 0;
   }
@@ -168,8 +169,8 @@ static int cmd_d(char *args) {
 
 static int cmd_sir(char *args) {
 
-  cpu_exec(1);  
-  isa_reg_display();
+  execute(1);  
+  reg_display();
   
   return 0;
 }
@@ -181,12 +182,12 @@ static int cmd_sir(char *args) {
 //   return 0;
 // }
 
-static int cmd_ftrace(char *args) {
+// static int cmd_ftrace(char *args) {
 
-  print_ftrace();
+//   print_ftrace();
 
-  return 0;
-}
+//   return 0;
+// }
 
 
 static int cmd_help(char *args);
@@ -207,9 +208,11 @@ static struct {
   { "d", " d N Deletes the watchpoint with ID N.", cmd_d },
   { "sir", " si 1 + info r.", cmd_sir },
   // { "itrace", " print trace of 16 last instructions ", cmd_itrace },
-  { "ftrace", " print trace of 16 last function calls ", cmd_ftrace }
+  // { "ftrace", " print trace of 16 last function calls ", cmd_ftrace }
 };
 
+
+#define ARRLEN(x) sizeof(x)/sizeof(x[0])
 #define NR_CMD ARRLEN(cmd_table)
 
 static int cmd_help(char *args) {
@@ -240,10 +243,6 @@ void sdb_set_batch_mode() {
 }
 
 void sdb_mainloop() {
-  if (is_batch_mode) {
-    cmd_c(NULL);
-    return;
-  }
 
   for (char *str; (str = rl_gets()) || true; ) {
 

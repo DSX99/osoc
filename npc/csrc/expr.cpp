@@ -13,16 +13,18 @@
  * See the Mulan PSL v2 for more details.
  ***************************************************************************************/
 
-#include <isa.h>
 #include <string.h>
 #include <stdlib.h>
 /* We use the POSIX regex functions to process regular expressions.
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
+#include <cstdint>
+#include <cstdio>
+#include <assert.h>
+#include "dpi.h"
 
-word_t paddr_read(paddr_t addr, int len);
-word_t isa_reg_str2val(const char *s, bool *success);
+uint32_t reg_str2val(const char *s, bool *success);
 
 enum
 {
@@ -61,6 +63,7 @@ static struct rule
     {"^/", '/'},
 };
 
+#define ARRLEN(x) sizeof(x)/sizeof(x[0])
 #define NR_REGEX ARRLEN(rules)
 
 static regex_t re[NR_REGEX] = {};
@@ -80,7 +83,7 @@ void init_regex()
     if (ret != 0)
     {
       regerror(ret, &re[i], error_msg, 128);
-      panic("regex compilation failed: %s\n%s", error_msg, rules[i].regex);
+      printf("regex compilation failed: %s\n%s", error_msg, rules[i].regex);
     }
   }
 }
@@ -128,6 +131,7 @@ static bool make_token(char *e)
           return 0;
         }
         tokens[nr_token].type = rules[i].token_type;
+        
         strncpy(tokens[nr_token].str, substr_start, substr_len);
         tokens[nr_token].str[substr_len + 1] = '\0';
         nr_token++;
@@ -202,7 +206,7 @@ unsigned eval(int p, int q, bool *success)
     case 'v':
       return atoi(tokens[p].str);
       break;
-    case 'h':
+    case 'h':{
       int val = strtol(tokens[p].str, &endptr_val, 0);
       if (*endptr_val != '\0')
       {
@@ -213,8 +217,9 @@ unsigned eval(int p, int q, bool *success)
       {
         return val;
       }
+    }
     case 'r':
-      return isa_reg_str2val(tokens[p].str + 1, success);
+      return reg_str2val(tokens[p].str + 1, success);
     }
   }
   else if (check_parentheses(p, q) == true)
@@ -290,7 +295,7 @@ unsigned eval(int p, int q, bool *success)
           *success = false;
           return 0;
         }
-        return paddr_read(addr, 4);
+        return memread(addr);
       }
       else
       {
@@ -336,7 +341,7 @@ unsigned eval(int p, int q, bool *success)
   return 0;
 }
 
-word_t expr(char *e, bool *success)
+uint32_t expr(char *e, bool *success)
 {
   if (!make_token(e))
   {
