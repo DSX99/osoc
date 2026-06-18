@@ -64,7 +64,7 @@ module decode(
             7'b1100111: begin // JALR
                 rd     = rd_val;
                 rs1    = rs1_val;
-                rs2    = rs2_val;
+                rs2    = rs1_val;
                 imm    = imm_i;
                 alu_op = 8'b10010000;
                 mux_select = 2'b10;
