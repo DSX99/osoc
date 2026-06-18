@@ -135,6 +135,7 @@ void execute(uint32_t n){
     contextp->timeInc(1);
     top->clk=!top->clk;
     top->eval();
+    tracep->dump(contextp->time());
     contextp->timeInc(1);
     top->clk=!top->clk;
     top->eval();
