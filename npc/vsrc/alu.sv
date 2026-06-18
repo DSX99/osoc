@@ -18,8 +18,8 @@ module alu (
 
     logic [31:0] val1, val2;
 
-    assign val1 = alu_op[7] ? pc : data_rs1;
-    assign val2 = alu_op[6] ? imm : data_rs2;
+    assign val1 = alu_op[6] ? pc : data_rs1;
+    assign val2 = alu_op[7] ? imm : data_rs2;
 
     always_comb begin
         data_out=0;
@@ -29,7 +29,7 @@ module alu (
             case(alu_op[2:0])
                 0: begin
                     if(alu_op[3]) data_out = val1 - val2;
-                    else data_out = val1 + val2;
+                    else data_out = val1 + val2 + 1;
                 end 
                 1: data_out = val1<<val2[4:0];
                 2: data_out = {31'b0,$signed(val1)<$signed(val2)};
