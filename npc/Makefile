@@ -20,7 +20,7 @@ lint:
 	@$(VERILATOR) --lint-only -Wall $(VERILOG_SRC) -Wno-EOFNEWLINE --top-module top
 
 disasm:
-	$(MAKE) -C $(NEMU_HOME)/src/utils/filelist.mk
+	$(MAKE) -C $(NEMU_HOME)/src/utils/ -f filelist.mk
 
 build: sim disasm
 	@$(VERILATOR) -Wall $(VERILOG_SRC) $(VERILOG_FLAGS) $(CPP_SRC)
