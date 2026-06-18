@@ -61,9 +61,12 @@ static char *diff_so_file = NULL;
 static char *img_file = NULL;
 static char *elf_file = NULL;
 static int difftest_port = 1234;
+
+#ifdef CONFIG_FTRACE
 static char ftrace[256][256];
 int lead_space=0;
 int ftrace_count=0;
+#endif
 
 #ifdef CONFIG_FTRACE
 
@@ -247,8 +250,10 @@ void init_monitor(int argc, char *argv[]) {
   /* Perform ISA dependent initialization. */
   init_isa();
 
+  #ifdef CONFIG_FTRACE
   /*Loading elf for ftrace*/
   load_elf();
+  #endif
 
   /* Load the image to memory. This will overwrite the built-in image. */
   long img_size = load_img();
