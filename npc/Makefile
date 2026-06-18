@@ -26,10 +26,7 @@ sim:
 lint:
 	@$(VERILATOR) --lint-only -Wall $(VERILOG_SRC) -Wno-EOFNEWLINE --top-module top
 
-disasm:
-	$(MAKE) -C $(NEMU_HOME)
-
-build: sim disasm
+build: sim 
 	@$(VERILATOR) -Wall $(VERILOG_SRC) $(VERILOG_FLAGS) $(CPP_SRC) $(NEMU_HOME)/src/utils/disasm.c
 	@$(MAKE) -j -C obj_dir -f Vtop.mk VM_USER_OBJECTS="$(NEMU_HOME)/build/obj-riscv32-nemu-interpreter/src/utils/disasm.o"
 
