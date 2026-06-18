@@ -105,11 +105,11 @@ int main(int argc, char** argv) {
 
 void execute(uint32_t n){
   if(finished){
-    printf("Program finished\n");
+    printf("Program finished");
     return;
   }
   char str[128];
-  uint32_t raw_inst;
+  uint8_t inst[4];
   while(n>0){
 
     #ifdef CONFIG_FST
@@ -119,12 +119,17 @@ void execute(uint32_t n){
     if(contextp->time() > MAX_SIM_TIME){
       ret = top->top->reg_mod->regs[10];
     }
-    if(!((contextp->time()) % 1000) && batch){
+    if(!((contextp->time()) % 1000)&&batch){
       printf("time:%lu\n", contextp->time());
     }
 
-    raw_inst = top->top->opcode;
-    disassemble(str, 128, top->top->pc, (uint8_t *)&raw_inst, 4);
+    inst[0] = (top->top->opcode) & 0xff;
+    inst[1] = (top->top->opcode >> 8) & 0xff;
+    inst[2] = (top->top->opcode >> 16) & 0xff;
+    inst[3] = (top->top->opcode >> 24) & 0xff;
+    printf("%d: %02x %02x %02x %02x ", top->top->pc, inst[3], inst[2], inst[1], inst[0]);
+    disassemble(str, 128, top->top->pc, inst, 4);
+    
     printf("%s\n", str);
 
     contextp->timeInc(1);
