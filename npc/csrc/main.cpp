@@ -109,7 +109,7 @@ void execute(uint32_t n){
     return;
   }
   char str[128];
-  uint8_t inst[4];
+  uint32_t raw_inst;
   while(n>0){
 
     #ifdef CONFIG_FST
@@ -123,12 +123,8 @@ void execute(uint32_t n){
       printf("time:%lu\n", contextp->time());
     }
 
-    inst[0] = (top->top->opcode) & 0xff;
-    inst[1] = (top->top->opcode >> 8) & 0xff;
-    inst[2] = (top->top->opcode >> 16) & 0xff;
-    inst[3] = (top->top->opcode >> 24) & 0xff;
-
-    disassemble(str, 128, top->top->pc, inst, 4);
+    raw_inst = top->top->opcode;
+    disassemble(str, 128, top->top->pc, (uint8_t)&raw_inst, 4);
     
     printf("%s\n", str);
 
