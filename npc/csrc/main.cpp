@@ -189,12 +189,11 @@ void execute(uint32_t n){
 
     difftest_regcpy(ref_regs, 0);
     for(int i=0;i<32;i++){
-      printf("%u:0x%08x\n",i,ref_regs[i]);
-      // if(ref_regs[i]-top->top->reg_mod->regs[i]!=0){
-      //   printf("Difference with REF %s, should:%u, actually:%u\n", regs[i], ref_regs[i], top->top->reg_mod->regs[i]);
-      //   ret=1;
-      //   return;
-      // }
+      if(ref_regs[i]-top->top->reg_mod->regs[i]!=0){
+        printf("Difference with REF %s, should:%u, actually:%u\n", regs[i], ref_regs[i], top->top->reg_mod->regs[i]);
+        ret=1;
+        return;
+      }
     }
   }
 }
