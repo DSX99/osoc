@@ -18,7 +18,7 @@ VERILATOR_CFLAGS += -DCONFIG_ISA_riscv32
 
 DISASM_OBJ = $(abspath obj_dir/disasm.o)
 
-LDFLAGS += -lreadline -L$(NEMU_HOME)/tools/capstone/repo -lcapstone $(DISASM_OBJ) -L$(NEMU_HOME)/build -l$(NEMU_HOME)/build/riscv32-nemu-interpreter-so
+LDFLAGS += -lreadline -L$(NEMU_HOME)/tools/capstone/repo -lcapstone $(DISASM_OBJ) $(NEMU_HOME)/build/riscv32-nemu-interpreter-so
 
 VERILOG_FLAGS := -cc --exe -Wno-EOFNEWLINE --top-module top --trace-fst -LDFLAGS "$(LDFLAGS)" -CFLAGS "$(VERILATOR_CFLAGS)"
 
