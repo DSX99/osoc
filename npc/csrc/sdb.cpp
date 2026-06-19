@@ -242,7 +242,7 @@ void sdb_set_batch_mode() {
   is_batch_mode = true;
 }
 
-void sdb_mainloop(uint32_t *ret) {
+void sdb_mainloop(uint32_t *exit) {
 
   for (char *str; (str = rl_gets()) || true; ) {
 
@@ -287,7 +287,7 @@ void sdb_mainloop(uint32_t *ret) {
     for (i = 0; i < NR_CMD; i ++) {
       if (strcmp(cmd, cmd_table[i].name) == 0) {
         if ((hand = cmd_table[i].handler(args)) < 0) { 
-          *ret = 1;
+          *exit = 1;
           return; 
         }
         break;
