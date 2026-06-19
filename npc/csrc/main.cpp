@@ -19,14 +19,14 @@
 bool batch=0;
 char *img_file;
 bool finished=0;
-uint32_t ret = 0;
+static uint32_t ret = 0;
 VerilatedContext *contextp;
 VerilatedFstC *tracep;
 Vtop* top; 
 
 void execute(uint32_t n);
 void init_sdb();
-void sdb_mainloop();
+void sdb_mainloop(uint32_t *ret);
 bool check_watchpoints();
 extern "C" {
 void difftest_init(int port);
@@ -100,7 +100,7 @@ int main(int argc, char** argv) {
     execute(-1);
   }else{
     init_sdb();
-    sdb_mainloop();
+    sdb_mainloop(&ret);
   }
   
   #ifdef CONFIG_FST
