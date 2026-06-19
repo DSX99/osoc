@@ -259,7 +259,7 @@ void sdb_mainloop() {
       strcpy(curr_cmd, str);
     }
 
-    if (str != prev_cmd && str!=NULL) {
+    if (str != prev_cmd && *str!='\0') {
       strncpy(prev_cmd, str, strlen(str));
       prev_cmd[sizeof(str)] = '\0';
     }
