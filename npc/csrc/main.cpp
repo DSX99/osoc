@@ -20,7 +20,7 @@ bool batch=0;
 char *img_file;
 bool finished=0;
 uint32_t ret = 0;
-static uint32_t close = 0;
+static uint32_t qexit = 0;
 VerilatedContext *contextp;
 VerilatedFstC *tracep;
 Vtop* top; 
@@ -101,14 +101,14 @@ int main(int argc, char** argv) {
     execute(-1);
   }else{
     init_sdb();
-    sdb_mainloop(&close);
+    sdb_mainloop(&qexit);
   }
   
   #ifdef CONFIG_FST
   tracep->close();
   #endif
   delete top;
-  return (ret || (!finished && close));
+  return (ret || (!finished && qexit));
 }
 
 
