@@ -29,7 +29,7 @@ module alu (
             case(alu_op[2:0])
                 0: begin
                     if(alu_op[3]) data_out = val1 - val2;
-                    else data_out = val1 + val2 + 1;
+                    else data_out = val1 + val2;
                 end 
                 1: data_out = val1<<val2[4:0];
                 2: data_out = {31'b0,$signed(val1)<$signed(val2)};
