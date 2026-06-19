@@ -260,7 +260,7 @@ void sdb_mainloop(uint32_t *ret) {
 
     if (str != prev_cmd && str!=NULL) {
       strncpy(prev_cmd, str, strlen(str));
-      prev_cmd[sizeof(str)] = '\0';
+      prev_cmd[strlen(str)] = '\0';
     }
 
     char *str_end = curr_cmd + strlen(curr_cmd);
