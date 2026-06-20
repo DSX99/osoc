@@ -289,6 +289,8 @@ void sdb_mainloop() {
       if (strcmp(cmd, cmd_table[i].name) == 0) {
         if ((hand = cmd_table[i].handler(args)) < 0) { 
           if(hand == -1 && nemu_state.state!=NEMU_END){
+            nemu_state.state = NEMU_ABORT;
+          }else if(hand == -1){
             nemu_state.state = NEMU_QUIT;
           }
           return; 
