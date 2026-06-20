@@ -336,9 +336,8 @@ void Vtop_top___ico_sequent__TOP__top__1(Vtop_top* vlSelf) {
                                          ? ((8U & (IData)(vlSelfRef.__PVT__alu_op))
                                              ? (vlSelfRef.__PVT__alu_mod__DOT__val1 
                                                 - vlSelfRef.__PVT__alu_mod__DOT__val2)
-                                             : ((IData)(1U) 
-                                                + (vlSelfRef.__PVT__alu_mod__DOT__val1 
-                                                   + vlSelfRef.__PVT__alu_mod__DOT__val2)))
+                                             : (vlSelfRef.__PVT__alu_mod__DOT__val1 
+                                                + vlSelfRef.__PVT__alu_mod__DOT__val2))
                                          : ((1U == 
                                              (7U & (IData)(vlSelfRef.__PVT__alu_op)))
                                              ? (vlSelfRef.__PVT__alu_mod__DOT__val1 
