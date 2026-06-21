@@ -267,10 +267,9 @@ void sdb_mainloop() {
       strcpy(curr_cmd, str);
     }
 
-    if (str != prev_cmd && *str!='\0') {
-      strncpy(prev_cmd, str, strlen(str));
-      prev_cmd[strlen(str)] = '\0';
-    }
+    if (str != prev_cmd && *str != '\0') {
+    snprintf(prev_cmd, sizeof(prev_cmd), "%s", str);
+}
 
     char *str_end = curr_cmd + strlen(curr_cmd);
 
