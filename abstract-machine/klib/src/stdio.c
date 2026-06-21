@@ -29,12 +29,11 @@ int printf(const char *fmt, ...) {
         }
       }
       i++;
-      putch('\0');
     }else{
       putch(fmt[i]);
       i++;
-      putch('\0');
     }
+    putch('d');
   }
   va_end(list);
   return (i);
