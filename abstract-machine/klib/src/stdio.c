@@ -21,6 +21,9 @@ int printf(const char *fmt, ...) {
           putch(*p);
           p++;
         }
+      }else if (fmt[i]=='c'){
+        char c = (char)va_arg(list, int);
+        putch(c);
       }else if (fmt[i]=='s'){
         char *p = va_arg(list, char *);
         while(*p!='\0'){
