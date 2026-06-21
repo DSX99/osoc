@@ -34,7 +34,6 @@ int printf(const char *fmt, ...) {
       i++;
     }
   }
-  va_end(list);
   return (i);
 }
 
