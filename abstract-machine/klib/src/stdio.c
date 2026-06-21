@@ -33,7 +33,6 @@ int printf(const char *fmt, ...) {
       putch(fmt[i]);
       i++;
     }
-    putch('\n');
   }
   va_end(list);
   return (i);
