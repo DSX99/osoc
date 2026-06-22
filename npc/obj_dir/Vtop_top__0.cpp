@@ -462,8 +462,10 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
     IData/*31:0*/ __Vfunc_ifu_mod__DOT__memread__8__Vfuncout;
     __Vfunc_ifu_mod__DOT__memread__8__Vfuncout = 0;
     // Body
-    Vtop_top____Vdpiimwrap_lsu_mod__DOT__memread_TOP__top(vlSelfRef.pc, __Vfunc_ifu_mod__DOT__memread__8__Vfuncout);
-    vlSelfRef.opcode = __Vfunc_ifu_mod__DOT__memread__8__Vfuncout;
+    if ((1U & (~ (IData)(vlSymsp->TOP.rst)))) {
+        Vtop_top____Vdpiimwrap_lsu_mod__DOT__memread_TOP__top(vlSelfRef.pc, __Vfunc_ifu_mod__DOT__memread__8__Vfuncout);
+        vlSelfRef.opcode = __Vfunc_ifu_mod__DOT__memread__8__Vfuncout;
+    }
     if (vlSymsp->TOP.rst) {
         vlSelfRef.pc = 0x80000000U;
     } else {
