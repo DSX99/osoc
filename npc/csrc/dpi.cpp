@@ -56,7 +56,7 @@ extern "C" {
 
     void memwrite(uint32_t addr, uint32_t data, uint32_t type){
         #ifdef MTRACE
-        printf("\033[032mGOOD\033[0m\n");
+        printf("\n\033[034mCall to write to memory at %08x\033[0m\n", addr);
         #endif
         if(addr>=ROM_OFFSET && addr<(ROM_OFFSET + MEM_SIZE)){
             if(type ==0){
@@ -81,6 +81,9 @@ extern "C" {
     }
 
     uint32_t memread(uint32_t addr){
+        #ifdef MTRACE
+        printf("\n\033[034mCall to read from memory at %08x\033[0m\n", addr);
+        #endif
         if(addr>=ROM_OFFSET && addr<(ROM_OFFSET + MEM_SIZE)){
             return ((mem[addr-ROM_OFFSET+3]<<24)|
                     (mem[addr-ROM_OFFSET+2]<<16)|
