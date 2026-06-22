@@ -9,7 +9,7 @@
 uint8_t mem[MEM_SIZE];
 time_t curr_time;
 
-#define DEVICE_BASE 0xa00000000
+#define DEVICE_BASE 0xa0000000
 
 #define SERIAL_PORT     (DEVICE_BASE + 0x00003f8)
 #define KBD_ADDR        (DEVICE_BASE + 0x0000060)
