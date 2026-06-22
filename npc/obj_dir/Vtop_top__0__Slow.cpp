@@ -45,5 +45,4 @@ VL_ATTR_COLD void Vtop_top___ctor_var_reset(Vtop_top* vlSelf) {
     vlSelf->__Vfunc_lsu_mod__DOT__memread__2__Vfuncout = 0;
     vlSelf->__Vfunc_lsu_mod__DOT__memread__3__Vfuncout = 0;
     vlSelf->__Vfunc_lsu_mod__DOT__memread__4__Vfuncout = 0;
-    vlSelf->__Vfunc_ifu_mod__DOT__memread__8__Vfuncout = 0;
 }

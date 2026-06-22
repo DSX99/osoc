@@ -37,8 +37,6 @@ void Vtop_top___ico_sequent__TOP__top__0(Vtop_top* vlSelf) {
     // Body
     vlSelfRef.__PVT__pc_mod__DOT__next_pc = ((IData)(4U) 
                                              + vlSelfRef.pc);
-    Vtop_top____Vdpiimwrap_lsu_mod__DOT__memread_TOP__top(vlSelfRef.pc, vlSelfRef.__Vfunc_ifu_mod__DOT__memread__8__Vfuncout);
-    vlSelfRef.opcode = vlSelfRef.__Vfunc_ifu_mod__DOT__memread__8__Vfuncout;
     vlSelfRef.__PVT__decode_mod__DOT__imm_i = (((- (IData)(
                                                            (vlSelfRef.opcode 
                                                             >> 0x0000001fU))) 
@@ -460,7 +458,12 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
     VL_DEBUG_IF(VL_DBG_MSGF("+      Vtop_top___nba_sequent__TOP__top__0\n"); );
     Vtop__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     auto& vlSelfRef = std::ref(*vlSelf).get();
+    // Locals
+    IData/*31:0*/ __Vfunc_ifu_mod__DOT__memread__8__Vfuncout;
+    __Vfunc_ifu_mod__DOT__memread__8__Vfuncout = 0;
     // Body
+    Vtop_top____Vdpiimwrap_lsu_mod__DOT__memread_TOP__top(vlSelfRef.pc, __Vfunc_ifu_mod__DOT__memread__8__Vfuncout);
+    vlSelfRef.opcode = __Vfunc_ifu_mod__DOT__memread__8__Vfuncout;
     if (vlSymsp->TOP.rst) {
         vlSelfRef.pc = 0x80000000U;
     } else {
@@ -469,10 +472,6 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
             vlSelfRef.pc = vlSelfRef.__PVT__alu_out;
         }
     }
-    vlSelfRef.__PVT__pc_mod__DOT__next_pc = ((IData)(4U) 
-                                             + vlSelfRef.pc);
-    Vtop_top____Vdpiimwrap_lsu_mod__DOT__memread_TOP__top(vlSelfRef.pc, vlSelfRef.__Vfunc_ifu_mod__DOT__memread__8__Vfuncout);
-    vlSelfRef.opcode = vlSelfRef.__Vfunc_ifu_mod__DOT__memread__8__Vfuncout;
     vlSelfRef.__PVT__decode_mod__DOT__imm_i = (((- (IData)(
                                                            (vlSelfRef.opcode 
                                                             >> 0x0000001fU))) 
@@ -715,4 +714,6 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
             }
         }
     }
+    vlSelfRef.__PVT__pc_mod__DOT__next_pc = ((IData)(4U) 
+                                             + vlSelfRef.pc);
 }
