@@ -2,7 +2,7 @@
 
 
 #define CONFIG_FST
-#define MTRACE
+// #define MTRACE
 
 
 
