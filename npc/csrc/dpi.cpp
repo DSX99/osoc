@@ -2,7 +2,7 @@
 #include <stdint.h>
 #include <assert.h>
 #include <cstring>
-#include <time.h>
+#include <chrono>
 #include "common.h"
 
 uint8_t mem[MEM_SIZE];
