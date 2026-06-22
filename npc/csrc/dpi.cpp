@@ -56,7 +56,7 @@ extern "C" {
     }
 
     void memwrite(uint32_t addr, uint32_t data, uint32_t type){
-        if(addr>ROM_OFFSET && addr<(ROM_OFFSET + MEM_SIZE)){
+        if(addr>=ROM_OFFSET && addr<(ROM_OFFSET + MEM_SIZE)){
             if(type ==0){
                 mem[addr-ROM_OFFSET] = data & 0xFF;
             }else if (type ==1){
@@ -79,7 +79,7 @@ extern "C" {
     }
 
     uint32_t memread(uint32_t addr){
-        if(addr>ROM_OFFSET && addr<(ROM_OFFSET + MEM_SIZE)){
+        if(addr>=ROM_OFFSET && addr<(ROM_OFFSET + MEM_SIZE)){
             return ((mem[addr-ROM_OFFSET+3]<<24)|
                     (mem[addr-ROM_OFFSET+2]<<16)|
                     (mem[addr-ROM_OFFSET+1]<<8)|
