@@ -92,7 +92,7 @@ extern "C" {
         }else if(addr == RTC_ADDR || addr == RTC_ADDR + 4){
             if(addr == RTC_ADDR + 4){
                 auto now = std::chrono::system_clock::now().time_since_epoch();
-                uint64_t us = std::chrono::duration_cast<std::chrono::microseconds>(now).count();
+                uint64_t curr_time = std::chrono::duration_cast<std::chrono::microseconds>(now).count();
                 return curr_time>>32;
             }
             if(addr == RTC_ADDR) return (uint32_t)curr_time;
