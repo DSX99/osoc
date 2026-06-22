@@ -61,31 +61,31 @@ enum {
 static uint32_t csr_access(uint32_t addr, uint32_t data, uint32_t type){ //type 0-write 1-set 2-clear
   uint32_t temp=0;
   if(addr == 0x305){ //mtvec
-    temp = csr[MTVEC];
+    temp = cpu.mtvec;
     if(type == 0){
-      csr[MTVEC] = data;
+      cpu.mtvec = data;
     }else if(type == 1){
-      csr[MTVEC] = csr[MTVEC] | data;
+      cpu.mtvec = cpu.mtvec | data;
     }else if(type == 2){
-      csr[MTVEC] = csr[MTVEC] & ~data;
+      cpu.mtvec = cpu.mtvec & ~data;
     } 
   } else if(addr == 0x341){ //mepc
-    temp = csr[MEPC];
+    temp = cpu.mepc;
     if(type == 0){
-      csr[MEPC] = data;
+      cpu.mepc = data;
     }else if(type == 1){
-      csr[MEPC] = csr[MEPC] | data;
+      cpu.mepc = cpu.mepc | data;
     }else if(type == 2){
-      csr[MEPC] = csr[MEPC] & ~data;
+      cpu.mepc = cpu.mepc & ~data;
     } 
   } else if(addr == 0x342){ //mcause
-    temp = csr[MCAUSE];
+    temp = cpu.mcause;
     if(type == 0){
-      csr[MCAUSE] = data;
+      cpu.mcause = data;
     }else if(type == 1){
-      csr[MCAUSE] = csr[MCAUSE] | data;
+      cpu.mcause = cpu.mcause | data;
     }else if(type == 2){
-      csr[MCAUSE] = csr[MCAUSE] & ~data;
+      cpu.mcause = cpu.mcause & ~data;
     } 
   } else{
     printf("calling unknown CSR at addr: 0x%04x with data: 0x%08x and type: %d", addr, data, type);
@@ -162,6 +162,8 @@ static int decode_exec(Decode *s) {
   INSTPAT("??????? ????? ????? 110 ????? 11100 11", csrrsi  , I, R(rd) = csr_access(imm, src1, 1));
   INSTPAT("??????? ????? ????? 111 ????? 11100 11", csrrci  , I, R(rd) = csr_access(imm, src1, 2));
 
+  
+  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , N, isa_raise_intr(0, s->pc));
   INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak , N, NEMUTRAP(s->pc, R(10))); // R(10) is $a0
   INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv    , N, INV(s->pc));
   INSTPAT_END();
