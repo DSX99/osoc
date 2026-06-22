@@ -8,7 +8,7 @@ module ifu(
 import "DPI-C" function int memread(int addr);
 
 initial begin
-    opcode = memread(32'h80000000)
+    opcode = memread(32'h80000000);
 end
 
 always_ff @(posedge clk) begin
