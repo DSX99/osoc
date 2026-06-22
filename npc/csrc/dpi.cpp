@@ -3,9 +3,8 @@
 #include <assert.h>
 #include <cstring>
 #include <time.h>
+#include "common.h"
 
-#define ROM_OFFSET 0x80000000
-#define MEM_SIZE 1024*1024
 uint8_t mem[MEM_SIZE];
 time_t curr_time;
 
@@ -56,6 +55,9 @@ extern "C" {
     }
 
     void memwrite(uint32_t addr, uint32_t data, uint32_t type){
+        #ifdef MTRACE
+        printf("\033[032mGOOD\033[0m\n");
+        #endif
         if(addr>=ROM_OFFSET && addr<(ROM_OFFSET + MEM_SIZE)){
             if(type ==0){
                 mem[addr-ROM_OFFSET] = data & 0xFF;

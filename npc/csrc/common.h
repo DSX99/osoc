@@ -1,0 +1,8 @@
+#define CONFIG_FST
+#define MTRACE
+
+
+
+#define MAX_SIM_TIME 1024*1024*1024
+#define ROM_OFFSET 0x80000000
+#define MEM_SIZE 1024*1024

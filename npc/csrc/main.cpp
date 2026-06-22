@@ -7,9 +7,7 @@
 #include "Vtop_top.h"
 #include "Vtop_regs.h"
 #include "dpi.h"
-
-#define CONFIG_FST
-#define MAX_SIM_TIME 1024*1024*1024
+#include "common.h"
 
 
 #ifdef CONFIG_FST
