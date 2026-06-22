@@ -33,7 +33,7 @@ alu alu_mod(
 );
 
 ifu ifu_mod(
-    .clk(clk), .pc(pc), .opcode(opcode)
+    .rst(rst), .clk(clk), .pc(pc), .opcode(opcode)
 );
 
 always_comb begin

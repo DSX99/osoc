@@ -1,4 +1,5 @@
 module ifu(
+    input logic rst,
     input logic clk,
     input logic [31:0] pc,
     output logic [31:0] opcode
@@ -7,7 +8,7 @@ module ifu(
 import "DPI-C" function int memread(int addr);
 
 always_ff @(posedge clk) begin
-    opcode <= memread(pc);
+    if(!rst) opcode <= memread(pc);
 end
 
 endmodule
