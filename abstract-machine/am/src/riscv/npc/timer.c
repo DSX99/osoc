@@ -1,10 +1,20 @@
 #include <am.h>
+#include "addr.h"
+
+uint64_t start_time;
 
 void __am_timer_init() {
+  uint32_t high,low;
+  inl(RTC_ADDR+4, high);
+  inl(RTC_ADDR, low);
+  start_time = ((uint64_t)high<<32) + (uint64_t)low;
 }
 
 void __am_timer_uptime(AM_TIMER_UPTIME_T *uptime) {
-  uptime->us = 0;
+  uint32_t high,low;
+  inl(RTC_ADDR+4, high);
+  inl(RTC_ADDR, low);
+  uptime->us = ((uint64_t)high<<32) + (uint64_t)low - start_time;
 }
 
 void __am_timer_rtc(AM_TIMER_RTC_T *rtc) {
