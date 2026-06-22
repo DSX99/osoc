@@ -466,6 +466,13 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
         Vtop_top____Vdpiimwrap_lsu_mod__DOT__memread_TOP__top(vlSelfRef.pc, __Vfunc_ifu_mod__DOT__memread__9__Vfuncout);
         vlSelfRef.opcode = __Vfunc_ifu_mod__DOT__memread__9__Vfuncout;
     }
+    vlSelfRef.__PVT__decode_mod__DOT__imm_i = (((- (IData)(
+                                                           (vlSelfRef.opcode 
+                                                            >> 0x0000001fU))) 
+                                                << 0x0000000bU) 
+                                               | (0x000007ffU 
+                                                  & (vlSelfRef.opcode 
+                                                     >> 0x00000014U)));
     if (vlSymsp->TOP.rst) {
         vlSelfRef.pc = 0x80000000U;
     } else {
@@ -474,13 +481,6 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
             vlSelfRef.pc = vlSelfRef.__PVT__alu_out;
         }
     }
-    vlSelfRef.__PVT__decode_mod__DOT__imm_i = (((- (IData)(
-                                                           (vlSelfRef.opcode 
-                                                            >> 0x0000001fU))) 
-                                                << 0x0000000bU) 
-                                               | (0x000007ffU 
-                                                  & (vlSelfRef.opcode 
-                                                     >> 0x00000014U)));
     vlSelfRef.__PVT__rs1 = 0U;
     vlSelfRef.__PVT__rs2 = 0U;
     vlSelfRef.__PVT__rd = 0U;

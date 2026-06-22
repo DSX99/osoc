@@ -12,7 +12,7 @@ initial begin
 end
 
 always_ff @(posedge clk) begin
-    if(!rst) opcode = memread(pc);
+    if(!rst) opcode <= memread(pc);
 end
 
 endmodule
