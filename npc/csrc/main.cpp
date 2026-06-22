@@ -139,7 +139,7 @@ void execute(uint32_t n){
       ret = top->top->reg_mod->regs[10];
       break;
     }
-    if(!((contextp->time()) % 1000000)&&batch){
+    if(!((contextp->time()) % 100000000)&&batch){
       printf("time:%lu\n", contextp->time());
     }
 
