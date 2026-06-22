@@ -60,7 +60,16 @@ enum {
 
 static uint32_t csr_access(uint32_t addr, uint32_t data, uint32_t type){ //type 0-write 1-set 2-clear
   uint32_t temp=0;
-  if(addr == 0x305){ //mtvec
+  if(addr == 0x300){ //mstatus
+    temp = cpu.mstatus;
+    if(type == 0){
+      cpu.mstatus = data;
+    }else if(type == 1){
+      cpu.mstatus = cpu.mstatus | data;
+    }else if(type == 2){
+      cpu.mstatus = cpu.mstatus & ~data;
+    }
+  } else if(addr == 0x305){ //mtvec
     temp = cpu.mtvec;
     if(type == 0){
       cpu.mtvec = data;
@@ -68,7 +77,7 @@ static uint32_t csr_access(uint32_t addr, uint32_t data, uint32_t type){ //type 
       cpu.mtvec = cpu.mtvec | data;
     }else if(type == 2){
       cpu.mtvec = cpu.mtvec & ~data;
-    } 
+    }  
   } else if(addr == 0x341){ //mepc
     temp = cpu.mepc;
     if(type == 0){
@@ -87,7 +96,7 @@ static uint32_t csr_access(uint32_t addr, uint32_t data, uint32_t type){ //type 
     }else if(type == 2){
       cpu.mcause = cpu.mcause & ~data;
     } 
-  } else{
+  }else{
     printf("calling unknown CSR at addr: 0x%04x with data: 0x%08x and type: %d", addr, data, type);
     assert(0);
   }
