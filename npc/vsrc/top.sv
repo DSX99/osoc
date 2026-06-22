@@ -21,7 +21,7 @@ pc pc_mod(
 );
 
 lsu lsu_mod(
-    .data_in(data_rs2), .addr(alu_out), .oper(lsu_oper), .we(lsu_we), .le(lsu_le), .data_out(lsu_out)
+    .clk(clk), .data_in(data_rs2), .addr(alu_out), .oper(lsu_oper), .we(lsu_we), .le(lsu_le), .data_out(lsu_out)
 );
 
 decode decode_mod(
@@ -33,7 +33,7 @@ alu alu_mod(
 );
 
 ifu ifu_mod(
-    .rst(rst), .clk(clk), .pc(pc), .opcode(opcode)
+    .pc(pc), .opcode(opcode)
 );
 
 always_comb begin

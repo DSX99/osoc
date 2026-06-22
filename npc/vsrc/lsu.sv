@@ -1,4 +1,5 @@
 module lsu(
+    input logic clk,
     input logic we,
     input logic le,
     input logic [31:0] data_in,
@@ -21,7 +22,7 @@ module lsu(
 
     int A;
 
-    always_comb begin
+    always_ff @(posedge clk) begin
         data_out = 0;
         if(le) begin
             case(oper)
