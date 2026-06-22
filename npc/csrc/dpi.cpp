@@ -94,5 +94,6 @@ extern "C" {
             printf("Illegal memory read access at addr:0x%08x\n",addr);
             assert(0);
         }
+        return 0;
     }
 }
