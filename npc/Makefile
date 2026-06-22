@@ -8,7 +8,7 @@ include $(NEMU_HOME)/src/utils/filelist.mk
 .DEFAULT_GOAL  := lint
 VERILATOR = verilator
 VERILOG_SRC = vsrc/*.sv
-CPP_SRC = csrc/*.cpp csrc/*.h 
+CPP_SRC = csrc/*.cpp
 
 IMG ?= 
 ARGS ?= 
