@@ -4,19 +4,12 @@
 
 #include "Vtop__pch.h"
 
-void Vtop_top____Vdpiimwrap_lsu_mod__DOT__memread_TOP__top(IData/*31:0*/ addr, IData/*31:0*/ &memread__Vfuncrtn);
-
 VL_ATTR_COLD void Vtop_top___eval_initial__TOP__top(Vtop_top* vlSelf) {
     VL_DEBUG_IF(VL_DBG_MSGF("+      Vtop_top___eval_initial__TOP__top\n"); );
     Vtop__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     auto& vlSelfRef = std::ref(*vlSelf).get();
-    // Locals
-    IData/*31:0*/ __Vfunc_ifu_mod__DOT__memread__8__Vfuncout;
-    __Vfunc_ifu_mod__DOT__memread__8__Vfuncout = 0;
     // Body
     vlSelfRef.pc = 0x80000000U;
-    Vtop_top____Vdpiimwrap_lsu_mod__DOT__memread_TOP__top(0x80000000U, __Vfunc_ifu_mod__DOT__memread__8__Vfuncout);
-    vlSelfRef.opcode = __Vfunc_ifu_mod__DOT__memread__8__Vfuncout;
 }
 
 VL_ATTR_COLD void Vtop_top___ctor_var_reset(Vtop_top* vlSelf) {
@@ -47,9 +40,5 @@ VL_ATTR_COLD void Vtop_top___ctor_var_reset(Vtop_top* vlSelf) {
     vlSelf->__PVT__decode_mod__DOT__imm_i = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 17728463912631228713ull);
     vlSelf->__PVT__alu_mod__DOT__val1 = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 3618980885417066799ull);
     vlSelf->__PVT__alu_mod__DOT__val2 = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 5531290321701216620ull);
-    vlSelf->__Vfunc_lsu_mod__DOT__memread__0__Vfuncout = 0;
-    vlSelf->__Vfunc_lsu_mod__DOT__memread__1__Vfuncout = 0;
-    vlSelf->__Vfunc_lsu_mod__DOT__memread__2__Vfuncout = 0;
-    vlSelf->__Vfunc_lsu_mod__DOT__memread__3__Vfuncout = 0;
-    vlSelf->__Vfunc_lsu_mod__DOT__memread__4__Vfuncout = 0;
+    vlSelf->__Vfunc_ifu_mod__DOT__memread__8__Vfuncout = 0;
 }
