@@ -16,7 +16,7 @@ int printf(const char *fmt, ...) {
         int val = va_arg(list, int);
         char str[12];
         char *p = str;
-        itoa(str, val);
+        _itoa(str, val);
         while(*p!='\0'){
           putch(*p);
           p++;
@@ -56,7 +56,7 @@ int sprintf(char *out, const char *fmt, ...) {
         int val = va_arg(list, int);
         char str[12];
         char *p = str;
-        itoa(str, val);
+        _itoa(str, val);
         while(*p!='\0'){
           *out++=*p++;
         }

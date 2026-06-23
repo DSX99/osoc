@@ -29,7 +29,7 @@ int atoi(const char* nptr) {
   return x;
 }
 
-void itoa(char *s, int x){
+void _itoa(char *s, int x){
   bool neg=0;
   int i=0;
 
