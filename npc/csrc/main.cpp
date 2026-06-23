@@ -276,3 +276,7 @@ void print_itrace(){
     }
   }
 }
+
+void print_ftrace(){
+  printf("too bad, not implemented\n");
+}
