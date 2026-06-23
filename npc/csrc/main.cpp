@@ -29,6 +29,7 @@ VerilatedFstC *tracep;
 Vtop* top; 
 bool skip_inst=0;
 CPU_state cpu;
+bool fail=0;
 
 char itrace[16][128];
 int point=0;
@@ -137,6 +138,11 @@ const char *regs[] = {
 
 void execute(uint32_t n){
 
+  if(fail){ 
+    printf("failed");
+    return;
+  }
+
   if(finished){
     printf("Program finished\n");
     if(!batch) difftest_exec(1);
@@ -183,6 +189,11 @@ void execute(uint32_t n){
     contextp->timeInc(1);
     top->clk=!top->clk;
     top->eval();
+
+    if(fail){ 
+      printf("failed");
+      return;
+    }
 
     bool current_cycle_is_skipped = skip_inst;
 

@@ -14,6 +14,7 @@ extern Vtop* top;
 uint8_t mem[MEM_SIZE];
 uint64_t curr_time;
 extern bool skip_inst;
+extern bool fail;
 
 #define DEVICE_BASE 0xa0000000
 
@@ -107,7 +108,7 @@ extern "C" {
             if(addr == RTC_ADDR) return (uint32_t)curr_time;
         }else{
             printf("Illegal memory read access at addr:0x%08x at pc: 0x%08x\n",addr, top->top->pc);
-            assert(0);
+            fail=1;
         }
         return 0;
     }
