@@ -8,8 +8,7 @@
 #endif
 
 struct Context {
-  // Layout must match the saved trap frame in trap.S:
-  // gpr[NR_REGS], mcause, mstatus, mepc
+  // Layout must match the saved trap frame in trap.S
   uintptr_t gpr[NR_REGS];
   uintptr_t mcause;
   uintptr_t mstatus;
