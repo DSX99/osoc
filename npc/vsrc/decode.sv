@@ -133,7 +133,8 @@ module decode(
                             alu_op = 8'b10010000;
                             rs1 = 0;
                             rd = 0;
-                            csr_oper = 3'b010;
+                            csr_oper = 3'b001;
+                            imm = 12'h341;
                         end
                     end
                     default: begin
