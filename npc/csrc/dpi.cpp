@@ -4,7 +4,13 @@
 #include <cstring>
 #include <chrono>
 #include "common.h"
+#include "Vtop.h"
+#include "Vtop___024root.h"
+#include "Vtop_top.h"
+#include "Vtop_regs.h"
 
+
+Vtop* top; 
 uint8_t mem[MEM_SIZE];
 uint64_t curr_time;
 extern bool skip_inst;
@@ -100,7 +106,7 @@ extern "C" {
             }
             if(addr == RTC_ADDR) return (uint32_t)curr_time;
         }else{
-            printf("Illegal memory read access at addr:0x%08x\n",addr);
+            printf("Illegal memory read access at addr:0x%08x at pc: 0x%08x\n",addr, top->top->pc);
             assert(0);
         }
         return 0;
