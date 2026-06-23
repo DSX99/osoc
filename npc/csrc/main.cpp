@@ -84,7 +84,7 @@ int main(int argc, char** argv) {
   cpu.pc = 0x80000000;
 
   if(!batch){
-  difftest_regcpy(&cpu, 1);
+    difftest_regcpy(&cpu, 1);
   }
 
   contextp = new VerilatedContext;
