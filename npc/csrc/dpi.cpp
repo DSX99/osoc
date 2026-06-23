@@ -7,6 +7,7 @@
 
 uint8_t mem[MEM_SIZE];
 uint64_t curr_time;
+extern bool skip_inst;
 
 #define DEVICE_BASE 0xa0000000
 
@@ -90,6 +91,7 @@ extern "C" {
                     (mem[addr-ROM_OFFSET+1]<<8)|
                     (mem[addr-ROM_OFFSET]));
         }else if(addr == RTC_ADDR || addr == RTC_ADDR + 4){
+            skip_inst = 1;
             if(addr == RTC_ADDR + 4){
                 auto now = std::chrono::system_clock::now().time_since_epoch();
                 curr_time = std::chrono::duration_cast<std::chrono::microseconds>(now).count();

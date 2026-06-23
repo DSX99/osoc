@@ -27,6 +27,8 @@ static uint32_t qexit = 0;
 VerilatedContext *contextp;
 VerilatedFstC *tracep;
 Vtop* top; 
+bool skip_inst=0;
+CPU_state cpu;
 
 void execute(uint32_t n);
 void init_sdb();
@@ -78,7 +80,6 @@ int main(int argc, char** argv) {
     difftest_init(0);
   }
   loadmemory(img_file, batch);
-  CPU_state cpu;
   memset(&cpu, 0, sizeof(CPU_state));
   cpu.pc = 0x80000000;
   difftest_regcpy(&cpu, 1);
@@ -196,7 +197,7 @@ void execute(uint32_t n){
     }
     n--;
     
-    if(!batch){
+    if(!batch && !skip_inst){
       difftest_regcpy(ref_regs, 0);
       for(int i=0;i<32;i++){
         if(ref_regs[i]-top->top->reg_mod->regs[i]!=0){
@@ -205,6 +206,13 @@ void execute(uint32_t n){
           return;
         }
       }
+    } else if(!batch && skip_inst){
+      for(int i=0;i<32;i++){
+        cpu.gpr[i] = top->top->reg_mod->regs[i];
+      }
+      cpu.pc = top->top->pc;
+      difftest_regcpy(&cpu, 1);
+      skip_inst = 0;
     }
   }
 }
