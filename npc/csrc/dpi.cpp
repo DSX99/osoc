@@ -83,6 +83,7 @@ extern "C" {
         }else if(addr == SERIAL_PORT){
             skip_inst = 1;
             putchar((uint8_t)data);
+            fflush(stdout);
         }else{
             printf("Illegal memory write access at addr:0x%08x\n",addr);
             assert(0);
