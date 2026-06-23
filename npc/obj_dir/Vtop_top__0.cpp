@@ -70,12 +70,12 @@ void Vtop_top___ico_sequent__TOP__top__0(Vtop_top* vlSelf) {
                                     = (0x0000001fU 
                                        & (vlSelfRef.opcode 
                                           >> 7U));
-                                vlSelfRef.__PVT__imm 
-                                    = vlSelfRef.__PVT__decode_mod__DOT__imm_i;
                                 vlSelfRef.__PVT__rs1 
                                     = (0x0000001fU 
                                        & (vlSelfRef.opcode 
                                           >> 0x0000000fU));
+                                vlSelfRef.__PVT__imm 
+                                    = vlSelfRef.__PVT__decode_mod__DOT__imm_i;
                                 if ((0U == (7U & (vlSelfRef.opcode 
                                                   >> 0x0000000cU)))) {
                                     if (VL_UNLIKELY(((IData)(
@@ -98,7 +98,8 @@ void Vtop_top___ico_sequent__TOP__top__0(Vtop_top* vlSelf) {
                                         vlSelfRef.__PVT__alu_op = 0x90U;
                                         vlSelfRef.__PVT__rs1 = 0U;
                                         vlSelfRef.__PVT__rd = 0U;
-                                        vlSelfRef.__PVT__csr_oper = 2U;
+                                        vlSelfRef.__PVT__csr_oper = 1U;
+                                        vlSelfRef.__PVT__imm = 0x00000341U;
                                     } else {
                                         vlSelfRef.__PVT__cause = 0x0bU;
                                         vlSelfRef.__PVT__mux_select_pc = 1U;
@@ -677,12 +678,12 @@ void Vtop_top___nba_sequent__TOP__top__1(Vtop_top* vlSelf) {
                                     = (0x0000001fU 
                                        & (vlSelfRef.opcode 
                                           >> 7U));
-                                vlSelfRef.__PVT__imm 
-                                    = vlSelfRef.__PVT__decode_mod__DOT__imm_i;
                                 vlSelfRef.__PVT__rs1 
                                     = (0x0000001fU 
                                        & (vlSelfRef.opcode 
                                           >> 0x0000000fU));
+                                vlSelfRef.__PVT__imm 
+                                    = vlSelfRef.__PVT__decode_mod__DOT__imm_i;
                                 if ((0U == (7U & (vlSelfRef.opcode 
                                                   >> 0x0000000cU)))) {
                                     if (VL_UNLIKELY(((IData)(
@@ -705,7 +706,8 @@ void Vtop_top___nba_sequent__TOP__top__1(Vtop_top* vlSelf) {
                                         vlSelfRef.__PVT__alu_op = 0x90U;
                                         vlSelfRef.__PVT__rs1 = 0U;
                                         vlSelfRef.__PVT__rd = 0U;
-                                        vlSelfRef.__PVT__csr_oper = 2U;
+                                        vlSelfRef.__PVT__csr_oper = 1U;
+                                        vlSelfRef.__PVT__imm = 0x00000341U;
                                     } else {
                                         vlSelfRef.__PVT__cause = 0x0bU;
                                         vlSelfRef.__PVT__mux_select_pc = 1U;

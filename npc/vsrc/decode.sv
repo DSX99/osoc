@@ -134,7 +134,7 @@ module decode(
                             rs1 = 0;
                             rd = 0;
                             csr_oper = 3'b001;
-                            imm = 12'h341;
+                            imm ={20'b0,12'h341};
                         end
                     end
                     default: begin
