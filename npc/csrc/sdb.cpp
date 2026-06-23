@@ -199,7 +199,7 @@ static int cmd_sir(char *args) {
 //         return 0;
 //       }
 //     }
-}
+// }
 
 // static int cmd_itrace(char *args) {
 
