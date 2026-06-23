@@ -21,7 +21,7 @@ initial begin
     for(int i = 0; i < 32; i++) begin
         regs[i] = 32'h0;
     end
-    regs[MSTATUS] = 32'h00001800
+    regs[MSTATUS] = 32'h00001800;
 end
 
 always_comb begin
@@ -39,9 +39,10 @@ end
 
 always_ff @(posedge clk) begin
 if(rst) begin
-    for(int i=0;i<4;i++) begin
-        regs[i]<=0;
+    for(int i = 0; i < 32; i++) begin
+        regs[i] <= 32'h0;
     end
+    regs[MSTATUS] <= 32'h00001800;
 end else begin
         case(oper)
             2'b00: ;
