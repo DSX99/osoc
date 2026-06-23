@@ -78,10 +78,10 @@ int main(int argc, char** argv) {
     difftest_init(0);
   }
   loadmemory(img_file, batch);
-  CPU_state *cpu;
-  memset(cpu, 0, sizeof(CPU_state));
-  cpu->pc = 0x80000000;
-  difftest_regcpy(cpu, 0);
+  CPU_state cpu;
+  memset(&cpu, 0, sizeof(CPU_state));
+  cpu.pc = 0x80000000;
+  difftest_regcpy(&cpu, 1);
   contextp = new VerilatedContext;
   // contextp->threads(1); // can be used in future to increase speed
 
