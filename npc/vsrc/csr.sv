@@ -21,6 +21,7 @@ initial begin
     for(int i=0;i<32;i++) begin
         regs[i]=0;
     end
+    regs[MSTATUS]=32'h00001800;
 end
 
 always_comb begin
