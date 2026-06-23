@@ -74,6 +74,7 @@ extern "C" {
                 printf("strange data access addr:%u, data:%u, type:%u\n", addr, data, type);
             }
         }else if(addr == SERIAL_PORT){
+            skip_inst = 1;
             putchar((uint8_t)data);
         }else{
             printf("Illegal memory write access at addr:0x%08x\n",addr);
