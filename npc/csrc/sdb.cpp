@@ -175,6 +175,8 @@ static int cmd_sir(char *args) {
   return 0;
 }
 
+#include "Vtop.h"
+#include "Vtop___024root.h"
 #include "Vtop_top.h"
 #include "Vtop_regs.h"
 
