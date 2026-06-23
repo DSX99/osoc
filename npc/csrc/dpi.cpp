@@ -98,7 +98,7 @@ extern "C" {
             if(addr == RTC_ADDR) return (uint32_t)curr_time;
         }else{
             printf("Illegal memory read access at addr:0x%08x\n",addr);
-            // assert(0);
+            assert(0);
         }
         return 0;
     }
