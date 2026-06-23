@@ -192,6 +192,15 @@ static int cmd_ftrace(char *args) {
 }
 #endif
 
+#ifdef CONFIG_ETRACE
+static int cmd_etrace(char *args) {
+
+  print_etrace();
+
+  return 0;
+}
+#endif
+
 
 static int cmd_help(char *args);
 
@@ -215,6 +224,9 @@ static struct {
   #endif
   #ifdef CONFIG_FTRACE
   { "ftrace", " print trace of 16 last function calls ", cmd_ftrace }
+  #endif  
+  #ifdef CONFIG_ETRACE
+  { "ftrace", " print trace of 16 last exception calls ", cmd_etrace }
   #endif
 };
 
