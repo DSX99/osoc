@@ -31,7 +31,7 @@ bool skip_inst=0;
 CPU_state cpu;
 
 char itrace[16][128];
-int point;
+int point=0;
 
 void execute(uint32_t n);
 void init_sdb();
