@@ -88,6 +88,8 @@ int main(int argc, char** argv) {
 
   top = new Vtop{contextp};
 
+  printf("1");
+
 #ifdef CONFIG_FST
   Verilated::traceEverOn(true);
   tracep = new VerilatedFstC;
@@ -95,6 +97,7 @@ int main(int argc, char** argv) {
   tracep->open("waveform.fst");
 #endif
 
+printf("2");
 
   if (top == NULL || top->top == NULL) {
     fprintf(stderr, "Error: Simulation model instantiation failed!\n");
@@ -129,8 +132,6 @@ const char *regs[] = {
 
 
 void execute(uint32_t n){
-
-  printf("1");
 
   if(finished){
     printf("Program finished\n");
