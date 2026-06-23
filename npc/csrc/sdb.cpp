@@ -233,7 +233,7 @@ static struct {
   { "w", " w EXPR Suspend program execution when the value of expression EXPR changes.", cmd_w },
   { "d", " d N Deletes the watchpoint with ID N.", cmd_d },
   { "sir", " si 1 + info r.", cmd_sir },
-  { "check", " check regs", cmd_check },
+  // { "check", " check regs", cmd_check },
   
   // { "itrace", " print trace of 16 last instructions ", cmd_itrace },
   // { "ftrace", " print trace of 16 last function calls ", cmd_ftrace }
