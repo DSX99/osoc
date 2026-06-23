@@ -33,21 +33,12 @@ bool cte_init(Context*(*handler)(Event, Context*)) {
 }
 
 Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
+  memset(kstack.start, 0, kstack.end-kstack.start);
   uintptr_t ctxp = ((uintptr_t)kstack.end - sizeof(Context) - 16) & (~15);
   Context *ctx = (Context *)ctxp;
-
-  // Clear saved registers to avoid garbage
-  for (int i = 0; i < NR_REGS; i++) ctx->gpr[i] = 0;
-
-  // Set up initial machine state for the new context
   ctx->mstatus = 0x1800;
-  ctx->mepc = (uintptr_t)entry;     // start executing `entry` on first resume
-  ctx->gpr[10] = (uintptr_t)arg;    // a0 = arg
-
-  // Ensure return address is zero (so returning from `entry` won't resume elsewhere)
-  ctx->gpr[1] = 0;
-
-  // Store the pointer to this context at kstack.start for convenience
+  ctx->mepc = (uintptr_t)entry;
+  ctx->gpr[10]=(uintptr_t)arg;
   *((Context **)kstack.start) = ctx;
   return ctx;
 }
