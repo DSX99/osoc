@@ -167,7 +167,9 @@ void execute(uint32_t n){
       printf("%s\n", str);
     }
 
-    if((!batch) && (!skip_inst)) difftest_exec(1);
+    bool current_cycle_is_skipped = skip_inst;
+
+    if((!batch) && (!current_cycle_is_skipped)) difftest_exec(1);
 
     contextp->timeInc(1);
     top->clk=!top->clk;
@@ -201,23 +203,33 @@ void execute(uint32_t n){
     }
     n--;
     
-    if((!batch) && (!skip_inst)){
-      difftest_regcpy(&ref_cpu, 0);
-      for(int i=0;i<32;i++){
-        if(ref_cpu.gpr[i]-top->top->reg_mod->regs[i]!=0){
-          printf("Difference with REF %s, should:0x%08x, actually:0x%08x, pc: 0x%08x\n", regs[i], ref_cpu.gpr[i], top->top->reg_mod->regs[i], top->top->pc);
-          ret=1;
-          return;
+    if(!batch) {
+      if (!current_cycle_is_skipped) {
+        difftest_regcpy(&ref_cpu, 0);
+
+        if (ref_cpu.pc != top->top->pc) {
+          printf("Difference with REF pc, should:0x%08x, actually:0x%08x\n", ref_cpu.pc, top->top->pc);
+          ret = 1;
+          return; 
         }
+
+        for(int i = 0; i < 32; i++){
+          if(ref_cpu.gpr[i] != top->top->reg_mod->regs[i]){
+            printf("Difference with REF %s, should:0x%08x, actually:0x%08x, pc: 0x%08x\n", 
+                   regs[i], ref_cpu.gpr[i], top->top->reg_mod->regs[i], top->top->pc);
+            ret = 1;
+            return;
+          }
+        }
+      } 
+      else {
+        for(int i = 0; i < 32; i++){
+          cpu.gpr[i] = top->top->reg_mod->regs[i];
+        }
+        cpu.pc = top->top->pc;
+        difftest_regcpy(&cpu, 1);
+        skip_inst = 0; 
       }
-      if (ref_cpu.pc != top->top->pc) printf("Difference with REF pc, should:0x%08x, actually:0x%08x\n", ref_cpu.pc ,top->top->pc);
-    } else if(!batch && skip_inst){
-      for(int i=0;i<32;i++){
-        cpu.gpr[i] = top->top->reg_mod->regs[i];
-      }
-      cpu.pc = top->top->pc;
-      difftest_regcpy(&cpu, 1);
-      skip_inst = 0;
     }
   }
 }
