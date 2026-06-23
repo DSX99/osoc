@@ -175,6 +175,22 @@ static int cmd_sir(char *args) {
   return 0;
 }
 
+
+void difftest_regcpy(void *regs, bool direction);
+extern Vtop* top; 
+uint32_t ref_regs[32];
+
+static int cmd_check(char *args) {
+
+  difftest_regcpy(ref_regs, 0);
+    for(int i=0;i<32;i++){
+      if(ref_regs[i]-top->top->reg_mod->regs[i]!=0){
+        printf("Difference with REF %s, should:0x%08x, actually:0x%08x, pc: 0x%08x\n", regs[i], ref_regs[i], top->top->reg_mod->regs[i], top->top->pc);
+        return;
+      }
+    }
+}
+
 // static int cmd_itrace(char *args) {
 
 //   print_itrace();
@@ -207,6 +223,8 @@ static struct {
   { "w", " w EXPR Suspend program execution when the value of expression EXPR changes.", cmd_w },
   { "d", " d N Deletes the watchpoint with ID N.", cmd_d },
   { "sir", " si 1 + info r.", cmd_sir },
+  { "check", " check regs", cmd_check },
+  
   // { "itrace", " print trace of 16 last instructions ", cmd_itrace },
   // { "ftrace", " print trace of 16 last function calls ", cmd_ftrace }
 };
