@@ -209,8 +209,8 @@ void execute(uint32_t n){
           ret=1;
           return;
         }
-        if (ref_cpu.pc != top->top->pc) printf("Difference with REF pc, should:0x%08x, actually:0x%08x\n", ref_cpu.pc ,top->top->pc);
       }
+      if (ref_cpu.pc != top->top->pc) printf("Difference with REF pc, should:0x%08x, actually:0x%08x\n", ref_cpu.pc ,top->top->pc);
     } else if(!batch && skip_inst){
       for(int i=0;i<32;i++){
         cpu.gpr[i] = top->top->reg_mod->regs[i];
