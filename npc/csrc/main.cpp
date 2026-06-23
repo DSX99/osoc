@@ -14,10 +14,10 @@
 #include <verilated_fst_c.h>
 #endif
 
-typedef struct {
-    uint32_t gpr[32];
-    uint32_t pc;
-} CPU_state;
+struct CPU_state {
+  uint32_t gpr[32];
+  uint32_t pc;
+};
 
 bool batch=0;
 char *img_file;
