@@ -81,17 +81,12 @@ int main(int argc, char** argv) {
   }
   loadmemory(img_file, batch);
   memset(&cpu, 0, sizeof(CPU_state));
-  
-  printf("1");
-
   cpu.pc = 0x80000000;
   difftest_regcpy(&cpu, 1);
   contextp = new VerilatedContext;
   // contextp->threads(1); // can be used in future to increase speed
 
   top = new Vtop{contextp};
-
-  printf("1");
 
 #ifdef CONFIG_FST
   Verilated::traceEverOn(true);
@@ -100,7 +95,6 @@ int main(int argc, char** argv) {
   tracep->open("waveform.fst");
 #endif
 
-printf("2");
 
   if (top == NULL || top->top == NULL) {
     fprintf(stderr, "Error: Simulation model instantiation failed!\n");

@@ -50,9 +50,13 @@ extern "C" {
 
         fclose(fp);
 
+        printf("1");
+
         if(!batch){
             difftest_memcpy(0x80000000, mem, size, 1);
         }
+
+        printf("2");
     }
 
     void memwrite(uint32_t addr, uint32_t data, uint32_t type){
