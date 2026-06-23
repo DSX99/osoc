@@ -153,7 +153,7 @@ void execute(uint32_t n){
       printf("%s\n", str);
     }
 
-    // if(!batch) difftest_exec(1);
+    if(!batch) difftest_exec(1);
 
     contextp->timeInc(1);
     top->clk=!top->clk;
@@ -187,16 +187,16 @@ void execute(uint32_t n){
     }
     n--;
     
-    // if(!batch){
-    //   difftest_regcpy(ref_regs, 0);
-    //   for(int i=0;i<32;i++){
-    //     if(ref_regs[i]-top->top->reg_mod->regs[i]!=0){
-    //       printf("Difference with REF %s, should:0x%08x, actually:0x%08x\n", regs[i], ref_regs[i], top->top->reg_mod->regs[i]);
-    //       ret=1;
-    //       return;
-    //     }
-    //   }
-    // }
+    if(!batch){
+      difftest_regcpy(ref_regs, 0);
+      for(int i=0;i<32;i++){
+        if(ref_regs[i]-top->top->reg_mod->regs[i]!=0){
+          printf("Difference with REF %s, should:0x%08x, actually:0x%08x\n", regs[i], ref_regs[i], top->top->reg_mod->regs[i]);
+          ret=1;
+          return;
+        }
+      }
+    }
   }
 }
 
