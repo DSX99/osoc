@@ -5,6 +5,13 @@
 
 
 void Vtop___024root__traceDeclTypesSub0(VerilatedFst* tracep) {
+    {
+        const char* __VenumItemNames[]
+        = {"MEPS", "MSTATUS", "MCAUSE", "MTVEC"};
+        const char* __VenumItemValues[]
+        = {"0", "1", "10", "11"};
+        tracep->declDTypeEnum(1, "csr.__typeimpmod1", 4, 32, __VenumItemNames, __VenumItemValues);
+    }
 }
 
 void Vtop___024root__trace_decl_types(VerilatedFst* tracep) {

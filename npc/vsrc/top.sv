@@ -26,7 +26,7 @@ lsu lsu_mod(
 
 decode decode_mod(
     .inst(opcode), .imm(imm), .alu_op(alu_op), .rs1(rs1), .rs2(rs2), .rd(rd), .lsu_we(lsu_we), .lsu_le(lsu_le), .mux_select(mux_select), .lsu_oper(lsu_oper),
-    .csr_oper(oper), .cause(cause), .mux_select_pc(mux_select_pc)
+    .csr_oper(csr_oper), .cause(cause), .mux_select_pc(mux_select_pc)
 );
 
 alu alu_mod(
@@ -54,6 +54,7 @@ always_comb begin
     case(mux_select_pc)
         2'b00: to_pc = alu_out;
         2'b01: to_pc = csr_out;
+        default: to_pc = alu_out;
     endcase
 end
 

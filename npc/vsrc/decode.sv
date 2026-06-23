@@ -131,7 +131,7 @@ module decode(
                         end else begin
                             mux_select_pc = 2'b01;
                             alu_op = 8'b10010000;
-                            rs1_val = 0;
+                            rs1 = 0;
                             rd = 0;
                             csr_oper = 3'b010;
                         end
