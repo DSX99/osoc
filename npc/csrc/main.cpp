@@ -153,7 +153,7 @@ void execute(uint32_t n){
       printf("%s\n", str);
     }
 
-    if(!batch) difftest_exec(1);
+    // if(!batch) difftest_exec(1);
 
     contextp->timeInc(1);
     top->clk=!top->clk;
