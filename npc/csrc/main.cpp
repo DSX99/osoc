@@ -81,6 +81,9 @@ int main(int argc, char** argv) {
   }
   loadmemory(img_file, batch);
   memset(&cpu, 0, sizeof(CPU_state));
+  
+  printf("1");
+
   cpu.pc = 0x80000000;
   difftest_regcpy(&cpu, 1);
   contextp = new VerilatedContext;
