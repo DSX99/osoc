@@ -143,7 +143,7 @@ void execute(uint32_t n){
   }
   char str[128];
   uint8_t inst[4];
-  uint32_t ref_regs[32];
+  CPU_state ref_cpu;
 
   while(n>0){
 
@@ -204,13 +204,14 @@ void execute(uint32_t n){
     n--;
     
     if(!batch && !skip_inst){
-      difftest_regcpy(ref_regs, 0);
+      difftest_regcpy(&ref_cpu, 0);
       for(int i=0;i<32;i++){
-        if(ref_regs[i]-top->top->reg_mod->regs[i]!=0){
-          printf("Difference with REF %s, should:0x%08x, actually:0x%08x, pc: 0x%08x\n", regs[i], ref_regs[i], top->top->reg_mod->regs[i], top->top->pc);
+        if(ref_cpu.gpr[i]-top->top->reg_mod->regs[i]!=0){
+          printf("Difference with REF %s, should:0x%08x, actually:0x%08x, pc: 0x%08x\n", regs[i], ref_cpu.gpr[i], top->top->reg_mod->regs[i], top->top->pc);
           ret=1;
           return;
         }
+        if (ref_cpu.pc != top->top->pc) printf("Difference with REF pc, should:0x%08x, actually:0x%08x\n", ref_cpu.pc ,top->top->pc);
       }
     } else if(!batch && skip_inst){
       for(int i=0;i<32;i++){
