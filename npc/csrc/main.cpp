@@ -80,21 +80,19 @@ int main(int argc, char** argv) {
     difftest_init(0);
   }
   loadmemory(img_file, batch);
-
-  printf("1\n");
-
   memset(&cpu, 0, sizeof(CPU_state));
+  cpu.pc = 0x80000000;
 
   printf("1\n");
-  
-  cpu.pc = 0x80000000;
+
   difftest_regcpy(&cpu, 1);
+
+  printf("2\n");
+
   contextp = new VerilatedContext;
   // contextp->threads(1); // can be used in future to increase speed
 
   top = new Vtop{contextp};
-
-  printf("1\n");
 
 #ifdef CONFIG_FST
   Verilated::traceEverOn(true);
@@ -102,8 +100,6 @@ int main(int argc, char** argv) {
   top->trace(tracep, 5);
   tracep->open("waveform.fst");
 #endif
-
-  printf("1\n");
 
 
   if (top == NULL || top->top == NULL) {
@@ -114,8 +110,6 @@ int main(int argc, char** argv) {
   reset(top, 100);
   top->rst=0;
   top->clk=0;
-
-  printf("1\n");
 
   if(batch){
     execute(-1);
