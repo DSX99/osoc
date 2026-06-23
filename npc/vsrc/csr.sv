@@ -20,8 +20,8 @@ logic [4:0] working_reg;
 initial begin
     for(int i=0;i<32;i++) begin
         if(i!= {27'b0,MSTATUS}) regs[i]=0;
+        else regs[i]=32'h00001800;
     end
-    regs[MSTATUS]=32'h00001800;
 end
 
 always_comb begin
