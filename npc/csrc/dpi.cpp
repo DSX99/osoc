@@ -10,7 +10,7 @@
 #include "Vtop_regs.h"
 
 
-Vtop* top; 
+extern Vtop* top; 
 uint8_t mem[MEM_SIZE];
 uint64_t curr_time;
 extern bool skip_inst;
