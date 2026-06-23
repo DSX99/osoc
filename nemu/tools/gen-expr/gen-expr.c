@@ -70,7 +70,7 @@ static void gen_rand_expr(char **point) {
   if(*point - buf > 40000) i=0;
   switch (i) {
     case 0: 
-      *point+=sprintf(*point,"%uu",(unsigned)(rand()+1)); 
+      *point+=sprintf(*point,"%uu",(unsigned)(rand())); 
         break;
     case 1: 
       *point+=sprintf(*point,"%s",get_random_spaces('('));

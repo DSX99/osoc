@@ -8,7 +8,10 @@ module decode(
     output logic lsu_we,
     output logic lsu_le,
     output logic [1:0] mux_select,
-    output logic [2:0] lsu_oper
+    output logic [2:0] lsu_oper,
+    output logic [2:0] csr_oper,
+    output logic [4:0] cause,
+    output logic [1:0] mux_select_pc
 );
 
     logic [31:0] imm_i, imm_s, imm_b, imm_u, imm_j;
@@ -43,6 +46,9 @@ module decode(
         lsu_we      = 1'b0;
         lsu_le      = 1'b0;
         mux_select  = 2'b0;
+        mux_select_pc= 2'b0;
+        cause       = 5'b0;
+        csr_oper    = 3'b0;
 
         case(inst[6:0])
             7'b0110111: begin // LUI
@@ -111,12 +117,31 @@ module decode(
                 if(inst[25] && inst[30]) ; //raise exeprion
                 if(inst[31]|(|inst[29:26])) ; //raise exeption
             end
-            7'b1110011: begin // SYSTEM (ECALL, EBREAK)
+            7'b1110011: begin // SYSTEM (ECALL, EBREAK) + CSR
                 rd     = rd_val;
                 rs1    = rs1_val;
                 imm    = imm_i;
-                alu_op = {5'b11000, func3}; 
-                $finish();
+                case(func3)
+                    3'b000: begin
+                        if(!(|func7) && rs2_val==1) $finish;
+                        else if(!(|func7 | |rs2_val)) begin
+                            cause = 11;
+                            mux_select_pc = 2'b01;
+                            alu_op = 8'b10010000;
+                        end else begin
+                            mux_select_pc = 2'b01;
+                            alu_op = 8'b10010000;
+                            rs1 = 0;
+                            rd = 0;
+                            csr_oper = 3'b001;
+                            imm ={20'b0,12'h341};
+                        end
+                    end
+                    default: begin
+                        csr_oper = func3;
+                        mux_select = 2'b11;
+                    end
+                endcase 
             end
             default: ;
         endcase

@@ -52,6 +52,57 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_
   }
 }
 
+uint32_t csr[20];
+
+enum {
+  MTVEC, MEPC, MCAUSE,
+};
+
+static uint32_t csr_access(uint32_t addr, uint32_t data, uint32_t type){ //type 0-write 1-set 2-clear
+  uint32_t temp=0;
+  if(addr == 0x300){ //mstatus
+    temp = cpu.mstatus;
+    if(type == 0){
+      cpu.mstatus = data;
+    }else if(type == 1){
+      cpu.mstatus = cpu.mstatus | data;
+    }else if(type == 2){
+      cpu.mstatus = cpu.mstatus & ~data;
+    }
+  } else if(addr == 0x305){ //mtvec
+    temp = cpu.mtvec;
+    if(type == 0){
+      cpu.mtvec = data;
+    }else if(type == 1){
+      cpu.mtvec = cpu.mtvec | data;
+    }else if(type == 2){
+      cpu.mtvec = cpu.mtvec & ~data;
+    }  
+  } else if(addr == 0x341){ //mepc
+    temp = cpu.mepc;
+    if(type == 0){
+      cpu.mepc = data;
+    }else if(type == 1){
+      cpu.mepc = cpu.mepc | data;
+    }else if(type == 2){
+      cpu.mepc = cpu.mepc & ~data;
+    } 
+  } else if(addr == 0x342){ //mcause
+    temp = cpu.mcause;
+    if(type == 0){
+      cpu.mcause = data;
+    }else if(type == 1){
+      cpu.mcause = cpu.mcause | data;
+    }else if(type == 2){
+      cpu.mcause = cpu.mcause & ~data;
+    } 
+  }else{
+    printf("calling unknown CSR at addr: 0x%04x with data: 0x%08x and type: %d", addr, data, type);
+    assert(0);
+  }
+  return temp;
+}
+
 static int decode_exec(Decode *s) {
   s->dnpc = s->snpc;
 
@@ -94,7 +145,7 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000000 ????? ????? 000 ????? 01100 11", add    , R, R(rd) = src1 + src2);
   INSTPAT("0100000 ????? ????? 000 ????? 01100 11", sub    , R, R(rd) = src1 - src2);
   INSTPAT("0000000 ????? ????? 001 ????? 01100 11", sll    , R, R(rd) = src1 << BITS(src2, 4,0));
-  INSTPAT("0000000 ????? ????? 010 ????? 01100 11", slt    , R, R(rd) = (sword_t)src1 < (sword_t)src1);
+  INSTPAT("0000000 ????? ????? 010 ????? 01100 11", slt    , R, R(rd) = (sword_t)src1 < (sword_t)src2);
   INSTPAT("0000000 ????? ????? 011 ????? 01100 11", sltu   , R, R(rd) = (word_t)src1 < (word_t)src2);
   INSTPAT("0000000 ????? ????? 100 ????? 01100 11", xor    , R, R(rd) = src1 ^ src2);
   INSTPAT("0000000 ????? ????? 101 ????? 01100 11", srl    , R, R(rd) = (word_t)src1 >> BITS(src2, 4,0));
@@ -112,6 +163,17 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000001 ????? ????? 110 ????? 01100 11", rem    , R, if(src2==0){ R(rd) = src1;      }else if(src1==(1<<31) && src2==UINT32_MAX){ R(rd) = 0;    }else{ R(rd) = (sword_t)src1 % (sword_t)src2; });
   INSTPAT("0000001 ????? ????? 111 ????? 01100 11", remu   , R, if(src2==0){ R(rd) = src1;      }else{ R(rd) = (word_t)src1 % (word_t)src2; } );
 
+  INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I, R(rd) = csr_access(imm, src1, 0));
+  INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs  , I, R(rd) = csr_access(imm, src1, 1));
+  INSTPAT("??????? ????? ????? 011 ????? 11100 11", csrrc  , I, R(rd) = csr_access(imm, src1, 2));
+
+  INSTPAT("??????? ????? ????? 101 ????? 11100 11", csrrwi , I, R(rd) = csr_access(imm, BITS(s->isa.inst, 19, 15), 0)); 
+  INSTPAT("??????? ????? ????? 110 ????? 11100 11", csrrsi , I, R(rd) = csr_access(imm, BITS(s->isa.inst, 19, 15), 1));  // here BITS are rs1
+  INSTPAT("??????? ????? ????? 111 ????? 11100 11", csrrci , I, R(rd) = csr_access(imm, BITS(s->isa.inst, 19, 15), 2)); 
+
+  
+  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , N, s->dnpc = isa_raise_intr(11, s->pc));
+  INSTPAT("0011000 00010 00000 000 00000 11100 11", mret   , N, s->dnpc = cpu.mepc);
   INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak , N, NEMUTRAP(s->pc, R(10))); // R(10) is $a0
   INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv    , N, INV(s->pc));
   INSTPAT_END();

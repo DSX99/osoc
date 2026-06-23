@@ -175,19 +175,46 @@ static int cmd_sir(char *args) {
   return 0;
 }
 
-// static int cmd_itrace(char *args) {
+#include "Vtop.h"
+#include "Vtop___024root.h"
+#include "Vtop_top.h"
+#include "Vtop_regs.h"
 
-//   print_itrace();
+const static char *regs[] = {
+  "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
+  "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
+  "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
+  "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
+};
+extern "C" void difftest_regcpy(void *regs, bool direction);
+extern Vtop* top; 
+uint32_t ref_regs[32];
 
-//   return 0;
-// }
+static int cmd_check(char *args) {
 
-// static int cmd_ftrace(char *args) {
+  difftest_regcpy(ref_regs, 0);
+  for(int i=0;i<32;i++){
+    if(ref_regs[i]-top->top->reg_mod->regs[i]!=0){
+      printf("Difference with REF %s, should:0x%08x, actually:0x%08x, pc: 0x%08x\n", regs[i], ref_regs[i], top->top->reg_mod->regs[i], top->top->pc);
+      return 0;
+    }
+  }
+  return 0;
+}
 
-//   print_ftrace();
+static int cmd_itrace(char *args) {
 
-//   return 0;
-// }
+  print_itrace();
+
+  return 0;
+}
+
+static int cmd_ftrace(char *args) {
+
+  print_ftrace();
+
+  return 0;
+}
 
 
 static int cmd_help(char *args);
@@ -207,8 +234,9 @@ static struct {
   { "w", " w EXPR Suspend program execution when the value of expression EXPR changes.", cmd_w },
   { "d", " d N Deletes the watchpoint with ID N.", cmd_d },
   { "sir", " si 1 + info r.", cmd_sir },
-  // { "itrace", " print trace of 16 last instructions ", cmd_itrace },
-  // { "ftrace", " print trace of 16 last function calls ", cmd_ftrace }
+  { "check", " check regs", cmd_check },
+  { "itrace", " print trace of 16 last instructions ", cmd_itrace },
+  { "ftrace", " print trace of 16 last function calls ", cmd_ftrace }
 };
 
 
@@ -242,7 +270,7 @@ void sdb_set_batch_mode() {
   is_batch_mode = true;
 }
 
-void sdb_mainloop() {
+void sdb_mainloop(uint32_t *exit) {
 
   for (char *str; (str = rl_gets()) || true; ) {
 
@@ -258,9 +286,9 @@ void sdb_mainloop() {
       strcpy(curr_cmd, str);
     }
 
-    if (str != prev_cmd && str!=NULL) {
+    if (str != prev_cmd && *str!='\0') {
       strncpy(prev_cmd, str, strlen(str));
-      prev_cmd[sizeof(str)] = '\0';
+      prev_cmd[strlen(str)] = '\0';
     }
 
     char *str_end = curr_cmd + strlen(curr_cmd);
@@ -287,6 +315,7 @@ void sdb_mainloop() {
     for (i = 0; i < NR_CMD; i ++) {
       if (strcmp(cmd, cmd_table[i].name) == 0) {
         if ((hand = cmd_table[i].handler(args)) < 0) { 
+          *exit = 1;
           return; 
         }
         break;

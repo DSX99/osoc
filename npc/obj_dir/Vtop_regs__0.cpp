@@ -9,8 +9,8 @@ void Vtop_regs___ico_sequent__TOP__top__reg_mod__0(Vtop_regs* vlSelf) {
     Vtop__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     auto& vlSelfRef = std::ref(*vlSelf).get();
     // Body
-    vlSelfRef.__PVT__data_rs1 = vlSelfRef.regs[vlSymsp->TOP__top.__PVT__rs1];
     vlSelfRef.__PVT__data_rs2 = vlSelfRef.regs[vlSymsp->TOP__top.__PVT__rs2];
+    vlSelfRef.__PVT__data_rs1 = vlSelfRef.regs[vlSymsp->TOP__top.__PVT__rs1];
 }
 
 void Vtop_regs___nba_sequent__TOP__top__reg_mod__0(Vtop_regs* vlSelf) {

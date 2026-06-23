@@ -1,4 +1,5 @@
 module lsu(
+    input logic clk,
     input logic we,
     input logic le,
     input logic [31:0] data_in,
@@ -47,19 +48,22 @@ module lsu(
                 end 
             endcase
         end
-        if(we) begin
-            case(oper)
-                0: begin //SB
-                    memwrite(addr, data_in, 0);
-                end 
-                1: begin //SH
-                    memwrite(addr, data_in, 1);
-                end 
-                2: begin //SW
-                    memwrite(addr, data_in, 2);
-                end
-            endcase
-        end
     end 
+
+always_ff @( posedge clk ) begin
+    if(we) begin
+        case(oper)
+            0: begin //SB
+                memwrite(addr, data_in, 0);
+            end 
+            1: begin //SH
+                memwrite(addr, data_in, 1);
+            end 
+            2: begin //SW
+                memwrite(addr, data_in, 2);
+            end
+        endcase
+    end
+end
 
 endmodule

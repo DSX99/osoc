@@ -1,0 +1,69 @@
+module csr(
+    input logic clk,
+    input logic rst,
+    input logic [1:0] oper,
+    input logic [4:0] cause,
+    input logic [11:0] addr,
+    input logic [31:0] data_in,
+    input logic [31:0] pc,
+    output logic [31:0] data_out
+);
+
+logic [31:0] regs [31:0];
+
+typedef enum bit [4:0]{
+    UNUSED, MEPS, MSTATUS, MCAUSE, MTVEC
+} csr_t;
+
+logic [4:0] working_reg;
+
+initial begin
+    for(int i = 0; i < 32; i++) begin
+        regs[i] = 32'h0;
+    end
+    regs[MSTATUS] = 32'h00001800;
+end
+
+always_comb begin
+    working_reg =0;
+    case(addr)
+        12'h300: working_reg = MSTATUS;
+        12'h305: working_reg = MTVEC;
+        12'h341: working_reg = MEPS;
+        12'h342: working_reg = MCAUSE;
+        default working_reg = UNUSED;
+    endcase
+    if(cause != 0) working_reg = MTVEC;
+    data_out = regs[working_reg];
+end
+
+always_ff @(posedge clk) begin
+if(rst) begin
+    for(int i = 0; i < 32; i++) begin
+        regs[i] <= 32'h0;
+    end
+    regs[MSTATUS] <= 32'h00001800;
+end else begin
+        case(oper)
+            2'b00: ;
+            2'b01 : begin
+                regs[working_reg] <= data_in;
+            end
+            2'b10 : begin
+                regs[working_reg] <= regs[working_reg] | data_in;
+            end
+            2'b11 : begin
+                regs[working_reg] <= regs[working_reg] & (~data_in);
+            end
+        endcase
+
+        if(cause !=0) begin
+            regs[MEPS]<=pc;
+            regs[MCAUSE]<={27'b0,cause};
+        end
+    end
+end
+
+
+
+endmodule

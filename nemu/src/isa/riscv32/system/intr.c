@@ -15,14 +15,32 @@
 
 #include <isa.h>
 
+char etrace[16][128];
+int point=0;
+
 word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   /* TODO: Trigger an interrupt/exception with ``NO''.
    * Then return the address of the interrupt/exception vector.
    */
+  cpu.mepc = epc;
+  cpu.mcause = NO;
 
-  return 0;
+  sprintf(etrace[point],"Cause: %u, mepc: 0x%08x", NO, epc);
+
+  point = (point+1)%16;
+
+  return cpu.mtvec;
 }
 
 word_t isa_query_intr() {
   return INTR_EMPTY;
+}
+
+
+void print_etrace(void){
+  for(int i=0;i<16;i++){
+    printf("%s\n",etrace[point]);
+    point=point-1;
+    if(point==-1) point=15;
+  }
 }

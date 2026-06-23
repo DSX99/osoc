@@ -17,7 +17,7 @@ void  *memcpy    (void *dst, const void *src, size_t n);
 void  *memmove   (void *dst, const void *src, size_t n);
 int    memcmp    (const void *s1, const void *s2, size_t n);
 size_t strlen    (const char *s);
-size_t strnlen(const char *s, size_t n);
+size_t _strnlen   (const char *s, size_t n);
 char  *strcat    (char *dst, const char *src);
 char  *strcpy    (char *dst, const char *src);
 char  *strncpy   (char *dst, const char *src, size_t n);
@@ -31,7 +31,7 @@ void  *malloc    (size_t size);
 void   free      (void *ptr);
 int    abs       (int x);
 int    atoi      (const char *nptr);
-void   itoa      (char *s, int x);
+void   _itoa      (char *s, int x);
 
 // stdio.h
 int    printf    (const char *format, ...);

@@ -211,7 +211,7 @@ bool delete_wp(int n)
       printf("No active watchpoint with this ID\n");
       return 0;
     }
-    head_wp = head->next;
+    head_wp = head_wp->next;
   }
   free_wp(head_wp);
   return 0;

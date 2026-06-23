@@ -16,11 +16,14 @@ int printf(const char *fmt, ...) {
         int val = va_arg(list, int);
         char str[12];
         char *p = str;
-        itoa(str, val);
+        _itoa(str, val);
         while(*p!='\0'){
           putch(*p);
           p++;
         }
+      }else if (fmt[i]=='c'){
+        char c = (char)va_arg(list, int);
+        putch(c);
       }else if (fmt[i]=='s'){
         char *p = va_arg(list, char *);
         while(*p!='\0'){
@@ -34,7 +37,6 @@ int printf(const char *fmt, ...) {
       i++;
     }
   }
-  va_end(list);
   return (i);
 }
 
@@ -54,7 +56,7 @@ int sprintf(char *out, const char *fmt, ...) {
         int val = va_arg(list, int);
         char str[12];
         char *p = str;
-        itoa(str, val);
+        _itoa(str, val);
         while(*p!='\0'){
           *out++=*p++;
         }

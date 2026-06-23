@@ -12,7 +12,7 @@ size_t strlen(const char *s) {
   return p;
 }
 
-size_t strnlen(const char *s, size_t n) {
+size_t _strnlen(const char *s, size_t n) {
   int p=0;
   while(s[p]!='\0' && p<n){
     p++;
@@ -31,7 +31,7 @@ char *strcpy(char *dst, const char *src) {
 char *strncpy(char *dst, const char *src, size_t n) {
   size_t  len;
 
-  len = strnlen(src, n);
+  len = _strnlen(src, n);
   memset(memcpy(dst, src, len) + len, 0, n - len);
   return dst;
 }

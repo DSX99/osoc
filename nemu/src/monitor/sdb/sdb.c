@@ -29,8 +29,9 @@ void init_wp_pool();
 void info_wp();
 void create_wp(char *s);
 bool delete_wp(int n);
-// void print_itrace();
+void print_itrace();
 void print_ftrace();
+void print_etrace();
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
@@ -174,19 +175,32 @@ static int cmd_sir(char *args) {
   return 0;
 }
 
-// static int cmd_itrace(char *args) {
+#ifdef CONFIG_ITRACE
+static int cmd_itrace(char *args) {
 
-//   print_itrace();
+  print_itrace();
 
-//   return 0;
-// }
+  return 0;
+}
+#endif
 
+#ifdef CONFIG_FTRACE
 static int cmd_ftrace(char *args) {
 
   print_ftrace();
 
   return 0;
 }
+#endif
+
+#ifdef CONFIG_ETRACE
+static int cmd_etrace(char *args) {
+
+  print_etrace();
+
+  return 0;
+}
+#endif
 
 
 static int cmd_help(char *args);
@@ -206,8 +220,15 @@ static struct {
   { "w", " w EXPR Suspend program execution when the value of expression EXPR changes.", cmd_w },
   { "d", " d N Deletes the watchpoint with ID N.", cmd_d },
   { "sir", " si 1 + info r.", cmd_sir },
-  // { "itrace", " print trace of 16 last instructions ", cmd_itrace },
-  { "ftrace", " print trace of 16 last function calls ", cmd_ftrace }
+  #ifdef CONFIG_ITRACE
+  { "itrace", " print trace of 16 last instructions ", cmd_itrace },
+  #endif
+  #ifdef CONFIG_FTRACE
+  { "ftrace", " print trace of 16 last function calls ", cmd_ftrace },
+  #endif  
+  #ifdef CONFIG_ETRACE
+  { "ftrace", " print trace of 16 last exception calls ", cmd_etrace }
+  #endif
 };
 
 #define NR_CMD ARRLEN(cmd_table)
@@ -259,10 +280,9 @@ void sdb_mainloop() {
       strcpy(curr_cmd, str);
     }
 
-    if (str != prev_cmd && str!=NULL) {
-      strncpy(prev_cmd, str, strlen(str));
-      prev_cmd[sizeof(str)] = '\0';
-    }
+    if (str != prev_cmd && *str != '\0') {
+    snprintf(prev_cmd, sizeof(prev_cmd), "%s", str);
+}
 
     char *str_end = curr_cmd + strlen(curr_cmd);
 
@@ -288,6 +308,9 @@ void sdb_mainloop() {
     for (i = 0; i < NR_CMD; i ++) {
       if (strcmp(cmd, cmd_table[i].name) == 0) {
         if ((hand = cmd_table[i].handler(args)) < 0) { 
+          if(hand == -1){
+            nemu_state.state = NEMU_QUIT;
+          }
           return; 
         }
         break;
