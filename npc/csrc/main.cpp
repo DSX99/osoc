@@ -130,6 +130,8 @@ const char *regs[] = {
 
 void execute(uint32_t n){
 
+  printf("1");
+
   if(finished){
     printf("Program finished\n");
     if(!batch) difftest_exec(1);
