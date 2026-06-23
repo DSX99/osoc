@@ -88,7 +88,7 @@ int main(int argc, char** argv) {
   }
 
   contextp = new VerilatedContext;
-  // contextp->threads(1); // can be used in future to increase speed
+  contextp->threads(1); // can be used in future to increase speed
 
   top = new Vtop{contextp};
 
