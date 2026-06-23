@@ -16,6 +16,12 @@ struct Context {
   void *pdir;
 };
 
+/* Number of machine words saved by trap.S: gpr[NR_REGS] + mcause + mstatus + mepc + pdir */
+#define CONTEXT_WORDS (NR_REGS + 4)
+
+_Static_assert(sizeof(uintptr_t) == sizeof(void *), "uintptr_t must be pointer-sized");
+_Static_assert(sizeof(struct Context) == (CONTEXT_WORDS * sizeof(uintptr_t)), "Context size mismatch with trap.S: update trap.S or arch/riscv.h");
+
 #ifdef __riscv_e
 #define GPR1 gpr[15] // a5
 #else
