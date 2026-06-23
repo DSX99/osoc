@@ -14,6 +14,11 @@
 #include <verilated_fst_c.h>
 #endif
 
+typedef struct {
+    uint32_t gpr[32];
+    uint32_t pc;
+} CPU_state;
+
 bool batch=0;
 char *img_file;
 bool finished=0;
@@ -30,7 +35,7 @@ bool check_watchpoints();
 extern "C" {
 void difftest_init(int port);
 void difftest_exec(uint64_t n);
-void difftest_regcpy(uint32_t *regs, bool direction);
+void difftest_regcpy(void *regs, bool direction);
 void init_disasm();
 void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 }
@@ -73,6 +78,10 @@ int main(int argc, char** argv) {
     difftest_init(0);
   }
   loadmemory(img_file, batch);
+  CPU_state *cpu;
+  memset(cpu, 0, sizeof(CPU_state));
+  cpu->pc = 0x80000000;
+  difftest_regcpy(cpu, 1);
   contextp = new VerilatedContext;
   // contextp->threads(1); // can be used in future to increase speed
 
