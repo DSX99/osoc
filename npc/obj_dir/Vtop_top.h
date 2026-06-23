@@ -31,9 +31,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop_top final {
     CData/*0:0*/ __PVT__branch;
     CData/*0:0*/ __PVT__lsu_we;
     CData/*0:0*/ __PVT__lsu_le;
-    CData/*2:0*/ __Vcellout__decode_mod__csr_oper;
-    CData/*4:0*/ __PVT__decode_mod__DOT__rs1_val;
-    CData/*3:0*/ __PVT__csr_mod__DOT__working_reg;
+    CData/*4:0*/ __PVT__csr_mod__DOT__working_reg;
     IData/*31:0*/ opcode;
     IData/*31:0*/ pc;
     IData/*31:0*/ __PVT__to_regs;
@@ -41,21 +39,19 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop_top final {
     IData/*31:0*/ __PVT__lsu_out;
     IData/*31:0*/ __PVT__imm;
     IData/*31:0*/ __PVT__csr_out;
-    IData/*31:0*/ __PVT__to_pc;
     IData/*31:0*/ __PVT__pc_mod__DOT__next_pc;
     IData/*31:0*/ __PVT__lsu_mod__DOT__A;
     IData/*31:0*/ __PVT__decode_mod__DOT__imm_i;
     IData/*31:0*/ __PVT__alu_mod__DOT__val1;
     IData/*31:0*/ __PVT__alu_mod__DOT__val2;
     IData/*31:0*/ __PVT__csr_mod__DOT__data_in;
-    IData/*31:0*/ __PVT__csr_mod__DOT__idk;
     IData/*31:0*/ __Vfunc_lsu_mod__DOT__memread__0__Vfuncout;
     IData/*31:0*/ __Vfunc_lsu_mod__DOT__memread__1__Vfuncout;
     IData/*31:0*/ __Vfunc_lsu_mod__DOT__memread__2__Vfuncout;
     IData/*31:0*/ __Vfunc_lsu_mod__DOT__memread__3__Vfuncout;
     IData/*31:0*/ __Vfunc_lsu_mod__DOT__memread__4__Vfuncout;
     IData/*31:0*/ __Vfunc_ifu_mod__DOT__memread__8__Vfuncout;
-    VlUnpacked<IData/*31:0*/, 4> __PVT__csr_mod__DOT__regs;
+    VlUnpacked<IData/*31:0*/, 32> __PVT__csr_mod__DOT__regs;
 
     // INTERNAL VARIABLES
     Vtop__Syms* vlSymsp;

@@ -4,8 +4,8 @@
 
 #include "Vtop__pch.h"
 
-void Vtop_regs___ico_comb__TOP__top__reg_mod__0(Vtop_regs* vlSelf) {
-    VL_DEBUG_IF(VL_DBG_MSGF("+        Vtop_regs___ico_comb__TOP__top__reg_mod__0\n"); );
+void Vtop_regs___ico_sequent__TOP__top__reg_mod__0(Vtop_regs* vlSelf) {
+    VL_DEBUG_IF(VL_DBG_MSGF("+        Vtop_regs___ico_sequent__TOP__top__reg_mod__0\n"); );
     Vtop__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     auto& vlSelfRef = std::ref(*vlSelf).get();
     // Body
