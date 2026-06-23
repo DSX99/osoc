@@ -27,9 +27,20 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
 
   sprintf(etrace[point],"Cause: %u, mepc: 0x%08x", NO, epc);
 
+  point = (point+1)%16;
+
   return cpu.mtvec;
 }
 
 word_t isa_query_intr() {
   return INTR_EMPTY;
+}
+
+
+void print_etrace(void){
+  for(int i=0;i<16;i++){
+    printf("%s\n",etrace[point]);
+    point=point-1;
+    if(point==-1) point=15;
+  }
 }

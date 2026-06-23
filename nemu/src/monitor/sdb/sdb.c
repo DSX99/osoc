@@ -31,6 +31,7 @@ void create_wp(char *s);
 bool delete_wp(int n);
 void print_itrace();
 void print_ftrace();
+void print_etrace();
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
@@ -223,7 +224,7 @@ static struct {
   { "itrace", " print trace of 16 last instructions ", cmd_itrace },
   #endif
   #ifdef CONFIG_FTRACE
-  { "ftrace", " print trace of 16 last function calls ", cmd_ftrace }
+  { "ftrace", " print trace of 16 last function calls ", cmd_ftrace },
   #endif  
   #ifdef CONFIG_ETRACE
   { "ftrace", " print trace of 16 last exception calls ", cmd_etrace }
