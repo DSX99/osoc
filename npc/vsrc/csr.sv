@@ -13,7 +13,7 @@ logic [31:0] regs [3:0];
 
 enum{
     MEPS, MSTATUS, MCAUSE, MTVEC
-};
+}
 
 logic [3:0] working_reg;
 
