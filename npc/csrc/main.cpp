@@ -201,7 +201,7 @@ void execute(uint32_t n){
     }
     n--;
     
-    if(!batch && !skip_inst){
+    if((!batch) && (!skip_inst)){
       difftest_regcpy(&ref_cpu, 0);
       for(int i=0;i<32;i++){
         if(ref_cpu.gpr[i]-top->top->reg_mod->regs[i]!=0){
