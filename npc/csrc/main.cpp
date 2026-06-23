@@ -83,11 +83,9 @@ int main(int argc, char** argv) {
   memset(&cpu, 0, sizeof(CPU_state));
   cpu.pc = 0x80000000;
 
-  printf("1\n");
-
-  // difftest_regcpy(&cpu, 1);
-
-  printf("2\n");
+  if(!batch){
+  difftest_regcpy(&cpu, 1);
+  }
 
   contextp = new VerilatedContext;
   // contextp->threads(1); // can be used in future to increase speed
