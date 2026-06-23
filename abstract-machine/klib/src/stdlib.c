@@ -68,7 +68,7 @@ void *malloc(size_t size) {
 // #endif
 //   return NULL;
   if(addr == 0) addr = (uint32_t) heap.start;
-  uint32_t temp = addr;
+  uint32_t temp = (addr+7)&(~7);
   addr = addr + (uint32_t)size;
   return (void *)temp;
 }
