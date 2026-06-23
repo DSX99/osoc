@@ -160,7 +160,7 @@ void execute(uint32_t n){
         return;
       }
     }
-    difftest_exec(1)
+    difftest_exec(1);
     return;
   }
 
