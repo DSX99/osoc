@@ -44,21 +44,15 @@ extern "C" {
 
         printf("The image is %s, size = %ld\n", img_file, size);
 
-        printf("1\n");
-
         fseek(fp, 0, SEEK_SET);
         int ret = fread(mem, size, 1, fp);
         assert(ret == 1);
 
         fclose(fp);
 
-        printf("1\n");
-
         if(!batch){
             difftest_memcpy(0x80000000, mem, size, 1);
         }
-
-        printf("1\n");
     }
 
     void memwrite(uint32_t addr, uint32_t data, uint32_t type){

@@ -88,12 +88,16 @@ int main(int argc, char** argv) {
 
   top = new Vtop{contextp};
 
+  printf("1\n");
+
 #ifdef CONFIG_FST
   Verilated::traceEverOn(true);
   tracep = new VerilatedFstC;
   top->trace(tracep, 5);
   tracep->open("waveform.fst");
 #endif
+
+  printf("1\n");
 
 
   if (top == NULL || top->top == NULL) {
@@ -104,6 +108,8 @@ int main(int argc, char** argv) {
   reset(top, 100);
   top->rst=0;
   top->clk=0;
+
+  printf("1\n");
 
   if(batch){
     execute(-1);
