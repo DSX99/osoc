@@ -85,7 +85,7 @@ extern "C" {
             putchar((uint8_t)data);
             fflush(stdout);
         }else{
-            printf("Illegal memory write access at addr:0x%08x\n",addr);
+            printf("Illegal memory write access at addr:0x%08x at pc: 0x%08x\n",addr, top->top->pc);
             assert(0);
         }
     }
