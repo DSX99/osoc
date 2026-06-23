@@ -85,7 +85,7 @@ int main(int argc, char** argv) {
 
   printf("1\n");
 
-  difftest_regcpy(&cpu, 1);
+  // difftest_regcpy(&cpu, 1);
 
   printf("2\n");
 
