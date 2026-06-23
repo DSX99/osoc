@@ -138,8 +138,28 @@ const char *regs[] = {
 
 void execute(uint32_t n){
 
+  char str[128];
+  uint8_t inst[4];
+  CPU_state ref_cpu;
+
   if(fail){ 
-    printf("failed");
+    printf("failed\n");
+    difftest_regcpy(&ref_cpu, 0);
+
+    if (ref_cpu.pc != top->top->pc) {
+      printf("Difference with REF pc, should:0x%08x, actually:0x%08x\n", ref_cpu.pc, top->top->pc);
+      ret = 1;
+      return; 
+    }
+
+    for(int i = 0; i < 32; i++){
+      if(ref_cpu.gpr[i] != top->top->reg_mod->regs[i]){
+        printf("Difference with REF %s, should:0x%08x, actually:0x%08x, pc: 0x%08x\n", 
+                regs[i], ref_cpu.gpr[i], top->top->reg_mod->regs[i], top->top->pc);
+        ret = 1;
+        return;
+      }
+    }
     return;
   }
 
@@ -148,9 +168,6 @@ void execute(uint32_t n){
     if(!batch) difftest_exec(1);
     return;
   }
-  char str[128];
-  uint8_t inst[4];
-  CPU_state ref_cpu;
 
   while(n>0){
 
@@ -191,7 +208,7 @@ void execute(uint32_t n){
     top->eval();
 
     if(fail){ 
-      printf("failed");
+      printf("failed\n");
       return;
     }
 
