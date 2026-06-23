@@ -12,7 +12,6 @@ VL_ATTR_COLD void Vtop_top___eval_initial__TOP__top(Vtop_top* vlSelf) {
     vlSelfRef.pc = 0x80000000U;
     vlSelfRef.__PVT__csr_mod__DOT__regs[0U] = 0U;
     vlSelfRef.__PVT__csr_mod__DOT__regs[1U] = 0U;
-    vlSelfRef.__PVT__csr_mod__DOT__regs[2U] = 0U;
     vlSelfRef.__PVT__csr_mod__DOT__regs[3U] = 0U;
     vlSelfRef.__PVT__csr_mod__DOT__regs[4U] = 0U;
     vlSelfRef.__PVT__csr_mod__DOT__regs[5U] = 0U;
