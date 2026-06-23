@@ -175,31 +175,31 @@ static int cmd_sir(char *args) {
   return 0;
 }
 
-// #include "Vtop.h"
-// #include "Vtop___024root.h"
-// #include "Vtop_top.h"
-// #include "Vtop_regs.h"
+#include "Vtop.h"
+#include "Vtop___024root.h"
+#include "Vtop_top.h"
+#include "Vtop_regs.h"
 
-// const static char *regs[] = {
-//   "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
-//   "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
-//   "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
-//   "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
-// };
-// extern "C" void difftest_regcpy(void *regs, bool direction);
-// extern Vtop* top; 
-// uint32_t ref_regs[32];
+const static char *regs[] = {
+  "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
+  "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
+  "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
+  "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
+};
+extern "C" void difftest_regcpy(void *regs, bool direction);
+extern Vtop* top; 
+uint32_t ref_regs[32];
 
-// static int cmd_check(char *args) {
+static int cmd_check(char *args) {
 
-//   difftest_regcpy(ref_regs, 0);
-//     for(int i=0;i<32;i++){
-//       if(ref_regs[i]-top->top->reg_mod->regs[i]!=0){
-//         printf("Difference with REF %s, should:0x%08x, actually:0x%08x, pc: 0x%08x\n", regs[i], ref_regs[i], top->top->reg_mod->regs[i], top->top->pc);
-//         return 0;
-//       }
-//     }
-// }
+  difftest_regcpy(ref_regs, 0);
+    for(int i=0;i<32;i++){
+      if(ref_regs[i]-top->top->reg_mod->regs[i]!=0){
+        printf("Difference with REF %s, should:0x%08x, actually:0x%08x, pc: 0x%08x\n", regs[i], ref_regs[i], top->top->reg_mod->regs[i], top->top->pc);
+        return 0;
+      }
+    }
+}
 
 // static int cmd_itrace(char *args) {
 
@@ -233,7 +233,7 @@ static struct {
   { "w", " w EXPR Suspend program execution when the value of expression EXPR changes.", cmd_w },
   { "d", " d N Deletes the watchpoint with ID N.", cmd_d },
   { "sir", " si 1 + info r.", cmd_sir },
-  // { "check", " check regs", cmd_check },
+  { "check", " check regs", cmd_check },
   
   // { "itrace", " print trace of 16 last instructions ", cmd_itrace },
   // { "ftrace", " print trace of 16 last function calls ", cmd_ftrace }
