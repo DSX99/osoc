@@ -202,19 +202,19 @@ static int cmd_check(char *args) {
   return 0;
 }
 
-// static int cmd_itrace(char *args) {
+static int cmd_itrace(char *args) {
 
-//   print_itrace();
+  print_itrace();
 
-//   return 0;
-// }
+  return 0;
+}
 
-// static int cmd_ftrace(char *args) {
+static int cmd_ftrace(char *args) {
 
-//   print_ftrace();
+  print_ftrace();
 
-//   return 0;
-// }
+  return 0;
+}
 
 
 static int cmd_help(char *args);
@@ -235,9 +235,8 @@ static struct {
   { "d", " d N Deletes the watchpoint with ID N.", cmd_d },
   { "sir", " si 1 + info r.", cmd_sir },
   { "check", " check regs", cmd_check },
-  
-  // { "itrace", " print trace of 16 last instructions ", cmd_itrace },
-  // { "ftrace", " print trace of 16 last function calls ", cmd_ftrace }
+  { "itrace", " print trace of 16 last instructions ", cmd_itrace },
+  { "ftrace", " print trace of 16 last function calls ", cmd_ftrace }
 };
 
 

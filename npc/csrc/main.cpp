@@ -30,6 +30,9 @@ Vtop* top;
 bool skip_inst=0;
 CPU_state cpu;
 
+char itrace[16][128];
+int point;
+
 void execute(uint32_t n);
 void init_sdb();
 void sdb_mainloop(uint32_t *ret);
@@ -188,6 +191,10 @@ void execute(uint32_t n){
         printf("0x%08x: %02x %02x %02x %02x ", top->top->pc, inst[3], inst[2], inst[1], inst[0]);
         disassemble(str, 128, top->top->pc, inst, 4);
         printf("%s\n", str);
+        #ifdef ITRACE
+        strcpy(itrace[point],str);
+        point = (point+1)%ITRACE_VAL;
+        #endif
       }
       finished = 1;
       ret = top->top->reg_mod->regs[10];
@@ -258,4 +265,14 @@ uint32_t reg_str2val(const char *s, bool *success) {
   printf("please input a correct reg name\n");
   *success=false;
   return 0;
+}
+
+void print_itrace(){
+  for(int i=0;i<ITRACE_VAL;i++){
+    printf("%s\n",itrace[point]);
+    point=point-1;
+    if(point==-1){
+      point=ITRACE_VAL-1;
+    }
+  }
 }
