@@ -138,7 +138,7 @@ module decode(
                     end
                     default: begin
                         csr_oper = func3;
-                        mux_select = 2'11;
+                        mux_select = 2'b11;
                     end
                 endcase 
             end

@@ -39,7 +39,7 @@ ifu ifu_mod(
 
 csr csr_mod(
     .clk(clk), .rst(rst), .oper(csr_oper[1:0]), .addr(imm[11:0]), .value(csr_in), .csr_out(csr_out), .pc(pc) ,.cause(cause)
-)
+);
 
 assign csr_in = csr_oper[2] ? {27'b0, rs1} : data_rs1;
 
