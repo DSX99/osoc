@@ -186,8 +186,7 @@ const char *regs[] = {
   "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
   "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
 };
-
-void difftest_regcpy(void *regs, bool direction);
+extern "C" void difftest_regcpy(void *regs, bool direction);
 extern Vtop* top; 
 uint32_t ref_regs[32];
 
