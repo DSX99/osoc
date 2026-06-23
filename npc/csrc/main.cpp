@@ -167,10 +167,6 @@ void execute(uint32_t n){
       printf("%s\n", str);
     }
 
-    bool current_cycle_is_skipped = skip_inst;
-
-    if((!batch) && (!current_cycle_is_skipped)) difftest_exec(1);
-
     contextp->timeInc(1);
     top->clk=!top->clk;
     top->eval();
@@ -178,7 +174,11 @@ void execute(uint32_t n){
     contextp->timeInc(1);
     top->clk=!top->clk;
     top->eval();
-    
+
+    bool current_cycle_is_skipped = skip_inst;
+
+    if((!batch) && (!current_cycle_is_skipped)) difftest_exec(1);
+
     if(contextp->gotFinish()){
       if(!batch){
         inst[0] = (top->top->opcode) & 0xff;
