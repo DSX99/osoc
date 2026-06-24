@@ -30,7 +30,7 @@ regs reg_mod(
 );
 
 pc pc_mod(
-    .clk(clk), .rst(rst), .branch(branch), .data_in(to_pc), .pc(pc), .next_pc(next_pc)
+    .clk(clk), .rst(rst), .branch(branch), .data_in(to_pc), .pc(pc), .next_pc(next_pc), .external_stall(external_stall)
 );
 
 lsu lsu_mod (

@@ -2,7 +2,7 @@ module pc(
     input logic clk,
     input logic rst,
     input logic branch,
-    input logic external_stall
+    input logic external_stall,
     input logic [31:0] data_in,
 
     output logic [31:0] pc,
