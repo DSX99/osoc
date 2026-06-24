@@ -36,7 +36,7 @@ always_ff @(posedge clk) begin
         if(arvalid_ifu && arready_ifu) begin
             arvalid_ifu<=0;
         end
-        if(!external_stall) begin
+        if(!lsu_stall) begin
             araddr_ifu<=pc;
             arvalid_ifu<=1;
         end
