@@ -67,12 +67,12 @@ extern "C" {
         printf("\033[034mCall to write to memory at %08x\033[0m\n", addr);
         #endif
         if(addr>=ROM_OFFSET && addr<(ROM_OFFSET + MEM_SIZE)){
-            if(type ==0){
+            if(type ==1){
                 mem[addr-ROM_OFFSET] = data & 0xFF;
-            }else if (type ==1){
+            }else if (type ==3){
                 mem[addr-ROM_OFFSET] = data & 0xFF;
                 mem[addr-ROM_OFFSET+1] = (data>>8) & 0xFF;
-            }else if (type ==2){
+            }else if (type ==15){
                 mem[addr-ROM_OFFSET] = data & 0xFF;
                 mem[addr-ROM_OFFSET+1] = (data>>8) & 0xFF;
                 mem[addr-ROM_OFFSET+2] = (data>>16) & 0xFF;
