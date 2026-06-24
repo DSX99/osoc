@@ -228,7 +228,7 @@ void execute(uint32_t n){
         printf("%s\n", str);
       }
       finished = 1;
-      printf("finished, took %d cycles\n",contextp->time())
+      printf("finished, took %ld cycles\n",contextp->time());
       ret = top->top->reg_mod->regs[10];
       if(ret){
         printf("\033[1m\033[31mNOT GOOD\033[0m\n");
