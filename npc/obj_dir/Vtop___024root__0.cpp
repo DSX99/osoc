@@ -76,18 +76,9 @@ void Vtop___024root___eval_triggers_vec__act(Vtop___024root* vlSelf) {
     auto& vlSelfRef = std::ref(*vlSelf).get();
     // Body
     vlSelfRef.__VactTriggered[0U] = (QData)((IData)(
-                                                    ((((IData)(vlSelfRef.clk) 
-                                                       & (~ (IData)(vlSelfRef.__Vtrigprevexpr___TOP__clk__0))) 
-                                                      << 1U) 
-                                                     | ((IData)(vlSymsp->TOP__top.__PVT__external_stall) 
-                                                        != (IData)(vlSelfRef.__Vtrigprevexpr___TOP__top____PVT__external_stall__1)))));
-    vlSelfRef.__Vtrigprevexpr___TOP__top____PVT__external_stall__1 
-        = vlSymsp->TOP__top.__PVT__external_stall;
+                                                    ((IData)(vlSelfRef.clk) 
+                                                     & (~ (IData)(vlSelfRef.__Vtrigprevexpr___TOP__clk__0)))));
     vlSelfRef.__Vtrigprevexpr___TOP__clk__0 = vlSelfRef.clk;
-    if (VL_UNLIKELY(((1U & (~ (IData)(vlSelfRef.__VactDidInit)))))) {
-        vlSelfRef.__VactDidInit = 1U;
-        vlSelfRef.__VactTriggered[0U] = (1ULL | vlSelfRef.__VactTriggered[0U]);
-    }
 }
 
 bool Vtop___024root___trigger_anySet__act(const VlUnpacked<QData/*63:0*/, 1> &in) {
@@ -105,18 +96,6 @@ bool Vtop___024root___trigger_anySet__act(const VlUnpacked<QData/*63:0*/, 1> &in
     return (0U);
 }
 
-void Vtop_top___act_sequent__TOP__top__0(Vtop_top* vlSelf);
-
-void Vtop___024root___eval_act(Vtop___024root* vlSelf) {
-    VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root___eval_act\n"); );
-    Vtop__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
-    auto& vlSelfRef = std::ref(*vlSelf).get();
-    // Body
-    if ((1ULL & vlSelfRef.__VactTriggered[0U])) {
-        Vtop_top___act_sequent__TOP__top__0((&vlSymsp->TOP__top));
-    }
-}
-
 void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf);
 void Vtop_regs___nba_sequent__TOP__top__reg_mod__0(Vtop_regs* vlSelf);
 void Vtop_top___nba_sequent__TOP__top__1(Vtop_top* vlSelf);
@@ -126,16 +105,13 @@ void Vtop___024root___eval_nba(Vtop___024root* vlSelf) {
     Vtop__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     auto& vlSelfRef = std::ref(*vlSelf).get();
     // Body
-    if ((2ULL & vlSelfRef.__VnbaTriggered[0U])) {
+    if ((1ULL & vlSelfRef.__VnbaTriggered[0U])) {
         Vtop_top___nba_sequent__TOP__top__0((&vlSymsp->TOP__top));
         vlSelfRef.__Vm_traceActivity[2U] = 1U;
         Vtop_regs___nba_sequent__TOP__top__reg_mod__0((&vlSymsp->TOP__top__reg_mod));
         Vtop_top___nba_sequent__TOP__top__1((&vlSymsp->TOP__top));
         Vtop_regs___ico_sequent__TOP__top__reg_mod__0((&vlSymsp->TOP__top__reg_mod));
         Vtop_top___ico_sequent__TOP__top__1((&vlSymsp->TOP__top));
-    }
-    if ((3ULL & vlSelfRef.__VnbaTriggered[0U])) {
-        Vtop_top___act_sequent__TOP__top__0((&vlSymsp->TOP__top));
     }
 }
 
@@ -159,8 +135,6 @@ bool Vtop___024root___eval_phase__act(Vtop___024root* vlSelf) {
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root___eval_phase__act\n"); );
     Vtop__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     auto& vlSelfRef = std::ref(*vlSelf).get();
-    // Locals
-    CData/*0:0*/ __VactExecute;
     // Body
     Vtop___024root___eval_triggers_vec__act(vlSelf);
 #ifdef VL_DEBUG
@@ -169,11 +143,7 @@ bool Vtop___024root___eval_phase__act(Vtop___024root* vlSelf) {
     }
 #endif
     Vtop___024root___trigger_orInto__act_vec_vec(vlSelfRef.__VnbaTriggered, vlSelfRef.__VactTriggered);
-    __VactExecute = Vtop___024root___trigger_anySet__act(vlSelfRef.__VactTriggered);
-    if (__VactExecute) {
-        Vtop___024root___eval_act(vlSelf);
-    }
-    return (__VactExecute);
+    return (0U);
 }
 
 void Vtop___024root___trigger_clear__act(VlUnpacked<QData/*63:0*/, 1> &out) {

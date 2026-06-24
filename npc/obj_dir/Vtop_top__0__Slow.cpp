@@ -337,6 +337,10 @@ VL_ATTR_COLD void Vtop_top___stl_sequent__TOP__top__0(Vtop_top* vlSelf) {
     __Vtableidx1 = vlSelfRef.__PVT__lsu_oper;
     vlSelfRef.__PVT__wstrb_lsu = Vtop__ConstPool__TABLE_hf9f0be4a_0
         [__Vtableidx1];
+    vlSelfRef.__PVT__ifu_mod__DOT__lsu_stall = ((IData)(vlSelfRef.__PVT__lsu_mod__DOT__ff_stall) 
+                                                | ((IData)(vlSelfRef.__PVT__lsu_le) 
+                                                   & ((~ (IData)(vlSelfRef.__PVT__lsu_mod__DOT__prev_le)) 
+                                                      | (IData)(vlSelfRef.__PVT__lsu_mod__DOT__we_stall))));
     vlSelfRef.__PVT__csr_mod__DOT__working_reg = ((0x0300U 
                                                    == 
                                                    (0x00000fffU 
@@ -366,6 +370,12 @@ VL_ATTR_COLD void Vtop_top___stl_sequent__TOP__top__0(Vtop_top* vlSelf) {
     }
     vlSelfRef.__PVT__csr_out = vlSelfRef.__PVT__csr_mod__DOT__regs
         [vlSelfRef.__PVT__csr_mod__DOT__working_reg];
+    vlSelfRef.__PVT__lsu_mod__DOT__external_stall = 
+        (1U & ((((~ (IData)(vlSelfRef.__PVT__arb_arready)) 
+                 & (IData)(vlSelfRef.__PVT__arvalid_ifu)) 
+                | ((~ (IData)(vlSelfRef.__PVT__arb_rvalid)) 
+                   & (~ (IData)(vlSelfRef.__PVT__ifu_mod__DOT__lsu_stall)))) 
+               | (IData)(vlSelfRef.__PVT__ifu_mod__DOT__lsu_stall)));
 }
 
 VL_ATTR_COLD void Vtop_top___ctor_var_reset(Vtop_top* vlSelf) {
@@ -404,8 +414,6 @@ VL_ATTR_COLD void Vtop_top___ctor_var_reset(Vtop_top* vlSelf) {
     vlSelf->__PVT__branch = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 16985980692193088871ull);
     vlSelf->__PVT__lsu_we = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 14626365765754585692ull);
     vlSelf->__PVT__lsu_le = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 3851020032965099929ull);
-    vlSelf->__PVT__external_stall = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 2871934794811161235ull);
-    vlSelf->__PVT__ifu_stall = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 13998222303260242712ull);
     vlSelf->__PVT__arb_wready = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 1680289899656006799ull);
     vlSelf->__PVT__arb_arready = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 16207480654425753374ull);
     vlSelf->__PVT__arb_awready = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 11911765733314370540ull);
@@ -415,6 +423,7 @@ VL_ATTR_COLD void Vtop_top___ctor_var_reset(Vtop_top* vlSelf) {
     vlSelf->__PVT__arb_rvalid = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 8164879084404364685ull);
     vlSelf->__PVT__arb_bvalid = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 1020592276924299105ull);
     vlSelf->__PVT__pc_mod__DOT__next_pc = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 3103581620590096924ull);
+    vlSelf->__PVT__lsu_mod__DOT__external_stall = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 6177772973895783415ull);
     vlSelf->__PVT__lsu_mod__DOT__prev_le = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 8179215459852384519ull);
     vlSelf->__PVT__lsu_mod__DOT__we_stall = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 2405764662904401275ull);
     vlSelf->__PVT__lsu_mod__DOT__ff_stall = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 6052672636032029626ull);
@@ -422,6 +431,7 @@ VL_ATTR_COLD void Vtop_top___ctor_var_reset(Vtop_top* vlSelf) {
     vlSelf->__PVT__decode_mod__DOT__imm_i = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 17728463912631228713ull);
     vlSelf->__PVT__alu_mod__DOT__val1 = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 3618980885417066799ull);
     vlSelf->__PVT__alu_mod__DOT__val2 = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 5531290321701216620ull);
+    vlSelf->__PVT__ifu_mod__DOT__lsu_stall = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 9488322534828500004ull);
     vlSelf->__PVT__ifu_mod__DOT__idk_2 = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 13597526410532356314ull);
     vlSelf->__PVT__csr_mod__DOT__data_in = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 12700116229890022093ull);
     for (int __Vi0 = 0; __Vi0 < 32; ++__Vi0) {
