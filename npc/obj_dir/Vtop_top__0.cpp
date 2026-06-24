@@ -816,14 +816,14 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
         }
         if ((1U & (~ (IData)(vlSelfRef.__PVT__ifu_mod__DOT__external_stall)))) {
             vlSelfRef.__PVT__araddr_ifu = vlSelfRef.pc;
-        }
-        vlSelfRef.pc = vlSelfRef.__PVT__pc_mod__DOT__next_pc;
-        if (vlSelfRef.__PVT__branch) {
-            vlSelfRef.pc = ((0U == (IData)(vlSelfRef.__PVT__mux_select_pc))
-                             ? vlSelfRef.__PVT__alu_out
-                             : ((1U == (IData)(vlSelfRef.__PVT__mux_select_pc))
-                                 ? vlSelfRef.__PVT__csr_out
-                                 : vlSelfRef.__PVT__alu_out));
+            vlSelfRef.pc = vlSelfRef.__PVT__pc_mod__DOT__next_pc;
+            if (vlSelfRef.__PVT__branch) {
+                vlSelfRef.pc = ((0U == (IData)(vlSelfRef.__PVT__mux_select_pc))
+                                 ? vlSelfRef.__PVT__alu_out
+                                 : ((1U == (IData)(vlSelfRef.__PVT__mux_select_pc))
+                                     ? vlSelfRef.__PVT__csr_out
+                                     : vlSelfRef.__PVT__alu_out));
+            }
         }
     }
     vlSelfRef.__PVT__araddr_lsu = __Vdly__araddr_lsu;
