@@ -50,7 +50,7 @@ alu alu_mod(
 );
 
 ifu ifu_mod (
-    .clk(clk), .rst(rst), .pc(pc), .opcode(opcode), .external_stall(external_stall), .stall(ifu_stall), .araddr_ifu(araddr_ifu), .arvalid_ifu(arvalid_ifu), .arready_ifu(arready_ifu), 
+    .clk(clk), .rst(rst), .pc(pc), .opcode(opcode), .lsu_stall(lsu_stall), .stall(ifu_stall), .araddr_ifu(araddr_ifu), .arvalid_ifu(arvalid_ifu), .arready_ifu(arready_ifu), 
     .rdata_ifu(rdata_ifu), .rresp_ifu(rresp_ifu), .rvalid_ifu(rvalid_ifu), .rready_ifu(rready_ifu)
 );
 

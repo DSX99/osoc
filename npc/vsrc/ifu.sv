@@ -4,7 +4,7 @@ module ifu(
     input logic [31:0] pc,
     output logic [31:0] opcode,
 
-    input logic external_stall,
+    input logic lsu_stall,
     output logic stall,
 
     // Read Addr Channel (AR)
