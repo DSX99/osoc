@@ -63,6 +63,7 @@ always_ff @(posedge clk) begin
                         ifu<=AWAIT;
                         bus_out.opcode<=rdata;
                         rready<=0;
+                        valid<=1;
                     end
                 end
                 AWAIT: begin

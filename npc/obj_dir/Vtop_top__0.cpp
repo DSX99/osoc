@@ -1328,7 +1328,7 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
         vlSelfRef.__PVT__wvalid_lsu = 0U;
         vlSelfRef.__PVT__awaddr_lsu = 0U;
         vlSelfRef.__PVT__awvalid_lsu = 0U;
-        __Vdly__ifu_mod__DOT__ifu = 0U;
+        __Vdly__ifu_mod__DOT__ifu = 1U;
         __Vdly__if_id_bus[0U] = 0U;
         __VdlyMask__if_id_bus[0U] = 0xffffffffU;
         vlSelfRef.__PVT__arvalid_ifu = 0U;
