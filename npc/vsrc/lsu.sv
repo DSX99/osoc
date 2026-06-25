@@ -94,7 +94,7 @@ always_ff @(posedge clk) begin
         rready<=0;
         ready<=1;
     end else begin
-        if(bus_in.lsu_le) begin
+        if(bus_in.lsu_le && lsu_l==AWAIT) begin
             arvalid<=1;
             araddr<=bus_in.alu_out;
             lsu_l<=WAIT_AR;
@@ -170,7 +170,7 @@ always_ff @(posedge clk) begin
         awaddr<=0;
         awvalid<=0;
     end else begin
-        if(bus_in.lsu_we) begin
+        if(bus_in.lsu_we && lsu_s == AWAIT_S) begin
             awaddr<=bus_in.alu_out;
             awvalid<=1;
             wdata<=bus_in.data_rs2;
