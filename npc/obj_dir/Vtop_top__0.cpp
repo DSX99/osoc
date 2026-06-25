@@ -572,9 +572,10 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
     __Vdly__slave_mod__DOT__aw_mask = vlSelfRef.__PVT__slave_mod__DOT__aw_mask;
     vlSelfRef.__PVT__ifu_mod__DOT__idk_2 = ((IData)(vlSelfRef.__PVT__ifu_mod__DOT__idk_2) 
                                             | (0U != (IData)(vlSelfRef.__PVT__arb_rresp)));
-    vlSelfRef.__PVT__lsu_mod__DOT__idk = (((IData)(vlSelfRef.__PVT__lsu_mod__DOT__idk) 
-                                           | (0U != (IData)(vlSelfRef.__PVT__arb_rresp))) 
-                                          | (0U != (IData)(vlSelfRef.__PVT__arb_bresp)));
+    vlSelfRef.__PVT__lsu_mod__DOT__idk = ((((IData)(vlSelfRef.__PVT__lsu_mod__DOT__idk) 
+                                            | (0U != (IData)(vlSelfRef.__PVT__arb_rresp))) 
+                                           | (0U != (IData)(vlSelfRef.__PVT__arb_bresp))) 
+                                          | (IData)(vlSelfRef.__PVT__arb_bvalid));
     vlSelfRef.__PVT__lsu_mod__DOT__prev_we = vlSelfRef.__PVT__lsu_we;
     vlSelfRef.__PVT__lsu_mod__DOT__prev_le = vlSelfRef.__PVT__lsu_le;
     if ((1U & (~ (IData)(vlSymsp->TOP.rst)))) {
@@ -848,11 +849,11 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
         vlSelfRef.__PVT__csr_mod__DOT__regs[1U] = __VdlyVal__csr_mod__DOT__regs__v35;
         vlSelfRef.__PVT__csr_mod__DOT__regs[3U] = __VdlyVal__csr_mod__DOT__regs__v36;
     }
-    vlSelfRef.__PVT__arb_bvalid = __Vdly__arb_bvalid;
     vlSelfRef.__PVT__slave_mod__DOT__aw = __Vdly__slave_mod__DOT__aw;
     vlSelfRef.__PVT__slave_mod__DOT__aw_done = __Vdly__slave_mod__DOT__aw_done;
     vlSelfRef.__PVT__slave_mod__DOT__aw_mask = __Vdly__slave_mod__DOT__aw_mask;
     vlSelfRef.__PVT__arb_wready = __Vdly__arb_wready;
+    vlSelfRef.__PVT__arb_bvalid = __Vdly__arb_bvalid;
     vlSelfRef.__PVT__lsu_mod__DOT__w_done = __Vdly__lsu_mod__DOT__w_done;
     vlSelfRef.__PVT__lsu_mod__DOT__aw_done = __Vdly__lsu_mod__DOT__aw_done;
     vlSelfRef.__PVT__lsu_mod__DOT__aw_sent = __Vdly__lsu_mod__DOT__aw_sent;
