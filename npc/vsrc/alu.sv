@@ -1,12 +1,11 @@
+`include "pipeline_bus_pkg.sv"
+import pipeline_bus_pkg::*;
+
 module alu (
-    input logic [7:0] alu_op,
-    input logic [31:0] data_rs1,
-    input logic [31:0] data_rs2,
-    input logic [31:0] pc,
-    input logic [31:0] imm,
-    
-    output logic branch,
-    output logic [31:0] data_out
+    input id_to_ex_bus_t bus_in,
+    output ex_to_ls_bus_t bus_out,
+    output logic valid,
+    input logic ready
 );
 
     //alu_op[7] = change rs2_val to imm
@@ -18,45 +17,54 @@ module alu (
 
     logic [31:0] val1, val2;
 
-    assign val1 = alu_op[6] ? pc : data_rs1;
-    assign val2 = alu_op[7] ? imm : data_rs2;
+    assign val1 = bus_in.alu_op[6] ? bus_in.pc : bus_in.data_rs1;
+    assign val2 = bus_in.alu_op[7] ? bus_in.imm : bus_in.data_rs2;
 
     always_comb begin
-        data_out=0;
-        branch = 0;
-        
-        if(alu_op[5:4]==2'b00) begin
-            case(alu_op[2:0])
+        bus_out = '0;
+        bus_out.alu_out = 0;
+        bus_out.branch = 0;
+
+        if(bus_in.alu_op[5:4]==2'b00) begin
+            case(bus_in.alu_op[2:0])
                 0: begin
-                    if(alu_op[3]) data_out = val1 - val2;
-                    else data_out = val1 + val2;
+                    if(bus_in.alu_op[3]) bus_out.alu_out = val1 - val2;
+                    else bus_out.alu_out = val1 + val2;
                 end 
-                1: data_out = val1<<val2[4:0];
-                2: data_out = {31'b0,$signed(val1)<$signed(val2)};
-                3: data_out = {31'b0,val1<val2};
-                4: data_out = val1^val2;
+                1: bus_out.alu_out = val1<<val2[4:0];
+                2: bus_out.alu_out = {31'b0,$signed(val1)<$signed(val2)};
+                3: bus_out.alu_out = {31'b0,val1<val2};
+                4: bus_out.alu_out = val1^val2;
                 5: begin
-                    if(alu_op[3]) data_out = $signed(val1) >>> val2[4:0];
-                    else data_out = val1 >> val2[4:0];
+                    if(bus_in.alu_op[3]) bus_out.alu_out = $signed(val1) >>> val2[4:0];
+                    else bus_out.alu_out = val1 >> val2[4:0];
                 end 
-                6: data_out = val1|val2;
-                7: data_out = val1&val2;
+                6: bus_out.alu_out = val1|val2;
+                7: bus_out.alu_out = val1&val2;
             endcase
-        end else if(alu_op[5:4]==2'b01) begin
-            data_out = val1 + val2;
-            case(alu_op[2:0])
-                0: branch = data_rs1 == data_rs2;
-                1: branch = data_rs1 != data_rs2;
-                4: branch = $signed(data_rs1) <  $signed(data_rs2);
-                5: branch = $signed(data_rs1) >= $signed(data_rs2);
-                6: branch = data_rs1 <  data_rs2;
-                7: branch = data_rs1 >= data_rs2;
+        end else if(bus_in.alu_op[5:4]==2'b01) begin
+            bus_out.alu_out = val1 + val2;
+            case(bus_in.alu_op[2:0])
+                0: bus_out.branch = bus_in.data_rs1 == bus_in.data_rs2;
+                1: bus_out.branch = bus_in.data_rs1 != bus_in.data_rs2;
+                4: bus_out.branch = $signed(bus_in.data_rs1) <  $signed(bus_in.data_rs2);
+                5: bus_out.branch = $signed(bus_in.data_rs1) >= $signed(bus_in.data_rs2);
+                6: bus_out.branch = bus_in.data_rs1 <  bus_in.data_rs2;
+                7: bus_out.branch = bus_in.data_rs1 >= bus_in.data_rs2;
             endcase
-        end else if(alu_op[5:4]==2'b10) begin
-            ; //mult
-        end else if(alu_op[5:4]==2'b11) begin
-            ; //atomic
         end
+
+        // propagate control signals
+        bus_out.next_pc = bus_in.next_pc;
+        bus_out.data_rs2 = bus_in.data_rs2;
+        bus_out.csr_out = 0;
+        bus_out.lsu_we = bus_in.lsu_we;
+        bus_out.lsu_le = bus_in.lsu_le;
+        bus_out.lsu_oper = bus_in.lsu_oper;
+        bus_out.rd = bus_in.rd;
+        bus_out.mux_select = bus_in.mux_select;
     end
+
+    always_comb valid = 1'b1;
 
 endmodule

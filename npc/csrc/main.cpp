@@ -184,7 +184,7 @@ void execute(uint32_t n){
       printf("time:%lu\n", contextp->time());
     }
 
-    if(!batch && top->top->opcode!=0){
+    if(!batch){
       inst[0] = (top->top->opcode) & 0xff;
       inst[1] = (top->top->opcode >> 8) & 0xff;
       inst[2] = (top->top->opcode >> 16) & 0xff;
@@ -228,7 +228,6 @@ void execute(uint32_t n){
         printf("%s\n", str);
       }
       finished = 1;
-      printf("finished, took %ld cycles\n",contextp->time());
       ret = top->top->reg_mod->regs[10];
       if(ret){
         printf("\033[1m\033[31mNOT GOOD\033[0m\n");
@@ -243,7 +242,7 @@ void execute(uint32_t n){
     n--;
     
     if(!batch) {
-      if (!current_cycle_is_skipped && !(top->top->external_stall)) {
+      if (!current_cycle_is_skipped) {
         difftest_regcpy(&ref_cpu, 0);
 
         if (ref_cpu.pc != top->top->pc) {

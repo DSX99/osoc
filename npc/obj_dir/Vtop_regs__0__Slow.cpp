@@ -12,7 +12,6 @@ VL_ATTR_COLD void Vtop_regs___ctor_var_reset(Vtop_regs* vlSelf) {
     const uint64_t __VscopeHash = VL_MURMUR64_HASH(vlSelf->vlNamep);
     vlSelf->__PVT__clk = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 16707436170211756652ull);
     vlSelf->__PVT__rst = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 18209466448985614591ull);
-    vlSelf->__PVT__external_stall = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 2871934794811161235ull);
     vlSelf->__PVT__data_in = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 10574596302020702150ull);
     vlSelf->__PVT__rs1 = VL_SCOPED_RAND_RESET_I(5, __VscopeHash, 10211807078052224816ull);
     vlSelf->__PVT__rs2 = VL_SCOPED_RAND_RESET_I(5, __VscopeHash, 392999376545494891ull);

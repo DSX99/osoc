@@ -38,10 +38,7 @@ extern "C" {
         if (img_file == NULL) {
             printf("No image is given.\n");
             memcpy(mem, img, sizeof(img));
-            if(!batch){
-                difftest_memcpy(0x80000000, mem, sizeof(img), 1);
-            }
-            return; // built-in image
+            return; // built-in image size
         }
 
         FILE *fp = fopen(img_file, "rb");
@@ -70,12 +67,12 @@ extern "C" {
         printf("\033[034mCall to write to memory at %08x\033[0m\n", addr);
         #endif
         if(addr>=ROM_OFFSET && addr<(ROM_OFFSET + MEM_SIZE)){
-            if(type ==1){
+            if(type ==0){
                 mem[addr-ROM_OFFSET] = data & 0xFF;
-            }else if (type ==3){
+            }else if (type ==1){
                 mem[addr-ROM_OFFSET] = data & 0xFF;
                 mem[addr-ROM_OFFSET+1] = (data>>8) & 0xFF;
-            }else if (type ==15){
+            }else if (type ==2){
                 mem[addr-ROM_OFFSET] = data & 0xFF;
                 mem[addr-ROM_OFFSET+1] = (data>>8) & 0xFF;
                 mem[addr-ROM_OFFSET+2] = (data>>16) & 0xFF;

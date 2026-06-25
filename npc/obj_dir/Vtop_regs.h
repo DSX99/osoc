@@ -16,7 +16,6 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop_regs final {
     // DESIGN SPECIFIC STATE
     CData/*0:0*/ __PVT__clk;
     CData/*0:0*/ __PVT__rst;
-    CData/*0:0*/ __PVT__external_stall;
     CData/*4:0*/ __PVT__rs1;
     CData/*4:0*/ __PVT__rs2;
     CData/*4:0*/ __PVT__rd;

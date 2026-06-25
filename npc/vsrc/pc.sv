@@ -2,7 +2,6 @@ module pc(
     input logic clk,
     input logic rst,
     input logic branch,
-    input logic external_stall,
     input logic [31:0] data_in,
 
     output logic [31:0] pc,
@@ -20,11 +19,9 @@ module pc(
         if(rst) begin
             pc<=32'h80000000;
         end else begin
-            if(!external_stall) begin
-                pc<=next_pc;
-                if(branch)begin
-                    pc<=data_in;
-                end
+            pc<=next_pc;
+            if(branch)begin
+                pc<=data_in;
             end
         end
     end
