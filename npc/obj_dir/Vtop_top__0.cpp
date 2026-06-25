@@ -1314,7 +1314,7 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
         vlSelfRef.__PVT__arvalid_lsu = 0U;
         vlSelfRef.__PVT__araddr_lsu = 0U;
         vlSelfRef.__PVT__rready_lsu = 0U;
-        vlSelfRef.__PVT__lsu_mod__DOT__ready = 0U;
+        vlSelfRef.__PVT__lsu_mod__DOT__ready = 1U;
         vlSelfRef.__PVT__bready_lsu = 1U;
         vlSelfRef.__PVT__wdata_lsu = 0U;
         vlSelfRef.__PVT__wvalid_lsu = 0U;
