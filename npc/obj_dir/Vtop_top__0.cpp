@@ -1111,6 +1111,11 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
         __VdlySet__csr_mod__DOT__regs__v35 = 0U;
         __Vdly__ifu_mod__DOT__ifu = vlSelfRef.__PVT__ifu_mod__DOT__ifu;
         vlSelfRef.__Vdly__if_id_valid = 1U;
+        __Vdly__arready_ifu = vlSelfRef.__PVT__arready_ifu;
+        __Vdly__rdata_ifu = vlSelfRef.__PVT__rdata_ifu;
+        __Vdly__rvalid_ifu = vlSelfRef.__PVT__rvalid_ifu;
+        __Vdly__axi_slave_mod__DOT__slave = vlSelfRef.__PVT__axi_slave_mod__DOT__slave;
+        vlSelfRef.reg_valid = 1U;
     } else {
         __VdlySet__csr_mod__DOT__regs__v0 = 0U;
         __VdlySet__csr_mod__DOT__regs__v33 = 0U;
@@ -1118,11 +1123,12 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
         __VdlySet__csr_mod__DOT__regs__v35 = 0U;
         __Vdly__ifu_mod__DOT__ifu = vlSelfRef.__PVT__ifu_mod__DOT__ifu;
         vlSelfRef.__Vdly__if_id_valid = 0U;
+        __Vdly__arready_ifu = vlSelfRef.__PVT__arready_ifu;
+        __Vdly__rdata_ifu = vlSelfRef.__PVT__rdata_ifu;
+        __Vdly__rvalid_ifu = vlSelfRef.__PVT__rvalid_ifu;
+        __Vdly__axi_slave_mod__DOT__slave = vlSelfRef.__PVT__axi_slave_mod__DOT__slave;
+        vlSelfRef.reg_valid = 0U;
     }
-    __Vdly__arready_ifu = vlSelfRef.__PVT__arready_ifu;
-    __Vdly__rdata_ifu = vlSelfRef.__PVT__rdata_ifu;
-    __Vdly__rvalid_ifu = vlSelfRef.__PVT__rvalid_ifu;
-    __Vdly__axi_slave_mod__DOT__slave = vlSelfRef.__PVT__axi_slave_mod__DOT__slave;
     if (vlSymsp->TOP.rst) {
         __VdlySet__csr_mod__DOT__regs__v0 = 1U;
     } else if (vlSelfRef.__PVT__if_id_valid) {
@@ -1327,7 +1333,6 @@ void Vtop_top___nba_sequent__TOP__top__1(Vtop_top* vlSelf) {
     auto& vlSelfRef = std::ref(*vlSelf).get();
     // Body
     vlSelfRef.__PVT__if_id_valid = vlSelfRef.__Vdly__if_id_valid;
-    vlSelfRef.reg_valid = vlSelfRef.__PVT__if_id_valid;
     vlSelfRef.__PVT__id_ex_bus_decoded[0U] = 0U;
     vlSelfRef.__PVT__id_ex_bus_decoded[1U] = 0U;
     vlSelfRef.__PVT__id_ex_bus_decoded[2U] = 0U;
