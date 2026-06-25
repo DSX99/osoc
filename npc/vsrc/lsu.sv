@@ -2,11 +2,11 @@ import pipeline_bus_pkg::ex_to_ls_bus_t;
 import pipeline_bus_pkg::ls_to_wb_bus_t;
 
 module lsu(
-    input  logic clk,
-    input  logic rst,
-    input  pipeline_bus_pkg::ex_to_ls_bus_t bus_in,
+    input logic clk,
+    input logic rst,
+    input pipeline_bus_pkg::ex_to_ls_bus_t bus_in,
     output pipeline_bus_pkg::ls_to_wb_bus_t bus_out,
-    input  logic valid_left, ready_right,
+    input logic valid_left, ready_right,
     output logic ready_left, valid_right,
 
     // Read Address Channel (AR)
@@ -37,21 +37,28 @@ module lsu(
     output logic        bready
 );
 
-    // Removed the AWAIT states to allow consecutive back-to-back operations
-    typedef enum {
-        IDLE, WAIT_AR, WAIT_R
+    // LB 0
+    // LH 1
+    // LW 2
+    // LBU 3
+    // LHU 4
+    // SB 5
+    // SH 6
+    // SW 7
+
+    typedef enum{
+        IDLE, WAIT_AR, WAIT_R, AWAIT
     } IFU_state_t;
     IFU_state_t lsu_l;
 
-    typedef enum {
-        IDLE_S, WAIT, WAIT_RESP
+    typedef enum{
+        IDLE_S, WAIT, WAIT_RESP, AWAIT_S
     } IFU_state_s_t;
     IFU_state_s_t lsu_s;
 
     logic unused_branch;
     logic ready;
     logic prev_le, prev_we;
-    logic done_aw, done_w;
 
     always_comb begin
         valid_right = valid_left && !(!prev_le && bus_in.lsu_le) && !(!prev_we && bus_in.lsu_we) && ready;
@@ -65,7 +72,8 @@ module lsu(
         bus_out.mux_select = 0;
         bus_out.mux_select_pc = 0;
 
-        if(valid_left && ready_right) begin 
+
+        if(valid_left && ready_right) begin //should it be here or better to take out for future?                   !!check when doing pipeline                        
             bus_out.alu_out = bus_in.alu_out;
             bus_out.next_pc = bus_in.next_pc;
             bus_out.csr_out = bus_in.csr_out;
@@ -73,110 +81,127 @@ module lsu(
             bus_out.mux_select = bus_in.mux_select;
             bus_out.mux_select_pc = bus_in.mux_select_pc;
         end 
-        
-        // Write strobe decoding
-        case(bus_in.lsu_oper) 
-            3'b000: wstrb = 4'b0001;
-            3'b001: wstrb = 4'b0011;
-            3'b010: wstrb = 4'b1111;
-            default: wstrb = 0;
-        endcase
     end
 
-    // Unified Read/Write Sequential Block
-    always_ff @(posedge clk) begin
-        prev_le <= bus_in.lsu_le;
-        prev_we <= bus_in.lsu_we;
-        
-        if(rst) begin
-            bus_out.lsu_out <= 0;
-            arvalid <= 0;
-            araddr <= 0;
-            rready <= 0;
-            bready <= 1;
-            wdata <= 0;
-            wvalid <= 0;
-            awaddr <= 0;
-            awvalid <= 0;
-            done_aw <= 0;
-            done_w <= 0;
-            ready <= 1;
-            lsu_l <= IDLE;
-            lsu_s <= IDLE_S;
-        end else begin
-            if(ready_right && valid_left) begin
-                
-                // --- READ FSM ---
-                case(lsu_l)
-                    IDLE: begin
-                        if(bus_in.lsu_le) begin
-                            arvalid <= 1;
-                            araddr <= bus_in.alu_out;
-                            lsu_l <= WAIT_AR;
-                            ready <= 0;
-                        end
+//reading
+always_ff @(posedge clk) begin
+    prev_le<=bus_in.lsu_le;
+    prev_we<=bus_in.lsu_we;
+    if(rst) begin
+        bus_out.lsu_out<=0;
+        arvalid<=0;
+        araddr<=0;
+        rready<=0;
+        ready<=1;
+    end else begin
+        if(ready_right && valid_left) begin
+            case(lsu_l)
+                IDLE:begin
+                    if(bus_in.lsu_le) begin
+                        arvalid<=1;
+                        araddr<=bus_in.alu_out;
+                        lsu_l<=WAIT_AR;
+                        ready<=0;
                     end
-                    WAIT_AR: begin
-                        if(arready) begin 
-                            arvalid <= 0;
-                            rready <= 1;
-                            lsu_l <= WAIT_R;
-                        end
+                end
+                WAIT_AR:begin
+                    if(arready)begin 
+                        arvalid<=0;
+                        rready<=1;
+                        lsu_l<=WAIT_R;
                     end
-                    WAIT_R: begin
-                        if(rvalid) begin
-                            lsu_l <= IDLE; // FIX: Jump directly to IDLE to catch consecutive read
-                            rready <= 0;
-                            ready <= 1;
-                            
-                            case(bus_in.lsu_oper)
-                                0: bus_out.lsu_out <= {{24{rdata[7]}}, rdata[7:0]};       // LB
-                                1: bus_out.lsu_out <= {{16{rdata[15]}}, rdata[15:0]};     // LH
-                                2: bus_out.lsu_out <= rdata[31:0];                        // LW
-                                4: bus_out.lsu_out <= {24'b0, rdata[7:0]};                // LBU
-                                5: bus_out.lsu_out <= {16'b0, rdata[15:0]};               // LHU
-                            endcase
-                        end
+                end
+                WAIT_R:begin
+                    if(rvalid) begin
+                        lsu_l<=AWAIT;
+                        case(bus_in.lsu_oper)
+                            0: begin //LB
+                                bus_out.lsu_out <= {{24{rdata[7]}},rdata[7:0]};
+                            end 
+                            1: begin //LH
+                                bus_out.lsu_out <= {{16{rdata[15]}},rdata[15:0]};
+                            end 
+                            2: begin //LW
+                                bus_out.lsu_out <= rdata[31:0];
+                            end 
+                            4: begin //LBU
+                                bus_out.lsu_out <= {24'b0,rdata[7:0]};
+                            end 
+                            5: begin //LHU
+                                bus_out.lsu_out <= {16'b0,rdata[15:0]};
+                            end 
+                        endcase
+                        rready<=0;
+                        ready<=1;
                     end
-                endcase
-
-                // --- WRITE FSM ---
-                case(lsu_s)
-                    IDLE_S: begin
-                        if(bus_in.lsu_we) begin
-                            awaddr <= bus_in.alu_out;
-                            awvalid <= 1;
-                            wdata <= bus_in.data_rs2;
-                            wvalid <= 1;
-                            lsu_s <= WAIT;
-                            ready <= 0;
-                        end
-                    end
-                    WAIT: begin
-                        if(wready) begin 
-                            wvalid <= 0;
-                            done_w <= 1;
-                        end
-                        if(awready) begin
-                            awvalid <= 0;
-                            done_aw <= 1;
-                        end
-                        if((done_aw || awready) && (done_w || wready)) begin
-                            lsu_s <= WAIT_RESP;
-                        end
-                    end
-                    WAIT_RESP: begin
-                        done_aw <= 0;
-                        done_w <= 0;
-                        if(bvalid) begin
-                            lsu_s <= IDLE_S; // FIX: Jump directly to IDLE_S to catch consecutive write
-                            ready <= 1;
-                        end
-                    end
-                endcase
-                
-            end
+                end
+                AWAIT: begin
+                    lsu_l<=IDLE;
+                end
+            endcase
         end
     end
+end
+
+logic done_aw, done_w;
+
+//writing
+
+always_comb begin
+    case(bus_in.lsu_oper) 
+        3'b000: wstrb=4'b0001;
+        3'b001: wstrb=4'b0011;
+        3'b010: wstrb=4'b1111;
+        default: wstrb=0;
+    endcase
+end
+
+always_ff @(posedge clk) begin
+    if(rst) begin
+        bready<=1;
+        wdata<=0;
+        wvalid<=0;
+        awaddr<=0;
+        awvalid<=0;
+    end else begin
+        if(ready_right && valid_left) begin
+            case(lsu_s)
+                IDLE_S:begin
+                    if(bus_in.lsu_we) begin
+                        awaddr<=bus_in.alu_out;
+                        awvalid<=1;
+                        wdata<=bus_in.data_rs2;
+                        wvalid<=1;
+                        lsu_s<=WAIT;
+                        ready<=0;
+                    end
+                end
+                WAIT:begin
+                    if(wready)begin 
+                        wvalid<=0;
+                        done_w<=1;
+                    end
+                    if(awready) begin
+                        awvalid<=0;
+                        done_aw<=1;
+                    end
+                    if((done_aw || awready) && (done_w || wready)) lsu_s <= WAIT_RESP;
+                end
+                WAIT_RESP:begin
+                    done_aw<=0;
+                    done_w<=0;
+                    if(bvalid) begin
+                        lsu_s<=AWAIT_S;
+                        ready<=1;
+                    end
+                end
+                AWAIT_S: begin
+                    lsu_l<=IDLE_S;
+                end
+            endcase
+        end
+    end
+end
+
 
 endmodule
