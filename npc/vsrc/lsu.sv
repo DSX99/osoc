@@ -58,11 +58,11 @@ module lsu(
 
     logic unused_branch;
     logic ready;
-    logic prev_le;
+    logic prev_le, prev_we;
 
     always_comb begin
-        valid_right = valid_left && !(!prev_le && bus_in.lsu_le) && ready;
-        ready_left = ready_right && !(!prev_le && bus_in.lsu_le) && ready;
+        valid_right = valid_left && !(!prev_le && bus_in.lsu_le) && !(!prev_we && bus_in.lsu_we) && ready;
+        ready_left = ready_right && !(!prev_le && bus_in.lsu_le) && !(!prev_we && bus_in.lsu_we) && ready;
         unused_branch = bus_in.branch | |rresp | |bresp;
 
         bus_out.alu_out = 0;
@@ -86,6 +86,7 @@ module lsu(
 //reading
 always_ff @(posedge clk) begin
     prev_le<=bus_in.lsu_le;
+    prev_we<=bus_in.lsu_we
     if(rst) begin
         bus_out.lsu_out<=0;
         arvalid<=0;
