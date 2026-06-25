@@ -35,7 +35,7 @@ always_comb begin
     bus_out.next_pc = next_pc;
 end
 
-assign araddr = comb_pc;
+assign araddr = ifu ? comb_pc : pc;
 
 always_ff @(posedge clk) begin
     if(rst) begin
