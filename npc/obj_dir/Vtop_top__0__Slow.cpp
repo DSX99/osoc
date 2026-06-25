@@ -94,8 +94,5 @@ VL_ATTR_COLD void Vtop_top___ctor_var_reset(Vtop_top* vlSelf) {
     vlSelf->__Vfunc_lsu_mod__DOT__memread__4__Vfuncout = 0;
     VL_ZERO_RESET_W(142, vlSelf->__VdfgRegularize_h6e95ff9d_0_0);
     VL_ZERO_RESET_W(142, vlSelf->__VdfgRegularize_h6e95ff9d_0_10);
-    vlSelf->__Vdly__ifu_mod__DOT__ifu = 0;
-    vlSelf->__Vdly__arready_ifu = 0;
-    vlSelf->__Vdly__rdata_ifu = 0;
-    vlSelf->__Vdly__rvalid_ifu = 0;
+    vlSelf->__Vdly__if_id_valid = 0;
 }

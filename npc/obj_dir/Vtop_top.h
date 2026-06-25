@@ -30,8 +30,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop_top final {
     CData/*0:0*/ __PVT__rready_ifu;
     CData/*3:0*/ decode_mod__DOT____VdfgRegularize_h901acc23_0_2;
     CData/*4:0*/ __PVT__csr_mod__DOT__working_reg;
-    CData/*0:0*/ __Vdly__arready_ifu;
-    CData/*0:0*/ __Vdly__rvalid_ifu;
+    CData/*0:0*/ __Vdly__if_id_valid;
     SData/*9:0*/ decode_mod__DOT____VdfgExtracted_h3b2fb429__0;
     IData/*31:0*/ pc;
     IData/*31:0*/ opcode;
@@ -54,8 +53,6 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop_top final {
     IData/*31:0*/ __Vfunc_lsu_mod__DOT__memread__4__Vfuncout;
     VlWide<5>/*141:0*/ __VdfgRegularize_h6e95ff9d_0_0;
     VlWide<5>/*141:0*/ __VdfgRegularize_h6e95ff9d_0_10;
-    IData/*31:0*/ __Vdly__ifu_mod__DOT__ifu;
-    IData/*31:0*/ __Vdly__rdata_ifu;
     VlWide<3>/*95:0*/ __PVT__if_id_bus;
     VlWide<7>/*199:0*/ __PVT__id_ex_bus_decoded;
     VlWide<5>/*135:0*/ __PVT__ls_wb_bus;

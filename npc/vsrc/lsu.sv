@@ -33,7 +33,7 @@ module lsu(
 
         bus_out = '0;
 
-        if(valid_left && ready_left) begin
+        if(valid_left && ready_right) begin
 
             if(bus_in.lsu_le) begin
                 case(bus_in.lsu_oper)
@@ -73,7 +73,7 @@ module lsu(
     end
 
 always_ff @( posedge clk ) begin
-    if(valid_left && ready_left) begin
+    if(valid_left) begin
         if(bus_in.lsu_we) begin
             case(bus_in.lsu_oper)
                 0: begin //SB

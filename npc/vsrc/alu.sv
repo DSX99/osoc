@@ -28,7 +28,7 @@ module alu (
 
         bus_out = '0;
 
-        if(valid_left && ready_left) begin
+        if(valid_left && ready_right) begin
             bus_out.alu_out = 0;
             bus_out.branch = 0;
 

@@ -39,7 +39,7 @@ module decode(
 
         bus_out = '0;
 
-        if(valid_left && ready_left) begin
+        if(valid_left && ready_right) begin
         
             bus_out.pc = bus_in.pc;
             bus_out.next_pc = bus_in.next_pc;

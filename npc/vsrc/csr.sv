@@ -28,10 +28,10 @@ initial begin
 end
 
 always_comb begin
-        valid_right = valid_left;
-        ready_left = ready_right;
+    valid_right = valid_left;
+    ready_left = ready_right;
 
-    if(valid_left && ready_left) begin
+    if(valid_left && ready_right) begin
 
         working_reg =0;
         case(addr)
