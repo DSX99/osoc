@@ -97,7 +97,7 @@ always_ff @(posedge clk) begin
         end
 
         if(we) begin
-            if(!lsu_stall && !aw_sent) begin  // starting handshake fro aw and w
+            if(!external_stall && !aw_sent) begin  // starting handshake fro aw and w
                 awvalid_lsu<=1;
                 awaddr_lsu<=addr; 
                 aw_sent<=1;
