@@ -20,9 +20,6 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop_top final {
     CData/*0:0*/ clk;
     CData/*0:0*/ rst;
     CData/*0:0*/ __PVT__if_id_valid;
-    CData/*0:0*/ __PVT__if_id_ready;
-    CData/*0:0*/ __PVT__ex_ls_ready;
-    CData/*0:0*/ __PVT__id_ex_ready_csr;
     CData/*1:0*/ __PVT__rresp_ifu;
     CData/*0:0*/ __PVT__arvalid_ifu;
     CData/*0:0*/ __PVT__arready_ifu;
@@ -51,12 +48,11 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop_top final {
     IData/*31:0*/ __Vfunc_lsu_mod__DOT__memread__2__Vfuncout;
     IData/*31:0*/ __Vfunc_lsu_mod__DOT__memread__3__Vfuncout;
     IData/*31:0*/ __Vfunc_lsu_mod__DOT__memread__4__Vfuncout;
-    VlWide<5>/*141:0*/ __VdfgRegularize_h6e95ff9d_0_0;
-    VlWide<5>/*141:0*/ __VdfgRegularize_h6e95ff9d_0_10;
     VlWide<3>/*95:0*/ __PVT__if_id_bus;
     VlWide<7>/*199:0*/ __PVT__id_ex_bus_decoded;
+    VlWide<5>/*141:0*/ __PVT__ex_ls_bus_alu;
     VlWide<5>/*135:0*/ __PVT__ls_wb_bus;
-    VlWide<5>/*141:0*/ __PVT__alu_mod__DOT__bus_out;
+    VlWide<7>/*199:0*/ __PVT__alu_mod__DOT__bus_in;
     VlWide<5>/*141:0*/ __PVT__lsu_mod__DOT__bus_in;
     VlUnpacked<IData/*31:0*/, 32> __PVT__csr_mod__DOT__regs;
 
