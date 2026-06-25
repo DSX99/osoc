@@ -113,22 +113,21 @@ void Vtop___024root__trace_chg_0_sub_0(Vtop___024root* vlSelf, VerilatedFst::Buf
         bufp->chgIData(oldp+79,(vlSymsp->TOP__top.__PVT__csr_mod__DOT__regs[0]),32);
         bufp->chgBit(oldp+80,((0U != (IData)(vlSymsp->TOP__top.__PVT__arb_rresp))));
         bufp->chgBit(oldp+81,(vlSymsp->TOP__top.__PVT__ifu_mod__DOT__idk_2));
-        bufp->chgBit(oldp+82,(vlSymsp->TOP__top.__PVT__ifu_mod__DOT__extra_stall));
-        bufp->chgBit(oldp+83,(vlSymsp->TOP__top.__PVT__lsu_mod__DOT__prev_le));
-        bufp->chgBit(oldp+84,(vlSymsp->TOP__top.__PVT__lsu_mod__DOT__we_stall));
-        bufp->chgBit(oldp+85,(vlSymsp->TOP__top.__PVT__lsu_mod__DOT__ff_stall));
-        bufp->chgBit(oldp+86,(vlSymsp->TOP__top.__PVT__lsu_mod__DOT__idk));
-        bufp->chgIData(oldp+87,(vlSymsp->TOP__top.__PVT__slave_mod__DOT__aw),32);
-        bufp->chgBit(oldp+88,(vlSymsp->TOP__top.__PVT__slave_mod__DOT__aw_done));
-        bufp->chgCData(oldp+89,(vlSymsp->TOP__top.__PVT__slave_mod__DOT__aw_mask),4);
+        bufp->chgBit(oldp+82,(vlSymsp->TOP__top.__PVT__lsu_mod__DOT__prev_le));
+        bufp->chgBit(oldp+83,(vlSymsp->TOP__top.__PVT__lsu_mod__DOT__we_stall));
+        bufp->chgBit(oldp+84,(vlSymsp->TOP__top.__PVT__lsu_mod__DOT__ff_stall));
+        bufp->chgBit(oldp+85,(vlSymsp->TOP__top.__PVT__lsu_mod__DOT__idk));
+        bufp->chgIData(oldp+86,(vlSymsp->TOP__top.__PVT__slave_mod__DOT__aw),32);
+        bufp->chgBit(oldp+87,(vlSymsp->TOP__top.__PVT__slave_mod__DOT__aw_done));
+        bufp->chgCData(oldp+88,(vlSymsp->TOP__top.__PVT__slave_mod__DOT__aw_mask),4);
     }
-    bufp->chgBit(oldp+90,(vlSelfRef.clk));
-    bufp->chgBit(oldp+91,(vlSelfRef.rst));
-    bufp->chgIData(oldp+92,(vlSymsp->TOP__top.opcode),32);
-    bufp->chgIData(oldp+93,(vlSymsp->TOP__top.pc),32);
-    bufp->chgBit(oldp+94,(vlSymsp->TOP__top.external_stall));
-    bufp->chgIData(oldp+95,(((IData)(4U) + vlSymsp->TOP__top.pc)),32);
-    bufp->chgIData(oldp+96,((((- (IData)((vlSymsp->TOP__top.opcode 
+    bufp->chgBit(oldp+89,(vlSelfRef.clk));
+    bufp->chgBit(oldp+90,(vlSelfRef.rst));
+    bufp->chgIData(oldp+91,(vlSymsp->TOP__top.opcode),32);
+    bufp->chgIData(oldp+92,(vlSymsp->TOP__top.pc),32);
+    bufp->chgBit(oldp+93,(vlSymsp->TOP__top.external_stall));
+    bufp->chgIData(oldp+94,(((IData)(4U) + vlSymsp->TOP__top.pc)),32);
+    bufp->chgIData(oldp+95,((((- (IData)((vlSymsp->TOP__top.opcode 
                                           >> 0x0000001fU))) 
                               << 0x0000000bU) | ((0x000007e0U 
                                                   & (vlSymsp->TOP__top.opcode 
@@ -136,7 +135,7 @@ void Vtop___024root__trace_chg_0_sub_0(Vtop___024root* vlSelf, VerilatedFst::Buf
                                                  | (0x0000001fU 
                                                     & (vlSymsp->TOP__top.opcode 
                                                        >> 7U))))),32);
-    bufp->chgIData(oldp+97,((((- (IData)((vlSymsp->TOP__top.opcode 
+    bufp->chgIData(oldp+96,((((- (IData)((vlSymsp->TOP__top.opcode 
                                           >> 0x0000001fU))) 
                               << 0x0000000cU) | ((0x00000800U 
                                                   & (vlSymsp->TOP__top.opcode 
@@ -147,8 +146,8 @@ void Vtop___024root__trace_chg_0_sub_0(Vtop___024root* vlSelf, VerilatedFst::Buf
                                                     | (0x0000001eU 
                                                        & (vlSymsp->TOP__top.opcode 
                                                           >> 7U)))))),32);
-    bufp->chgIData(oldp+98,((0xfffff000U & vlSymsp->TOP__top.opcode)),32);
-    bufp->chgIData(oldp+99,((((- (IData)((vlSymsp->TOP__top.opcode 
+    bufp->chgIData(oldp+97,((0xfffff000U & vlSymsp->TOP__top.opcode)),32);
+    bufp->chgIData(oldp+98,((((- (IData)((vlSymsp->TOP__top.opcode 
                                           >> 0x0000001fU))) 
                               << 0x00000014U) | (((
                                                    (0x000001feU 
@@ -161,48 +160,48 @@ void Vtop___024root__trace_chg_0_sub_0(Vtop___024root* vlSelf, VerilatedFst::Buf
                                                  | (0x000007feU 
                                                     & (vlSymsp->TOP__top.opcode 
                                                        >> 0x00000014U))))),32);
-    bufp->chgCData(oldp+100,((vlSymsp->TOP__top.opcode 
-                              >> 0x00000019U)),7);
-    bufp->chgCData(oldp+101,((0x0000001fU & (vlSymsp->TOP__top.opcode 
+    bufp->chgCData(oldp+99,((vlSymsp->TOP__top.opcode 
+                             >> 0x00000019U)),7);
+    bufp->chgCData(oldp+100,((0x0000001fU & (vlSymsp->TOP__top.opcode 
                                              >> 0x0000000fU))),5);
-    bufp->chgCData(oldp+102,((0x0000001fU & (vlSymsp->TOP__top.opcode 
+    bufp->chgCData(oldp+101,((0x0000001fU & (vlSymsp->TOP__top.opcode 
                                              >> 0x00000014U))),5);
-    bufp->chgCData(oldp+103,((0x0000001fU & (vlSymsp->TOP__top.opcode 
+    bufp->chgCData(oldp+102,((0x0000001fU & (vlSymsp->TOP__top.opcode 
                                              >> 7U))),5);
-    bufp->chgCData(oldp+104,((7U & (vlSymsp->TOP__top.opcode 
+    bufp->chgCData(oldp+103,((7U & (vlSymsp->TOP__top.opcode 
                                     >> 0x0000000cU))),3);
-    bufp->chgIData(oldp+105,(vlSymsp->TOP__top__reg_mod.regs[31]),32);
-    bufp->chgIData(oldp+106,(vlSymsp->TOP__top__reg_mod.regs[30]),32);
-    bufp->chgIData(oldp+107,(vlSymsp->TOP__top__reg_mod.regs[29]),32);
-    bufp->chgIData(oldp+108,(vlSymsp->TOP__top__reg_mod.regs[28]),32);
-    bufp->chgIData(oldp+109,(vlSymsp->TOP__top__reg_mod.regs[27]),32);
-    bufp->chgIData(oldp+110,(vlSymsp->TOP__top__reg_mod.regs[26]),32);
-    bufp->chgIData(oldp+111,(vlSymsp->TOP__top__reg_mod.regs[25]),32);
-    bufp->chgIData(oldp+112,(vlSymsp->TOP__top__reg_mod.regs[24]),32);
-    bufp->chgIData(oldp+113,(vlSymsp->TOP__top__reg_mod.regs[23]),32);
-    bufp->chgIData(oldp+114,(vlSymsp->TOP__top__reg_mod.regs[22]),32);
-    bufp->chgIData(oldp+115,(vlSymsp->TOP__top__reg_mod.regs[21]),32);
-    bufp->chgIData(oldp+116,(vlSymsp->TOP__top__reg_mod.regs[20]),32);
-    bufp->chgIData(oldp+117,(vlSymsp->TOP__top__reg_mod.regs[19]),32);
-    bufp->chgIData(oldp+118,(vlSymsp->TOP__top__reg_mod.regs[18]),32);
-    bufp->chgIData(oldp+119,(vlSymsp->TOP__top__reg_mod.regs[17]),32);
-    bufp->chgIData(oldp+120,(vlSymsp->TOP__top__reg_mod.regs[16]),32);
-    bufp->chgIData(oldp+121,(vlSymsp->TOP__top__reg_mod.regs[15]),32);
-    bufp->chgIData(oldp+122,(vlSymsp->TOP__top__reg_mod.regs[14]),32);
-    bufp->chgIData(oldp+123,(vlSymsp->TOP__top__reg_mod.regs[13]),32);
-    bufp->chgIData(oldp+124,(vlSymsp->TOP__top__reg_mod.regs[12]),32);
-    bufp->chgIData(oldp+125,(vlSymsp->TOP__top__reg_mod.regs[11]),32);
-    bufp->chgIData(oldp+126,(vlSymsp->TOP__top__reg_mod.regs[10]),32);
-    bufp->chgIData(oldp+127,(vlSymsp->TOP__top__reg_mod.regs[9]),32);
-    bufp->chgIData(oldp+128,(vlSymsp->TOP__top__reg_mod.regs[8]),32);
-    bufp->chgIData(oldp+129,(vlSymsp->TOP__top__reg_mod.regs[7]),32);
-    bufp->chgIData(oldp+130,(vlSymsp->TOP__top__reg_mod.regs[6]),32);
-    bufp->chgIData(oldp+131,(vlSymsp->TOP__top__reg_mod.regs[5]),32);
-    bufp->chgIData(oldp+132,(vlSymsp->TOP__top__reg_mod.regs[4]),32);
-    bufp->chgIData(oldp+133,(vlSymsp->TOP__top__reg_mod.regs[3]),32);
-    bufp->chgIData(oldp+134,(vlSymsp->TOP__top__reg_mod.regs[2]),32);
-    bufp->chgIData(oldp+135,(vlSymsp->TOP__top__reg_mod.regs[1]),32);
-    bufp->chgIData(oldp+136,(vlSymsp->TOP__top__reg_mod.regs[0]),32);
+    bufp->chgIData(oldp+104,(vlSymsp->TOP__top__reg_mod.regs[31]),32);
+    bufp->chgIData(oldp+105,(vlSymsp->TOP__top__reg_mod.regs[30]),32);
+    bufp->chgIData(oldp+106,(vlSymsp->TOP__top__reg_mod.regs[29]),32);
+    bufp->chgIData(oldp+107,(vlSymsp->TOP__top__reg_mod.regs[28]),32);
+    bufp->chgIData(oldp+108,(vlSymsp->TOP__top__reg_mod.regs[27]),32);
+    bufp->chgIData(oldp+109,(vlSymsp->TOP__top__reg_mod.regs[26]),32);
+    bufp->chgIData(oldp+110,(vlSymsp->TOP__top__reg_mod.regs[25]),32);
+    bufp->chgIData(oldp+111,(vlSymsp->TOP__top__reg_mod.regs[24]),32);
+    bufp->chgIData(oldp+112,(vlSymsp->TOP__top__reg_mod.regs[23]),32);
+    bufp->chgIData(oldp+113,(vlSymsp->TOP__top__reg_mod.regs[22]),32);
+    bufp->chgIData(oldp+114,(vlSymsp->TOP__top__reg_mod.regs[21]),32);
+    bufp->chgIData(oldp+115,(vlSymsp->TOP__top__reg_mod.regs[20]),32);
+    bufp->chgIData(oldp+116,(vlSymsp->TOP__top__reg_mod.regs[19]),32);
+    bufp->chgIData(oldp+117,(vlSymsp->TOP__top__reg_mod.regs[18]),32);
+    bufp->chgIData(oldp+118,(vlSymsp->TOP__top__reg_mod.regs[17]),32);
+    bufp->chgIData(oldp+119,(vlSymsp->TOP__top__reg_mod.regs[16]),32);
+    bufp->chgIData(oldp+120,(vlSymsp->TOP__top__reg_mod.regs[15]),32);
+    bufp->chgIData(oldp+121,(vlSymsp->TOP__top__reg_mod.regs[14]),32);
+    bufp->chgIData(oldp+122,(vlSymsp->TOP__top__reg_mod.regs[13]),32);
+    bufp->chgIData(oldp+123,(vlSymsp->TOP__top__reg_mod.regs[12]),32);
+    bufp->chgIData(oldp+124,(vlSymsp->TOP__top__reg_mod.regs[11]),32);
+    bufp->chgIData(oldp+125,(vlSymsp->TOP__top__reg_mod.regs[10]),32);
+    bufp->chgIData(oldp+126,(vlSymsp->TOP__top__reg_mod.regs[9]),32);
+    bufp->chgIData(oldp+127,(vlSymsp->TOP__top__reg_mod.regs[8]),32);
+    bufp->chgIData(oldp+128,(vlSymsp->TOP__top__reg_mod.regs[7]),32);
+    bufp->chgIData(oldp+129,(vlSymsp->TOP__top__reg_mod.regs[6]),32);
+    bufp->chgIData(oldp+130,(vlSymsp->TOP__top__reg_mod.regs[5]),32);
+    bufp->chgIData(oldp+131,(vlSymsp->TOP__top__reg_mod.regs[4]),32);
+    bufp->chgIData(oldp+132,(vlSymsp->TOP__top__reg_mod.regs[3]),32);
+    bufp->chgIData(oldp+133,(vlSymsp->TOP__top__reg_mod.regs[2]),32);
+    bufp->chgIData(oldp+134,(vlSymsp->TOP__top__reg_mod.regs[1]),32);
+    bufp->chgIData(oldp+135,(vlSymsp->TOP__top__reg_mod.regs[0]),32);
 }
 
 void Vtop___024root__trace_cleanup(void* voidSelf, VerilatedFst* /*unused*/) {

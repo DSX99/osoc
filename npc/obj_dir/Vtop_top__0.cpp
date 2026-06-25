@@ -566,7 +566,6 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
                                            | (0U != (IData)(vlSelfRef.__PVT__arb_rresp))) 
                                           | (0U != (IData)(vlSelfRef.__PVT__arb_bresp)));
     vlSelfRef.__PVT__lsu_mod__DOT__prev_le = vlSelfRef.__PVT__lsu_le;
-    vlSelfRef.__PVT__ifu_stall = vlSelfRef.__PVT__ifu_mod__DOT__extra_stall;
     if (vlSymsp->TOP.rst) {
         __Vdly__wvalid_lsu = 0U;
         __Vdly__awvalid_lsu = 0U;
@@ -657,70 +656,69 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
     if (vlSymsp->TOP.rst) {
         __Vdly__araddr_lsu = 0U;
         __Vdly__arvalid_lsu = 0U;
-    } else if (((IData)(vlSelfRef.__PVT__lsu_le) & 
-                (~ (IData)(vlSelfRef.__PVT__lsu_mod__DOT__we_stall)))) {
-        if (((IData)(vlSelfRef.__PVT__arvalid_lsu) 
-             & (IData)(vlSelfRef.__PVT__slave_mod__DOT__arvalid))) {
-            __Vdly__arvalid_lsu = 0U;
-        }
-        if ((1U & (~ (IData)(vlSelfRef.external_stall)))) {
-            __Vdly__araddr_lsu = vlSelfRef.__PVT__alu_out;
-            __Vdly__arvalid_lsu = 1U;
-            vlSelfRef.__PVT__lsu_mod__DOT__ff_stall = 1U;
-        }
-        if (vlSelfRef.__PVT__arb_rvalid) {
-            vlSelfRef.__PVT__lsu_out = ((4U & (IData)(vlSelfRef.__PVT__lsu_oper))
-                                         ? ((2U & (IData)(vlSelfRef.__PVT__lsu_oper))
-                                             ? 0U : 
-                                            ((1U & (IData)(vlSelfRef.__PVT__lsu_oper))
-                                              ? (0x0000ffffU 
-                                                 & vlSelfRef.__PVT__arb_rdata)
-                                              : (0x000000ffU 
-                                                 & vlSelfRef.__PVT__arb_rdata)))
-                                         : ((2U & (IData)(vlSelfRef.__PVT__lsu_oper))
-                                             ? ((1U 
-                                                 & (IData)(vlSelfRef.__PVT__lsu_oper))
-                                                 ? 0U
-                                                 : vlSelfRef.__PVT__arb_rdata)
-                                             : ((1U 
-                                                 & (IData)(vlSelfRef.__PVT__lsu_oper))
-                                                 ? 
-                                                (((- (IData)(
-                                                             (1U 
-                                                              & (vlSelfRef.__PVT__arb_rdata 
-                                                                 >> 7U)))) 
-                                                  << 0x00000010U) 
-                                                 | (0x0000ffffU 
-                                                    & vlSelfRef.__PVT__arb_rdata))
-                                                 : 
-                                                (((- (IData)(
-                                                             (1U 
-                                                              & (vlSelfRef.__PVT__arb_rdata 
-                                                                 >> 7U)))) 
-                                                  << 8U) 
-                                                 | (0x000000ffU 
-                                                    & vlSelfRef.__PVT__arb_rdata)))));
-            vlSelfRef.__PVT__lsu_mod__DOT__ff_stall = 0U;
-        }
-    }
-    vlSelfRef.__PVT__arvalid_lsu = __Vdly__arvalid_lsu;
-    if ((1U & (~ (IData)(vlSymsp->TOP.rst)))) {
-        if (((IData)(vlSelfRef.__PVT__lsu_we) & (~ (IData)(vlSelfRef.external_stall)))) {
-            vlSelfRef.__PVT__lsu_mod__DOT__we_stall = 1U;
-        }
-        if (vlSelfRef.__PVT__arb_bvalid) {
-            vlSelfRef.__PVT__lsu_mod__DOT__we_stall = 0U;
-        }
-    }
-    if (vlSymsp->TOP.rst) {
+        vlSelfRef.__PVT__arvalid_lsu = __Vdly__arvalid_lsu;
         vlSelfRef.opcode = 0U;
         __Vdly__arvalid_ifu = 0U;
         __Vdly__rready_ifu = 0U;
-        vlSelfRef.__PVT__ifu_mod__DOT__extra_stall = 1U;
+        vlSelfRef.__PVT__ifu_stall = 1U;
     } else {
+        if (((IData)(vlSelfRef.__PVT__lsu_le) & (~ (IData)(vlSelfRef.__PVT__lsu_mod__DOT__we_stall)))) {
+            if (((IData)(vlSelfRef.__PVT__arvalid_lsu) 
+                 & (IData)(vlSelfRef.__PVT__slave_mod__DOT__arvalid))) {
+                __Vdly__arvalid_lsu = 0U;
+            }
+            if ((1U & (~ (IData)(vlSelfRef.external_stall)))) {
+                __Vdly__araddr_lsu = vlSelfRef.__PVT__alu_out;
+                __Vdly__arvalid_lsu = 1U;
+                vlSelfRef.__PVT__lsu_mod__DOT__ff_stall = 1U;
+            }
+            if (vlSelfRef.__PVT__arb_rvalid) {
+                vlSelfRef.__PVT__lsu_out = ((4U & (IData)(vlSelfRef.__PVT__lsu_oper))
+                                             ? ((2U 
+                                                 & (IData)(vlSelfRef.__PVT__lsu_oper))
+                                                 ? 0U
+                                                 : 
+                                                ((1U 
+                                                  & (IData)(vlSelfRef.__PVT__lsu_oper))
+                                                  ? 
+                                                 (0x0000ffffU 
+                                                  & vlSelfRef.__PVT__arb_rdata)
+                                                  : 
+                                                 (0x000000ffU 
+                                                  & vlSelfRef.__PVT__arb_rdata)))
+                                             : ((2U 
+                                                 & (IData)(vlSelfRef.__PVT__lsu_oper))
+                                                 ? 
+                                                ((1U 
+                                                  & (IData)(vlSelfRef.__PVT__lsu_oper))
+                                                  ? 0U
+                                                  : vlSelfRef.__PVT__arb_rdata)
+                                                 : 
+                                                ((1U 
+                                                  & (IData)(vlSelfRef.__PVT__lsu_oper))
+                                                  ? 
+                                                 (((- (IData)(
+                                                              (1U 
+                                                               & (vlSelfRef.__PVT__arb_rdata 
+                                                                  >> 7U)))) 
+                                                   << 0x00000010U) 
+                                                  | (0x0000ffffU 
+                                                     & vlSelfRef.__PVT__arb_rdata))
+                                                  : 
+                                                 (((- (IData)(
+                                                              (1U 
+                                                               & (vlSelfRef.__PVT__arb_rdata 
+                                                                  >> 7U)))) 
+                                                   << 8U) 
+                                                  | (0x000000ffU 
+                                                     & vlSelfRef.__PVT__arb_rdata)))));
+                vlSelfRef.__PVT__lsu_mod__DOT__ff_stall = 0U;
+            }
+        }
+        vlSelfRef.__PVT__arvalid_lsu = __Vdly__arvalid_lsu;
         if ((1U & (~ (IData)(vlSelfRef.__PVT__ifu_mod__DOT__lsu_stall)))) {
             __Vdly__arvalid_ifu = 1U;
-            vlSelfRef.__PVT__ifu_mod__DOT__extra_stall = 1U;
+            vlSelfRef.__PVT__ifu_stall = 1U;
         }
         if (((IData)(vlSelfRef.__PVT__arvalid_ifu) 
              & (IData)(vlSelfRef.__PVT__slave_mod__DOT__arvalid))) {
@@ -730,11 +728,19 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
         if (((IData)(vlSelfRef.__PVT__arb_rvalid) & (IData)(vlSelfRef.__PVT__rready_ifu))) {
             vlSelfRef.opcode = vlSelfRef.__PVT__arb_rdata;
             __Vdly__rready_ifu = 0U;
-            vlSelfRef.__PVT__ifu_mod__DOT__extra_stall = 0U;
+            vlSelfRef.__PVT__ifu_stall = 0U;
         }
     }
     vlSelfRef.__PVT__rready_ifu = __Vdly__rready_ifu;
     vlSelfRef.__PVT__arvalid_ifu = __Vdly__arvalid_ifu;
+    if ((1U & (~ (IData)(vlSymsp->TOP.rst)))) {
+        if (((IData)(vlSelfRef.__PVT__lsu_we) & (~ (IData)(vlSelfRef.external_stall)))) {
+            vlSelfRef.__PVT__lsu_mod__DOT__we_stall = 1U;
+        }
+        if (vlSelfRef.__PVT__arb_bvalid) {
+            vlSelfRef.__PVT__lsu_mod__DOT__we_stall = 0U;
+        }
+    }
     vlSelfRef.__PVT__decode_mod__DOT__imm_i = (((- (IData)(
                                                            (vlSelfRef.opcode 
                                                             >> 0x0000001fU))) 
