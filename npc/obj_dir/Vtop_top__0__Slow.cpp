@@ -88,6 +88,8 @@ VL_ATTR_COLD void Vtop_top___ctor_var_reset(Vtop_top* vlSelf) {
     vlSelf->__PVT__ifu_mod__DOT__next_pc = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 9786868741865089741ull);
     vlSelf->__PVT__ifu_mod__DOT__ifu = 0;
     vlSelf->__PVT__decode_mod__DOT__imm_i = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 17728463912631228713ull);
+    vlSelf->decode_mod__DOT____VdfgExtracted_h3b2fb429__0 = 0;
+    vlSelf->decode_mod__DOT____VdfgRegularize_h901acc23_0_2 = 0;
     VL_SCOPED_RAND_RESET_W(200, vlSelf->__PVT__alu_mod__DOT__bus_in, __VscopeHash, 9512658023472319657ull);
     vlSelf->__PVT__alu_mod__DOT__ready_right = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 11735168189738799635ull);
     vlSelf->__PVT__alu_mod__DOT__val1 = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 3618980885417066799ull);
@@ -98,6 +100,7 @@ VL_ATTR_COLD void Vtop_top___ctor_var_reset(Vtop_top* vlSelf) {
     }
     vlSelf->__PVT__csr_mod__DOT__working_reg = VL_SCOPED_RAND_RESET_I(5, __VscopeHash, 11201873268134957014ull);
     VL_SCOPED_RAND_RESET_W(142, vlSelf->__PVT__lsu_mod__DOT__bus_in, __VscopeHash, 7939752121783657875ull);
+    vlSelf->__PVT__lsu_mod__DOT__valid_right = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 17937545675397858093ull);
     vlSelf->__PVT__lsu_mod__DOT__lsu_l = 0;
     vlSelf->__PVT__lsu_mod__DOT__lsu_s = 0;
     vlSelf->__PVT__lsu_mod__DOT__ready = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 13064420644330996825ull);
@@ -112,11 +115,4 @@ VL_ATTR_COLD void Vtop_top___ctor_var_reset(Vtop_top* vlSelf) {
     vlSelf->__PVT__axi_slave_lsu_mod__DOT__aw = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 10150655162570726797ull);
     vlSelf->__PVT__axi_slave_lsu_mod__DOT__mask = VL_SCOPED_RAND_RESET_I(4, __VscopeHash, 6511546567341204472ull);
     vlSelf->__PVT__axi_slave_mod__DOT__slave = 0;
-    vlSelf->__Vdly__pc = 0;
-    vlSelf->__Vdly__ifu_mod__DOT__ifu = 0;
-    VL_ZERO_RESET_W(136, vlSelf->__Vdly__ls_wb_bus);
-    VL_ZERO_RESET_W(136, vlSelf->__VdlyMask__ls_wb_bus);
-    vlSelf->__Vdly__arready_ifu = 0;
-    vlSelf->__Vdly__rdata_ifu = 0;
-    vlSelf->__Vdly__rvalid_ifu = 0;
 }
