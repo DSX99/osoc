@@ -34,7 +34,7 @@ always_ff @(posedge clk) begin
         araddr_ifu<=0;
         stall<=1;
     end else begin
-        if(stall ==0) stall<=1; //stall only for cycle to update pc (possibly in future use comb value that will be written in to pc)
+        if(external_stall ==0) stall<=1; //stall only for cycle to update pc (possibly in future use comb value that will be written in to pc)
         if(!lsu_stall && stall && !ar_sent) begin 
             arvalid_ifu<=1;
             araddr_ifu<=pc; 
