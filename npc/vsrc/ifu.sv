@@ -23,8 +23,10 @@ module ifu(
 
 import "DPI-C" function int memread(int addr);
 
-typedef enum{
-    IDLE, WAIT_AR, WAIT_R
+typedef enum {
+    IDLE, 
+    WAIT_AR, 
+    WAIT_R
 } IFU_state_t;
 IFU_state_t ifu;
 
