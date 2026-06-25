@@ -55,7 +55,7 @@ end
 
 logic idk;
 logic ff_stall, prev_we, prev_le;
-logic aw_sent, aw_done, w_done;
+logic aw_sent, ar_sent, aw_done, w_done;
 
 always_ff @(posedge clk) begin
     idk<= idk | |rresp_lsu | |bresp_lsu | |bvalid_lsu;
@@ -75,9 +75,10 @@ always_ff @(posedge clk) begin
         prev_we<=0;
     end else begin
         if(le) begin
-            if(!external_stall) begin       // starting a read
+            if(!ar_sent) begin       // starting a read
                 araddr_lsu<=addr;
                 arvalid_lsu<=1;
+                ar_sent<=1;
                 ff_stall<=1;
             end
             if(arvalid_lsu && arready_lsu) begin // done handshake for ar
@@ -92,12 +93,13 @@ always_ff @(posedge clk) begin
                     3'b101: data_out<={{16'b0},rdata_lsu[15:0]};
                     default: data_out<=0;
                 endcase
+                ar_sent<=0;
                 ff_stall<=0;
             end
         end
 
         if(we) begin
-            if(!external_stall && !aw_sent) begin  // starting handshake fro aw and w
+            if(!aw_sent) begin  // starting handshake fro aw and w
                 awvalid_lsu<=1;
                 awaddr_lsu<=addr; 
                 aw_sent<=1;
