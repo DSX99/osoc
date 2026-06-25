@@ -1,11 +1,11 @@
-`include "pipeline_bus_pkg.sv"
-import pipeline_bus_pkg::*;
+import pipeline_bus_pkg::if_to_id_bus_t;
+import pipeline_bus_pkg::id_to_ex_bus_t;
 
 module decode(
-    input if_to_id_bus_t bus_in,
-    output id_to_ex_bus_t bus_out,
-    output logic valid,
-    input logic ready
+    input pipeline_bus_pkg::if_to_id_bus_t bus_in,
+    output pipeline_bus_pkg::id_to_ex_bus_t bus_out,
+    input logic valid_left, ready_right,
+    output logic ready_left, valid_right
 );
 
     logic [31:0] imm_i, imm_s, imm_b, imm_u, imm_j;
@@ -34,9 +34,13 @@ module decode(
     //alu_op[2:0] directly operation, alu_op[2:0] copied from instr
 
     always_comb begin
+        valid_right = valid_left;
+        ready_left = ready_right;
+
         bus_out = '0;
 
-        // Fill decoded fields into bus_out
+        bus_out.pc = bus_in.pc;
+        bus_out.next_pc = bus_in.next_pc;
 
         case(inst[6:0])
             7'b0110111: begin // LUI
@@ -109,15 +113,15 @@ module decode(
                 bus_out.rd     = rd_val;
                 bus_out.rs1    = rs1_val;
                 bus_out.imm    = imm_i;
+                
+                bus_out.mux_select = 2'b11;
                 case(func3)
                     3'b000: begin
                         if(!(|func7) && rs2_val==1) $finish;
                         else if(!(|func7 | |rs2_val)) begin
                             bus_out.cause = 11;
-                            bus_out.mux_select_pc = 2'b01;
                             bus_out.alu_op = 8'b10010000;
                         end else begin
-                            bus_out.mux_select_pc = 2'b01;
                             bus_out.alu_op = 8'b10010000;
                             bus_out.rs1 = 0;
                             bus_out.rd = 0;
@@ -127,17 +131,11 @@ module decode(
                     end
                     default: begin
                         bus_out.csr_oper = func3;
-                        bus_out.mux_select = 2'b11;
                     end
                 endcase 
             end
             default: ;
         endcase
-    end
-
-    // Simple valid/ready passthrough for now
-    always_comb begin
-        valid = 1'b1;
     end
 
 endmodule

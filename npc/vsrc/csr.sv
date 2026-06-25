@@ -6,7 +6,10 @@ module csr(
     input logic [11:0] addr,
     input logic [31:0] data_in,
     input logic [31:0] pc,
-    output logic [31:0] data_out
+    output logic [31:0] data_out,
+
+    input logic valid_left, ready_right,
+    output logic ready_left, valid_right
 );
 
 logic [31:0] regs [31:0];
@@ -25,6 +28,9 @@ initial begin
 end
 
 always_comb begin
+        valid_right = valid_left;
+        ready_left = ready_right;
+
     working_reg =0;
     case(addr)
         12'h300: working_reg = MSTATUS;

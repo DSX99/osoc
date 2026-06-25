@@ -18,6 +18,9 @@ package pipeline_bus_pkg;
         logic [31:0] imm;        // Fully decoded immediate value
         logic [31:0] data_rs1;   // Register file source 1 data (or forwarded)
         logic [31:0] data_rs2;   // Register file source 2 data (or forwarded)
+
+        logic [4:0] rs1; // to WB to read rs1
+        logic [4:0] rs2; // to WB to read rs2
         
         // Control Signals for EXU (ALU)
         logic [7:0]  alu_op;     // ALU operation selection
