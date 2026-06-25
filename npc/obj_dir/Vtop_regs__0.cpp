@@ -37,7 +37,7 @@ void Vtop_regs___nba_sequent__TOP__top__reg_mod__0(Vtop_regs* vlSelf) {
     __VdlySet__regs__v32 = 0U;
     if (vlSymsp->TOP.rst) {
         __VdlySet__regs__v0 = 1U;
-    } else if (vlSymsp->TOP__top.__PVT__lsu_mod__DOT__valid_right) {
+    } else if (vlSymsp->TOP__top.__PVT__ls_wb_valid) {
         __VdlyVal__regs__v32 = ((4U & vlSymsp->TOP__top.__PVT__ls_wb_bus[0U])
                                  ? ((2U & vlSymsp->TOP__top.__PVT__ls_wb_bus[0U])
                                      ? ((vlSymsp->TOP__top.__PVT__ls_wb_bus[1U] 
