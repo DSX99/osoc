@@ -85,7 +85,7 @@ regs reg_mod(
     .clk(clk), .rst(rst), .data_in(reg_in), .rs1(id_ex_bus_decoded.rs1), .rs2(id_ex_bus_decoded.rs2), .rd(ls_wb_bus.rd), .data_rs1(reg_data_rs1), .data_rs2(reg_data_rs2), .valid(ls_wb_valid), .ready(ls_wb_ready)
 );
 
-assign reg_valid = ls_wb_ready;
+assign reg_valid = ls_wb_valid;
 
 // feed register values into id_ex_bus data fields before ALU
 always_comb begin
