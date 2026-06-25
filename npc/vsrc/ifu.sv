@@ -30,13 +30,13 @@ logic unused_bits;
 
 always_comb begin
     unused_bits = |rresp;
-    bus_out = 0;
     bus_out.pc = pc;
     bus_out.next_pc = next_pc;
 end
 
 always_ff @(posedge clk) begin
     if(rst) begin
+        bus_out.opcode<=0;
         arvalid<=0;
         araddr<=0;
         rready<=0;
