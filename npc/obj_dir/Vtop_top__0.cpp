@@ -1454,6 +1454,7 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
                 }
             } else if ((3U == vlSelfRef.__PVT__lsu_mod__DOT__lsu_l)) {
                 __Vdly__lsu_mod__DOT__lsu_l = 0U;
+                vlSelfRef.__PVT__lsu_mod__DOT__ready = 0U;
             }
             if ((0U == vlSelfRef.__PVT__lsu_mod__DOT__lsu_s)) {
                 if ((0x00002000U & vlSelfRef.__PVT__lsu_mod__DOT__bus_in[0U])) {
@@ -1495,6 +1496,7 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
                 }
             } else if ((3U == vlSelfRef.__PVT__lsu_mod__DOT__lsu_s)) {
                 __Vdly__lsu_mod__DOT__lsu_s = 0U;
+                vlSelfRef.__PVT__lsu_mod__DOT__ready = 0U;
             }
         }
         if ((1U & (~ (IData)(vlSelfRef.__PVT__alu_mod__DOT__ready_right)))) {
