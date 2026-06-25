@@ -331,7 +331,7 @@ void Vtop___024root__trace_chg_0_sub_0(Vtop___024root* vlSelf, VerilatedFst::Buf
     bufp->chgBit(oldp+140,(vlSelfRef.rst));
     bufp->chgIData(oldp+141,(vlSymsp->TOP__top.pc),32);
     bufp->chgIData(oldp+142,(vlSymsp->TOP__top.opcode),32);
-    bufp->chgIData(oldp+143,(vlSymsp->TOP__top.reg_valid),32);
+    bufp->chgBit(oldp+143,(vlSymsp->TOP__top.reg_valid));
     bufp->chgIData(oldp+144,(((IData)(4U) + vlSymsp->TOP__top.pc)),32);
     bufp->chgIData(oldp+145,(vlSymsp->TOP__top__reg_mod.regs[31]),32);
     bufp->chgIData(oldp+146,(vlSymsp->TOP__top__reg_mod.regs[30]),32);

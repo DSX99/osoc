@@ -215,7 +215,7 @@ void execute(uint32_t n){
 
     bool current_cycle_is_skipped = skip_inst;
 
-    if((!batch) && (!current_cycle_is_skipped)) difftest_exec(1);
+    if((!batch) && (!current_cycle_is_skipped) && top->top->reg_valid) difftest_exec(1);
 
     if(contextp->gotFinish()){
       if(!batch){
@@ -242,7 +242,7 @@ void execute(uint32_t n){
     n--;
     
     if(!batch) {
-      if (!current_cycle_is_skipped & top->top->reg_valid) {
+      if (!current_cycle_is_skipped) {
         difftest_regcpy(&ref_cpu, 0);
 
         if (ref_cpu.pc != top->top->pc) {
