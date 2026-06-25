@@ -4,16 +4,20 @@
 
 #include "Vtop__pch.h"
 
+VL_ATTR_COLD void Vtop_top___eval_static__TOP__top(Vtop_top* vlSelf);
+VL_ATTR_COLD void Vtop___024root____Vm_traceActivitySetAll(Vtop___024root* vlSelf);
+
 VL_ATTR_COLD void Vtop___024root___eval_static(Vtop___024root* vlSelf) {
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root___eval_static\n"); );
     Vtop__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     auto& vlSelfRef = std::ref(*vlSelf).get();
     // Body
+    Vtop_top___eval_static__TOP__top((&vlSymsp->TOP__top));
+    Vtop___024root____Vm_traceActivitySetAll(vlSelf);
     vlSelfRef.__Vtrigprevexpr___TOP__clk__0 = vlSelfRef.clk;
 }
 
 VL_ATTR_COLD void Vtop_top___eval_initial__TOP__top(Vtop_top* vlSelf);
-VL_ATTR_COLD void Vtop___024root____Vm_traceActivitySetAll(Vtop___024root* vlSelf);
 
 VL_ATTR_COLD void Vtop___024root___eval_initial(Vtop___024root* vlSelf) {
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root___eval_initial\n"); );
