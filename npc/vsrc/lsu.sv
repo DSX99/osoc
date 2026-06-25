@@ -58,12 +58,11 @@ module lsu(
             endcase
         end
 
-        if(bus_in.lsu_le) begin
-            bus_out.alu_out = lsu_out;
-        end else begin
-            bus_out.alu_out = bus_in.alu_out;
-        end 
-
+        
+        bus_out.lsu_out = lsu_out;
+            
+        bus_out.alu_out = bus_in.alu_out;
+        
         bus_out.next_pc = bus_in.next_pc;
         bus_out.csr_out = bus_in.csr_out;
         bus_out.rd = bus_in.rd;
