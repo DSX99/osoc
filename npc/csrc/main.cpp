@@ -184,7 +184,7 @@ void execute(uint32_t n){
       printf("time:%lu\n", contextp->time());
     }
 
-    if(!batch && top->top->opcode!=0){
+    if(!batch && top->top->opcode!=0 && top->top->reg_valid){
       inst[0] = (top->top->opcode) & 0xff;
       inst[1] = (top->top->opcode >> 8) & 0xff;
       inst[2] = (top->top->opcode >> 16) & 0xff;
