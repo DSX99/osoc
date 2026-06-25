@@ -32,10 +32,12 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop_top final {
     SData/*9:0*/ decode_mod__DOT____VdfgExtracted_h3b2fb429__0;
     IData/*31:0*/ pc;
     IData/*31:0*/ opcode;
+    IData/*31:0*/ __PVT__comb_pc;
     IData/*31:0*/ __PVT__csr_data;
     IData/*31:0*/ __PVT__araddr_ifu;
     IData/*31:0*/ __PVT__rdata_ifu;
-    IData/*31:0*/ __PVT__ifu_mod__DOT__next_pc;
+    IData/*31:0*/ __PVT__pc_mod__DOT__data_in;
+    IData/*31:0*/ __PVT__pc_mod__DOT__next_pc;
     IData/*31:0*/ __PVT__ifu_mod__DOT__ifu;
     IData/*31:0*/ __PVT__decode_mod__DOT__imm_i;
     IData/*31:0*/ __PVT__alu_mod__DOT__val1;
