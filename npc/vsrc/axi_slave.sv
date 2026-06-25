@@ -20,8 +20,6 @@ typedef enum{
 } IFU_state_t;
 IFU_state_t slave;
 
-logic [31:0] ar;
-
 always_ff @(posedge clk) begin
     if(rst) begin
         arready<=0;
@@ -39,7 +37,6 @@ always_ff @(posedge clk) begin
             WAIT_AR: begin
                 if(arready & arvalid) begin
                     arready<=0;
-                    ar<=araddr;
                     slave<=WAIT_R;
                     rvalid<=1;
                     rdata<=memread(araddr);
