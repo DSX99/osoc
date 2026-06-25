@@ -135,11 +135,9 @@ always_ff @(posedge clk) begin
                         ready<=1;
                     end
                 end
-                AWAIT: begin
-                    lsu_l<=IDLE;
-                end
             endcase
         end
+        if(lsu_l == AWAIT) lsu_l<=IDLE;
     end
 end
 
@@ -195,11 +193,9 @@ always_ff @(posedge clk) begin
                         ready<=1;
                     end
                 end
-                AWAIT_S: begin
-                    lsu_s<=IDLE_S;
-                end
             endcase
         end
+        if(lsu_s == AWAIT_S) lsu_s<=IDLE_S;
     end
 end
 
