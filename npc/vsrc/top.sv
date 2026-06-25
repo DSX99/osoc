@@ -25,7 +25,7 @@ ls_to_wb_bus_t ls_wb_bus;
 logic ls_wb_valid, ls_wb_ready;
 logic [31:0] csr_data;
 
-logic pc_in;
+logic [31:0] pc_in;
 pc pc_mod(
     .clk(clk), .rst(rst), .branch(ex_ls_bus.branch), .data_in(pc_in), .pc(pc), .next_pc(next_pc)
 );

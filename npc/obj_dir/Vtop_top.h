@@ -40,11 +40,11 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop_top final {
     IData/*31:0*/ __Vfunc_lsu_mod__DOT__memread__4__Vfuncout;
     IData/*31:0*/ __Vfunc_lsu_mod__DOT__memread__5__Vfuncout;
     VlWide<3>/*95:0*/ __PVT__if_id_bus;
-    VlWide<7>/*198:0*/ __PVT__id_ex_bus_decoded;
-    VlWide<5>/*140:0*/ __PVT__ex_ls_bus_alu;
-    VlWide<5>/*134:0*/ __PVT__ls_wb_bus;
-    VlWide<7>/*198:0*/ __PVT__alu_mod__DOT__bus_in;
-    VlWide<5>/*140:0*/ __PVT__lsu_mod__DOT__bus_in;
+    VlWide<7>/*199:0*/ __PVT__id_ex_bus_decoded;
+    VlWide<5>/*141:0*/ __PVT__ex_ls_bus_alu;
+    VlWide<5>/*135:0*/ __PVT__ls_wb_bus;
+    VlWide<7>/*199:0*/ __PVT__alu_mod__DOT__bus_in;
+    VlWide<5>/*141:0*/ __PVT__lsu_mod__DOT__bus_in;
     VlUnpacked<IData/*31:0*/, 32> __PVT__csr_mod__DOT__regs;
 
     // INTERNAL VARIABLES
