@@ -9,7 +9,6 @@ VL_ATTR_COLD void Vtop_top___eval_initial__TOP__top(Vtop_top* vlSelf) {
     Vtop__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     auto& vlSelfRef = std::ref(*vlSelf).get();
     // Body
-    vlSelfRef.reg_valid = 1U;
     vlSelfRef.pc = 0x80000000U;
     vlSelfRef.__PVT__csr_mod__DOT__regs[0U] = 0U;
     vlSelfRef.__PVT__csr_mod__DOT__regs[1U] = 0U;
@@ -44,6 +43,537 @@ VL_ATTR_COLD void Vtop_top___eval_initial__TOP__top(Vtop_top* vlSelf) {
     vlSelfRef.__PVT__csr_mod__DOT__regs[30U] = 0U;
     vlSelfRef.__PVT__csr_mod__DOT__regs[31U] = 0U;
     vlSelfRef.__PVT__csr_mod__DOT__regs[2U] = 0x00001800U;
+}
+
+VL_ATTR_COLD void Vtop_top___stl_sequent__TOP__top__0(Vtop_top* vlSelf) {
+    VL_DEBUG_IF(VL_DBG_MSGF("+      Vtop_top___stl_sequent__TOP__top__0\n"); );
+    Vtop__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
+    auto& vlSelfRef = std::ref(*vlSelf).get();
+    // Body
+    vlSelfRef.reg_valid = vlSelfRef.__PVT__if_id_valid;
+    vlSelfRef.__PVT__ifu_mod__DOT__next_pc = ((IData)(4U) 
+                                              + vlSelfRef.pc);
+    vlSelfRef.__PVT__if_id_bus[1U] = (IData)((((QData)((IData)(vlSelfRef.pc)) 
+                                               << 0x00000020U) 
+                                              | (QData)((IData)(
+                                                                ((IData)(4U) 
+                                                                 + vlSelfRef.pc)))));
+    vlSelfRef.__PVT__if_id_bus[2U] = (IData)(((((QData)((IData)(vlSelfRef.pc)) 
+                                                << 0x00000020U) 
+                                               | (QData)((IData)(
+                                                                 ((IData)(4U) 
+                                                                  + vlSelfRef.pc)))) 
+                                              >> 0x00000020U));
+    vlSelfRef.opcode = vlSelfRef.__PVT__if_id_bus[0U];
+    vlSelfRef.__PVT__decode_mod__DOT__imm_i = (((- (IData)(
+                                                           (vlSelfRef.__PVT__if_id_bus[0U] 
+                                                            >> 0x0000001fU))) 
+                                                << 0x0000000bU) 
+                                               | (0x000007ffU 
+                                                  & (vlSelfRef.__PVT__if_id_bus[0U] 
+                                                     >> 0x00000014U)));
+    vlSelfRef.decode_mod__DOT____VdfgExtracted_h3b2fb429__0 
+        = ((0x000003e0U & (vlSelfRef.__PVT__if_id_bus[0U] 
+                           >> 0x0000000aU)) | (0x0000001fU 
+                                               & (vlSelfRef.__PVT__if_id_bus[0U] 
+                                                  >> 0x00000014U)));
+    vlSelfRef.decode_mod__DOT____VdfgRegularize_h901acc23_0_2 
+        = ((8U & (vlSelfRef.__PVT__if_id_bus[0U] >> 0x0000001bU)) 
+           | (7U & (vlSelfRef.__PVT__if_id_bus[0U] 
+                    >> 0x0000000cU)));
+    vlSelfRef.__PVT__id_ex_bus_decoded[0U] = 0U;
+    vlSelfRef.__PVT__id_ex_bus_decoded[1U] = 0U;
+    vlSelfRef.__PVT__id_ex_bus_decoded[2U] = 0U;
+    vlSelfRef.__PVT__id_ex_bus_decoded[3U] = 0U;
+    vlSelfRef.__PVT__id_ex_bus_decoded[4U] = 0U;
+    vlSelfRef.__PVT__id_ex_bus_decoded[5U] = 0U;
+    vlSelfRef.__PVT__id_ex_bus_decoded[6U] = 0U;
+    if (vlSelfRef.__PVT__if_id_valid) {
+        vlSelfRef.__PVT__id_ex_bus_decoded[4U] = ((0x000000ffU 
+                                                   & vlSelfRef.__PVT__id_ex_bus_decoded[4U]) 
+                                                  | ((IData)(
+                                                             (((QData)((IData)(vlSelfRef.__PVT__if_id_bus[2U])) 
+                                                               << 0x00000020U) 
+                                                              | (QData)((IData)(vlSelfRef.__PVT__if_id_bus[1U])))) 
+                                                     << 8U));
+        vlSelfRef.__PVT__id_ex_bus_decoded[5U] = (((IData)(
+                                                           (((QData)((IData)(vlSelfRef.__PVT__if_id_bus[2U])) 
+                                                             << 0x00000020U) 
+                                                            | (QData)((IData)(vlSelfRef.__PVT__if_id_bus[1U])))) 
+                                                   >> 0x00000018U) 
+                                                  | ((IData)(
+                                                             ((((QData)((IData)(vlSelfRef.__PVT__if_id_bus[2U])) 
+                                                                << 0x00000020U) 
+                                                               | (QData)((IData)(vlSelfRef.__PVT__if_id_bus[1U]))) 
+                                                              >> 0x00000020U)) 
+                                                     << 8U));
+        vlSelfRef.__PVT__id_ex_bus_decoded[6U] = ((IData)(
+                                                          ((((QData)((IData)(vlSelfRef.__PVT__if_id_bus[2U])) 
+                                                             << 0x00000020U) 
+                                                            | (QData)((IData)(vlSelfRef.__PVT__if_id_bus[1U]))) 
+                                                           >> 0x00000020U)) 
+                                                  >> 0x00000018U);
+        if ((0x00000040U & vlSelfRef.__PVT__if_id_bus[0U])) {
+            if ((0x00000020U & vlSelfRef.__PVT__if_id_bus[0U])) {
+                if ((0x00000010U & vlSelfRef.__PVT__if_id_bus[0U])) {
+                    if ((1U & (~ (vlSelfRef.__PVT__if_id_bus[0U] 
+                                  >> 3U)))) {
+                        if ((1U & (~ (vlSelfRef.__PVT__if_id_bus[0U] 
+                                      >> 2U)))) {
+                            if ((2U & vlSelfRef.__PVT__if_id_bus[0U])) {
+                                if ((1U & vlSelfRef.__PVT__if_id_bus[0U])) {
+                                    vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                                        = ((0xffffff07U 
+                                            & vlSelfRef.__PVT__id_ex_bus_decoded[0U]) 
+                                           | (0x000000f8U 
+                                              & (vlSelfRef.__PVT__if_id_bus[0U] 
+                                                 >> 4U)));
+                                    vlSelfRef.__PVT__id_ex_bus_decoded[1U] 
+                                        = ((0xffffff07U 
+                                            & vlSelfRef.__PVT__id_ex_bus_decoded[1U]) 
+                                           | (0x000000f8U 
+                                              & (vlSelfRef.__PVT__if_id_bus[0U] 
+                                                 >> 0x0000000cU)));
+                                    vlSelfRef.__PVT__id_ex_bus_decoded[3U] 
+                                        = ((0x000000ffU 
+                                            & vlSelfRef.__PVT__id_ex_bus_decoded[3U]) 
+                                           | (vlSelfRef.__PVT__decode_mod__DOT__imm_i 
+                                              << 8U));
+                                    vlSelfRef.__PVT__id_ex_bus_decoded[4U] 
+                                        = ((0xffffff00U 
+                                            & vlSelfRef.__PVT__id_ex_bus_decoded[4U]) 
+                                           | (vlSelfRef.__PVT__decode_mod__DOT__imm_i 
+                                              >> 0x00000018U));
+                                    vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                                        = (6U | vlSelfRef.__PVT__id_ex_bus_decoded[0U]);
+                                    if ((0U == (7U 
+                                                & (vlSelfRef.__PVT__if_id_bus[0U] 
+                                                   >> 0x0000000cU)))) {
+                                        if (VL_UNLIKELY(((IData)(
+                                                                 ((0x00100000U 
+                                                                   == 
+                                                                   (0x01f00000U 
+                                                                    & vlSelfRef.__PVT__if_id_bus[0U])) 
+                                                                  & (~ 
+                                                                     (0U 
+                                                                      != 
+                                                                      (vlSelfRef.__PVT__if_id_bus[0U] 
+                                                                       >> 0x00000019U)))))))) {
+                                            VL_FINISH_MT("vsrc/decode.sv", 122, "");
+                                        } else if ((IData)(
+                                                           (0U 
+                                                            != 
+                                                            (0xfff00000U 
+                                                             & vlSelfRef.__PVT__if_id_bus[0U])))) {
+                                            vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                                                = (0x24000000U 
+                                                   | (0xc03fffffU 
+                                                      & vlSelfRef.__PVT__id_ex_bus_decoded[0U]));
+                                            vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                                                = (1U 
+                                                   | vlSelfRef.__PVT__id_ex_bus_decoded[0U]);
+                                            vlSelfRef.__PVT__id_ex_bus_decoded[1U] 
+                                                = (0xffffff07U 
+                                                   & vlSelfRef.__PVT__id_ex_bus_decoded[1U]);
+                                            vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                                                = (0xffffff07U 
+                                                   & vlSelfRef.__PVT__id_ex_bus_decoded[0U]);
+                                            vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                                                = (0x00040000U 
+                                                   | (0xffe3ffffU 
+                                                      & vlSelfRef.__PVT__id_ex_bus_decoded[0U]));
+                                            vlSelfRef.__PVT__id_ex_bus_decoded[3U] 
+                                                = (0x00034100U 
+                                                   | (0x000000ffU 
+                                                      & vlSelfRef.__PVT__id_ex_bus_decoded[3U]));
+                                            vlSelfRef.__PVT__id_ex_bus_decoded[4U] 
+                                                = (0xffffff00U 
+                                                   & vlSelfRef.__PVT__id_ex_bus_decoded[4U]);
+                                        } else {
+                                            vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                                                = (0x00016000U 
+                                                   | (0xfffc1fffU 
+                                                      & vlSelfRef.__PVT__id_ex_bus_decoded[0U]));
+                                            vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                                                = (0x24000000U 
+                                                   | (0xc03fffffU 
+                                                      & vlSelfRef.__PVT__id_ex_bus_decoded[0U]));
+                                            vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                                                = (1U 
+                                                   | vlSelfRef.__PVT__id_ex_bus_decoded[0U]);
+                                        }
+                                    } else {
+                                        vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                                            = ((0xffe3ffffU 
+                                                & vlSelfRef.__PVT__id_ex_bus_decoded[0U]) 
+                                               | (0x001c0000U 
+                                                  & (vlSelfRef.__PVT__if_id_bus[0U] 
+                                                     << 6U)));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else if ((8U & vlSelfRef.__PVT__if_id_bus[0U])) {
+                    if ((4U & vlSelfRef.__PVT__if_id_bus[0U])) {
+                        if ((2U & vlSelfRef.__PVT__if_id_bus[0U])) {
+                            if ((1U & vlSelfRef.__PVT__if_id_bus[0U])) {
+                                vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                                    = ((0xffffff07U 
+                                        & vlSelfRef.__PVT__id_ex_bus_decoded[0U]) 
+                                       | (0x000000f8U 
+                                          & (vlSelfRef.__PVT__if_id_bus[0U] 
+                                             >> 4U)));
+                                vlSelfRef.__PVT__id_ex_bus_decoded[3U] 
+                                    = ((0xf00000ffU 
+                                        & vlSelfRef.__PVT__id_ex_bus_decoded[3U]) 
+                                       | (0xffffff00U 
+                                          & ((((0x000001feU 
+                                                & (vlSelfRef.__PVT__if_id_bus[0U] 
+                                                   >> 0x0000000bU)) 
+                                               | (1U 
+                                                  & (vlSelfRef.__PVT__if_id_bus[0U] 
+                                                     >> 0x00000014U))) 
+                                              << 0x00000013U) 
+                                             | (0x0007fe00U 
+                                                & (vlSelfRef.__PVT__if_id_bus[0U] 
+                                                   >> 0x0000000cU)))));
+                                vlSelfRef.__PVT__id_ex_bus_decoded[3U] 
+                                    = ((0x0fffffffU 
+                                        & vlSelfRef.__PVT__id_ex_bus_decoded[3U]) 
+                                       | ((- (IData)(
+                                                     (vlSelfRef.__PVT__if_id_bus[0U] 
+                                                      >> 0x0000001fU))) 
+                                          << 0x0000001cU));
+                                vlSelfRef.__PVT__id_ex_bus_decoded[4U] 
+                                    = ((0xffffff00U 
+                                        & vlSelfRef.__PVT__id_ex_bus_decoded[4U]) 
+                                       | (0x000000ffU 
+                                          & ((- (IData)(
+                                                        (vlSelfRef.__PVT__if_id_bus[0U] 
+                                                         >> 0x0000001fU))) 
+                                             >> 4U)));
+                                vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                                    = (0x34000000U 
+                                       | (0xc03fffffU 
+                                          & vlSelfRef.__PVT__id_ex_bus_decoded[0U]));
+                                vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                                    = (4U | (0xfffffff9U 
+                                             & vlSelfRef.__PVT__id_ex_bus_decoded[0U]));
+                            }
+                        }
+                    }
+                } else if ((4U & vlSelfRef.__PVT__if_id_bus[0U])) {
+                    if ((2U & vlSelfRef.__PVT__if_id_bus[0U])) {
+                        if ((1U & vlSelfRef.__PVT__if_id_bus[0U])) {
+                            vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                                = ((0xffffff07U & vlSelfRef.__PVT__id_ex_bus_decoded[0U]) 
+                                   | (0x000000f8U & 
+                                      (vlSelfRef.__PVT__if_id_bus[0U] 
+                                       >> 4U)));
+                            vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                                = ((0x3fffffffU & vlSelfRef.__PVT__id_ex_bus_decoded[0U]) 
+                                   | (((0x000003e0U 
+                                        & (vlSelfRef.__PVT__if_id_bus[0U] 
+                                           >> 0x0000000aU)) 
+                                       | (0x0000001fU 
+                                          & (vlSelfRef.__PVT__if_id_bus[0U] 
+                                             >> 0x0000000fU))) 
+                                      << 0x0000001eU));
+                            vlSelfRef.__PVT__id_ex_bus_decoded[1U] 
+                                = ((0xffffff00U & vlSelfRef.__PVT__id_ex_bus_decoded[1U]) 
+                                   | (0x000000ffU & 
+                                      (((0x000003e0U 
+                                         & (vlSelfRef.__PVT__if_id_bus[0U] 
+                                            >> 0x0000000aU)) 
+                                        | (0x0000001fU 
+                                           & (vlSelfRef.__PVT__if_id_bus[0U] 
+                                              >> 0x0000000fU))) 
+                                       >> 2U)));
+                            vlSelfRef.__PVT__id_ex_bus_decoded[3U] 
+                                = ((0x000000ffU & vlSelfRef.__PVT__id_ex_bus_decoded[3U]) 
+                                   | (vlSelfRef.__PVT__decode_mod__DOT__imm_i 
+                                      << 8U));
+                            vlSelfRef.__PVT__id_ex_bus_decoded[4U] 
+                                = ((0xffffff00U & vlSelfRef.__PVT__id_ex_bus_decoded[4U]) 
+                                   | (vlSelfRef.__PVT__decode_mod__DOT__imm_i 
+                                      >> 0x00000018U));
+                            vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                                = (0x24000000U | (0xc03fffffU 
+                                                  & vlSelfRef.__PVT__id_ex_bus_decoded[0U]));
+                            vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                                = (4U | (0xfffffff9U 
+                                         & vlSelfRef.__PVT__id_ex_bus_decoded[0U]));
+                        }
+                    }
+                } else if ((2U & vlSelfRef.__PVT__if_id_bus[0U])) {
+                    if ((1U & vlSelfRef.__PVT__if_id_bus[0U])) {
+                        vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                            = ((0x3fffffffU & vlSelfRef.__PVT__id_ex_bus_decoded[0U]) 
+                               | ((IData)(vlSelfRef.decode_mod__DOT____VdfgExtracted_h3b2fb429__0) 
+                                  << 0x0000001eU));
+                        vlSelfRef.__PVT__id_ex_bus_decoded[1U] 
+                            = ((0xffffff00U & vlSelfRef.__PVT__id_ex_bus_decoded[1U]) 
+                               | ((IData)(vlSelfRef.decode_mod__DOT____VdfgExtracted_h3b2fb429__0) 
+                                  >> 2U));
+                        vlSelfRef.__PVT__id_ex_bus_decoded[3U] 
+                            = ((0xfff000ffU & vlSelfRef.__PVT__id_ex_bus_decoded[3U]) 
+                               | (((0x00000800U & (vlSelfRef.__PVT__if_id_bus[0U] 
+                                                   << 4U)) 
+                                   | ((0x000007e0U 
+                                       & (vlSelfRef.__PVT__if_id_bus[0U] 
+                                          >> 0x00000014U)) 
+                                      | (0x0000001eU 
+                                         & (vlSelfRef.__PVT__if_id_bus[0U] 
+                                            >> 7U)))) 
+                                  << 8U));
+                        vlSelfRef.__PVT__id_ex_bus_decoded[3U] 
+                            = ((0x000fffffU & vlSelfRef.__PVT__id_ex_bus_decoded[3U]) 
+                               | ((- (IData)((vlSelfRef.__PVT__if_id_bus[0U] 
+                                              >> 0x0000001fU))) 
+                                  << 0x00000014U));
+                        vlSelfRef.__PVT__id_ex_bus_decoded[4U] 
+                            = ((0xffffff00U & vlSelfRef.__PVT__id_ex_bus_decoded[4U]) 
+                               | (0x000000ffU & ((- (IData)(
+                                                            (vlSelfRef.__PVT__if_id_bus[0U] 
+                                                             >> 0x0000001fU))) 
+                                                 >> 0x0000000cU)));
+                        vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                            = ((0xc03fffffU & vlSelfRef.__PVT__id_ex_bus_decoded[0U]) 
+                               | (0xffc00000U & (0x34000000U 
+                                                 | (0x01c00000U 
+                                                    & (vlSelfRef.__PVT__if_id_bus[0U] 
+                                                       << 0x0000000aU)))));
+                    }
+                }
+            }
+        } else if ((0x00000020U & vlSelfRef.__PVT__if_id_bus[0U])) {
+            if ((0x00000010U & vlSelfRef.__PVT__if_id_bus[0U])) {
+                if ((1U & (~ (vlSelfRef.__PVT__if_id_bus[0U] 
+                              >> 3U)))) {
+                    if ((4U & vlSelfRef.__PVT__if_id_bus[0U])) {
+                        if ((2U & vlSelfRef.__PVT__if_id_bus[0U])) {
+                            if ((1U & vlSelfRef.__PVT__if_id_bus[0U])) {
+                                vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                                    = ((0xffffff07U 
+                                        & vlSelfRef.__PVT__id_ex_bus_decoded[0U]) 
+                                       | (0x000000f8U 
+                                          & (vlSelfRef.__PVT__if_id_bus[0U] 
+                                             >> 4U)));
+                                vlSelfRef.__PVT__id_ex_bus_decoded[3U] 
+                                    = ((0x000000ffU 
+                                        & vlSelfRef.__PVT__id_ex_bus_decoded[3U]) 
+                                       | (0xfff00000U 
+                                          & (vlSelfRef.__PVT__if_id_bus[0U] 
+                                             << 8U)));
+                                vlSelfRef.__PVT__id_ex_bus_decoded[4U] 
+                                    = ((0xffffff00U 
+                                        & vlSelfRef.__PVT__id_ex_bus_decoded[4U]) 
+                                       | (vlSelfRef.__PVT__if_id_bus[0U] 
+                                          >> 0x00000018U));
+                                vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                                    = (0x20000000U 
+                                       | (0xc03fffffU 
+                                          & vlSelfRef.__PVT__id_ex_bus_decoded[0U]));
+                            }
+                        }
+                    } else if ((2U & vlSelfRef.__PVT__if_id_bus[0U])) {
+                        if ((1U & vlSelfRef.__PVT__if_id_bus[0U])) {
+                            vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                                = ((0xffffff07U & vlSelfRef.__PVT__id_ex_bus_decoded[0U]) 
+                                   | (0x000000f8U & 
+                                      (vlSelfRef.__PVT__if_id_bus[0U] 
+                                       >> 4U)));
+                            vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                                = ((0xc03fffffU & vlSelfRef.__PVT__id_ex_bus_decoded[0U]) 
+                                   | (((0x00000020U 
+                                        & (vlSelfRef.__PVT__if_id_bus[0U] 
+                                           >> 0x00000014U)) 
+                                       | (IData)(vlSelfRef.decode_mod__DOT____VdfgRegularize_h901acc23_0_2)) 
+                                      << 0x00000016U));
+                            vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                                = ((0x3fffffffU & vlSelfRef.__PVT__id_ex_bus_decoded[0U]) 
+                                   | ((IData)(vlSelfRef.decode_mod__DOT____VdfgExtracted_h3b2fb429__0) 
+                                      << 0x0000001eU));
+                            vlSelfRef.__PVT__id_ex_bus_decoded[1U] 
+                                = ((0xffffff00U & vlSelfRef.__PVT__id_ex_bus_decoded[1U]) 
+                                   | ((IData)(vlSelfRef.decode_mod__DOT____VdfgExtracted_h3b2fb429__0) 
+                                      >> 2U));
+                        }
+                    }
+                }
+            } else if ((1U & (~ (vlSelfRef.__PVT__if_id_bus[0U] 
+                                 >> 3U)))) {
+                if ((1U & (~ (vlSelfRef.__PVT__if_id_bus[0U] 
+                              >> 2U)))) {
+                    if ((2U & vlSelfRef.__PVT__if_id_bus[0U])) {
+                        if ((1U & vlSelfRef.__PVT__if_id_bus[0U])) {
+                            vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                                = ((0x3fffffffU & vlSelfRef.__PVT__id_ex_bus_decoded[0U]) 
+                                   | ((IData)(vlSelfRef.decode_mod__DOT____VdfgExtracted_h3b2fb429__0) 
+                                      << 0x0000001eU));
+                            vlSelfRef.__PVT__id_ex_bus_decoded[1U] 
+                                = ((0xffffff00U & vlSelfRef.__PVT__id_ex_bus_decoded[1U]) 
+                                   | ((IData)(vlSelfRef.decode_mod__DOT____VdfgExtracted_h3b2fb429__0) 
+                                      >> 2U));
+                            vlSelfRef.__PVT__id_ex_bus_decoded[3U] 
+                                = ((0x000000ffU & vlSelfRef.__PVT__id_ex_bus_decoded[3U]) 
+                                   | (0xffffff00U & 
+                                      (((- (IData)(
+                                                   (vlSelfRef.__PVT__if_id_bus[0U] 
+                                                    >> 0x0000001fU))) 
+                                        << 0x00000013U) 
+                                       | (((0x000007e0U 
+                                            & (vlSelfRef.__PVT__if_id_bus[0U] 
+                                               >> 0x00000014U)) 
+                                           | (0x0000001fU 
+                                              & (vlSelfRef.__PVT__if_id_bus[0U] 
+                                                 >> 7U))) 
+                                          << 8U))));
+                            vlSelfRef.__PVT__id_ex_bus_decoded[4U] 
+                                = ((0xffffff00U & vlSelfRef.__PVT__id_ex_bus_decoded[4U]) 
+                                   | (0x000000ffU & 
+                                      ((0x000000ffU 
+                                        & ((- (IData)(
+                                                      (vlSelfRef.__PVT__if_id_bus[0U] 
+                                                       >> 0x0000001fU))) 
+                                           >> 0x0000000dU)) 
+                                       | (((0x000007e0U 
+                                            & (vlSelfRef.__PVT__if_id_bus[0U] 
+                                               >> 0x00000014U)) 
+                                           | (0x0000001fU 
+                                              & (vlSelfRef.__PVT__if_id_bus[0U] 
+                                                 >> 7U))) 
+                                          >> 0x00000018U))));
+                            vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                                = (0x20000000U | (0xc03fffffU 
+                                                  & vlSelfRef.__PVT__id_ex_bus_decoded[0U]));
+                            vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                                = ((0xfffff8ffU & vlSelfRef.__PVT__id_ex_bus_decoded[0U]) 
+                                   | (0x00000700U & 
+                                      (vlSelfRef.__PVT__if_id_bus[0U] 
+                                       >> 4U)));
+                            vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                                = (0x00001000U | vlSelfRef.__PVT__id_ex_bus_decoded[0U]);
+                        }
+                    }
+                }
+            }
+        } else if ((0x00000010U & vlSelfRef.__PVT__if_id_bus[0U])) {
+            if ((1U & (~ (vlSelfRef.__PVT__if_id_bus[0U] 
+                          >> 3U)))) {
+                if ((4U & vlSelfRef.__PVT__if_id_bus[0U])) {
+                    if ((2U & vlSelfRef.__PVT__if_id_bus[0U])) {
+                        if ((1U & vlSelfRef.__PVT__if_id_bus[0U])) {
+                            vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                                = ((0xffffff07U & vlSelfRef.__PVT__id_ex_bus_decoded[0U]) 
+                                   | (0x000000f8U & 
+                                      (vlSelfRef.__PVT__if_id_bus[0U] 
+                                       >> 4U)));
+                            vlSelfRef.__PVT__id_ex_bus_decoded[3U] 
+                                = ((0x000000ffU & vlSelfRef.__PVT__id_ex_bus_decoded[3U]) 
+                                   | (0xfff00000U & 
+                                      (vlSelfRef.__PVT__if_id_bus[0U] 
+                                       << 8U)));
+                            vlSelfRef.__PVT__id_ex_bus_decoded[4U] 
+                                = ((0xffffff00U & vlSelfRef.__PVT__id_ex_bus_decoded[4U]) 
+                                   | (vlSelfRef.__PVT__if_id_bus[0U] 
+                                      >> 0x00000018U));
+                            vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                                = (0x30000000U | (0xc03fffffU 
+                                                  & vlSelfRef.__PVT__id_ex_bus_decoded[0U]));
+                        }
+                    }
+                } else if ((2U & vlSelfRef.__PVT__if_id_bus[0U])) {
+                    if ((1U & vlSelfRef.__PVT__if_id_bus[0U])) {
+                        vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                            = ((0xffffff07U & vlSelfRef.__PVT__id_ex_bus_decoded[0U]) 
+                               | (0x000000f8U & (vlSelfRef.__PVT__if_id_bus[0U] 
+                                                 >> 4U)));
+                        vlSelfRef.__PVT__id_ex_bus_decoded[1U] 
+                            = ((0xffffff07U & vlSelfRef.__PVT__id_ex_bus_decoded[1U]) 
+                               | (0x000000f8U & (vlSelfRef.__PVT__if_id_bus[0U] 
+                                                 >> 0x0000000cU)));
+                        vlSelfRef.__PVT__id_ex_bus_decoded[3U] 
+                            = ((0x000000ffU & vlSelfRef.__PVT__id_ex_bus_decoded[3U]) 
+                               | (vlSelfRef.__PVT__decode_mod__DOT__imm_i 
+                                  << 8U));
+                        vlSelfRef.__PVT__id_ex_bus_decoded[4U] 
+                            = ((0xffffff00U & vlSelfRef.__PVT__id_ex_bus_decoded[4U]) 
+                               | (vlSelfRef.__PVT__decode_mod__DOT__imm_i 
+                                  >> 0x00000018U));
+                        vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                            = ((0xc03fffffU & vlSelfRef.__PVT__id_ex_bus_decoded[0U]) 
+                               | (((5U == (7U & (vlSelfRef.__PVT__if_id_bus[0U] 
+                                                 >> 0x0000000cU)))
+                                    ? (0x00000080U 
+                                       | (IData)(vlSelfRef.decode_mod__DOT____VdfgRegularize_h901acc23_0_2))
+                                    : (0x00000080U 
+                                       | (7U & (vlSelfRef.__PVT__if_id_bus[0U] 
+                                                >> 0x0000000cU)))) 
+                                  << 0x00000016U));
+                    }
+                }
+            }
+        } else if ((1U & (~ (vlSelfRef.__PVT__if_id_bus[0U] 
+                             >> 3U)))) {
+            if ((1U & (~ (vlSelfRef.__PVT__if_id_bus[0U] 
+                          >> 2U)))) {
+                if ((2U & vlSelfRef.__PVT__if_id_bus[0U])) {
+                    if ((1U & vlSelfRef.__PVT__if_id_bus[0U])) {
+                        vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                            = ((0xffffff07U & vlSelfRef.__PVT__id_ex_bus_decoded[0U]) 
+                               | (0x000000f8U & (vlSelfRef.__PVT__if_id_bus[0U] 
+                                                 >> 4U)));
+                        vlSelfRef.__PVT__id_ex_bus_decoded[1U] 
+                            = ((0xffffff07U & vlSelfRef.__PVT__id_ex_bus_decoded[1U]) 
+                               | (0x000000f8U & (vlSelfRef.__PVT__if_id_bus[0U] 
+                                                 >> 0x0000000cU)));
+                        vlSelfRef.__PVT__id_ex_bus_decoded[3U] 
+                            = ((0x000000ffU & vlSelfRef.__PVT__id_ex_bus_decoded[3U]) 
+                               | (vlSelfRef.__PVT__decode_mod__DOT__imm_i 
+                                  << 8U));
+                        vlSelfRef.__PVT__id_ex_bus_decoded[4U] 
+                            = ((0xffffff00U & vlSelfRef.__PVT__id_ex_bus_decoded[4U]) 
+                               | (vlSelfRef.__PVT__decode_mod__DOT__imm_i 
+                                  >> 0x00000018U));
+                        vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                            = (0x20000000U | (0xc03fffffU 
+                                              & vlSelfRef.__PVT__id_ex_bus_decoded[0U]));
+                        vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                            = ((0xfffff0ffU & vlSelfRef.__PVT__id_ex_bus_decoded[0U]) 
+                               | (0xffffff00U & (0x00000800U 
+                                                 | (0x00000700U 
+                                                    & (vlSelfRef.__PVT__if_id_bus[0U] 
+                                                       >> 4U)))));
+                        vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                            = (2U | (0xfffffff9U & vlSelfRef.__PVT__id_ex_bus_decoded[0U]));
+                    }
+                }
+            }
+        }
+    }
+    if (vlSelfRef.__PVT__if_id_valid) {
+        vlSelfRef.__PVT__csr_mod__DOT__working_reg 
+            = ((0x0300U == (0x00000fffU & (vlSelfRef.__PVT__id_ex_bus_decoded[3U] 
+                                           >> 8U)))
+                ? 2U : ((0x0305U == (0x00000fffU & 
+                                     (vlSelfRef.__PVT__id_ex_bus_decoded[3U] 
+                                      >> 8U))) ? 4U
+                         : ((0x0341U == (0x00000fffU 
+                                         & (vlSelfRef.__PVT__id_ex_bus_decoded[3U] 
+                                            >> 8U)))
+                             ? 1U : ((0x0342U == (0x00000fffU 
+                                                  & (vlSelfRef.__PVT__id_ex_bus_decoded[3U] 
+                                                     >> 8U)))
+                                      ? 3U : 0U))));
+        if ((0U != (0x0000001fU & (vlSelfRef.__PVT__id_ex_bus_decoded[0U] 
+                                   >> 0x0000000dU)))) {
+            vlSelfRef.__PVT__csr_mod__DOT__working_reg = 4U;
+        }
+        vlSelfRef.__PVT__csr_data = vlSelfRef.__PVT__csr_mod__DOT__regs
+            [vlSelfRef.__PVT__csr_mod__DOT__working_reg];
+    }
 }
 
 VL_ATTR_COLD void Vtop_top___ctor_var_reset(Vtop_top* vlSelf) {

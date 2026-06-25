@@ -1327,6 +1327,7 @@ void Vtop_top___nba_sequent__TOP__top__1(Vtop_top* vlSelf) {
     auto& vlSelfRef = std::ref(*vlSelf).get();
     // Body
     vlSelfRef.__PVT__if_id_valid = vlSelfRef.__Vdly__if_id_valid;
+    vlSelfRef.reg_valid = vlSelfRef.__PVT__if_id_valid;
     vlSelfRef.__PVT__id_ex_bus_decoded[0U] = 0U;
     vlSelfRef.__PVT__id_ex_bus_decoded[1U] = 0U;
     vlSelfRef.__PVT__id_ex_bus_decoded[2U] = 0U;
