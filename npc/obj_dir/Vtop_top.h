@@ -36,6 +36,9 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop_top final {
     CData/*0:0*/ __PVT__branch;
     CData/*0:0*/ __PVT__lsu_we;
     CData/*0:0*/ __PVT__lsu_le;
+    CData/*0:0*/ __PVT__arb_wready;
+    CData/*0:0*/ __PVT__arb_arready;
+    CData/*0:0*/ __PVT__arb_awready;
     CData/*1:0*/ __PVT__arb_rresp;
     CData/*1:0*/ __PVT__arb_bresp;
     CData/*0:0*/ __PVT__arb_rvalid;
@@ -48,9 +51,10 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop_top final {
     CData/*0:0*/ __PVT__ifu_mod__DOT__lsu_stall;
     CData/*0:0*/ __PVT__ifu_mod__DOT__idk_2;
     CData/*4:0*/ __PVT__csr_mod__DOT__working_reg;
-    CData/*0:0*/ __PVT__slave_mod__DOT__awready;
-    CData/*0:0*/ __PVT__slave_mod__DOT__wready;
-    CData/*0:0*/ __PVT__slave_mod__DOT__aw_latched;
+    CData/*0:0*/ __PVT__slave_mod__DOT__arvalid;
+    CData/*0:0*/ __PVT__slave_mod__DOT__aw_done;
+    CData/*0:0*/ __PVT__slave_mod__DOT__ar_done;
+    CData/*3:0*/ __PVT__slave_mod__DOT__aw_mask;
     IData/*31:0*/ opcode;
     IData/*31:0*/ pc;
     IData/*31:0*/ __PVT__araddr_ifu;
@@ -68,8 +72,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop_top final {
     IData/*31:0*/ __PVT__alu_mod__DOT__val1;
     IData/*31:0*/ __PVT__alu_mod__DOT__val2;
     IData/*31:0*/ __PVT__csr_mod__DOT__data_in;
-    IData/*31:0*/ __PVT__slave_mod__DOT__awaddr_reg;
-    IData/*31:0*/ __PVT__slave_mod__DOT__unnamedblk1__DOT__target_addr;
+    IData/*31:0*/ __PVT__slave_mod__DOT__aw;
     VlUnpacked<IData/*31:0*/, 32> __PVT__csr_mod__DOT__regs;
 
     // INTERNAL VARIABLES
