@@ -43,7 +43,10 @@ always_ff @(posedge clk) begin
         rready<=0;
         valid<=0;
     end else begin
-        if(!ready) ifu<=AWAIT;
+        if(!ready) begin
+            ifu<=AWAIT;
+            valid<=1;
+        end
         if(ready) begin
             case(ifu)
                 IDLE:begin

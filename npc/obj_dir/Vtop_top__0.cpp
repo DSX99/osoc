@@ -1497,6 +1497,9 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
                 __Vdly__lsu_mod__DOT__lsu_s = 0U;
             }
         }
+        if ((1U & (~ (IData)(vlSelfRef.__PVT__alu_mod__DOT__ready_right)))) {
+            __Vdly__ifu_mod__DOT__ifu = 0U;
+        }
         if (vlSelfRef.__PVT__alu_mod__DOT__ready_right) {
             if ((1U == vlSelfRef.__PVT__ifu_mod__DOT__ifu)) {
                 vlSelfRef.__PVT__arvalid_ifu = 1U;
