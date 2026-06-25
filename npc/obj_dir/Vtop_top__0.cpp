@@ -756,7 +756,6 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
                                                                      | vlSelfRef.__PVT__araddr_lsu), __Vfunc_slave_mod__DOT__memread__0__Vfuncout);
             vlSelfRef.__PVT__arb_rdata = __Vfunc_slave_mod__DOT__memread__0__Vfuncout;
             __Vdly__arb_rvalid = 1U;
-            __Vdly__slave_mod__DOT__ar_done = 1U;
         }
         if (((IData)(vlSelfRef.__PVT__arb_rvalid) | (IData)(vlSelfRef.__PVT__slave_mod__DOT__ar_done))) {
             __Vdly__arb_rvalid = 0U;

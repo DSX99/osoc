@@ -31,7 +31,7 @@ module axi_slave (
 );
 
 logic [31:0] aw;
-logic aw_done, ar_done;
+logic aw_done;
 logic [3:0] aw_mask;
 
 import "DPI-C" function void memwrite(int addr, int data, int idk);
@@ -50,16 +50,10 @@ always_ff @(posedge clk) begin
             rvalid<=0;
             aw<=0;
             aw_done<=0;
-            aw_done<=0;
-            ar_done<=0;
             aw_mask<=0;
     end else begin
 
         //reading
-        if(arvalid && arready) begin
-            rdata<=memread(araddr);
-            rvalid<=1;
-        end
 
         if(rvalid && rready || ar_done) begin
             rvalid<=0;
@@ -67,6 +61,10 @@ always_ff @(posedge clk) begin
             ar_done<=0;
         end
 
+        if(arvalid && arready) begin
+            rdata<=memread(araddr);
+            rvalid<=1;
+        end
 
 
         //writing
