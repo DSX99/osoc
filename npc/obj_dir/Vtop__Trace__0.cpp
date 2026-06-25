@@ -283,7 +283,7 @@ void Vtop___024root__trace_chg_0_sub_0(Vtop___024root* vlSelf, VerilatedFst::Buf
         bufp->chgIData(oldp+95,(vlSymsp->TOP__top.__PVT__lsu_mod__DOT__lsu_out),32);
     }
     if (VL_UNLIKELY((vlSelfRef.__Vm_traceActivity[2U]))) {
-        bufp->chgBit(oldp+96,(vlSymsp->TOP__top.__PVT__alu_mod__DOT__valid_left));
+        bufp->chgBit(oldp+96,(vlSymsp->TOP__top.__PVT__if_id_valid));
         bufp->chgIData(oldp+97,(vlSymsp->TOP__top.__PVT__araddr_ifu),32);
         bufp->chgIData(oldp+98,(vlSymsp->TOP__top.__PVT__rdata_ifu),32);
         bufp->chgCData(oldp+99,(vlSymsp->TOP__top.__PVT__rresp_ifu),2);

@@ -641,7 +641,7 @@ VL_ATTR_COLD void Vtop___024root__trace_full_0_sub_0(Vtop___024root* vlSelf, Ver
                                     >> 0x0000000cU))),3);
     bufp->fullIData(oldp+94,(vlSymsp->TOP__top.__PVT__lsu_mod__DOT__A),32);
     bufp->fullIData(oldp+95,(vlSymsp->TOP__top.__PVT__lsu_mod__DOT__lsu_out),32);
-    bufp->fullBit(oldp+96,(vlSymsp->TOP__top.__PVT__alu_mod__DOT__valid_left));
+    bufp->fullBit(oldp+96,(vlSymsp->TOP__top.__PVT__if_id_valid));
     bufp->fullIData(oldp+97,(vlSymsp->TOP__top.__PVT__araddr_ifu),32);
     bufp->fullIData(oldp+98,(vlSymsp->TOP__top.__PVT__rdata_ifu),32);
     bufp->fullCData(oldp+99,(vlSymsp->TOP__top.__PVT__rresp_ifu),2);
