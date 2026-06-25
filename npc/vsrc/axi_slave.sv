@@ -78,7 +78,7 @@ always_ff @(posedge clk) begin
 
         if(wvalid && (aw_done || awvalid)) wready<=1;
         if(wvalid && wready) begin
-            if(awvalid && awready) memwrite(aw, wdata, {28'b0,aw_mask});
+            if(awvalid && awready) memwrite(awaddr, wdata, {28'b0,aw_mask});
             if(aw_done && !(awvalid && awready)) memwrite(aw, wdata, {28'b0,aw_mask});
             bvalid<=1;
             wready<=0;
