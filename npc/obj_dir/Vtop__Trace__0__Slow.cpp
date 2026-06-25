@@ -167,7 +167,7 @@ VL_ATTR_COLD void Vtop___024root__trace_init_sub__TOP__top__0(Vtop___024root* vl
     VL_TRACE_DECL_BIT(tracep,c+34,0,"rready_ifu",-1, VerilatedTraceSigDirection::OUTPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC);
     VL_TRACE_DECL_BIT(tracep,c+80,0,"idk",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::VAR, VerilatedTraceSigType::LOGIC);
     VL_TRACE_DECL_BIT(tracep,c+81,0,"idk_2",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::VAR, VerilatedTraceSigType::LOGIC);
-    VL_TRACE_DECL_BIT(tracep,c+82,0,"ar_sent",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::VAR, VerilatedTraceSigType::LOGIC);
+    VL_TRACE_DECL_BIT(tracep,c+82,0,"extra_stall",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::VAR, VerilatedTraceSigType::LOGIC);
     VL_TRACE_POP_PREFIX(tracep);
     VL_TRACE_PUSH_PREFIX(tracep, "lsu_mod", VerilatedTracePrefixType::SCOPE_MODULE, 0, 0);
     VL_TRACE_DECL_BIT(tracep,c+90,0,"clk",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC);
@@ -407,7 +407,7 @@ VL_ATTR_COLD void Vtop___024root__trace_full_0_sub_0(Vtop___024root* vlSelf, Ver
     bufp->fullIData(oldp+79,(vlSymsp->TOP__top.__PVT__csr_mod__DOT__regs[0]),32);
     bufp->fullBit(oldp+80,((0U != (IData)(vlSymsp->TOP__top.__PVT__arb_rresp))));
     bufp->fullBit(oldp+81,(vlSymsp->TOP__top.__PVT__ifu_mod__DOT__idk_2));
-    bufp->fullBit(oldp+82,(vlSymsp->TOP__top.__PVT__ifu_mod__DOT__ar_sent));
+    bufp->fullBit(oldp+82,(vlSymsp->TOP__top.__PVT__ifu_mod__DOT__extra_stall));
     bufp->fullBit(oldp+83,(vlSymsp->TOP__top.__PVT__lsu_mod__DOT__prev_le));
     bufp->fullBit(oldp+84,(vlSymsp->TOP__top.__PVT__lsu_mod__DOT__we_stall));
     bufp->fullBit(oldp+85,(vlSymsp->TOP__top.__PVT__lsu_mod__DOT__ff_stall));
