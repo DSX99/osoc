@@ -13,6 +13,8 @@ module axi_slave(
     input  logic        rready
 );
 
+import "DPI-C" function int memread(int addr);
+
 typedef enum{
     IDLE, WAIT_AR, WAIT_R
 } IFU_state_t;
@@ -31,10 +33,10 @@ always_ff @(posedge clk) begin
             IDLE: begin
                 if(arvalid) begin
                     arready<=1;
-                    slave<=WAIR_AR;
+                    slave<=WAIT_AR;
                 end
             end
-            WAIR_AR: begin
+            WAIT_AR: begin
                 if(arready & arvalid) begin
                     arready<=0;
                     ar<=araddr;

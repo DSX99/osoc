@@ -21,8 +21,6 @@ module ifu(
     output logic        rready
 );
 
-import "DPI-C" function int memread(int addr);
-
 typedef enum{
     IDLE, WAIT_AR, WAIT_R
 } IFU_state_t;
@@ -62,7 +60,7 @@ always_ff @(posedge clk) begin
                 WAIT_R:begin
                     if(rvalid) begin
                         ifu<=IDLE;
-                        opcode<=rdata;
+                        bus_out.opcode<=rdata;
                         rready<=0;
                     end
                 end
