@@ -1002,117 +1002,74 @@ void Vtop_top___ico_sequent__TOP__top__1(Vtop_top* vlSelf) {
                 = (0x0000ffffU & vlSelfRef.__PVT__lsu_mod__DOT__A);
         }
     }
-    vlSelfRef.__PVT__ls_wb_bus[3U] = ((0x0000007fU 
-                                       & vlSelfRef.__PVT__ls_wb_bus[3U]) 
-                                      | (((0x00000800U 
-                                           & vlSelfRef.__PVT__lsu_mod__DOT__bus_in[0U])
-                                           ? vlSelfRef.__PVT__lsu_mod__DOT__lsu_out
-                                           : ((vlSelfRef.__PVT__lsu_mod__DOT__bus_in[3U] 
-                                               << 0x00000013U) 
-                                              | (vlSelfRef.__PVT__lsu_mod__DOT__bus_in[2U] 
-                                                 >> 0x0000000dU))) 
-                                         << 7U));
-    vlSelfRef.__PVT__ls_wb_bus[4U] = (((0x00000800U 
-                                        & vlSelfRef.__PVT__lsu_mod__DOT__bus_in[0U])
-                                        ? vlSelfRef.__PVT__lsu_mod__DOT__lsu_out
-                                        : ((vlSelfRef.__PVT__lsu_mod__DOT__bus_in[3U] 
-                                            << 0x00000013U) 
-                                           | (vlSelfRef.__PVT__lsu_mod__DOT__bus_in[2U] 
-                                              >> 0x0000000dU))) 
-                                      >> 0x00000019U);
-    vlSelfRef.__PVT__ls_wb_bus[0U] = ((3U & vlSelfRef.__PVT__ls_wb_bus[0U]) 
-                                      | (((IData)((
+    vlSelfRef.__PVT__ls_wb_bus[1U] = ((0x0000007fU 
+                                       & vlSelfRef.__PVT__ls_wb_bus[1U]) 
+                                      | ((vlSelfRef.__PVT__lsu_mod__DOT__bus_in[4U] 
+                                          << 0x0000001aU) 
+                                         | (0x03ffff80U 
+                                            & (vlSelfRef.__PVT__lsu_mod__DOT__bus_in[3U] 
+                                               >> 6U))));
+    vlSelfRef.__PVT__ls_wb_bus[2U] = ((0x0000007fU 
+                                       & (vlSelfRef.__PVT__lsu_mod__DOT__bus_in[4U] 
+                                          >> 6U)) | 
+                                      ((IData)((((QData)((IData)(
+                                                                 ((vlSelfRef.__PVT__lsu_mod__DOT__bus_in[3U] 
+                                                                   << 0x00000013U) 
+                                                                  | (vlSelfRef.__PVT__lsu_mod__DOT__bus_in[2U] 
+                                                                     >> 0x0000000dU)))) 
+                                                 << 0x00000020U) 
+                                                | (QData)((IData)(vlSelfRef.__PVT__lsu_mod__DOT__lsu_out)))) 
+                                       << 7U));
+    vlSelfRef.__PVT__ls_wb_bus[3U] = (((IData)((((QData)((IData)(
+                                                                 ((vlSelfRef.__PVT__lsu_mod__DOT__bus_in[3U] 
+                                                                   << 0x00000013U) 
+                                                                  | (vlSelfRef.__PVT__lsu_mod__DOT__bus_in[2U] 
+                                                                     >> 0x0000000dU)))) 
+                                                 << 0x00000020U) 
+                                                | (QData)((IData)(vlSelfRef.__PVT__lsu_mod__DOT__lsu_out)))) 
+                                       >> 0x00000019U) 
+                                      | ((IData)(((
                                                    ((QData)((IData)(
-                                                                    ((vlSelfRef.__PVT__lsu_mod__DOT__bus_in[4U] 
+                                                                    ((vlSelfRef.__PVT__lsu_mod__DOT__bus_in[3U] 
                                                                       << 0x00000013U) 
-                                                                     | (vlSelfRef.__PVT__lsu_mod__DOT__bus_in[3U] 
+                                                                     | (vlSelfRef.__PVT__lsu_mod__DOT__bus_in[2U] 
                                                                         >> 0x0000000dU)))) 
                                                     << 0x00000020U) 
-                                                   | (QData)((IData)(
-                                                                     ((vlSelfRef.__PVT__lsu_mod__DOT__bus_in[1U] 
-                                                                       << 0x00000013U) 
-                                                                      | (vlSelfRef.__PVT__lsu_mod__DOT__bus_in[0U] 
-                                                                         >> 0x0000000dU)))))) 
-                                          << 7U) | 
-                                         (0x0000007cU 
-                                          & (vlSelfRef.__PVT__lsu_mod__DOT__bus_in[0U] 
-                                             >> 1U))));
-    vlSelfRef.__PVT__ls_wb_bus[1U] = ((3U & ((IData)(
-                                                     (((QData)((IData)(
-                                                                       ((vlSelfRef.__PVT__lsu_mod__DOT__bus_in[4U] 
-                                                                         << 0x00000013U) 
-                                                                        | (vlSelfRef.__PVT__lsu_mod__DOT__bus_in[3U] 
-                                                                           >> 0x0000000dU)))) 
-                                                       << 0x00000020U) 
-                                                      | (QData)((IData)(
-                                                                        ((vlSelfRef.__PVT__lsu_mod__DOT__bus_in[1U] 
-                                                                          << 0x00000013U) 
-                                                                         | (vlSelfRef.__PVT__lsu_mod__DOT__bus_in[0U] 
-                                                                            >> 0x0000000dU)))))) 
-                                             >> 0x00000019U)) 
-                                      | ((0x0000007cU 
-                                          & ((IData)(
-                                                     (((QData)((IData)(
-                                                                       ((vlSelfRef.__PVT__lsu_mod__DOT__bus_in[4U] 
-                                                                         << 0x00000013U) 
-                                                                        | (vlSelfRef.__PVT__lsu_mod__DOT__bus_in[3U] 
-                                                                           >> 0x0000000dU)))) 
-                                                       << 0x00000020U) 
-                                                      | (QData)((IData)(
-                                                                        ((vlSelfRef.__PVT__lsu_mod__DOT__bus_in[1U] 
-                                                                          << 0x00000013U) 
-                                                                         | (vlSelfRef.__PVT__lsu_mod__DOT__bus_in[0U] 
-                                                                            >> 0x0000000dU)))))) 
-                                             >> 0x00000019U)) 
-                                         | ((IData)(
-                                                    ((((QData)((IData)(
-                                                                       ((vlSelfRef.__PVT__lsu_mod__DOT__bus_in[4U] 
-                                                                         << 0x00000013U) 
-                                                                        | (vlSelfRef.__PVT__lsu_mod__DOT__bus_in[3U] 
-                                                                           >> 0x0000000dU)))) 
-                                                       << 0x00000020U) 
-                                                      | (QData)((IData)(
-                                                                        ((vlSelfRef.__PVT__lsu_mod__DOT__bus_in[1U] 
-                                                                          << 0x00000013U) 
-                                                                         | (vlSelfRef.__PVT__lsu_mod__DOT__bus_in[0U] 
-                                                                            >> 0x0000000dU))))) 
-                                                     >> 0x00000020U)) 
-                                            << 7U)));
-    vlSelfRef.__PVT__ls_wb_bus[2U] = ((0xffffff80U 
-                                       & vlSelfRef.__PVT__ls_wb_bus[2U]) 
-                                      | ((3U & ((IData)(
-                                                        ((((QData)((IData)(
-                                                                           ((vlSelfRef.__PVT__lsu_mod__DOT__bus_in[4U] 
-                                                                             << 0x00000013U) 
-                                                                            | (vlSelfRef.__PVT__lsu_mod__DOT__bus_in[3U] 
-                                                                               >> 0x0000000dU)))) 
-                                                           << 0x00000020U) 
-                                                          | (QData)((IData)(
-                                                                            ((vlSelfRef.__PVT__lsu_mod__DOT__bus_in[1U] 
-                                                                              << 0x00000013U) 
-                                                                             | (vlSelfRef.__PVT__lsu_mod__DOT__bus_in[0U] 
-                                                                                >> 0x0000000dU))))) 
-                                                         >> 0x00000020U)) 
-                                                >> 0x00000019U)) 
-                                         | (0x0000007cU 
-                                            & ((IData)(
-                                                       ((((QData)((IData)(
-                                                                          ((vlSelfRef.__PVT__lsu_mod__DOT__bus_in[4U] 
-                                                                            << 0x00000013U) 
-                                                                           | (vlSelfRef.__PVT__lsu_mod__DOT__bus_in[3U] 
-                                                                              >> 0x0000000dU)))) 
-                                                          << 0x00000020U) 
-                                                         | (QData)((IData)(
-                                                                           ((vlSelfRef.__PVT__lsu_mod__DOT__bus_in[1U] 
-                                                                             << 0x00000013U) 
-                                                                            | (vlSelfRef.__PVT__lsu_mod__DOT__bus_in[0U] 
-                                                                               >> 0x0000000dU))))) 
-                                                        >> 0x00000020U)) 
-                                               >> 0x00000019U))));
-    vlSelfRef.__PVT__ls_wb_bus[0U] = ((0xfffffffcU 
-                                       & vlSelfRef.__PVT__ls_wb_bus[0U]) 
-                                      | (3U & (vlSelfRef.__PVT__lsu_mod__DOT__bus_in[0U] 
-                                               >> 1U)));
+                                                   | (QData)((IData)(vlSelfRef.__PVT__lsu_mod__DOT__lsu_out))) 
+                                                  >> 0x00000020U)) 
+                                         << 7U));
+    vlSelfRef.__PVT__ls_wb_bus[4U] = ((IData)(((((QData)((IData)(
+                                                                 ((vlSelfRef.__PVT__lsu_mod__DOT__bus_in[3U] 
+                                                                   << 0x00000013U) 
+                                                                  | (vlSelfRef.__PVT__lsu_mod__DOT__bus_in[2U] 
+                                                                     >> 0x0000000dU)))) 
+                                                 << 0x00000020U) 
+                                                | (QData)((IData)(vlSelfRef.__PVT__lsu_mod__DOT__lsu_out))) 
+                                               >> 0x00000020U)) 
+                                      >> 0x00000019U);
+    vlSelfRef.__PVT__ls_wb_bus[0U] = (IData)((((QData)((IData)(
+                                                               ((vlSelfRef.__PVT__lsu_mod__DOT__bus_in[1U] 
+                                                                 << 0x00000013U) 
+                                                                | (vlSelfRef.__PVT__lsu_mod__DOT__bus_in[0U] 
+                                                                   >> 0x0000000dU)))) 
+                                               << 7U) 
+                                              | (QData)((IData)(
+                                                                (0x0000007fU 
+                                                                 & (vlSelfRef.__PVT__lsu_mod__DOT__bus_in[0U] 
+                                                                    >> 1U))))));
+    vlSelfRef.__PVT__ls_wb_bus[1U] = ((0xffffff80U 
+                                       & vlSelfRef.__PVT__ls_wb_bus[1U]) 
+                                      | (IData)(((((QData)((IData)(
+                                                                   ((vlSelfRef.__PVT__lsu_mod__DOT__bus_in[1U] 
+                                                                     << 0x00000013U) 
+                                                                    | (vlSelfRef.__PVT__lsu_mod__DOT__bus_in[0U] 
+                                                                       >> 0x0000000dU)))) 
+                                                   << 7U) 
+                                                  | (QData)((IData)(
+                                                                    (0x0000007fU 
+                                                                     & (vlSelfRef.__PVT__lsu_mod__DOT__bus_in[0U] 
+                                                                        >> 1U))))) 
+                                                 >> 0x00000020U)));
 }
 
 void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
