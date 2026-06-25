@@ -30,7 +30,7 @@ always_ff @(posedge clk) begin
         arvalid_ifu<=0;
         rready_ifu<=0;
         araddr_ifu<=0;
-        stall<=0;
+        stall<=1s;
     end else begin
         if(!lsu_stall) begin
             arvalid_ifu<=1;
