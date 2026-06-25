@@ -137,6 +137,7 @@ always_ff @(posedge clk) begin
                 end
                 AWAIT: begin
                     lsu_l<=IDLE;
+                    ready<=0;
                 end
             endcase
         end
@@ -197,6 +198,7 @@ always_ff @(posedge clk) begin
                 end
                 AWAIT_S: begin
                     lsu_s<=IDLE_S;
+                    ready<=0;
                 end
             endcase
         end
