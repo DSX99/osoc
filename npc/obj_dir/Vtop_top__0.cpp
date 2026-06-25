@@ -1213,6 +1213,7 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
                 vlSelfRef.__PVT__arvalid_ifu = 0U;
                 __Vdly__ifu_mod__DOT__ifu = 2U;
                 vlSelfRef.__PVT__rready_ifu = 1U;
+                vlSelfRef.__Vdly__if_id_valid = 0U;
             }
         } else if ((2U == vlSelfRef.__PVT__ifu_mod__DOT__ifu)) {
             if (vlSelfRef.__PVT__rvalid_ifu) {

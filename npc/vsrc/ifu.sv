@@ -52,11 +52,11 @@ always_ff @(posedge clk) begin
                     valid<=0;
                 end
                 WAIT_AR:begin
+                    valid<=0;
                     if(arready)begin 
                         arvalid<=0;
                         ifu<=WAIT_R;
                         rready<=1;
-                        valid<=0;
                     end
                 end
                 WAIT_R:begin
