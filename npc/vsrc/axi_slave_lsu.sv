@@ -77,7 +77,6 @@ always_ff @(posedge clk) begin
         done_w<=0;
         bvalid<=0;
         bresp<=0;
-    end
     end else begin
         case(slave_w)
             IDLE: begin
