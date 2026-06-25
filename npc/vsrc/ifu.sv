@@ -34,17 +34,17 @@ always_ff @(posedge clk) begin
         araddr_ifu<=0;
         stall<=1;
     end else begin
-        if(stall ==0) stall<=1;
-        if(!lsu_stall && stall && !ar_sent) begin
+        if(stall ==0) stall<=1; //stall only for cycle to update pc (possibly in future use comb value that will be written in to pc)
+        if(!lsu_stall && stall && !ar_sent) begin 
             arvalid_ifu<=1;
             araddr_ifu<=pc; 
             ar_sent<=1;
         end
-        if(arvalid_ifu && arready_ifu) begin
+        if(arvalid_ifu && arready_ifu) begin // done handshake for ar
             arvalid_ifu<=0;
             rready_ifu<=1;
         end
-        if(rvalid_ifu && rready_ifu) begin
+        if(rvalid_ifu && rready_ifu) begin //done handshake for r
             opcode<=rdata_ifu;
             rready_ifu<=0;
             stall<=0;
