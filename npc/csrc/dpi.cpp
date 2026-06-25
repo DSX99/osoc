@@ -38,6 +38,9 @@ extern "C" {
         if (img_file == NULL) {
             printf("No image is given.\n");
             memcpy(mem, img, sizeof(img));
+            if(!batch){
+                difftest_memcpy(0x80000000, mem, sizeof(img), 1);
+            }
             return; // built-in image size
         }
 

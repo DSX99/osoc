@@ -54,6 +54,7 @@ void Vtop_top___ico_sequent__TOP__top__0(Vtop_top* vlSelf) {
     vlSelfRef.__PVT__if_id_valid = 1U;
     Vtop_top____Vdpiimwrap_ifu_mod__DOT__memread_TOP__top(vlSelfRef.pc, vlSelfRef.ifu_mod__DOT____VlemCall_0__memread);
     vlSelfRef.__PVT__if_id_bus[0U] = vlSelfRef.ifu_mod__DOT____VlemCall_0__memread;
+    vlSelfRef.opcode = vlSelfRef.__PVT__if_id_bus[0U];
     vlSelfRef.__PVT__decode_mod__DOT__imm_i = (((- (IData)(
                                                            (vlSelfRef.__PVT__if_id_bus[0U] 
                                                             >> 0x0000001fU))) 
@@ -1290,6 +1291,7 @@ void Vtop_top___nba_sequent__TOP__top__1(Vtop_top* vlSelf) {
     vlSelfRef.__PVT__if_id_valid = 1U;
     Vtop_top____Vdpiimwrap_ifu_mod__DOT__memread_TOP__top(vlSelfRef.pc, vlSelfRef.ifu_mod__DOT____VlemCall_0__memread);
     vlSelfRef.__PVT__if_id_bus[0U] = vlSelfRef.ifu_mod__DOT____VlemCall_0__memread;
+    vlSelfRef.opcode = vlSelfRef.__PVT__if_id_bus[0U];
     vlSelfRef.__PVT__decode_mod__DOT__imm_i = (((- (IData)(
                                                            (vlSelfRef.__PVT__if_id_bus[0U] 
                                                             >> 0x0000001fU))) 
