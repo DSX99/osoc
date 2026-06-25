@@ -33,7 +33,7 @@ always_ff @(posedge clk) begin
         araddr_ifu<=0;
         stall<=1;
     end else begin
-        if(!lsu_stall && (pc != araddr_ifu)) begin
+        if(!lsu_stall) begin
             arvalid_ifu<=1;
             araddr_ifu<=pc; 
             stall<=1;
@@ -47,6 +47,7 @@ always_ff @(posedge clk) begin
             rready_ifu<=0;
             stall<=0;
         end
+        if(pc == araddr) stall<=1;
     end
 end
 
