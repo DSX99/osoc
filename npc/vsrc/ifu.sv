@@ -59,12 +59,12 @@ always_ff @(posedge clk) begin
                 end
                 WAIT_R:begin
                     if(rvalid) begin
-                        ifu<=AWAIT;
+                        ifu<=WAIT;
                         bus_out.opcode<=rdata;
                         rready<=0;
                         valid<=1;
                     end
-                AWAIT: begin
+                WAIT: begin
                     ifu<=IDLE;
                 end
                 end
