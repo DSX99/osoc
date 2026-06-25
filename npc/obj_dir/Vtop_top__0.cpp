@@ -1172,12 +1172,16 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
         if (((IData)(vlSelfRef.__PVT__arready_ifu) 
              & (IData)(vlSelfRef.__PVT__arvalid_ifu))) {
             Vtop_top____Vdpiimwrap_lsu_mod__DOT__memread_TOP__top(
-                                                                  ((1U 
-                                                                    & vlSelfRef.__PVT__ex_ls_bus_alu[0U])
-                                                                    ? vlSelfRef.__PVT__pc_mod__DOT__data_in
-                                                                    : 
-                                                                   ((IData)(4U) 
-                                                                    + vlSelfRef.pc)), __Vfunc_axi_slave_mod__DOT__memread__8__Vfuncout);
+                                                                  ((0U 
+                                                                    != vlSelfRef.__PVT__ifu_mod__DOT__ifu)
+                                                                    ? 
+                                                                   ((1U 
+                                                                     & vlSelfRef.__PVT__ex_ls_bus_alu[0U])
+                                                                     ? vlSelfRef.__PVT__pc_mod__DOT__data_in
+                                                                     : 
+                                                                    ((IData)(4U) 
+                                                                     + vlSelfRef.pc))
+                                                                    : vlSelfRef.pc), __Vfunc_axi_slave_mod__DOT__memread__8__Vfuncout);
             vlSelfRef.__Vdly__arready_ifu = 0U;
             __Vdly__axi_slave_mod__DOT__slave = 2U;
             vlSelfRef.__Vdly__rvalid_ifu = 1U;
