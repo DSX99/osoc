@@ -42,6 +42,8 @@ module lsu(
 assign rready_lsu = 1; // it was !external_stall but i guess 1 is okay here
 assign bready_lsu = 1;
 
+assign stall = ff_stall || (we && !prev_we) || (le&&!prev_le);
+
 always_comb begin
     case(oper[1:0])
         2'b00: wstrb_lsu=4'b0001;
@@ -52,10 +54,13 @@ always_comb begin
 end
 
 logic idk;
+logic ff_stall, prev_we, prev_le;
 logic aw_sent, aw_done, w_done;
 
 always_ff @(posedge clk) begin
     idk<= idk | |rresp_lsu | |bresp_lsu;
+    prev_le<=le;
+    prev_we<=we;
     if(rst) begin
         araddr_lsu<=0;
         arvalid_lsu<=0;
@@ -66,6 +71,8 @@ always_ff @(posedge clk) begin
         aw_done<=0;
         w_done<=0;
         aw_sent<=0;
+        prev_le<=0;
+        prev_we<=0;
     end else begin
         if(le) begin
             if(!external_stall) begin       // starting a read
