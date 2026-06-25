@@ -119,7 +119,7 @@ int main(int argc, char** argv) {
     init_sdb();
     sdb_mainloop(&qexit);
   }
-  
+
   #ifdef CONFIG_FST
   tracep->close();
   #endif
@@ -218,6 +218,9 @@ void execute(uint32_t n){
     if((!batch) && (!current_cycle_is_skipped) && top->top->reg_valid) difftest_exec(1);
 
     if(contextp->gotFinish()){
+      #ifdef CONFIG_FST
+      tracep->close();
+      #endif
       if(!batch){
         inst[0] = (top->top->opcode) & 0xff;
         inst[1] = (top->top->opcode >> 8) & 0xff;

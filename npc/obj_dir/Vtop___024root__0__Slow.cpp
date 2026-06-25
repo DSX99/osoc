@@ -9,10 +9,6 @@ VL_ATTR_COLD void Vtop___024root___eval_static(Vtop___024root* vlSelf) {
     Vtop__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     auto& vlSelfRef = std::ref(*vlSelf).get();
     // Body
-    vlSelfRef.__Vtrigprevexpr___TOP__top____PVT__ifu_mod__DOT__next_pc__0 
-        = vlSymsp->TOP__top.__PVT__ifu_mod__DOT__next_pc;
-    vlSelfRef.__Vtrigprevexpr___TOP__top____PVT__ifu_mod__DOT__next_pc__1 
-        = vlSymsp->TOP__top.__PVT__ifu_mod__DOT__next_pc;
     vlSelfRef.__Vtrigprevexpr___TOP__clk__0 = vlSelfRef.clk;
 }
 
@@ -35,7 +31,7 @@ VL_ATTR_COLD void Vtop___024root___eval_final(Vtop___024root* vlSelf) {
 }
 
 #ifdef VL_DEBUG
-VL_ATTR_COLD void Vtop___024root___dump_triggers__stl(const VlUnpacked<QData/*63:0*/, 2> &triggers, const std::string &tag);
+VL_ATTR_COLD void Vtop___024root___dump_triggers__stl(const VlUnpacked<QData/*63:0*/, 1> &triggers, const std::string &tag);
 #endif  // VL_DEBUG
 VL_ATTR_COLD bool Vtop___024root___eval_phase__stl(Vtop___024root* vlSelf);
 
@@ -66,39 +62,27 @@ VL_ATTR_COLD void Vtop___024root___eval_triggers_vec__stl(Vtop___024root* vlSelf
     Vtop__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     auto& vlSelfRef = std::ref(*vlSelf).get();
     // Body
-    vlSelfRef.__VstlTriggered[1U] = ((0xfffffffffffffffeULL 
-                                      & vlSelfRef.__VstlTriggered[1U]) 
+    vlSelfRef.__VstlTriggered[0U] = ((0xfffffffffffffffeULL 
+                                      & vlSelfRef.__VstlTriggered[0U]) 
                                      | (IData)((IData)(vlSelfRef.__VstlFirstIteration)));
-    vlSelfRef.__VstlTriggered[0U] = (QData)((IData)(
-                                                    (vlSymsp->TOP__top.__PVT__ifu_mod__DOT__next_pc 
-                                                     != vlSelfRef.__Vtrigprevexpr___TOP__top____PVT__ifu_mod__DOT__next_pc__0)));
-    vlSelfRef.__Vtrigprevexpr___TOP__top____PVT__ifu_mod__DOT__next_pc__0 
-        = vlSymsp->TOP__top.__PVT__ifu_mod__DOT__next_pc;
-    if (VL_UNLIKELY(((1U & (~ (IData)(vlSelfRef.__VstlDidInit)))))) {
-        vlSelfRef.__VstlDidInit = 1U;
-        vlSelfRef.__VstlTriggered[0U] = (1ULL | vlSelfRef.__VstlTriggered[0U]);
-    }
 }
 
-VL_ATTR_COLD bool Vtop___024root___trigger_anySet__stl(const VlUnpacked<QData/*63:0*/, 2> &in);
+VL_ATTR_COLD bool Vtop___024root___trigger_anySet__stl(const VlUnpacked<QData/*63:0*/, 1> &in);
 
 #ifdef VL_DEBUG
-VL_ATTR_COLD void Vtop___024root___dump_triggers__stl(const VlUnpacked<QData/*63:0*/, 2> &triggers, const std::string &tag) {
+VL_ATTR_COLD void Vtop___024root___dump_triggers__stl(const VlUnpacked<QData/*63:0*/, 1> &triggers, const std::string &tag) {
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root___dump_triggers__stl\n"); );
     // Body
     if ((1U & (~ (IData)(Vtop___024root___trigger_anySet__stl(triggers))))) {
         VL_DBG_MSGS("         No '" + tag + "' region triggers active\n");
     }
     if ((1U & (IData)(triggers[0U]))) {
-        VL_DBG_MSGS("         '" + tag + "' region trigger index 0 is active: @([hybrid] top.ifu_mod.next_pc)\n");
-    }
-    if ((1U & (IData)(triggers[1U]))) {
-        VL_DBG_MSGS("         '" + tag + "' region trigger index 64 is active: Internal 'stl' trigger - first iteration\n");
+        VL_DBG_MSGS("         '" + tag + "' region trigger index 0 is active: Internal 'stl' trigger - first iteration\n");
     }
 }
 #endif  // VL_DEBUG
 
-VL_ATTR_COLD bool Vtop___024root___trigger_anySet__stl(const VlUnpacked<QData/*63:0*/, 2> &in) {
+VL_ATTR_COLD bool Vtop___024root___trigger_anySet__stl(const VlUnpacked<QData/*63:0*/, 1> &in) {
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root___trigger_anySet__stl\n"); );
     // Locals
     IData/*31:0*/ n;
@@ -109,28 +93,24 @@ VL_ATTR_COLD bool Vtop___024root___trigger_anySet__stl(const VlUnpacked<QData/*6
             return (1U);
         }
         n = ((IData)(1U) + n);
-    } while ((2U > n));
+    } while ((1U > n));
     return (0U);
 }
 
 void Vtop_top___ico_sequent__TOP__top__0(Vtop_top* vlSelf);
-void Vtop_top___ico_comb__TOP__top__0(Vtop_top* vlSelf);
-void Vtop_regs___ico_comb__TOP__top__reg_mod__0(Vtop_regs* vlSelf);
-void Vtop_top___ico_comb__TOP__top__1(Vtop_top* vlSelf);
+void Vtop_regs___ico_sequent__TOP__top__reg_mod__0(Vtop_regs* vlSelf);
+void Vtop_top___ico_sequent__TOP__top__1(Vtop_top* vlSelf);
 
 VL_ATTR_COLD void Vtop___024root___eval_stl(Vtop___024root* vlSelf) {
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root___eval_stl\n"); );
     Vtop__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     auto& vlSelfRef = std::ref(*vlSelf).get();
     // Body
-    if ((1ULL & vlSelfRef.__VstlTriggered[1U])) {
+    if ((1ULL & vlSelfRef.__VstlTriggered[0U])) {
         Vtop_top___ico_sequent__TOP__top__0((&vlSymsp->TOP__top));
-    }
-    if ((1ULL & (vlSelfRef.__VstlTriggered[1U] | vlSelfRef.__VstlTriggered[0U]))) {
-        Vtop_top___ico_comb__TOP__top__0((&vlSymsp->TOP__top));
         Vtop___024root____Vm_traceActivitySetAll(vlSelf);
-        Vtop_regs___ico_comb__TOP__top__reg_mod__0((&vlSymsp->TOP__top__reg_mod));
-        Vtop_top___ico_comb__TOP__top__1((&vlSymsp->TOP__top));
+        Vtop_regs___ico_sequent__TOP__top__reg_mod__0((&vlSymsp->TOP__top__reg_mod));
+        Vtop_top___ico_sequent__TOP__top__1((&vlSymsp->TOP__top));
     }
 }
 
@@ -154,20 +134,17 @@ VL_ATTR_COLD bool Vtop___024root___eval_phase__stl(Vtop___024root* vlSelf) {
     return (__VstlExecute);
 }
 
-bool Vtop___024root___trigger_anySet__ico(const VlUnpacked<QData/*63:0*/, 2> &in);
+bool Vtop___024root___trigger_anySet__ico(const VlUnpacked<QData/*63:0*/, 1> &in);
 
 #ifdef VL_DEBUG
-VL_ATTR_COLD void Vtop___024root___dump_triggers__ico(const VlUnpacked<QData/*63:0*/, 2> &triggers, const std::string &tag) {
+VL_ATTR_COLD void Vtop___024root___dump_triggers__ico(const VlUnpacked<QData/*63:0*/, 1> &triggers, const std::string &tag) {
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root___dump_triggers__ico\n"); );
     // Body
     if ((1U & (~ (IData)(Vtop___024root___trigger_anySet__ico(triggers))))) {
         VL_DBG_MSGS("         No '" + tag + "' region triggers active\n");
     }
     if ((1U & (IData)(triggers[0U]))) {
-        VL_DBG_MSGS("         '" + tag + "' region trigger index 0 is active: @([hybrid] top.ifu_mod.next_pc)\n");
-    }
-    if ((1U & (IData)(triggers[1U]))) {
-        VL_DBG_MSGS("         '" + tag + "' region trigger index 64 is active: Internal 'ico' trigger - first iteration\n");
+        VL_DBG_MSGS("         '" + tag + "' region trigger index 0 is active: Internal 'ico' trigger - first iteration\n");
     }
 }
 #endif  // VL_DEBUG
@@ -182,10 +159,7 @@ VL_ATTR_COLD void Vtop___024root___dump_triggers__act(const VlUnpacked<QData/*63
         VL_DBG_MSGS("         No '" + tag + "' region triggers active\n");
     }
     if ((1U & (IData)(triggers[0U]))) {
-        VL_DBG_MSGS("         '" + tag + "' region trigger index 0 is active: @([hybrid] top.ifu_mod.next_pc)\n");
-    }
-    if ((1U & (IData)((triggers[0U] >> 1U)))) {
-        VL_DBG_MSGS("         '" + tag + "' region trigger index 1 is active: @(posedge clk)\n");
+        VL_DBG_MSGS("         '" + tag + "' region trigger index 0 is active: @(posedge clk)\n");
     }
 }
 #endif  // VL_DEBUG
@@ -198,8 +172,6 @@ VL_ATTR_COLD void Vtop___024root____Vm_traceActivitySetAll(Vtop___024root* vlSel
     vlSelfRef.__Vm_traceActivity[0U] = 1U;
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     vlSelfRef.__Vm_traceActivity[2U] = 1U;
-    vlSelfRef.__Vm_traceActivity[3U] = 1U;
-    vlSelfRef.__Vm_traceActivity[4U] = 1U;
 }
 
 VL_ATTR_COLD void Vtop___024root___ctor_var_reset(Vtop___024root* vlSelf) {
@@ -210,25 +182,20 @@ VL_ATTR_COLD void Vtop___024root___ctor_var_reset(Vtop___024root* vlSelf) {
     const uint64_t __VscopeHash = VL_MURMUR64_HASH(vlSelf->vlNamep);
     vlSelf->clk = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 16707436170211756652ull);
     vlSelf->rst = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 18209466448985614591ull);
-    for (int __Vi0 = 0; __Vi0 < 2; ++__Vi0) {
+    for (int __Vi0 = 0; __Vi0 < 1; ++__Vi0) {
         vlSelf->__VstlTriggered[__Vi0] = 0;
     }
-    vlSelf->__Vtrigprevexpr___TOP__top____PVT__ifu_mod__DOT__next_pc__0 = 0;
-    vlSelf->__VstlDidInit = 0;
-    for (int __Vi0 = 0; __Vi0 < 2; ++__Vi0) {
+    for (int __Vi0 = 0; __Vi0 < 1; ++__Vi0) {
         vlSelf->__VicoTriggered[__Vi0] = 0;
     }
-    vlSelf->__VicoDidInit = 0;
     for (int __Vi0 = 0; __Vi0 < 1; ++__Vi0) {
         vlSelf->__VactTriggered[__Vi0] = 0;
     }
-    vlSelf->__Vtrigprevexpr___TOP__top____PVT__ifu_mod__DOT__next_pc__1 = 0;
     vlSelf->__Vtrigprevexpr___TOP__clk__0 = 0;
-    vlSelf->__VactDidInit = 0;
     for (int __Vi0 = 0; __Vi0 < 1; ++__Vi0) {
         vlSelf->__VnbaTriggered[__Vi0] = 0;
     }
-    for (int __Vi0 = 0; __Vi0 < 5; ++__Vi0) {
+    for (int __Vi0 = 0; __Vi0 < 3; ++__Vi0) {
         vlSelf->__Vm_traceActivity[__Vi0] = 0;
     }
 }

@@ -56,6 +56,7 @@ always_ff @(posedge clk) begin
                         arvalid<=0;
                         ifu<=WAIT_R;
                         rready<=1;
+                        valid<=0;
                     end
                 end
                 WAIT_R:begin
