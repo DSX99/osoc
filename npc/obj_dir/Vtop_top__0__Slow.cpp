@@ -370,9 +370,8 @@ VL_ATTR_COLD void Vtop_top___stl_sequent__TOP__top__0(Vtop_top* vlSelf) {
     }
     vlSelfRef.__PVT__csr_out = vlSelfRef.__PVT__csr_mod__DOT__regs
         [vlSelfRef.__PVT__csr_mod__DOT__working_reg];
-    vlSelfRef.external_stall = (1U & (((~ (IData)(vlSelfRef.__PVT__arb_rvalid)) 
-                                       & (~ (IData)(vlSelfRef.__PVT__ifu_mod__DOT__lsu_stall))) 
-                                      | (IData)(vlSelfRef.__PVT__ifu_mod__DOT__lsu_stall)));
+    vlSelfRef.external_stall = ((IData)(vlSelfRef.__PVT__ifu_stall) 
+                                | (IData)(vlSelfRef.__PVT__ifu_mod__DOT__lsu_stall));
 }
 
 VL_ATTR_COLD void Vtop_top___ctor_var_reset(Vtop_top* vlSelf) {
@@ -386,7 +385,9 @@ VL_ATTR_COLD void Vtop_top___ctor_var_reset(Vtop_top* vlSelf) {
     vlSelf->opcode = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 17409787017080135397ull);
     vlSelf->pc = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 4211327832146562899ull);
     vlSelf->external_stall = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 2871934794811161235ull);
+    vlSelf->__PVT__araddr_ifu = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 17403733745108566750ull);
     vlSelf->__PVT__arvalid_ifu = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 6187099397844950305ull);
+    vlSelf->__PVT__rready_ifu = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 7080648654013881954ull);
     vlSelf->__PVT__araddr_lsu = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 5416967447709139ull);
     vlSelf->__PVT__awaddr_lsu = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 14890680784206275148ull);
     vlSelf->__PVT__wdata_lsu = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 4165621799402445171ull);
@@ -411,6 +412,7 @@ VL_ATTR_COLD void Vtop_top___ctor_var_reset(Vtop_top* vlSelf) {
     vlSelf->__PVT__branch = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 16985980692193088871ull);
     vlSelf->__PVT__lsu_we = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 14626365765754585692ull);
     vlSelf->__PVT__lsu_le = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 3851020032965099929ull);
+    vlSelf->__PVT__ifu_stall = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 13998222303260242712ull);
     vlSelf->__PVT__arb_wready = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 1680289899656006799ull);
     vlSelf->__PVT__arb_awready = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 11911765733314370540ull);
     vlSelf->__PVT__arb_rdata = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 6800096078308315140ull);
