@@ -3,7 +3,8 @@ module top(
     input rst
 );
 
-logic [31:0] pc /* verilator public */, opcode /* verilator public */, reg_valid /* verilator public */;
+logic [31:0] pc /* verilator public */, opcode /* verilator public */;
+logic reg_valid /* verilator public */;
 
 assign opcode = if_id_bus.opcode;
 

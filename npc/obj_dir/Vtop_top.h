@@ -31,6 +31,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop_top final {
     SData/*9:0*/ decode_mod__DOT____VdfgExtracted_h3b2fb429__0;
     IData/*31:0*/ pc;
     IData/*31:0*/ opcode;
+    IData/*31:0*/ reg_valid;
     IData/*31:0*/ __PVT__csr_data;
     IData/*31:0*/ __PVT__araddr_ifu;
     IData/*31:0*/ __PVT__rdata_ifu;

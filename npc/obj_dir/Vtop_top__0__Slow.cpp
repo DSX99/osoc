@@ -9,6 +9,7 @@ VL_ATTR_COLD void Vtop_top___eval_initial__TOP__top(Vtop_top* vlSelf) {
     Vtop__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     auto& vlSelfRef = std::ref(*vlSelf).get();
     // Body
+    vlSelfRef.reg_valid = 1U;
     vlSelfRef.pc = 0x80000000U;
     vlSelfRef.__PVT__csr_mod__DOT__regs[0U] = 0U;
     vlSelfRef.__PVT__csr_mod__DOT__regs[1U] = 0U;
@@ -55,6 +56,7 @@ VL_ATTR_COLD void Vtop_top___ctor_var_reset(Vtop_top* vlSelf) {
     vlSelf->rst = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 18209466448985614591ull);
     vlSelf->pc = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 4211327832146562899ull);
     vlSelf->opcode = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 17409787017080135397ull);
+    vlSelf->reg_valid = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 4430225706042301878ull);
     VL_SCOPED_RAND_RESET_W(96, vlSelf->__PVT__if_id_bus, __VscopeHash, 4165204006372198396ull);
     vlSelf->__PVT__if_id_valid = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 2712103756575143212ull);
     VL_SCOPED_RAND_RESET_W(200, vlSelf->__PVT__id_ex_bus_decoded, __VscopeHash, 13052232129216562696ull);
