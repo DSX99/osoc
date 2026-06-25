@@ -103,6 +103,7 @@ always_ff @(posedge clk) begin
                 aw_sent<=1;
                 wvalid_lsu<=1;
                 wdata_lsu<=data_in;
+                ff_stall<=1;
             end
             if(awvalid_lsu && awready_lsu) begin // done handshake for aw
                 awvalid_lsu<=0;
@@ -111,7 +112,10 @@ always_ff @(posedge clk) begin
             if(wvalid_lsu && wready_lsu) begin //done handshake for w
                 w_done<=1;
             end
-            if(aw_done && w_done) aw_sent<=0; //finishing transfer
+            if(aw_done && w_done) begin
+                aw_sent<=0; //finishing transfer
+                ff_stall<=0;
+            end
         end
     end
 end
