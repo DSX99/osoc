@@ -25,7 +25,7 @@ assign idk = |rresp_ifu;
 
 assign rready_ifu = !lsu_stall; // we are ready to accept new opcode iff lsu is not busy (we must keep opcode so result of lsu can be saved)
 assign stall = (!rvalid_ifu && rready_ifu); // we stall if we wait to accept addr or wait for data
-assign araddr = pc;
+assign araddr_ifu = pc;
 
 always_ff @(posedge clk) begin
     idk_2 <= idk_2 | idk;
