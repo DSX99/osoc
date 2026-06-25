@@ -1337,7 +1337,8 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
         vlSelfRef.__PVT__if_id_valid = 0U;
         vlSelfRef.pc = 0x80000000U;
     } else {
-        if ((0x00001000U & vlSelfRef.__PVT__lsu_mod__DOT__bus_in[0U])) {
+        if (((vlSelfRef.__PVT__lsu_mod__DOT__bus_in[0U] 
+              >> 0x0000000cU) & (3U == vlSelfRef.__PVT__lsu_mod__DOT__lsu_l))) {
             vlSelfRef.__PVT__arvalid_lsu = 1U;
             vlSelfRef.__PVT__araddr_lsu = ((vlSelfRef.__PVT__lsu_mod__DOT__bus_in[3U] 
                                             << 0x00000012U) 
@@ -1465,7 +1466,8 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
                 __Vdly__lsu_mod__DOT__lsu_l = 0U;
             }
         }
-        if ((0x00002000U & vlSelfRef.__PVT__lsu_mod__DOT__bus_in[0U])) {
+        if (((vlSelfRef.__PVT__lsu_mod__DOT__bus_in[0U] 
+              >> 0x0000000dU) & (3U == vlSelfRef.__PVT__lsu_mod__DOT__lsu_s))) {
             vlSelfRef.__PVT__awaddr_lsu = ((vlSelfRef.__PVT__lsu_mod__DOT__bus_in[3U] 
                                             << 0x00000012U) 
                                            | (vlSelfRef.__PVT__lsu_mod__DOT__bus_in[2U] 
