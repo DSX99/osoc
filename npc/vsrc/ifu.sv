@@ -36,7 +36,7 @@ end
 
 always_ff @(posedge clk) begin
     if(rst) begin
-        ifu<=AWAIT;
+        ifu<=IDLE;
         bus_out.opcode<=0;
         arvalid<=0;
         araddr<=0;
