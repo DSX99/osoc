@@ -55,10 +55,9 @@ always_ff @(posedge clk) begin
 
         //reading
 
-        if(rvalid && rready || ar_done) begin
+        if(rvalid && rready) begin
             rvalid<=0;
             rresp<=0;
-            ar_done<=0;
         end
 
         if(arvalid && arready) begin
