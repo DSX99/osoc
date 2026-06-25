@@ -45,7 +45,6 @@ always_ff @(posedge clk) begin
             wready      <= 1'b0;
             bvalid      <= 1'b0;
             bresp       <= 2'b00;
-            arready<=0;
             rdata<=0;
             rresp<=0;
             rvalid<=0;
