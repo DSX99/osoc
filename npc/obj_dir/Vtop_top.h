@@ -19,6 +19,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop_top final {
     // DESIGN SPECIFIC STATE
     CData/*0:0*/ clk;
     CData/*0:0*/ rst;
+    CData/*0:0*/ external_stall;
     CData/*0:0*/ __PVT__arvalid_ifu;
     CData/*0:0*/ __PVT__arvalid_lsu;
     CData/*0:0*/ __PVT__awvalid_lsu;
@@ -42,7 +43,6 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop_top final {
     CData/*1:0*/ __PVT__arb_bresp;
     CData/*0:0*/ __PVT__arb_rvalid;
     CData/*0:0*/ __PVT__arb_bvalid;
-    CData/*0:0*/ __PVT__lsu_mod__DOT__external_stall;
     CData/*0:0*/ __PVT__lsu_mod__DOT__prev_le;
     CData/*0:0*/ __PVT__lsu_mod__DOT__we_stall;
     CData/*0:0*/ __PVT__lsu_mod__DOT__ff_stall;

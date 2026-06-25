@@ -243,7 +243,7 @@ void execute(uint32_t n){
     n--;
     
     if(!batch) {
-      if (!current_cycle_is_skipped) {
+      if (!current_cycle_is_skipped && (!top->top->external_stall)) {
         difftest_regcpy(&ref_cpu, 0);
 
         if (ref_cpu.pc != top->top->pc) {
