@@ -660,6 +660,7 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
         vlSelfRef.opcode = 0U;
         __Vdly__arvalid_ifu = 0U;
         __Vdly__rready_ifu = 0U;
+        vlSelfRef.__PVT__ifu_mod__DOT__ar_sent = 0U;
         vlSelfRef.__PVT__ifu_stall = 1U;
     } else {
         if (((IData)(vlSelfRef.__PVT__lsu_le) & (~ (IData)(vlSelfRef.__PVT__lsu_mod__DOT__we_stall)))) {

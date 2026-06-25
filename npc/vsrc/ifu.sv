@@ -19,7 +19,8 @@ module ifu(
     output logic        rready_ifu
 );
 
-logic idk, idk_2, ar_sent;
+logic idk, idk_2;
+logic ar_sent;
 
 assign idk = |rresp_ifu;
 
