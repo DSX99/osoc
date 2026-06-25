@@ -5,7 +5,6 @@ module ifu(
     input logic rst,
     input logic [31:0] pc,
     input logic [31:0] next_pc,
-    input logic [31:0] comb_pc,
     output pipeline_bus_pkg::if_to_id_bus_t bus_out,
     output logic valid,
     input logic ready,
@@ -23,7 +22,7 @@ module ifu(
 );
 
 typedef enum{
-    IDLE, WAIT_AR, WAIT_R
+    AWAIT, IDLE, WAIT_AR, WAIT_R
 } IFU_state_t;
 IFU_state_t ifu;
 
@@ -35,12 +34,11 @@ always_comb begin
     bus_out.next_pc = next_pc;
 end
 
-assign araddr = |ifu ? comb_pc : pc;
-
 always_ff @(posedge clk) begin
     if(rst) begin
         bus_out.opcode<=0;
         arvalid<=0;
+        araddr<=0;
         rready<=0;
         valid<=0;
     end else begin
@@ -48,12 +46,12 @@ always_ff @(posedge clk) begin
             case(ifu)
                 IDLE:begin
                     arvalid<=1;
+                    araddr<=pc;
                     ifu<=WAIT_AR;
                     valid<=0;
                 end
                 WAIT_AR:begin
-                    valid<=0;
-                    if(arready)begin
+                    if(arready)begin 
                         arvalid<=0;
                         ifu<=WAIT_R;
                         rready<=1;
@@ -61,15 +59,17 @@ always_ff @(posedge clk) begin
                 end
                 WAIT_R:begin
                     if(rvalid) begin
-                        ifu<=WAIT_AR;
+                        ifu<=AWAIT;
                         bus_out.opcode<=rdata;
                         rready<=0;
                         valid<=1;
-                        arvalid<=1;
                     end
+                AWAIT: begin
+                    ifu<=IDLE;
+                end
                 end
             endcase
-        end else valid<=0;
+        end
     end
 end
 

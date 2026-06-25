@@ -10,7 +10,7 @@ logic reg_valid_e;
 
 assign opcode = if_id_bus.opcode;
 
-logic [31:0] next_pc, comb_pc; //here next may be misleading as it is pc+4, comb pc is what will be written in next cycle
+logic [31:0] next_pc;
 
 // Pipeline buses and valid/ready signals
 if_to_id_bus_t if_id_bus;
@@ -30,14 +30,14 @@ logic [31:0] csr_data;
 
 logic [31:0] pc_in;
 pc pc_mod(
-    .clk(clk), .rst(rst), .branch(ex_ls_bus.branch), .data_in(pc_in), .pc(pc), .next_pc(next_pc), .comb_pc(comb_pc), .valid(ls_wb_valid)
+    .clk(clk), .rst(rst), .branch(ex_ls_bus.branch), .data_in(pc_in), .pc(pc), .next_pc(next_pc), .valid(ls_wb_valid)
 );
 assign pc_in = ls_wb_bus.mux_select_pc ? ls_wb_bus.csr_out : ls_wb_bus.alu_out;
 
 
 // IFU
 ifu ifu_mod(
-    .clk(clk), .rst(rst), .pc(pc), .next_pc(next_pc), .comb_pc(comb_pc), .bus_out(if_id_bus), .valid(if_id_valid), .ready(if_id_ready),
+    .clk(clk), .rst(rst), .pc(pc), .next_pc(next_pc), .bus_out(if_id_bus), .valid(if_id_valid), .ready(if_id_ready),
     .araddr(araddr_ifu), .arvalid(arvalid_ifu), .arready(arready_ifu), .rdata(rdata_ifu), .rresp(rresp_ifu), .rvalid(rvalid_ifu), .rready(rready_ifu)
 );
 
