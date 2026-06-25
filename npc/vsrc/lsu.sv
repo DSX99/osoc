@@ -86,7 +86,7 @@ module lsu(
 //reading
 always_ff @(posedge clk) begin
     prev_le<=bus_in.lsu_le;
-    prev_we<=bus_in.lsu_we
+    prev_we<=bus_in.lsu_we;
     if(rst) begin
         bus_out.lsu_out<=0;
         arvalid<=0;
