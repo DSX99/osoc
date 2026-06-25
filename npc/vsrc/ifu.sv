@@ -29,7 +29,6 @@ IFU_state_t ifu;
 logic unused_bits;
 
 always_comb begin
-    valid = rvalid && rready;
     unused_bits = |rresp;
     bus_out.pc = pc;
     bus_out.next_pc = next_pc;
@@ -41,6 +40,7 @@ always_ff @(posedge clk) begin
         arvalid<=0;
         araddr<=0;
         rready<=0;
+        valid<=0;
     end else begin
         if(ready) begin
             case(ifu)
@@ -48,6 +48,7 @@ always_ff @(posedge clk) begin
                     arvalid<=1;
                     araddr<=pc;
                     ifu<=WAIT_AR;
+                    valid<=0;
                 end
                 WAIT_AR:begin
                     if(arready)begin 
@@ -61,6 +62,7 @@ always_ff @(posedge clk) begin
                         ifu<=IDLE;
                         bus_out.opcode<=rdata;
                         rready<=0;
+                        valid<=1;
                     end
                 end
             endcase

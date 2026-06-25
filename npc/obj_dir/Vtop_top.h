@@ -20,15 +20,14 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop_top final {
     CData/*0:0*/ clk;
     CData/*0:0*/ rst;
     CData/*0:0*/ reg_valid;
-    CData/*0:0*/ __PVT__if_id_valid;
     CData/*1:0*/ __PVT__rresp_ifu;
     CData/*0:0*/ __PVT__arvalid_ifu;
     CData/*0:0*/ __PVT__arready_ifu;
     CData/*0:0*/ __PVT__rvalid_ifu;
     CData/*0:0*/ __PVT__rready_ifu;
     CData/*3:0*/ decode_mod__DOT____VdfgRegularize_h901acc23_0_2;
+    CData/*0:0*/ __PVT__alu_mod__DOT__valid_left;
     CData/*4:0*/ __PVT__csr_mod__DOT__working_reg;
-    CData/*0:0*/ __Vdly__if_id_valid;
     SData/*9:0*/ decode_mod__DOT____VdfgExtracted_h3b2fb429__0;
     IData/*31:0*/ pc;
     IData/*31:0*/ opcode;
