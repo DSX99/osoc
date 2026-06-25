@@ -35,7 +35,7 @@ always_ff @(posedge clk) begin
         ar_sent<=0;
         stall<=1;
     end else begin
-        if(!lsu_stall) begin
+        if(!lsu_stall && !ar_sent) begin
             arvalid_ifu<=1;
             araddr_ifu<=pc; 
             stall<=1;
