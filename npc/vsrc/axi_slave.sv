@@ -37,6 +37,8 @@ logic [3:0] aw_mask;
 import "DPI-C" function void memwrite(int addr, int data, int idk);
 import "DPI-C" function int memread(int addr);
 
+assign arready = arvalid;
+
 always_ff @(posedge clk) begin
     if (rst) begin
             awready     <= 1'b0;
@@ -53,6 +55,25 @@ always_ff @(posedge clk) begin
             ar_done<=0;
             aw_mask<=0;
     end else begin
+
+        //reading
+        if(arvalid && arready) begin
+            rdatad<=memread(araddr);
+            rvalid<=1;
+            ar_done<=1;
+            arready<=0;
+        end
+
+        if(rvalid && rready || ar_done) begin
+            rvalid<=0;
+            rresp<=0;
+            ar_done<=0;
+        end
+
+
+
+        //writing
+
         if(awvalid) awready<=1;
         if(awvalid && awready) begin
             aw<=awaddr;
@@ -75,19 +96,6 @@ always_ff @(posedge clk) begin
             bvalid<=0;
         end
 
-        if(arvalid) arready<=1;
-        if(arvalid && arready) begin
-            rdata<=memread(araddr);
-            rvalid<=1;
-            ar_done<=1;
-            arready<=0;
-        end
-
-        if(rvalid && rready || ar_done) begin
-            rvalid<=0;
-            rresp<=0;
-            ar_done<=0;
-        end
     end
 end
 
