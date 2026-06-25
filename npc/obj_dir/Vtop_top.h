@@ -55,7 +55,6 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop_top final {
     CData/*3:0*/ __PVT__slave_mod__DOT__aw_mask;
     IData/*31:0*/ opcode;
     IData/*31:0*/ pc;
-    IData/*31:0*/ __PVT__araddr_ifu;
     IData/*31:0*/ __PVT__araddr_lsu;
     IData/*31:0*/ __PVT__awaddr_lsu;
     IData/*31:0*/ __PVT__wdata_lsu;
