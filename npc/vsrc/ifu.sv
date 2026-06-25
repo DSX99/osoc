@@ -22,7 +22,7 @@ module ifu(
 );
 
 typedef enum{
-    AWAIT, IDLE, WAIT_AR, WAIT_R
+    WAIT, IDLE, WAIT_AR, WAIT_R
 } IFU_state_t;
 IFU_state_t ifu;
 
