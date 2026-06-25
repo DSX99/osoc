@@ -735,10 +735,12 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
         if ((1U & (~ (IData)(vlSelfRef.__PVT__ifu_stall)))) {
             __Vdly__ifu_stall = 1U;
         }
-        if (((~ (IData)(vlSelfRef.__PVT__ifu_mod__DOT__lsu_stall)) 
-             & (IData)(vlSelfRef.__PVT__ifu_stall))) {
+        if ((((~ (IData)(vlSelfRef.__PVT__ifu_mod__DOT__lsu_stall)) 
+              & (IData)(vlSelfRef.__PVT__ifu_stall)) 
+             & (~ (IData)(vlSelfRef.__PVT__ifu_mod__DOT__ar_sent)))) {
             __Vdly__arvalid_ifu = 1U;
             vlSelfRef.__PVT__araddr_ifu = vlSelfRef.pc;
+            vlSelfRef.__PVT__ifu_mod__DOT__ar_sent = 1U;
         }
         if (((IData)(vlSelfRef.__PVT__arvalid_ifu) 
              & (IData)(vlSelfRef.__PVT__slave_mod__DOT__arvalid))) {
@@ -749,6 +751,7 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
             vlSelfRef.opcode = vlSelfRef.__PVT__arb_rdata;
             __Vdly__rready_ifu = 0U;
             __Vdly__ifu_stall = 0U;
+            vlSelfRef.__PVT__ifu_mod__DOT__ar_sent = 0U;
         }
         if ((1U & (~ (IData)(vlSelfRef.external_stall)))) {
             vlSelfRef.pc = vlSelfRef.__PVT__pc_mod__DOT__next_pc;
