@@ -76,7 +76,9 @@ assign ex_ls_valid = ex_ls_valid_alu & ex_ls_valid_csr;
 
 // LSU
 lsu lsu_mod(
-    .clk(clk), .bus_in(ex_ls_bus), .bus_out(ls_wb_bus), .valid_left(ex_ls_valid), .ready_left(ex_ls_ready), .valid_right(ls_wb_valid), .ready_right(ls_wb_ready)
+    .clk(clk), .bus_in(ex_ls_bus), .bus_out(ls_wb_bus), .valid_left(ex_ls_valid), .ready_left(ex_ls_ready), .valid_right(ls_wb_valid), .ready_right(ls_wb_ready),
+    .araddr(araddr_lsu), .arvalid(arvalid_lsu), .arready(arready_lsu), .rdata(rdata_lsu), .rresp(rresp_lsu), .rvalid(rvalid_lsu), .rready(rready_lsu),
+    .awaddr(awaddr_lsu), .awvalid(arvalid_lsu), .awready(arready_lsu), .wdata(rdata_lsu), .wvalid(rvalid_lsu), .wready(rready_lsu), .bresp(bresp_lsu), .bvalid(bvalid_lsu), .bready(bready_lsu)
 );
 
 
@@ -105,6 +107,18 @@ end
 
 assign csr_in = id_ex_bus.csr_oper[2] ? {27'b0, id_ex_bus.rs1} : id_ex_bus.data_rs1;
 
+logic [31:0] araddr_lsu, rdata_lsu;
+logic [1:0] rresp_lsu;
+logic arvalid_lsu, arready_lsu, rvalid_lsu, rready_lsu;
+
+logic [31:0] awaddr_lsu, wdata_lsu;
+logic [1:0] bresp_lsu;
+logic awvalid_lsu, awready_lsu, wvalid_lsu, wready_lsu, bvalid_lsu, bready_lsu;
+
+axi_slave_lsu axi_slave_lsu_mod (
+    .clk(clk), .rst(rst), .araddr(araddr_lsu), .arvalid(arvalid_lsu), .arready(arready_lsu), .rdata(rdata_lsu), .rresp(rresp_lsu), .rvalid(rvalid_lsu), .rready(rready_lsu),
+    .awaddr(awaddr_lsu), .awvalid(arvalid_lsu), .awready(arready_lsu), .wdata(rdata_lsu), .wvalid(rvalid_lsu), .wready(rready_lsu), .bresp(bresp_lsu), .bvalid(bvalid_lsu), .bready(bready_lsu)
+);
 
 logic [31:0] araddr_ifu, rdata_ifu;
 logic [1:0] rresp_ifu;
