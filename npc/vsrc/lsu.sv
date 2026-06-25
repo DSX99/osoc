@@ -37,171 +37,137 @@ module lsu(
     output logic        bready
 );
 
-    // LB 0
-    // LH 1
-    // LW 2
-    // LBU 3
-    // LHU 4
-    // SB 5
-    // SH 6
-    // SW 7
-
-    typedef enum{
-        IDLE, WAIT_AR, WAIT_R, AWAIT
-    } IFU_state_t;
-    IFU_state_t lsu_l;
-
-    typedef enum{
-        IDLE_S, WAIT, WAIT_RESP, AWAIT_S
-    } IFU_state_s_t;
-    IFU_state_s_t lsu_s;
+    typedef enum logic [2:0] {
+        IDLE, WAIT_AR, WAIT_R, WAIT_AW_W, WAIT_RESP
+    } lsu_state_t;
+    lsu_state_t state;
 
     logic unused_branch;
-    logic ready;
-    logic prev_le, prev_we;
+    logic done_aw, done_w;
+    logic lsu_active;
+
+    // Is there an active memory operation requested by a valid instruction?
+    assign lsu_active = valid_left && (bus_in.lsu_le || bus_in.lsu_we);
 
     always_comb begin
-        valid_right = valid_left && !(!prev_le && bus_in.lsu_le) && !(!prev_we && bus_in.lsu_we) && ready;
-        ready_left = ready_right && !(!prev_le && bus_in.lsu_le) && !(!prev_we && bus_in.lsu_we) && ready;
-        unused_branch = bus_in.branch | |rresp | |bresp;
+        // Default pipeline passthrough
+        ready_left  = ready_right;
+        valid_right = valid_left;
 
-        bus_out.alu_out = 0;
-        bus_out.next_pc = 0;
-        bus_out.csr_out = 0;
-        bus_out.rd = 0;
-        bus_out.mux_select = 0;
-        bus_out.mux_select_pc = 0;
+        // If the LSU is processing an operation, assert stall control
+        if (lsu_active || state != IDLE) begin
+            ready_left  = 0;
+            valid_right = 0;
+            
+            // Critical Optimization: Unstall on the exact cycle AXI finishes
+            if ((state == WAIT_R && rvalid) || (state == WAIT_RESP && bvalid)) begin
+                ready_left  = ready_right;
+                valid_right = 1;
+            end
+        end
 
+        // Pass-through structures
+        bus_out.alu_out       = bus_in.alu_out;
+        bus_out.next_pc       = bus_in.next_pc;
+        bus_out.csr_out       = bus_in.csr_out;
+        bus_out.rd            = bus_in.rd;
+        bus_out.mux_select    = bus_in.mux_select;
+        bus_out.mux_select_pc = bus_in.mux_select_pc;
+        unused_branch         = bus_in.branch | |rresp | |bresp;
 
-        if(valid_left && ready_right) begin //should it be here or better to take out for future?                   !!check when doing pipeline                        
-            bus_out.alu_out = bus_in.alu_out;
-            bus_out.next_pc = bus_in.next_pc;
-            bus_out.csr_out = bus_in.csr_out;
-            bus_out.rd = bus_in.rd;
-            bus_out.mux_select = bus_in.mux_select;
-            bus_out.mux_select_pc = bus_in.mux_select_pc;
-        end 
+        // Dynamic Write Strobe Decoding
+        case(bus_in.lsu_oper) 
+            3'b000:  wstrb = 4'b0001; // SB
+            3'b001:  wstrb = 4'b0011; // SH
+            3'b010:  wstrb = 4'b1111; // SW
+            default: wstrb = 4'b0000;
+        endcase
     end
 
-//reading
-always_ff @(posedge clk) begin
-    prev_le<=bus_in.lsu_le;
-    prev_we<=bus_in.lsu_we;
-    if(rst) begin
-        bus_out.lsu_out<=0;
-        arvalid<=0;
-        araddr<=0;
-        rready<=0;
-        ready<=1;
-    end else begin
-        if(ready_right && valid_left) begin
-            case(lsu_l)
-                IDLE:begin
-                    if(bus_in.lsu_le) begin
-                        arvalid<=1;
-                        araddr<=bus_in.alu_out;
-                        lsu_l<=WAIT_AR;
-                        ready<=0;
+    always_ff @(posedge clk) begin
+        if(rst) begin
+            state           <= IDLE;
+            bus_out.lsu_out <= 0;
+            arvalid         <= 0;
+            araddr          <= 0;
+            rready          <= 0;
+            awaddr          <= 0;
+            awvalid         <= 0;
+            wdata           <= 0;
+            wvalid          <= 0;
+            bready          <= 1;
+            done_aw         <= 0;
+            done_w          <= 0;
+        end else begin
+            case(state)
+                IDLE: begin
+                    done_aw <= 0;
+                    done_w  <= 0;
+                    if(valid_left && ready_right) begin
+                        if(bus_in.lsu_le) begin
+                            arvalid <= 1;
+                            araddr  <= bus_in.alu_out;
+                            state   <= WAIT_AR;
+                        end else if(bus_in.lsu_we) begin
+                            awaddr  <= bus_in.alu_out;
+                            awvalid <= 1;
+                            wdata   <= bus_in.data_rs2;
+                            wvalid  <= 1;
+                            state   <= WAIT_AW_W;
+                        end
                     end
                 end
-                WAIT_AR:begin
-                    if(arready)begin 
-                        arvalid<=0;
-                        rready<=1;
-                        lsu_l<=WAIT_R;
+
+                WAIT_AR: begin
+                    if(arready) begin 
+                        arvalid <= 0;
+                        rready  <= 1;
+                        state   <= WAIT_R;
                     end
                 end
-                WAIT_R:begin
+
+                WAIT_R: begin
                     if(rvalid) begin
-                        lsu_l<=AWAIT;
+                        rready <= 0;
+                        state  <= IDLE; // Jump directly back to IDLE for consecutive operations
+                        
                         case(bus_in.lsu_oper)
-                            0: begin //LB
-                                bus_out.lsu_out <= {{24{rdata[7]}},rdata[7:0]};
-                            end 
-                            1: begin //LH
-                                bus_out.lsu_out <= {{16{rdata[15]}},rdata[15:0]};
-                            end 
-                            2: begin //LW
-                                bus_out.lsu_out <= rdata[31:0];
-                            end 
-                            4: begin //LBU
-                                bus_out.lsu_out <= {24'b0,rdata[7:0]};
-                            end 
-                            5: begin //LHU
-                                bus_out.lsu_out <= {16'b0,rdata[15:0]};
-                            end 
+                            3'd0: bus_out.lsu_out <= {{24{rdata[7]}}, rdata[7:0]};   // LB
+                            3'd1: bus_out.lsu_out <= {{16{rdata[15]}}, rdata[15:0]}; // LH
+                            3'd2: bus_out.lsu_out <= rdata[31:0];                    // LW
+                            3'd4: bus_out.lsu_out <= {24'b0, rdata[7:0]};            // LBU
+                            3'd5: bus_out.lsu_out <= {16'b0, rdata[15:0]};           // LHU
+                            default: bus_out.lsu_out <= rdata;
                         endcase
-                        rready<=0;
-                        ready<=1;
                     end
                 end
-                AWAIT: begin
-                    lsu_l<=IDLE;
-                end
-            endcase
-        end
-    end
-end
 
-logic done_aw, done_w;
-
-//writing
-
-always_comb begin
-    case(bus_in.lsu_oper) 
-        3'b000: wstrb=4'b0001;
-        3'b001: wstrb=4'b0011;
-        3'b010: wstrb=4'b1111;
-        default: wstrb=0;
-    endcase
-end
-
-always_ff @(posedge clk) begin
-    if(rst) begin
-        bready<=1;
-        wdata<=0;
-        wvalid<=0;
-        awaddr<=0;
-        awvalid<=0;
-    end else begin
-        if(ready_right && valid_left) begin
-            case(lsu_s)
-                IDLE_S:begin
-                    if(bus_in.lsu_we) begin
-                        awaddr<=bus_in.alu_out;
-                        awvalid<=1;
-                        wdata<=bus_in.data_rs2;
-                        wvalid<=1;
-                        lsu_s<=WAIT;
-                        ready<=0;
-                    end
-                end
-                WAIT:begin
-                    if(wready)begin 
-                        wvalid<=0;
-                        done_w<=1;
-                    end
+                WAIT_AW_W: begin
                     if(awready) begin
-                        awvalid<=0;
-                        done_aw<=1;
+                        awvalid <= 0;
+                        done_aw <= 1;
                     end
-                    if((done_aw || awready) && (done_w || wready)) lsu_s <= WAIT_RESP;
+                    if(wready) begin
+                        wvalid  <= 0;
+                        done_w  <= 1;
+                    end
+                    
+                    if((done_aw || awready) && (done_w || wready)) begin
+                        state   <= WAIT_RESP;
+                        done_aw <= 0;
+                        done_w  <= 0;
+                    end
                 end
-                WAIT_RESP:begin
-                    done_aw<=0;
-                    done_w<=0;
+
+                WAIT_RESP: begin
                     if(bvalid) begin
-                        lsu_s<=AWAIT_S;
-                        ready<=1;
+                        state <= IDLE; // Jump directly back to IDLE for consecutive operations
                     end
                 end
-                AWAIT_S: begin
-                    lsu_s<=IDLE_S;
-                end
+                
+                default: state <= IDLE;
             endcase
         end
     end
-end
-
 
 endmodule
