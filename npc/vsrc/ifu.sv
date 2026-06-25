@@ -41,7 +41,6 @@ always_ff @(posedge clk) begin
     if(rst) begin
         bus_out.opcode<=0;
         arvalid<=0;
-        araddr<=0;
         rready<=0;
         valid<=0;
     end else begin
