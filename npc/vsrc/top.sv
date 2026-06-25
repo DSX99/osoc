@@ -27,7 +27,7 @@ logic [1:0] mux_select, mux_select_pc;
 logic branch, lsu_we, lsu_le, ifu_stall, lsu_stall;
 
 regs reg_mod(
-    .clk(clk), .rst(rst), .data_in(to_regs), .rs1(rs1), .rs2(rs2), .rd(rd), .data_rs1(data_rs1), .data_rs2(data_rs2)
+    .clk(clk), .rst(rst), .data_in(to_regs), .rs1(rs1), .rs2(rs2), .rd(rd), .data_rs1(data_rs1), .data_rs2(data_rs2), .external_stall(external_stall)
 );
 
 pc pc_mod(

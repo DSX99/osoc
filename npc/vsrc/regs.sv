@@ -1,6 +1,7 @@
 module regs (
     input logic clk,
     input logic rst,
+    input logic external_stall
     input logic [31:0] data_in,
     input logic [4:0] rs1,
     input logic [4:0] rs2,
@@ -22,7 +23,7 @@ module regs (
                 regs[i]<=0;
             end
         end else begin
-            regs[rd]<=data_in;
+            if(!external_stall) regs[rd]<=data_in;
             regs[0]<=0;
         end
     end
