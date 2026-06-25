@@ -714,7 +714,7 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
         if (((IData)(vlSelfRef.__PVT__wvalid_lsu) & (IData)(vlSelfRef.__PVT__arb_wready))) {
             if (((IData)(vlSelfRef.__PVT__awvalid_lsu) 
                  & (IData)(vlSelfRef.__PVT__arb_awready))) {
-                Vtop_top____Vdpiimwrap_slave_mod__DOT__memwrite_TOP__top(vlSelfRef.__PVT__slave_mod__DOT__aw, vlSelfRef.__PVT__wdata_lsu, (IData)(vlSelfRef.__PVT__slave_mod__DOT__aw_mask));
+                Vtop_top____Vdpiimwrap_slave_mod__DOT__memwrite_TOP__top(vlSelfRef.__PVT__awaddr_lsu, vlSelfRef.__PVT__wdata_lsu, (IData)(vlSelfRef.__PVT__slave_mod__DOT__aw_mask));
             }
             if (((IData)(vlSelfRef.__PVT__slave_mod__DOT__aw_done) 
                  & (~ ((IData)(vlSelfRef.__PVT__awvalid_lsu) 
