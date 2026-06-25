@@ -60,7 +60,6 @@ always_ff @(posedge clk) begin
             rdata<=memread(araddr);
             rvalid<=1;
             ar_done<=1;
-            arready<=0;
         end
 
         if(rvalid && rready || ar_done) begin
