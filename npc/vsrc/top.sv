@@ -37,7 +37,7 @@ assign pc_in = ls_wb_bus.mux_select_pc ? ls_wb_bus.csr_out : ls_wb_bus.alu_out;
 
 // IFU
 ifu ifu_mod(
-    .clk(clk), .rst(rst), .pc(pc), .next_pc(comb_pc), .bus_out(if_id_bus), .valid(if_id_valid), .ready(if_id_ready),
+    .clk(clk), .rst(rst), .pc(pc), .next_pc(next_pc), .comb_pc(comb_pc), .bus_out(if_id_bus), .valid(if_id_valid), .ready(if_id_ready),
     .araddr(araddr_ifu), .arvalid(arvalid_ifu), .arready(arready_ifu), .rdata(rdata_ifu), .rresp(rresp_ifu), .rvalid(rvalid_ifu), .rready(rready_ifu)
 );
 

@@ -5,6 +5,7 @@ module ifu(
     input logic rst,
     input logic [31:0] pc,
     input logic [31:0] next_pc,
+    input logic [31:0] comb_pc,
     output pipeline_bus_pkg::if_to_id_bus_t bus_out,
     output logic valid,
     input logic ready,
@@ -64,7 +65,7 @@ always_ff @(posedge clk) begin
                         rready<=0;
                         valid<=1;
                         arvalid<=1;
-                        araddr<=next_pc;
+                        araddr<=comb_pc;
                     end
                 end
             endcase
