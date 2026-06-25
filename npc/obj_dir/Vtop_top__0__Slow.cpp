@@ -51,9 +51,6 @@ VL_ATTR_COLD void Vtop_top___stl_sequent__TOP__top__0(Vtop_top* vlSelf) {
     VL_DEBUG_IF(VL_DBG_MSGF("+      Vtop_top___stl_sequent__TOP__top__0\n"); );
     Vtop__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     auto& vlSelfRef = std::ref(*vlSelf).get();
-    // Locals
-    CData/*2:0*/ __Vtableidx1;
-    __Vtableidx1 = 0;
     // Body
     vlSelfRef.__PVT__pc_mod__DOT__next_pc = ((IData)(4U) 
                                              + vlSelfRef.pc);
@@ -334,9 +331,9 @@ VL_ATTR_COLD void Vtop_top___stl_sequent__TOP__top__0(Vtop_top* vlSelf) {
             }
         }
     }
-    __Vtableidx1 = vlSelfRef.__PVT__lsu_oper;
+    vlSelfRef.__Vtableidx1 = vlSelfRef.__PVT__lsu_oper;
     vlSelfRef.__PVT__wstrb_lsu = Vtop__ConstPool__TABLE_hf9f0be4a_0
-        [__Vtableidx1];
+        [vlSelfRef.__Vtableidx1];
     vlSelfRef.__PVT__ifu_mod__DOT__lsu_stall = ((IData)(vlSelfRef.__PVT__lsu_mod__DOT__ff_stall) 
                                                 | (((~ (IData)(vlSelfRef.__PVT__lsu_mod__DOT__prev_we)) 
                                                     & (IData)(vlSelfRef.__PVT__lsu_we)) 
@@ -427,6 +424,7 @@ VL_ATTR_COLD void Vtop_top___ctor_var_reset(Vtop_top* vlSelf) {
     vlSelf->__PVT__lsu_mod__DOT__prev_we = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 4933764160699790127ull);
     vlSelf->__PVT__lsu_mod__DOT__prev_le = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 8179215459852384519ull);
     vlSelf->__PVT__lsu_mod__DOT__aw_sent = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 4493167164071238834ull);
+    vlSelf->__PVT__lsu_mod__DOT__ar_sent = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 16758408011261563757ull);
     vlSelf->__PVT__lsu_mod__DOT__aw_done = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 14110570884852838737ull);
     vlSelf->__PVT__lsu_mod__DOT__w_done = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 12310510971420858226ull);
     vlSelf->__PVT__decode_mod__DOT__imm_i = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 17728463912631228713ull);
@@ -444,4 +442,5 @@ VL_ATTR_COLD void Vtop_top___ctor_var_reset(Vtop_top* vlSelf) {
     vlSelf->__PVT__slave_mod__DOT__aw = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 14911593086297919951ull);
     vlSelf->__PVT__slave_mod__DOT__aw_done = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 9302009304647165941ull);
     vlSelf->__PVT__slave_mod__DOT__aw_mask = VL_SCOPED_RAND_RESET_I(4, __VscopeHash, 16785331223480926159ull);
+    vlSelf->__Vtableidx1 = 0;
 }

@@ -50,6 +50,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop_top final {
     CData/*0:0*/ __PVT__lsu_mod__DOT__prev_we;
     CData/*0:0*/ __PVT__lsu_mod__DOT__prev_le;
     CData/*0:0*/ __PVT__lsu_mod__DOT__aw_sent;
+    CData/*0:0*/ __PVT__lsu_mod__DOT__ar_sent;
     CData/*0:0*/ __PVT__lsu_mod__DOT__aw_done;
     CData/*0:0*/ __PVT__lsu_mod__DOT__w_done;
     CData/*0:0*/ __PVT__ifu_mod__DOT__lsu_stall;
@@ -59,6 +60,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop_top final {
     CData/*0:0*/ __PVT__slave_mod__DOT__arvalid;
     CData/*0:0*/ __PVT__slave_mod__DOT__aw_done;
     CData/*3:0*/ __PVT__slave_mod__DOT__aw_mask;
+    CData/*2:0*/ __Vtableidx1;
     IData/*31:0*/ opcode;
     IData/*31:0*/ pc;
     IData/*31:0*/ __PVT__araddr_ifu;

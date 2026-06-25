@@ -58,7 +58,7 @@ logic ff_stall, prev_we, prev_le;
 logic aw_sent, ar_sent, aw_done, w_done;
 
 always_ff @(posedge clk) begin
-    idk<= idk | |rresp_lsu | |bresp_lsu | |bvalid_lsu;
+    idk<= idk | |rresp_lsu | |bresp_lsu | |bvalid_lsu | |external_stall;
     prev_le<=le;
     prev_we<=we;
     if(rst) begin
