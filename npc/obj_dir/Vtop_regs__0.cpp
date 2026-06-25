@@ -9,8 +9,14 @@ void Vtop_regs___ico_sequent__TOP__top__reg_mod__0(Vtop_regs* vlSelf) {
     Vtop__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     auto& vlSelfRef = std::ref(*vlSelf).get();
     // Body
-    vlSelfRef.__PVT__data_rs2 = vlSelfRef.regs[vlSymsp->TOP__top.__PVT__rs2];
-    vlSelfRef.__PVT__data_rs1 = vlSelfRef.regs[vlSymsp->TOP__top.__PVT__rs1];
+    vlSelfRef.__PVT__data_rs2 = vlSelfRef.regs[(0x0000001fU 
+                                                & ((vlSymsp->TOP__top.__PVT__id_ex_bus_decoded[1U] 
+                                                    << 2U) 
+                                                   | (vlSymsp->TOP__top.__PVT__id_ex_bus_decoded[0U] 
+                                                      >> 0x0000001eU)))];
+    vlSelfRef.__PVT__data_rs1 = vlSelfRef.regs[(0x0000001fU 
+                                                & (vlSymsp->TOP__top.__PVT__id_ex_bus_decoded[1U] 
+                                                   >> 3U))];
 }
 
 void Vtop_regs___nba_sequent__TOP__top__reg_mod__0(Vtop_regs* vlSelf) {
@@ -31,9 +37,28 @@ void Vtop_regs___nba_sequent__TOP__top__reg_mod__0(Vtop_regs* vlSelf) {
     __VdlySet__regs__v32 = 0U;
     if (vlSymsp->TOP.rst) {
         __VdlySet__regs__v0 = 1U;
-    } else {
-        __VdlyVal__regs__v32 = vlSymsp->TOP__top.__PVT__to_regs;
-        __VdlyDim0__regs__v32 = vlSymsp->TOP__top.__PVT__rd;
+    } else if (vlSymsp->TOP__top.__PVT__if_id_valid) {
+        __VdlyVal__regs__v32 = ((4U & vlSymsp->TOP__top.__PVT__ls_wb_bus[0U])
+                                 ? ((2U & vlSymsp->TOP__top.__PVT__ls_wb_bus[0U])
+                                     ? ((vlSymsp->TOP__top.__PVT__ls_wb_bus[1U] 
+                                         << 0x00000018U) 
+                                        | (vlSymsp->TOP__top.__PVT__ls_wb_bus[0U] 
+                                           >> 8U)) : 
+                                    ((vlSymsp->TOP__top.__PVT__ls_wb_bus[2U] 
+                                      << 0x00000018U) 
+                                     | (vlSymsp->TOP__top.__PVT__ls_wb_bus[1U] 
+                                        >> 8U))) : 
+                                ((2U & vlSymsp->TOP__top.__PVT__ls_wb_bus[0U])
+                                  ? ((vlSymsp->TOP__top.__PVT__ls_wb_bus[3U] 
+                                      << 0x00000018U) 
+                                     | (vlSymsp->TOP__top.__PVT__ls_wb_bus[2U] 
+                                        >> 8U)) : (
+                                                   (vlSymsp->TOP__top.__PVT__ls_wb_bus[4U] 
+                                                    << 0x00000018U) 
+                                                   | (vlSymsp->TOP__top.__PVT__ls_wb_bus[3U] 
+                                                      >> 8U))));
+        __VdlyDim0__regs__v32 = (0x0000001fU & (vlSymsp->TOP__top.__PVT__ls_wb_bus[0U] 
+                                                >> 3U));
         __VdlySet__regs__v32 = 1U;
     }
     if (__VdlySet__regs__v0) {

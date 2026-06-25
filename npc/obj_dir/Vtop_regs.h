@@ -19,6 +19,8 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop_regs final {
     CData/*4:0*/ __PVT__rs1;
     CData/*4:0*/ __PVT__rs2;
     CData/*4:0*/ __PVT__rd;
+    CData/*0:0*/ __PVT__valid;
+    CData/*0:0*/ __PVT__ready;
     IData/*31:0*/ __PVT__data_in;
     IData/*31:0*/ __PVT__data_rs1;
     IData/*31:0*/ __PVT__data_rs2;

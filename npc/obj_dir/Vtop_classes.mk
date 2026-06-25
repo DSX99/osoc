@@ -36,6 +36,8 @@ VM_CLASSES_SLOW += \
   Vtop___024root__0__Slow \
   Vtop_top__Slow \
   Vtop_top__0__Slow \
+  Vtop___024unit__Slow \
+  Vtop___024unit__0__Slow \
   Vtop_regs__Slow \
   Vtop_regs__0__Slow \
 

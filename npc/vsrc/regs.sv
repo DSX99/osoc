@@ -6,12 +6,17 @@ module regs (
     input logic [4:0] rs2,
     input logic [4:0] rd,
     output logic [31:0] data_rs1,
-    output logic [31:0] data_rs2     
+    output logic [31:0] data_rs2,
+    
+    input logic valid,
+    output logic ready
 );
     
     logic [31:0] regs [31:0] /* verilator public */; 
 
     always_comb begin
+        ready=1;
+
         data_rs1 = regs[rs1];
         data_rs2 = regs[rs2];
     end
@@ -22,8 +27,10 @@ module regs (
                 regs[i]<=0;
             end
         end else begin
-            regs[rd]<=data_in;
-            regs[0]<=0;
+            if(valid) begin
+                regs[rd]<=data_in;
+                regs[0]<=0;
+            end
         end
     end
 endmodule

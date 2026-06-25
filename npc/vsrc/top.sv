@@ -3,59 +3,102 @@ module top(
     input rst
 );
 
-logic [31:0] opcode /* verilator public */,pc /* verilator public */;
+logic [31:0] pc /* verilator public */, opcode /* verilator public */;
 
-logic [31:0] to_regs, data_rs1, data_rs2, next_pc, alu_out, lsu_out, imm, csr_in, csr_out, to_pc;
-logic [7:0] alu_op;
-logic [4:0] rs1, rs2, rd, cause;
-logic [2:0] lsu_oper, csr_oper;
-logic [1:0] mux_select, mux_select_pc;
-logic branch, lsu_we, lsu_le;
+assign opcode = if_id_bus.opcode;
 
-regs reg_mod(
-    .clk(clk), .rst(rst), .data_in(to_regs), .rs1(rs1), .rs2(rs2), .rd(rd), .data_rs1(data_rs1), .data_rs2(data_rs2)
-);
+logic [31:0] next_pc;
 
+// Pipeline buses and valid/ready signals
+if_to_id_bus_t if_id_bus;
+logic if_id_valid, if_id_ready;
+
+id_to_ex_bus_t id_ex_bus_decoded;
+id_to_ex_bus_t id_ex_bus;
+logic id_ex_valid, id_ex_ready;
+
+ex_to_ls_bus_t ex_ls_bus_alu;
+ex_to_ls_bus_t ex_ls_bus;
+logic ex_ls_valid, ex_ls_ready;
+
+ls_to_wb_bus_t ls_wb_bus;
+logic ls_wb_valid, ls_wb_ready;
+logic [31:0] csr_data;
+
+logic [31:0] pc_in;
 pc pc_mod(
-    .clk(clk), .rst(rst), .branch(branch), .data_in(to_pc), .pc(pc), .next_pc(next_pc)
+    .clk(clk), .rst(rst), .branch(ex_ls_bus.branch), .data_in(pc_in), .pc(pc), .next_pc(next_pc)
+);
+assign pc_in = ls_wb_bus.mux_select_pc ? ls_wb_bus.csr_out : ls_wb_bus.alu_out;
+
+
+// IFU
+ifu ifu_mod(
+    .pc(pc), .next_pc(next_pc), .bus_out(if_id_bus), .valid(if_id_valid), .ready(if_id_ready)
 );
 
-lsu lsu_mod(
-    .clk(clk), .data_in(data_rs2), .addr(alu_out), .oper(lsu_oper), .we(lsu_we), .le(lsu_le), .data_out(lsu_out)
-);
 
+
+// ID
 decode decode_mod(
-    .inst(opcode), .imm(imm), .alu_op(alu_op), .rs1(rs1), .rs2(rs2), .rd(rd), .lsu_we(lsu_we), .lsu_le(lsu_le), .mux_select(mux_select), .lsu_oper(lsu_oper),
-    .csr_oper(csr_oper), .cause(cause), .mux_select_pc(mux_select_pc)
+    .bus_in(if_id_bus), .bus_out(id_ex_bus_decoded), .valid_left(if_id_valid), .ready_left(if_id_ready), .valid_right(id_ex_valid), .ready_right(id_ex_ready)
 );
+
+
+
+
+// EXU
+
+logic id_ex_ready_alu, id_ex_ready_csr, ex_ls_valid_alu, ex_ls_valid_csr;
 
 alu alu_mod(
-    .alu_op(alu_op), .data_rs1(data_rs1), .data_rs2(data_rs2), .pc(pc), .imm(imm), .branch(branch), .data_out(alu_out)
+    .bus_in(id_ex_bus), .bus_out(ex_ls_bus_alu), .valid_left(id_ex_valid), .ready_left(id_ex_ready_alu), .valid_right(ex_ls_valid_alu), .ready_right(ex_ls_ready)
 );
 
-ifu ifu_mod(
-    .pc(pc), .opcode(opcode)
-);
-
+logic [31:0] csr_in;
 csr csr_mod(
-    .clk(clk), .rst(rst), .oper(csr_oper[1:0]), .addr(imm[11:0]), .data_in(csr_in), .data_out(csr_out), .pc(pc) ,.cause(cause)
+    .clk(clk), .rst(rst), .oper(id_ex_bus.csr_oper[1:0]), .addr(id_ex_bus.imm[11:0]),
+    .data_in(csr_in), .data_out(csr_data), .pc(pc), .cause(id_ex_bus.cause), .valid_left(id_ex_valid), .ready_left(id_ex_ready_csr), .valid_right(ex_ls_valid_csr), .ready_right(ex_ls_ready)
 );
-
-assign csr_in = csr_oper[2] ? {27'b0, rs1} : data_rs1;
 
 always_comb begin
-    to_regs=0;
-    case(mux_select)
-        0: to_regs = alu_out;
-        1: to_regs = lsu_out;
-        2: to_regs = next_pc;
-        3: to_regs = csr_out;
-    endcase
-    case(mux_select_pc)
-        2'b00: to_pc = alu_out;
-        2'b01: to_pc = csr_out;
-        default: to_pc = alu_out;
+    ex_ls_bus = ex_ls_bus_alu;
+    ex_ls_bus.csr_out = csr_data;
+end
+
+assign id_ex_ready = id_ex_ready_alu & id_ex_ready_csr;
+assign ex_ls_valid = ex_ls_valid_alu & ex_ls_valid_csr;
+
+
+
+
+// LSU
+lsu lsu_mod(
+    .clk(clk), .bus_in(ex_ls_bus), .bus_out(ls_wb_bus), .valid_left(ex_ls_valid), .ready_left(ex_ls_ready), .valid_right(ls_wb_valid), .ready_right(ls_wb_ready)
+);
+
+
+
+// WB/regfile
+logic [31:0] reg_data_rs1, reg_data_rs2, reg_in;
+regs reg_mod(
+    .clk(clk), .rst(rst), .data_in(reg_in), .rs1(id_ex_bus_decoded.rs1), .rs2(id_ex_bus_decoded.rs2), .rd(ls_wb_bus.rd), .data_rs1(reg_data_rs1), .data_rs2(reg_data_rs2), .valid(ls_wb_valid), .ready(ls_wb_ready)
+);
+
+// feed register values into id_ex_bus data fields before ALU
+always_comb begin
+    id_ex_bus = id_ex_bus_decoded;
+    id_ex_bus.data_rs1 = reg_data_rs1;
+    id_ex_bus.data_rs2 = reg_data_rs2;
+
+    case(ls_wb_bus.mux_select)
+        2'b00: reg_in = ls_wb_bus.alu_out;
+        2'b01: reg_in = ls_wb_bus.lsu_out;
+        2'b10: reg_in = ls_wb_bus.next_pc;
+        2'b11: reg_in = ls_wb_bus.csr_out;
     endcase
 end
+
+assign csr_in = id_ex_bus.csr_oper[2] ? {27'b0, id_ex_bus.rs1} : id_ex_bus.data_rs1;
 
 endmodule

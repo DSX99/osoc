@@ -10,6 +10,8 @@
 #include "Vtop___024root__0__Slow.cpp"
 #include "Vtop_top__Slow.cpp"
 #include "Vtop_top__0__Slow.cpp"
+#include "Vtop___024unit__Slow.cpp"
+#include "Vtop___024unit__0__Slow.cpp"
 #include "Vtop_regs__Slow.cpp"
 #include "Vtop_regs__0__Slow.cpp"
 #include "Vtop__Syms__Slow.cpp"
