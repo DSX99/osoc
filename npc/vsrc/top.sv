@@ -100,4 +100,15 @@ end
 
 assign csr_in = id_ex_bus.csr_oper[2] ? {27'b0, id_ex_bus.rs1} : id_ex_bus.data_rs1;
 
+
+logic [31:0] araddr_ifu, rdata_ifu;
+logic arvalid_ifu, arready_ifu, rvalid_ifu, rready_ifu;
+
+
+axi_slave axi_slave_mod (
+    .clk(clk), .rst(rst), .araddr(araddr_ifu), .arvalid(arvalid_ifu), .arready(arready_ifu), .rvalid(rvalid_ifu), .rdata(rdata_ifu), .rready(rready_ifu), .rresp(rresp_ifu)
+);
+
+
+
 endmodule

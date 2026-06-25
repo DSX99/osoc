@@ -22,7 +22,10 @@ logic [31:0] ar;
 
 always_ff @(posedge clk) begin
     if(rst) begin
-    
+        arready<=0;
+        rdata<=0;
+        rresp<=0;
+        rvalid<=0;
     end else begin
         case(slave)
             IDLE: begin
