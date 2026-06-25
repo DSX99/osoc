@@ -1215,6 +1215,7 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
             }
         } else if ((0U == vlSelfRef.__PVT__ifu_mod__DOT__ifu)) {
             __Vdly__ifu_mod__DOT__ifu = 1U;
+            vlSelfRef.__Vdly__if_id_valid = 0U;
         }
         if (vlSelfRef.__PVT__if_id_valid) {
             vlSelfRef.pc = vlSelfRef.__PVT__ifu_mod__DOT__next_pc;
