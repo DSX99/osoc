@@ -524,12 +524,12 @@ VL_ATTR_COLD void Vtop___024root__trace_full_0_sub_0(Vtop___024root* vlSelf, Ver
     bufp->fullBit(oldp+66,((1U & vlSymsp->TOP__top.__PVT__ls_wb_bus[0U])));
     bufp->fullIData(oldp+67,(vlSymsp->TOP__top.__PVT__csr_data),32);
     bufp->fullIData(oldp+68,(((1U & vlSymsp->TOP__top.__PVT__ls_wb_bus[0U])
-                               ? ((vlSymsp->TOP__top.__PVT__ls_wb_bus[4U] 
+                               ? ((vlSymsp->TOP__top.__PVT__ls_wb_bus[1U] 
                                    << 0x00000018U) 
-                                  | (vlSymsp->TOP__top.__PVT__ls_wb_bus[3U] 
-                                     >> 8U)) : ((vlSymsp->TOP__top.__PVT__ls_wb_bus[1U] 
+                                  | (vlSymsp->TOP__top.__PVT__ls_wb_bus[0U] 
+                                     >> 8U)) : ((vlSymsp->TOP__top.__PVT__ls_wb_bus[4U] 
                                                  << 0x00000018U) 
-                                                | (vlSymsp->TOP__top.__PVT__ls_wb_bus[0U] 
+                                                | (vlSymsp->TOP__top.__PVT__ls_wb_bus[3U] 
                                                    >> 8U)))),32);
     bufp->fullIData(oldp+69,(vlSymsp->TOP__top.__PVT__csr_mod__DOT__data_in),32);
     bufp->fullIData(oldp+70,(vlSymsp->TOP__top__reg_mod.__PVT__data_rs1),32);

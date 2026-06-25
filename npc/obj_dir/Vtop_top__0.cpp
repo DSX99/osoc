@@ -1175,12 +1175,12 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
         vlSelfRef.pc = vlSelfRef.__PVT__ifu_mod__DOT__next_pc;
         if ((1U & vlSelfRef.__PVT__ex_ls_bus_alu[0U])) {
             vlSelfRef.pc = ((1U & vlSelfRef.__PVT__ls_wb_bus[0U])
-                             ? ((vlSelfRef.__PVT__ls_wb_bus[4U] 
+                             ? ((vlSelfRef.__PVT__ls_wb_bus[1U] 
                                  << 0x00000018U) | 
-                                (vlSelfRef.__PVT__ls_wb_bus[3U] 
-                                 >> 8U)) : ((vlSelfRef.__PVT__ls_wb_bus[1U] 
+                                (vlSelfRef.__PVT__ls_wb_bus[0U] 
+                                 >> 8U)) : ((vlSelfRef.__PVT__ls_wb_bus[4U] 
                                              << 0x00000018U) 
-                                            | (vlSelfRef.__PVT__ls_wb_bus[0U] 
+                                            | (vlSelfRef.__PVT__ls_wb_bus[3U] 
                                                >> 8U)));
         }
     }
