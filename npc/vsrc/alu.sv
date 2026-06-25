@@ -27,47 +27,50 @@ module alu (
         unused_bus_in = bus_in;
 
         bus_out = '0;
-        bus_out.alu_out = 0;
-        bus_out.branch = 0;
 
-        if(bus_in.alu_op[5:4]==2'b00) begin
-            case(bus_in.alu_op[2:0])
-                0: begin
-                    if(bus_in.alu_op[3]) bus_out.alu_out = val1 - val2;
-                    else bus_out.alu_out = val1 + val2;
-                end 
-                1: bus_out.alu_out = val1<<val2[4:0];
-                2: bus_out.alu_out = {31'b0,$signed(val1)<$signed(val2)};
-                3: bus_out.alu_out = {31'b0,val1<val2};
-                4: bus_out.alu_out = val1^val2;
-                5: begin
-                    if(bus_in.alu_op[3]) bus_out.alu_out = $signed(val1) >>> val2[4:0];
-                    else bus_out.alu_out = val1 >> val2[4:0];
-                end 
-                6: bus_out.alu_out = val1|val2;
-                7: bus_out.alu_out = val1&val2;
-            endcase
-        end else if(bus_in.alu_op[5:4]==2'b01) begin
-            bus_out.alu_out = val1 + val2;
-            case(bus_in.alu_op[2:0])
-                0: bus_out.branch = bus_in.data_rs1 == bus_in.data_rs2;
-                1: bus_out.branch = bus_in.data_rs1 != bus_in.data_rs2;
-                4: bus_out.branch = $signed(bus_in.data_rs1) <  $signed(bus_in.data_rs2);
-                5: bus_out.branch = $signed(bus_in.data_rs1) >= $signed(bus_in.data_rs2);
-                6: bus_out.branch = bus_in.data_rs1 <  bus_in.data_rs2;
-                7: bus_out.branch = bus_in.data_rs1 >= bus_in.data_rs2;
-            endcase
+        if(valid_left && ready_left) begin
+            bus_out.alu_out = 0;
+            bus_out.branch = 0;
+
+            if(bus_in.alu_op[5:4]==2'b00) begin
+                case(bus_in.alu_op[2:0])
+                    0: begin
+                        if(bus_in.alu_op[3]) bus_out.alu_out = val1 - val2;
+                        else bus_out.alu_out = val1 + val2;
+                    end 
+                    1: bus_out.alu_out = val1<<val2[4:0];
+                    2: bus_out.alu_out = {31'b0,$signed(val1)<$signed(val2)};
+                    3: bus_out.alu_out = {31'b0,val1<val2};
+                    4: bus_out.alu_out = val1^val2;
+                    5: begin
+                        if(bus_in.alu_op[3]) bus_out.alu_out = $signed(val1) >>> val2[4:0];
+                        else bus_out.alu_out = val1 >> val2[4:0];
+                    end 
+                    6: bus_out.alu_out = val1|val2;
+                    7: bus_out.alu_out = val1&val2;
+                endcase
+            end else if(bus_in.alu_op[5:4]==2'b01) begin
+                bus_out.alu_out = val1 + val2;
+                case(bus_in.alu_op[2:0])
+                    0: bus_out.branch = bus_in.data_rs1 == bus_in.data_rs2;
+                    1: bus_out.branch = bus_in.data_rs1 != bus_in.data_rs2;
+                    4: bus_out.branch = $signed(bus_in.data_rs1) <  $signed(bus_in.data_rs2);
+                    5: bus_out.branch = $signed(bus_in.data_rs1) >= $signed(bus_in.data_rs2);
+                    6: bus_out.branch = bus_in.data_rs1 <  bus_in.data_rs2;
+                    7: bus_out.branch = bus_in.data_rs1 >= bus_in.data_rs2;
+                endcase
+            end
+
+            // propagate control signals
+            bus_out.next_pc = bus_in.next_pc;
+            bus_out.data_rs2 = bus_in.data_rs2;
+            bus_out.lsu_we = bus_in.lsu_we;
+            bus_out.lsu_le = bus_in.lsu_le;
+            bus_out.lsu_oper = bus_in.lsu_oper;
+            bus_out.rd = bus_in.rd;
+            bus_out.mux_select = bus_in.mux_select;
+            bus_out.mux_select_pc = bus_in.mux_select_pc;
         end
-
-        // propagate control signals
-        bus_out.next_pc = bus_in.next_pc;
-        bus_out.data_rs2 = bus_in.data_rs2;
-        bus_out.lsu_we = bus_in.lsu_we;
-        bus_out.lsu_le = bus_in.lsu_le;
-        bus_out.lsu_oper = bus_in.lsu_oper;
-        bus_out.rd = bus_in.rd;
-        bus_out.mux_select = bus_in.mux_select;
-        bus_out.mux_select_pc = bus_in.mux_select_pc;
     end
 
 endmodule

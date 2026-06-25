@@ -27,7 +27,7 @@ logic [31:0] csr_data;
 
 logic [31:0] pc_in;
 pc pc_mod(
-    .clk(clk), .rst(rst), .branch(ex_ls_bus.branch), .data_in(pc_in), .pc(pc), .next_pc(next_pc)
+    .clk(clk), .rst(rst), .branch(ex_ls_bus.branch), .data_in(pc_in), .pc(pc), .next_pc(next_pc), .valid(ls_wb_valid)
 );
 assign pc_in = ls_wb_bus.mux_select_pc ? ls_wb_bus.csr_out : ls_wb_bus.alu_out;
 

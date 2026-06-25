@@ -62,6 +62,7 @@ always_ff @(posedge clk) begin
                         ifu<=IDLE;
                         bus_out.opcode<=rdata;
                         rready<=0;
+                        valid<=1;
                     end
                 end
             endcase

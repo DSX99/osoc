@@ -3,6 +3,7 @@ module pc(
     input logic rst,
     input logic branch,
     input logic [31:0] data_in,
+    input logic valid,
 
     output logic [31:0] pc,
     output logic [31:0] next_pc
