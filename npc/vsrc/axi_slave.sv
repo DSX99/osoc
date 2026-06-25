@@ -40,7 +40,7 @@ always_ff @(posedge clk) begin
                 if(arready & arvalid) begin
                     arready<=0;
                     ar<=araddr;
-                    slave<=WAIR_R;
+                    slave<=WAIT_R;
                     rvalid<=1;
                     rdata<=memread(araddr);
                 end

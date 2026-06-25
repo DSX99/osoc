@@ -102,6 +102,7 @@ assign csr_in = id_ex_bus.csr_oper[2] ? {27'b0, id_ex_bus.rs1} : id_ex_bus.data_
 
 
 logic [31:0] araddr_ifu, rdata_ifu;
+logic [1:0] rresp_ifu;
 logic arvalid_ifu, arready_ifu, rvalid_ifu, rready_ifu;
 
 
