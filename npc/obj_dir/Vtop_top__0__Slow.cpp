@@ -62,16 +62,18 @@ VL_ATTR_COLD void Vtop_top___ctor_var_reset(Vtop_top* vlSelf) {
     VL_SCOPED_RAND_RESET_W(142, vlSelf->__PVT__ex_ls_bus_alu, __VscopeHash, 15589358827054334394ull);
     VL_SCOPED_RAND_RESET_W(136, vlSelf->__PVT__ls_wb_bus, __VscopeHash, 14380409961569952781ull);
     vlSelf->__PVT__csr_data = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 15513057494073897048ull);
+    vlSelf->__PVT__araddr_ifu = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 17403733745108566750ull);
     vlSelf->__PVT__rdata_ifu = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 15047780144705229670ull);
     vlSelf->__PVT__rresp_ifu = VL_SCOPED_RAND_RESET_I(2, __VscopeHash, 386195556598118412ull);
     vlSelf->__PVT__arvalid_ifu = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 6187099397844950305ull);
     vlSelf->__PVT__arready_ifu = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 12608958848878039997ull);
     vlSelf->__PVT__rvalid_ifu = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 5414986147116062343ull);
     vlSelf->__PVT__rready_ifu = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 7080648654013881954ull);
-    vlSelf->__PVT__pc_mod__DOT__data_in = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 12302818248017054320ull);
     vlSelf->__PVT__ifu_mod__DOT__next_pc = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 9786868741865089741ull);
     vlSelf->__PVT__ifu_mod__DOT__ifu = 0;
     vlSelf->__PVT__decode_mod__DOT__imm_i = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 17728463912631228713ull);
+    vlSelf->decode_mod__DOT____VdfgExtracted_h3b2fb429__0 = 0;
+    vlSelf->decode_mod__DOT____VdfgRegularize_h901acc23_0_2 = 0;
     VL_SCOPED_RAND_RESET_W(200, vlSelf->__PVT__alu_mod__DOT__bus_in, __VscopeHash, 9512658023472319657ull);
     vlSelf->__PVT__alu_mod__DOT__val1 = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 3618980885417066799ull);
     vlSelf->__PVT__alu_mod__DOT__val2 = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 5531290321701216620ull);
@@ -89,8 +91,5 @@ VL_ATTR_COLD void Vtop_top___ctor_var_reset(Vtop_top* vlSelf) {
     vlSelf->__Vfunc_lsu_mod__DOT__memread__2__Vfuncout = 0;
     vlSelf->__Vfunc_lsu_mod__DOT__memread__3__Vfuncout = 0;
     vlSelf->__Vfunc_lsu_mod__DOT__memread__4__Vfuncout = 0;
-    vlSelf->__Vdly__ifu_mod__DOT__ifu = 0;
-    vlSelf->__Vdly__arready_ifu = 0;
-    vlSelf->__Vdly__rdata_ifu = 0;
-    vlSelf->__Vdly__rvalid_ifu = 0;
+    vlSelf->__Vdly__if_id_valid = 0;
 }

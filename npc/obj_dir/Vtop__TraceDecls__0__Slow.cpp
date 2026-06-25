@@ -14,10 +14,10 @@ void Vtop___024root__traceDeclTypesSub0(VerilatedFst* tracep) {
     }
     {
         const char* __VenumItemNames[]
-        = {"IDLE", "WAIT_AR", "WAIT_R"};
+        = {"AWAIT", "IDLE", "WAIT_AR", "WAIT_R"};
         const char* __VenumItemValues[]
-        = {"0", "1", "10"};
-        tracep->declDTypeEnum(2, "ifu.IFU_state_t", 3, 32, __VenumItemNames, __VenumItemValues);
+        = {"0", "1", "10", "11"};
+        tracep->declDTypeEnum(2, "ifu.IFU_state_t", 4, 32, __VenumItemNames, __VenumItemValues);
     }
 }
 

@@ -67,6 +67,7 @@ always_ff @(posedge clk) begin
                 end
                 AWAIT: begin
                     ifu<=IDLE;
+                    valid<=0;
                 end
             endcase
         end
