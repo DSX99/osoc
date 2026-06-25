@@ -31,19 +31,17 @@ always_comb begin
     valid_right = valid_left;
     ready_left = ready_right;
 
-    if(valid_left && ready_right) begin
 
-        working_reg =0;
-        case(addr)
-            12'h300: working_reg = MSTATUS;
-            12'h305: working_reg = MTVEC;
-            12'h341: working_reg = MEPS;
-            12'h342: working_reg = MCAUSE;
-            default working_reg = UNUSED;
-        endcase
-        if(cause != 0) working_reg = MTVEC;
-        data_out = regs[working_reg];
-    end
+    working_reg =0;
+    case(addr)
+        12'h300: working_reg = MSTATUS;
+        12'h305: working_reg = MTVEC;
+        12'h341: working_reg = MEPS;
+        12'h342: working_reg = MCAUSE;
+        default working_reg = UNUSED;
+    endcase
+    if(cause != 0) working_reg = MTVEC;
+    data_out = regs[working_reg];
 end
 
 always_ff @(posedge clk) begin

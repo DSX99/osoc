@@ -3,6 +3,7 @@ import pipeline_bus_pkg::ls_to_wb_bus_t;
 
 module lsu(
     input logic clk,
+    input logic rst,
     input pipeline_bus_pkg::ex_to_ls_bus_t bus_in,
     output pipeline_bus_pkg::ls_to_wb_bus_t bus_out,
     input logic valid_left, ready_right,
@@ -51,27 +52,28 @@ module lsu(
     IFU_state_t lsu_l;
 
     typedef enum{
-        IDLE, WAIT, WAIR_RESP,
-    } IFU_state_t;
-    IFU_state_t lsu_s;
+        IDLE_S, WAIT, WAIT_RESP
+    } IFU_state_s_t;
+    IFU_state_s_t lsu_s;
 
-    import "DPI-C" function void memwrite(int addr, int data, int idk);
-
-    logic [31:0] lsu_out;
     logic unused_branch;
     logic ready;
+    logic prev_le;
 
     always_comb begin
         valid_right = valid_left;
-        ready_left = ready_right && !(lsu_le && ready);
-        unused_branch = bus_in.branch;
+        ready_left = ready_right && !(!prev_le && bus_in.lsu_le && ready);
+        unused_branch = bus_in.branch | |rresp | |bresp;
+
+        bus_out.alu_out = 0;
+        bus_out.next_pc = 0;
+        bus_out.csr_out = 0;
+        bus_out.rd = 0;
+        bus_out.mux_select = 0;
+        bus_out.mux_select_pc = 0;
 
 
-        bus_out = '0;
-
-        if(valid_left && ready_right) begin //should it be here or better to take out for future?                   !!check when doing pipeline            
-            bus_out.lsu_out = lsu_out;
-                
+        if(valid_left && ready_right) begin //should it be here or better to take out for future?                   !!check when doing pipeline                        
             bus_out.alu_out = bus_in.alu_out;
             bus_out.next_pc = bus_in.next_pc;
             bus_out.csr_out = bus_in.csr_out;
@@ -83,6 +85,7 @@ module lsu(
 
 //reading
 always_ff @(posedge clk) begin
+    prev_le<=bus_in.lsu_le;
     if(rst) begin
         bus_out.lsu_out<=0;
         arvalid<=0;
@@ -93,9 +96,9 @@ always_ff @(posedge clk) begin
         if(ready_right && valid_left) begin
             case(lsu_l)
                 IDLE:begin
-                    if(lsu_le) begin
+                    if(bus_in.lsu_le) begin
                         arvalid<=1;
-                        araddr<=addr;
+                        araddr<=bus_in.alu_out;
                         lsu_l<=WAIT_AR;
                         ready<=0;
                     end
@@ -103,8 +106,8 @@ always_ff @(posedge clk) begin
                 WAIT_AR:begin
                     if(arready)begin 
                         arvalid<=0;
-                        lsu_l<=WAIT_R;
                         rready<=1;
+                        lsu_l<=WAIT_R;
                     end
                 end
                 WAIT_R:begin
@@ -112,19 +115,19 @@ always_ff @(posedge clk) begin
                         lsu_l<=IDLE;
                         case(bus_in.lsu_oper)
                             0: begin //LB
-                                lsu_out = {{24{rdata[7]}},rdata[7:0]};
+                                bus_out.lsu_out <= {{24{rdata[7]}},rdata[7:0]};
                             end 
                             1: begin //LH
-                                lsu_out = {{16{rdata[15]}},rdata[15:0]};
+                                bus_out.lsu_out <= {{16{rdata[15]}},rdata[15:0]};
                             end 
                             2: begin //LW
-                                lsu_out = rdata[31:0];
+                                bus_out.lsu_out <= rdata[31:0];
                             end 
                             4: begin //LBU
-                                lsu_out = {24'b0,rdata[7:0]};
+                                bus_out.lsu_out <= {24'b0,rdata[7:0]};
                             end 
                             5: begin //LHU
-                                lsu_out = {16'b0,rdata[15:0]};
+                                bus_out.lsu_out <= {16'b0,rdata[15:0]};
                             end 
                         endcase
                         rready<=0;
@@ -141,10 +144,11 @@ logic done_aw, done_w;
 //writing
 
 always_comb begin
-    case(lsu_oper) 
-        3'b000: wstrb=4'0001;
-        3'b001: wstrb=4'0011;
-        3'b010: wstrb=4'1111;
+    case(bus_in.lsu_oper) 
+        3'b000: wstrb=4'b0001;
+        3'b001: wstrb=4'b0011;
+        3'b010: wstrb=4'b1111;
+        default: wstrb=0;
     endcase
 end
 
@@ -158,11 +162,11 @@ always_ff @(posedge clk) begin
     end else begin
         if(ready_right && valid_left) begin
             case(lsu_s)
-                IDLE:begin
-                    if(lsu_we) begin
-                        awaddr<=addr;
+                IDLE_S:begin
+                    if(bus_in.lsu_we) begin
+                        awaddr<=bus_in.alu_out;
                         awvalid<=1;
-                        wdata<=data;
+                        wdata<=bus_in.data_rs2;
                         wvalid<=1;
                         lsu_s<=WAIT;
                         ready<=0;
@@ -177,13 +181,13 @@ always_ff @(posedge clk) begin
                         awvalid<=0;
                         done_aw<=1;
                     end
-                    if((done_aw || awready) && (done_w || wready)) lsu_s <= WAIR_RESP;
+                    if((done_aw || awready) && (done_w || wready)) lsu_s <= WAIT_RESP;
                 end
                 WAIT_RESP:begin
                     done_aw<=0;
                     done_w<=0;
                     if(bvalid) begin
-                        lsu_s<=IDLE;
+                        lsu_s<=IDLE_S;
                         ready<=1;
                     end
                 end
