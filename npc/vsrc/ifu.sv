@@ -44,7 +44,6 @@ always_ff @(posedge clk) begin
         valid<=0;
     end else begin
         if(!ready) begin
-            ifu<=AWAIT;
             valid<=1;
         end
         if(ready) begin
