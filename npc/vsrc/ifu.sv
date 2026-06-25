@@ -5,7 +5,7 @@ module ifu(
     output logic [31:0] opcode,
 
     input logic lsu_stall,
-    output logic extra_stall,
+    output logic stall,
 
     // Read Addr Channel (AR)
     output logic [31:0] araddr_ifu,
@@ -27,18 +27,18 @@ assign idk = |rresp_ifu;
 
 always_ff @(posedge clk) begin
     idk_2 <= idk_2 | idk;
-    extra_stall <= stall;
+    stall <= extra_stall;
     if(rst) begin
         opcode<=0;
         arvalid_ifu<=0;
         rready_ifu<=0;
         araddr_ifu<=0;
-        stall<=1;
+        extra_stall<=1;
     end else begin
         if(!lsu_stall) begin
             arvalid_ifu<=1;
             araddr_ifu<=pc; 
-            stall<=1;
+            extra_stall<=1;
         end
         if(arvalid_ifu && arready_ifu) begin
             arvalid_ifu<=0;
@@ -47,7 +47,7 @@ always_ff @(posedge clk) begin
         if(rvalid_ifu && rready_ifu) begin
             opcode<=rdata_ifu;
             rready_ifu<=0;
-            stall<=0;
+            extra_stall<=0;
         end
     end
 end
