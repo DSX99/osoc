@@ -62,11 +62,11 @@ module lsu(
         bus_out.lsu_out = lsu_out;
             
         bus_out.alu_out = bus_in.alu_out;
-        
         bus_out.next_pc = bus_in.next_pc;
         bus_out.csr_out = bus_in.csr_out;
         bus_out.rd = bus_in.rd;
         bus_out.mux_select = bus_in.mux_select;
+        bus_out.mux_select_pc = bus_in.mux_select_pc;
     end 
 
 always_ff @( posedge clk ) begin

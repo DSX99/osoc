@@ -38,6 +38,7 @@ package pipeline_bus_pkg;
         // Control Signals passed through to WBU
         logic [4:0]  rd;         // Destination register address (x0 - x31)
         logic [1:0]  mux_select; // Selector for Write-Back data multiplexer
+        logic mux_select_pc;     // selector for pc write
     } id_to_ex_bus_t;
 
     // =========================================================================
@@ -57,7 +58,8 @@ package pipeline_bus_pkg;
         // Control Signals passed through to WBU
         logic [4:0]  rd;         // Destination register address
         logic [1:0]  mux_select; // Selector for Write-Back data multiplexer
-        
+        logic mux_select_pc;     // selector for pc write
+
         // Branch indicator produced by ALU
         logic        branch;
     } ex_to_ls_bus_t;
@@ -74,6 +76,7 @@ package pipeline_bus_pkg;
         // Control Signals for WBU Register File Write
         logic [4:0]  rd;         // Destination register address
         logic [1:0]  mux_select; // 0: ALU, 1: LSU, 2: next_pc, 3: csr_out
+        logic mux_select_pc;     // selector for pc write
     } ls_to_wb_bus_t;
 
 endpackage : pipeline_bus_pkg

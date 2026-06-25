@@ -121,8 +121,10 @@ module decode(
                         else if(!(|func7 | |rs2_val)) begin
                             bus_out.cause = 11;
                             bus_out.alu_op = 8'b10010000;
+                            bus_out.mux_select_pc = 1'b1;
                         end else begin
                             bus_out.alu_op = 8'b10010000;
+                            bus_out.mux_select_pc  = 1'b1;
                             bus_out.rs1 = 0;
                             bus_out.rd = 0;
                             bus_out.csr_oper = 3'b001;

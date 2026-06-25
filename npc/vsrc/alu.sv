@@ -67,6 +67,7 @@ module alu (
         bus_out.lsu_oper = bus_in.lsu_oper;
         bus_out.rd = bus_in.rd;
         bus_out.mux_select = bus_in.mux_select;
+        bus_out.mux_select_pc = bus_in.mux_select_pc
     end
 
 endmodule
