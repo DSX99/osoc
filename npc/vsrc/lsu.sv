@@ -91,7 +91,7 @@ always_ff @(posedge clk) begin
         arvalid<=0;
         araddr<=0;
         rready<=0;
-        ready<=0;
+        ready<=1;
     end else begin
         if(ready_right && valid_left) begin
             case(lsu_l)
