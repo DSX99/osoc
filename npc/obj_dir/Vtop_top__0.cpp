@@ -558,11 +558,11 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
     __Vdly__slave_mod__DOT__aw = vlSelfRef.__PVT__slave_mod__DOT__aw;
     __Vdly__slave_mod__DOT__aw_done = vlSelfRef.__PVT__slave_mod__DOT__aw_done;
     __Vdly__slave_mod__DOT__aw_mask = vlSelfRef.__PVT__slave_mod__DOT__aw_mask;
-    __Vdly__araddr_lsu = vlSelfRef.__PVT__araddr_lsu;
-    __Vdly__arvalid_lsu = vlSelfRef.__PVT__arvalid_lsu;
     __Vdly__rready_ifu = vlSelfRef.__PVT__rready_ifu;
     __Vdly__arvalid_ifu = vlSelfRef.__PVT__arvalid_ifu;
     __Vdly__ifu_stall = vlSelfRef.__PVT__ifu_stall;
+    __Vdly__araddr_lsu = vlSelfRef.__PVT__araddr_lsu;
+    __Vdly__arvalid_lsu = vlSelfRef.__PVT__arvalid_lsu;
     vlSelfRef.__PVT__ifu_mod__DOT__idk_2 = ((IData)(vlSelfRef.__PVT__ifu_mod__DOT__idk_2) 
                                             | (0U != (IData)(vlSelfRef.__PVT__arb_rresp)));
     vlSelfRef.__PVT__lsu_mod__DOT__idk = (((IData)(vlSelfRef.__PVT__lsu_mod__DOT__idk) 
@@ -734,9 +734,6 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
             vlSelfRef.opcode = vlSelfRef.__PVT__arb_rdata;
             __Vdly__rready_ifu = 0U;
             __Vdly__ifu_stall = 0U;
-        }
-        if ((vlSelfRef.pc == vlSelfRef.__PVT__araddr_ifu)) {
-            __Vdly__ifu_stall = 1U;
         }
     }
     vlSelfRef.__PVT__rready_ifu = __Vdly__rready_ifu;
