@@ -4,6 +4,7 @@ module top(
 );
 
 logic [31:0] opcode /* verilator public */,pc /* verilator public */;
+logic external_stall /* verilator public */;
 
 logic [31:0] araddr_ifu;
 logic        arvalid_ifu, arready_ifu;
@@ -23,7 +24,7 @@ logic [7:0] alu_op;
 logic [4:0] rs1, rs2, rd, cause;
 logic [2:0] lsu_oper, csr_oper;
 logic [1:0] mux_select, mux_select_pc;
-logic branch, lsu_we, lsu_le, external_stall, ifu_stall, lsu_stall;
+logic branch, lsu_we, lsu_le, ifu_stall, lsu_stall;
 
 regs reg_mod(
     .clk(clk), .rst(rst), .data_in(to_regs), .rs1(rs1), .rs2(rs2), .rd(rd), .data_rs1(data_rs1), .data_rs2(data_rs2)
