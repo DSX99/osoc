@@ -47,7 +47,7 @@ always_ff @(posedge clk) begin
             rready_ifu<=0;
             stall<=0;
         end
-        if(pc == araddr) stall<=1;
+        if(pc == araddr_ifu) stall<=1;
     end
 end
 
