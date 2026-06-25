@@ -20,9 +20,11 @@ module pc(
         if(rst) begin
             pc<=32'h80000000;
         end else begin
-            pc<=next_pc;
-            if(branch)begin
-                pc<=data_in;
+            if(valid) begin
+                pc<=next_pc;
+                if(branch)begin
+                    pc<=data_in;
+                end
             end
         end
     end

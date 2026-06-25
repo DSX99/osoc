@@ -4,19 +4,19 @@
 
 #include "Vtop__pch.h"
 
-void Vtop_regs___ico_sequent__TOP__top__reg_mod__0(Vtop_regs* vlSelf) {
-    VL_DEBUG_IF(VL_DBG_MSGF("+        Vtop_regs___ico_sequent__TOP__top__reg_mod__0\n"); );
+void Vtop_regs___ico_comb__TOP__top__reg_mod__0(Vtop_regs* vlSelf) {
+    VL_DEBUG_IF(VL_DBG_MSGF("+        Vtop_regs___ico_comb__TOP__top__reg_mod__0\n"); );
     Vtop__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     auto& vlSelfRef = std::ref(*vlSelf).get();
     // Body
+    vlSelfRef.__PVT__data_rs1 = vlSelfRef.regs[(0x0000001fU 
+                                                & (vlSymsp->TOP__top.__PVT__id_ex_bus_decoded[1U] 
+                                                   >> 3U))];
     vlSelfRef.__PVT__data_rs2 = vlSelfRef.regs[(0x0000001fU 
                                                 & ((vlSymsp->TOP__top.__PVT__id_ex_bus_decoded[1U] 
                                                     << 2U) 
                                                    | (vlSymsp->TOP__top.__PVT__id_ex_bus_decoded[0U] 
                                                       >> 0x0000001eU)))];
-    vlSelfRef.__PVT__data_rs1 = vlSelfRef.regs[(0x0000001fU 
-                                                & (vlSymsp->TOP__top.__PVT__id_ex_bus_decoded[1U] 
-                                                   >> 3U))];
 }
 
 void Vtop_regs___nba_sequent__TOP__top__reg_mod__0(Vtop_regs* vlSelf) {
