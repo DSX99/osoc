@@ -94,6 +94,12 @@ always_ff @(posedge clk) begin
         rready<=0;
         ready<=1;
     end else begin
+        if(bus_in.lsu_le) begin
+            arvalid<=1;
+            araddr<=bus_in.alu_out;
+            lsu_l<=WAIT_AR;
+            ready<=0;
+        end
         if(ready_right && valid_left) begin
             case(lsu_l)
                 IDLE:begin
@@ -135,9 +141,11 @@ always_ff @(posedge clk) begin
                         ready<=1;
                     end
                 end
+                AWAIT: begin
+                    lsu_l<=IDLE;
+                end
             endcase
         end
-        if(lsu_l == AWAIT) lsu_l<=IDLE;
     end
 end
 
@@ -162,6 +170,14 @@ always_ff @(posedge clk) begin
         awaddr<=0;
         awvalid<=0;
     end else begin
+        if(bus_in.lsu_we) begin
+            awaddr<=bus_in.alu_out;
+            awvalid<=1;
+            wdata<=bus_in.data_rs2;
+            wvalid<=1;
+            lsu_s<=WAIT;
+            ready<=0;
+        end
         if(ready_right && valid_left) begin
             case(lsu_s)
                 IDLE_S:begin
@@ -193,9 +209,11 @@ always_ff @(posedge clk) begin
                         ready<=1;
                     end
                 end
+                AWAIT_S: begin
+                    lsu_s<=IDLE_S;
+                end
             endcase
         end
-        if(lsu_s == AWAIT_S) lsu_s<=IDLE_S;
     end
 end
 
