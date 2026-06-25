@@ -35,6 +35,8 @@ always_comb begin
     bus_out.next_pc = next_pc;
 end
 
+assign araddr_ifu = comb_pc;
+
 always_ff @(posedge clk) begin
     if(rst) begin
         bus_out.opcode<=0;
@@ -47,13 +49,12 @@ always_ff @(posedge clk) begin
             case(ifu)
                 IDLE:begin
                     arvalid<=1;
-                    araddr<=pc;
                     ifu<=WAIT_AR;
                     valid<=0;
                 end
                 WAIT_AR:begin
                     valid<=0;
-                    if(arready)begin 
+                    if(arready)begin
                         arvalid<=0;
                         ifu<=WAIT_R;
                         rready<=1;
@@ -66,7 +67,6 @@ always_ff @(posedge clk) begin
                         rready<=0;
                         valid<=1;
                         arvalid<=1;
-                        araddr<=comb_pc;
                     end
                 end
             endcase
