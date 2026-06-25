@@ -47,12 +47,12 @@ module lsu(
     // SW 7
 
     typedef enum{
-        IDLE, WAIT_AR, WAIT_R
+        IDLE, WAIT_AR, WAIT_R, AWAIT
     } IFU_state_t;
     IFU_state_t lsu_l;
 
     typedef enum{
-        IDLE_S, WAIT, WAIT_RESP
+        IDLE_S, WAIT, WAIT_RESP, AWAIT_S
     } IFU_state_s_t;
     IFU_state_s_t lsu_s;
 
@@ -113,7 +113,7 @@ always_ff @(posedge clk) begin
                 end
                 WAIT_R:begin
                     if(rvalid) begin
-                        lsu_l<=IDLE;
+                        lsu_l<=AWAIT;
                         case(bus_in.lsu_oper)
                             0: begin //LB
                                 bus_out.lsu_out <= {{24{rdata[7]}},rdata[7:0]};
@@ -134,6 +134,9 @@ always_ff @(posedge clk) begin
                         rready<=0;
                         ready<=1;
                     end
+                end
+                AWAIT: begin
+                    lsu_l<=IDLE;
                 end
             endcase
         end
@@ -188,9 +191,12 @@ always_ff @(posedge clk) begin
                     done_aw<=0;
                     done_w<=0;
                     if(bvalid) begin
-                        lsu_s<=IDLE_S;
+                        lsu_s<=AWAIT_S;
                         ready<=1;
                     end
+                end
+                AWAIT_S: begin
+                    lsu_l<=IDLE_S;
                 end
             endcase
         end
