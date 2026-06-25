@@ -94,8 +94,8 @@ always_ff @(posedge clk) begin
                 awvalid_lsu<=1;
                 awaddr_lsu<=addr; 
                 aw_sent<=1;
-                wvalid<=1;
-                wdata<=data_in;
+                wvalid_lsu<=1;
+                wdata_lsu<=data_in;
             end
             if(awvalid_lsu && awready_lsu) begin // done handshake for aw
                 awvalid_lsu<=0;
