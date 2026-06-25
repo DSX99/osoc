@@ -58,7 +58,7 @@ always_ff @(posedge clk) begin
 
         //reading
         if(arvalid && arready) begin
-            rdatad<=memread(araddr);
+            rdata<=memread(araddr);
             rvalid<=1;
             ar_done<=1;
             arready<=0;
