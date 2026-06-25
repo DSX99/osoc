@@ -20,25 +20,23 @@ module ifu(
 );
 
 logic idk, idk_2;
-logic extra_stall;
 
 assign idk = |rresp_ifu;
 
 
 always_ff @(posedge clk) begin
     idk_2 <= idk_2 | idk;
-    stall <= extra_stall;
     if(rst) begin
         opcode<=0;
         arvalid_ifu<=0;
         rready_ifu<=0;
         araddr_ifu<=0;
-        extra_stall<=1;
+        stall<=1;
     end else begin
         if(!lsu_stall) begin
             arvalid_ifu<=1;
             araddr_ifu<=pc; 
-            extra_stall<=1;
+            stall<=1;
         end
         if(arvalid_ifu && arready_ifu) begin
             arvalid_ifu<=0;
@@ -47,7 +45,7 @@ always_ff @(posedge clk) begin
         if(rvalid_ifu && rready_ifu) begin
             opcode<=rdata_ifu;
             rready_ifu<=0;
-            extra_stall<=0;
+            stall<=0;
         end
     end
 end
