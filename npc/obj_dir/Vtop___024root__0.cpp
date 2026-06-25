@@ -98,7 +98,6 @@ bool Vtop___024root___trigger_anySet__act(const VlUnpacked<QData/*63:0*/, 1> &in
 
 void Vtop_regs___nba_sequent__TOP__top__reg_mod__0(Vtop_regs* vlSelf);
 void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf);
-void Vtop_top___nba_sequent__TOP__top__1(Vtop_top* vlSelf);
 
 void Vtop___024root___eval_nba(Vtop___024root* vlSelf) {
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root___eval_nba\n"); );
@@ -110,7 +109,7 @@ void Vtop___024root___eval_nba(Vtop___024root* vlSelf) {
         vlSelfRef.__Vm_traceActivity[2U] = 1U;
         Vtop_top___nba_sequent__TOP__top__0((&vlSymsp->TOP__top));
         Vtop_regs___ico_sequent__TOP__top__reg_mod__0((&vlSymsp->TOP__top__reg_mod));
-        Vtop_top___nba_sequent__TOP__top__1((&vlSymsp->TOP__top));
+        Vtop_top___ico_sequent__TOP__top__1((&vlSymsp->TOP__top));
     }
 }
 
