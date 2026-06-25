@@ -1,7 +1,7 @@
 module regs (
     input logic clk,
     input logic rst,
-    input logic external_stall
+    input logic external_stall,
     input logic [31:0] data_in,
     input logic [4:0] rs1,
     input logic [4:0] rs2,
