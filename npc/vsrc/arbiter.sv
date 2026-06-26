@@ -91,7 +91,7 @@ always_comb begin //possible decouple reading and writing for non blocking writi
         arvalid=arvalid_ifu;
         arready_ifu=arready;
 
-        rready=rread_ifu;
+        rready=rready_ifu;
         rdata_ifu=rdata;
         rresp_ifu=rresp;
         rvalid_ifu=rvalid;
