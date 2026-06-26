@@ -1218,7 +1218,7 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
             }
         } else if ((2U == vlSelfRef.__PVT__lsu_mod__DOT__write_state)) {
             if (vlSelfRef.__PVT__bvalid_lsu) {
-                __Vdly__lsu_mod__DOT__write_state = 3U;
+                __Vdly__lsu_mod__DOT__write_state = 0U;
                 __Vdly__lsu_mod__DOT__ready = 1U;
             }
         } else if ((3U == vlSelfRef.__PVT__lsu_mod__DOT__write_state)) {
