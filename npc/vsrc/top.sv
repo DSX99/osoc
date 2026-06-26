@@ -128,9 +128,9 @@ axi_slave_lsu axi_slave_lsu_mod (
 );
 
 arbiter arbiter_mod(
-    .clk(clk), .rst(rst), .araddr(araddr_lsu), .arvalid(arvalid_lsu), .arready(arready_lsu), .rdata(rdata_lsu), .rresp(rresp_lsu), .rvalid(rvalid_lsu), .rready(rready_lsu),
-    .awaddr(awaddr_lsu), .awvalid(awvalid_lsu), .awready(awready_lsu), .wdata(wdata_lsu), .wstrb(wstrb_lsu), .wvalid(wvalid_lsu), .wready(wready_lsu), .bresp(bresp_lsu), .bvalid(bvalid_lsu), .bready(bready_lsu),
-    .araddr(araddr_ifu), .arvalid(arvalid_ifu), .arready(arready_ifu), .rvalid(rvalid_ifu), .rdata(rdata_ifu), .rready(rready_ifu), .rresp(rresp_ifu),
+    .clk(clk), .rst(rst), .araddr_lsu(araddr_lsu), .arvalid_lsu(arvalid_lsu), .arready_lsu(arready_lsu), .rdata_lsu(rdata_lsu), .rresp_lsu(rresp_lsu), .rvalid_lsu(rvalid_lsu), .rready_lsu(rready_lsu),
+    .awaddr_lsu(awaddr_lsu), .awvalid_lsu(awvalid_lsu), .awready_lsu(awready_lsu), .wdata_lsu(wdata_lsu), .wstrb_lsu(wstrb_lsu), .wvalid_lsu(wvalid_lsu), .wready_lsu(wready_lsu), .bresp_lsu(bresp_lsu), .bvalid_lsu(bvalid_lsu), .bready_lsu(bready_lsu),
+    .araddr_ifu(araddr_ifu), .arvalid_ifu(arvalid_ifu), .arready_ifu(arready_ifu), .rvalid_ifu(rvalid_ifu), .rdata_ifu(rdata_ifu), .rready_ifu(rready_ifu), .rresp_ifu(rresp_ifu),
     .araddr(araddr_arbiter), .arvalid(arvalid_arbiter), .arready(arready_arbiter), .rdata(rdata_arbiter), .rresp(rresp_arbiter), .rvalid(rvalid_arbiter), .rready(rready_arbiter),
     .awaddr(awaddr_arbiter), .awvalid(awvalid_arbiter), .awready(awready_arbiter), .wdata(wdata_arbiter), .wstrb(wstrb_arbiter), .wvalid(wvalid_arbiter), .wready(wready_arbiter), .bresp(bresp_arbiter), .bvalid(bvalid_arbiter), .bready(bready_arbiter)
 );
