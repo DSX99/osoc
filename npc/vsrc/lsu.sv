@@ -58,7 +58,7 @@ module lsu(
 
     logic unused_branch;
     logic ready;
-    logic prev_le;
+    logic prev_le, prev_se;
 
     always_comb begin
         valid_right = valid_left && ready && !(~prev_le && bus_in.lsu_le) && !(~prev_se && bus_in.lsu_se);
