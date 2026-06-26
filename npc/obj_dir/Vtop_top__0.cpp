@@ -1330,6 +1330,8 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
         } else if ((0x0fU == (IData)(vlSelfRef.__PVT__axi_slave_lsu_mod__DOT__mask))) {
             Vtop_top____Vdpiimwrap_axi_slave_lsu_mod__DOT__memwrite_TOP__top(vlSelfRef.__PVT__axi_slave_lsu_mod__DOT__aw, vlSelfRef.__PVT__axi_slave_lsu_mod__DOT__w, 2U);
         }
+        __Vdly__axi_slave_lsu_mod__DOT__done_aw = 0U;
+        __Vdly__axi_slave_lsu_mod__DOT__done_w = 0U;
         vlSelfRef.__PVT__bvalid_lsu = 1U;
         __Vdly__axi_slave_lsu_mod__DOT__slave_w = 2U;
     } else if ((2U == vlSelfRef.__PVT__axi_slave_lsu_mod__DOT__slave_w)) {
