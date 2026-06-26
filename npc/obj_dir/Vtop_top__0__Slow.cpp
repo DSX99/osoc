@@ -78,7 +78,7 @@ VL_ATTR_COLD void Vtop_top___stl_sequent__TOP__top__0(Vtop_top* vlSelf) {
                | (~ (IData)(vlSelfRef.__PVT__arbiter_mod__DOT__chose))))) {
         vlSelfRef.__PVT__araddr_arbiter = vlSelfRef.__PVT__araddr_lsu;
         vlSelfRef.__PVT__arvalid_arbiter = vlSelfRef.__PVT__arvalid_lsu;
-        vlSelfRef.__PVT__arready_ifu = vlSelfRef.__PVT__arready_arbiter;
+        vlSelfRef.__PVT__arready_lsu = vlSelfRef.__PVT__arready_arbiter;
         vlSelfRef.__PVT__rready_arbiter = vlSelfRef.__PVT__rready_lsu;
         vlSelfRef.__PVT__rdata_lsu = vlSelfRef.__PVT__rdata_arbiter;
         vlSelfRef.__PVT__rresp_lsu = vlSelfRef.__PVT__rresp_arbiter;
