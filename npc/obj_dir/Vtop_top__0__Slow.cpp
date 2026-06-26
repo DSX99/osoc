@@ -9,7 +9,7 @@ VL_ATTR_COLD void Vtop_top___eval_initial__TOP__top(Vtop_top* vlSelf) {
     Vtop__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     auto& vlSelfRef = std::ref(*vlSelf).get();
     // Body
-    vlSelfRef.pc = 0x7ffffffcU;
+    vlSelfRef.pc = 0x80000000U;
     vlSelfRef.__PVT__csr_mod__DOT__regs[0U] = 0U;
     vlSelfRef.__PVT__csr_mod__DOT__regs[1U] = 0U;
     vlSelfRef.__PVT__csr_mod__DOT__regs[2U] = 0U;
