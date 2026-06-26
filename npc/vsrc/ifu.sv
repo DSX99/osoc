@@ -43,40 +43,35 @@ always_ff @(posedge clk) begin
         rready<=0;
         valid<=0;
     end else begin
-        if(!ready) begin
-            valid<=1;
-        end
-        if(ready) begin
-            case(ifu)
-                IDLE:begin
+        case(ifu)
+            IDLE:begin
+                valid<=0;
+                arvalid<=1;
+                araddr<=pc;
+                ifu<=WAIT_AR;
+            end
+            WAIT_AR:begin
+                if(arready && arvalid)begin 
+                    arvalid<=0;
+                    ifu<=WAIT_R;
+                    rready<=1;
+                end
+            end
+            WAIT_R:begin
+                if(rvalid && rready) begin
+                    ifu<=AWAIT;
+                    bus_out.opcode<=rdata;
+                    rready<=0;
+                    valid<=1;
+                end
+            end
+            AWAIT:begin
+                if(ready) begin
                     valid<=0;
-                    arvalid<=1;
-                    araddr<=pc;
-                    ifu<=WAIT_AR;
+                    ifu<=IDLE;
                 end
-                WAIT_AR:begin
-                    if(arready && arvalid)begin 
-                        arvalid<=0;
-                        ifu<=WAIT_R;
-                        rready<=1;
-                    end
-                end
-                WAIT_R:begin
-                    if(rvalid && rready) begin
-                        ifu<=AWAIT;
-                        bus_out.opcode<=rdata;
-                        rready<=0;
-                        valid<=1;
-                    end
-                end
-                AWAIT:begin
-                    if(ready) begin
-                        valid<=0;
-                        ifu<=IDLE;
-                    end
-                end
-            endcase
-        end
+            end
+        endcase
     end
 end
 

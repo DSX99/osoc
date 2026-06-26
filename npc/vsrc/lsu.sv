@@ -86,55 +86,53 @@ always_ff @(posedge clk) begin
         rready<=0;
         ready<=1;
     end else begin
-        if(ready_right && valid_left) begin
-            case(lsu_r)
-                IDLE_R:begin
+        case(lsu_r)
+            IDLE_R:begin
+                ready<=0;
+                if(bus_in.lsu_re) begin
+                    arvalid<=1;
+                    araddr<=bus_in.alu_out;
+                    lsu_r<=WAIT_AR;
+                end
+            end
+            WAIT_AR:begin
+                if(arready && arvalid)begin 
+                    arvalid<=0;
+                    rready<=1;
+                    lsu_r<=WAIT_R;
+                end
+            end
+            WAIT_R:begin
+                if(rvalid && rready) begin
+                    lsu_r<=AWAIT_R;
+                    case(bus_in.lsu_oper)
+                        0: begin //LB
+                            bus_out.lsu_out <= {{24{rdata[7]}},rdata[7:0]};
+                        end 
+                        1: begin //LH
+                            bus_out.lsu_out <= {{16{rdata[15]}},rdata[15:0]};
+                        end 
+                        2: begin //LW
+                            bus_out.lsu_out <= rdata[31:0];
+                        end 
+                        4: begin //LBU
+                            bus_out.lsu_out <= {24'b0,rdata[7:0]};
+                        end 
+                        5: begin //LHU
+                            bus_out.lsu_out <= {16'b0,rdata[15:0]};
+                        end 
+                    endcase
+                    rready<=0;
+                    ready<=1;
+                end
+            end
+            AWAIT_R:begin
+                if(ready_right && valid_left) begin
                     ready<=0;
-                    if(bus_in.lsu_re) begin
-                        arvalid<=1;
-                        araddr<=bus_in.alu_out;
-                        lsu_r<=WAIT_AR;
-                    end
+                    lsu_r<=IDLE_R;
                 end
-                WAIT_AR:begin
-                    if(arready && arvalid)begin 
-                        arvalid<=0;
-                        rready<=1;
-                        lsu_r<=WAIT_R;
-                    end
-                end
-                WAIT_R:begin
-                    if(rvalid && rready) begin
-                        lsu_r<=AWAIT_R;
-                        case(bus_in.lsu_oper)
-                            0: begin //LB
-                                bus_out.lsu_out <= {{24{rdata[7]}},rdata[7:0]};
-                            end 
-                            1: begin //LH
-                                bus_out.lsu_out <= {{16{rdata[15]}},rdata[15:0]};
-                            end 
-                            2: begin //LW
-                                bus_out.lsu_out <= rdata[31:0];
-                            end 
-                            4: begin //LBU
-                                bus_out.lsu_out <= {24'b0,rdata[7:0]};
-                            end 
-                            5: begin //LHU
-                                bus_out.lsu_out <= {16'b0,rdata[15:0]};
-                            end 
-                        endcase
-                        rready<=0;
-                        ready<=1;
-                    end
-                end
-                AWAIT_R:begin
-                    if(ready_right && valid_left) begin
-                        ready<=0;
-                        lsu_r<=IDLE_R;
-                    end
-                end
-            endcase
-        end
+            end
+        endcase
     end
 end
 
@@ -166,45 +164,43 @@ always_ff @(posedge clk) begin
         awaddr<=0;
         awvalid<=0;
     end else begin
-        if(ready_right && valid_left) begin
-            case(lsu_w)
-                IDLE_W:begin
+        case(lsu_w)
+            IDLE_W:begin
+                ready<=0;
+                if(bus_in.lsu_we) begin
+                    awaddr<=bus_in.alu_out;
+                    awvalid<=1;
+                    wdata<=bus_in.data_rs2;
+                    wvalid<=1;
+                    lsu_w<=WAIT_W;
+                end
+            end
+            WAIT_W:begin
+                if(wready)begin 
+                    wvalid<=0;
+                    done_w<=1;
+                end
+                if(awready) begin
+                    awvalid<=0;
+                    done_aw<=1;
+                end
+                if((done_aw || awready) && (done_w || wready)) lsu_w <= WAIT_WRESP;
+            end
+            WAIT_WRESP:begin
+                done_aw<=0;
+                done_w<=0;
+                if(bvalid) begin
+                    lsu_w<=AWAIT_W;
+                    ready<=1;
+                end
+            end
+            AWAIT_W:begin
+                if(ready_right && valid_left) begin
                     ready<=0;
-                    if(bus_in.lsu_we) begin
-                        awaddr<=bus_in.alu_out;
-                        awvalid<=1;
-                        wdata<=bus_in.data_rs2;
-                        wvalid<=1;
-                        lsu_w<=WAIT_W;
-                    end
+                    lsu_w<=IDLE_W;
                 end
-                WAIT_W:begin
-                    if(wready)begin 
-                        wvalid<=0;
-                        done_w<=1;
-                    end
-                    if(awready) begin
-                        awvalid<=0;
-                        done_aw<=1;
-                    end
-                    if((done_aw || awready) && (done_w || wready)) lsu_w <= WAIT_WRESP;
-                end
-                WAIT_WRESP:begin
-                    done_aw<=0;
-                    done_w<=0;
-                    if(bvalid) begin
-                        lsu_w<=AWAIT_W;
-                        ready<=1;
-                    end
-                end
-                AWAIT_W:begin
-                    if(ready_right && valid_left) begin
-                        ready<=0;
-                        lsu_w<=IDLE_W;
-                    end
-                end
-            endcase
-        end
+            end
+        endcase
     end
 end
 
