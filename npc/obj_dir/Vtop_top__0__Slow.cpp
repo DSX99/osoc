@@ -586,7 +586,6 @@ VL_ATTR_COLD void Vtop_top___ctor_var_reset(Vtop_top* vlSelf) {
     vlSelf->__PVT__wready_lsu = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 8668060886356540866ull);
     vlSelf->__PVT__bvalid_lsu = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 15497188780555387885ull);
     vlSelf->__PVT__bready_lsu = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 502261188337401444ull);
-    vlSelf->__PVT__araddr_ifu = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 17403733745108566750ull);
     vlSelf->__PVT__rdata_ifu = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 15047780144705229670ull);
     vlSelf->__PVT__rresp_ifu = VL_SCOPED_RAND_RESET_I(2, __VscopeHash, 386195556598118412ull);
     vlSelf->__PVT__arvalid_ifu = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 6187099397844950305ull);

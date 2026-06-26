@@ -6,14 +6,16 @@ module pc(
     input logic valid,
 
     output logic [31:0] pc,
-    output logic [31:0] next_pc
+    output logic [31:0] next_pc,
+    output logic [31:0] comb_pc
 );
 
     initial begin
-        pc = 32'h80000000;
+        pc = 32'h80000000 - 4;
     end
 
     assign next_pc = pc + 4;
+    assign comb_pc = branch ? data_in : next_pc;
 
 
     always_ff @(posedge clk) begin
