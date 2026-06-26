@@ -127,7 +127,7 @@ always_ff @(posedge clk) begin
         lsu_transfer<=0;
     end else begin
         if(chose && arvalid && arready) ifu_transfer<=1;
-        if(!chose && arvalid && arready) lsu_transfer<=1;
+        if(!chose && arvalid && arready && !ifu_transfer) lsu_transfer<=1;
         
         if(ifu_transfer && rvalid && rready) ifu_transfer<=0;
         if(lsu_transfer && ((rvalid && rready))) lsu_transfer<=0;
