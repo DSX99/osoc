@@ -114,6 +114,8 @@ always_ff @(posedge clk) begin
                     4'b1111:memwrite(aw, w,2);
                     default:;
                 endcase
+                done_aw<=0;
+                done_w<=0;
                 bvalid<=1;
                 slave_w<=WAIT_RESP;
             end
