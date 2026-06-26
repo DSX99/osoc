@@ -592,7 +592,6 @@ VL_ATTR_COLD void Vtop_top___ctor_var_reset(Vtop_top* vlSelf) {
     vlSelf->__PVT__arready_ifu = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 12608958848878039997ull);
     vlSelf->__PVT__rvalid_ifu = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 5414986147116062343ull);
     vlSelf->__PVT__rready_ifu = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 7080648654013881954ull);
-    vlSelf->__PVT__pc_mod__DOT__data_in = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 12302818248017054320ull);
     vlSelf->__PVT__ifu_mod__DOT__next_pc = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 9786868741865089741ull);
     vlSelf->__PVT__ifu_mod__DOT__ifu_state = VL_SCOPED_RAND_RESET_I(2, __VscopeHash, 13530514046458923352ull);
     vlSelf->__PVT__ifu_mod__DOT__opcode_reg = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 16793676803726672548ull);
