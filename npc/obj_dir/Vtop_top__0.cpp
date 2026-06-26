@@ -920,12 +920,12 @@ void Vtop_top___ico_sequent__TOP__top__1(Vtop_top* vlSelf) {
                                              & (vlSelfRef.__PVT__alu_mod__DOT__bus_in[0U] 
                                                 << 1U)));
     vlSelfRef.__PVT__alu_mod__DOT__ready_right = (1U 
-                                                  & (IData)(
-                                                            ((0x00003000U 
-                                                              != 
-                                                              (0x00003000U 
-                                                               & vlSelfRef.__PVT__ex_ls_bus_alu[0U])) 
-                                                             | (IData)(vlSelfRef.__PVT__lsu_mod__DOT__ready))));
+                                                  & ((~ (IData)(
+                                                                (0U 
+                                                                 != 
+                                                                 (0x00003000U 
+                                                                  & vlSelfRef.__PVT__ex_ls_bus_alu[0U])))) 
+                                                     | (IData)(vlSelfRef.__PVT__lsu_mod__DOT__ready)));
     vlSelfRef.__PVT__lsu_mod__DOT__bus_in[0U] = ((vlSelfRef.__PVT__csr_data 
                                                   << 0x0000000eU) 
                                                  | (0x00003fffU 
@@ -2547,12 +2547,12 @@ void Vtop_top___nba_sequent__TOP__top__1(Vtop_top* vlSelf) {
                                              & (vlSelfRef.__PVT__alu_mod__DOT__bus_in[0U] 
                                                 << 1U)));
     vlSelfRef.__PVT__alu_mod__DOT__ready_right = (1U 
-                                                  & (IData)(
-                                                            ((0x00003000U 
-                                                              != 
-                                                              (0x00003000U 
-                                                               & vlSelfRef.__PVT__ex_ls_bus_alu[0U])) 
-                                                             | (IData)(vlSelfRef.__PVT__lsu_mod__DOT__ready))));
+                                                  & ((~ (IData)(
+                                                                (0U 
+                                                                 != 
+                                                                 (0x00003000U 
+                                                                  & vlSelfRef.__PVT__ex_ls_bus_alu[0U])))) 
+                                                     | (IData)(vlSelfRef.__PVT__lsu_mod__DOT__ready)));
     vlSelfRef.__PVT__lsu_mod__DOT__bus_in[0U] = ((vlSelfRef.__PVT__csr_data 
                                                   << 0x0000000eU) 
                                                  | (0x00003fffU 
