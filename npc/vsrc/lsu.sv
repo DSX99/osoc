@@ -55,8 +55,8 @@ module lsu(
     logic ready;
 
     always_comb begin
-        valid_right = valid_left && (!bus_in.lsu_re || !bus_in.lsu_we || ready); //
-        ready_left = ready_right && (!bus_in.lsu_re || !bus_in.lsu_we || ready);
+        valid_right = valid_left && (!(bus_in.lsu_re || bus_in.lsu_we) || ready); //
+        ready_left = ready_right && (!(bus_in.lsu_re || bus_in.lsu_we) || ready);
         unused_branch = bus_in.branch | |rresp | |bresp;
 
         bus_out.alu_out = 0;
