@@ -60,7 +60,7 @@ module lsu(
     logic ready;
 
     always_comb begin
-        valid_right = valid_left && ready (!bus_in.lsu_le || ready) && (!bus_in.lsu_we || ready);
+        valid_right = valid_left && (!bus_in.lsu_le || ready) && (!bus_in.lsu_we || ready);
         ready_left = ready;
 
         bus_out.alu_out = bus_in.alu_out;
