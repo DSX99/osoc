@@ -79,6 +79,7 @@ always_comb begin //possible decouple reading and writing for non blocking writi
     awready_lsu=awready;
 
     wdata=wdata_lsu;
+    wstrb=wstrb_lsu;
     wvalid=wvalid_lsu;
     wready_lsu=wready;
 
@@ -120,11 +121,16 @@ always_comb begin //possible decouple reading and writing for non blocking writi
 end
 
 always_ff @(posedge clk) begin
-    if(chose && arvalid && arready) ifu_transfer<=1;
-    if(!chose && arvalid && arready) lsu_transfer<=1;
-    
-    if(ifu_transfer && rvalid && rready) ifu_transfer<=0;
-    if(lsu_transfer && ((rvalid && rready))) lsu_transfer<=0;
+    if(rst) begin
+        ifu_transfer<=0;
+        lsu_transfer<=0;
+    end else begin
+        if(chose && arvalid && arready) ifu_transfer<=1;
+        if(!chose && arvalid && arready) lsu_transfer<=1;
+        
+        if(ifu_transfer && rvalid && rready) ifu_transfer<=0;
+        if(lsu_transfer && ((rvalid && rready))) lsu_transfer<=0;
+    end
 end
 
 
