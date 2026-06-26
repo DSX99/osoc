@@ -22,7 +22,7 @@ module ifu(
 );
 
 typedef enum{
-    IDLE, WAIT_AR, WAIT_R
+    IDLE, WAIT_AR, WAIT_R, AWAIT
 } IFU_state_t;
 IFU_state_t ifu;
 
@@ -49,12 +49,10 @@ always_ff @(posedge clk) begin
         if(ready) begin
             case(ifu)
                 IDLE:begin
-                    if(ready) begin
-                        valid<=0;
-                        arvalid<=1;
-                        araddr<=pc;
-                        ifu<=WAIT_AR;
-                    end
+                    valid<=0;
+                    arvalid<=1;
+                    araddr<=pc;
+                    ifu<=WAIT_AR;
                 end
                 WAIT_AR:begin
                     if(arready && arvalid)begin 
@@ -65,10 +63,16 @@ always_ff @(posedge clk) begin
                 end
                 WAIT_R:begin
                     if(rvalid && rready) begin
-                        ifu<=IDLE;
+                        ifu<=AWAIT;
                         bus_out.opcode<=rdata;
                         rready<=0;
                         valid<=1;
+                    end
+                end
+                AWAIT:begin
+                    if(ready) begin
+                        valid<=0;
+                        ifu<=IDLE;
                     end
                 end
             endcase

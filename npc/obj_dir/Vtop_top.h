@@ -41,7 +41,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop_top final {
     CData/*3:0*/ decode_mod__DOT____VdfgRegularize_h901acc23_0_2;
     CData/*0:0*/ __PVT__alu_mod__DOT__ready_right;
     CData/*4:0*/ __PVT__csr_mod__DOT__working_reg;
-    CData/*0:0*/ __PVT__lsu_mod__DOT__ready_right;
+    CData/*0:0*/ __PVT__lsu_mod__DOT__valid_right;
     CData/*0:0*/ __PVT__lsu_mod__DOT__ready;
     CData/*0:0*/ __PVT__lsu_mod__DOT__done_aw;
     CData/*0:0*/ __PVT__lsu_mod__DOT__done_w;
