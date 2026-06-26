@@ -64,7 +64,7 @@ module alu (
         bus_out.next_pc = bus_in.next_pc;
         bus_out.data_rs2 = bus_in.data_rs2;
         bus_out.lsu_we = bus_in.lsu_we;
-        bus_out.lsu_le = bus_in.lsu_le;
+        bus_out.lsu_re = bus_in.lsu_re;
         bus_out.lsu_oper = bus_in.lsu_oper;
         bus_out.rd = bus_in.rd;
         bus_out.mux_select = bus_in.mux_select;
