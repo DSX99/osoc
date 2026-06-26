@@ -116,20 +116,89 @@ logic [3:0] wstrb_lsu;
 logic [1:0] bresp_lsu;
 logic awvalid_lsu, awready_lsu, wvalid_lsu, wready_lsu, bvalid_lsu, bready_lsu;
 
-axi_slave_lsu axi_slave_lsu_mod (
-    .clk(clk), .rst(rst), .araddr(araddr_lsu), .arvalid(arvalid_lsu), .arready(arready_lsu), .rdata(rdata_lsu), .rresp(rresp_lsu), .rvalid(rvalid_lsu), .rready(rready_lsu),
-    .awaddr(awaddr_lsu), .awvalid(awvalid_lsu), .awready(awready_lsu), .wdata(wdata_lsu), .wstrb(wstrb_lsu), .wvalid(wvalid_lsu), .wready(wready_lsu), .bresp(bresp_lsu), .bvalid(bvalid_lsu), .bready(bready_lsu)
-);
-
 logic [31:0] araddr_ifu, rdata_ifu;
 logic [1:0] rresp_ifu;
 logic arvalid_ifu, arready_ifu, rvalid_ifu, rready_ifu;
 
 
-axi_slave axi_slave_mod (
-    .clk(clk), .rst(rst), .araddr(araddr_ifu), .arvalid(arvalid_ifu), .arready(arready_ifu), .rvalid(rvalid_ifu), .rdata(rdata_ifu), .rready(rready_ifu), .rresp(rresp_ifu)
+axi_slave_lsu axi_slave_lsu_mod (
+    .clk(clk), .rst(rst), .araddr(araddr_arbiter), .arvalid(arvalid_arbiter), .arready(arready_arbiter), .rdata(rdata_arbiter), .rresp(rresp_arbiter), .rvalid(rvalid_arbiter), .rready(rready_arbiter),
+    .awaddr(awaddr_arbiter), .awvalid(awvalid_arbiter), .awready(awready_arbiter), .wdata(wdata_arbiter), .wstrb(wstrb_arbiter), .wvalid(wvalid_arbiter), .wready(wready_arbiter), .bresp(bresp_arbiter), .bvalid(bvalid_arbiter), .bready(bready_arbiter)
+
 );
 
+arbiter arbiter_mod(
+    .clk(clk), .rst(rst), .araddr(araddr_lsu), .arvalid(arvalid_lsu), .arready(arready_lsu), .rdata(rdata_lsu), .rresp(rresp_lsu), .rvalid(rvalid_lsu), .rready(rready_lsu),
+    .awaddr(awaddr_lsu), .awvalid(awvalid_lsu), .awready(awready_lsu), .wdata(wdata_lsu), .wstrb(wstrb_lsu), .wvalid(wvalid_lsu), .wready(wready_lsu), .bresp(bresp_lsu), .bvalid(bvalid_lsu), .bready(bready_lsu),
+    .araddr(araddr_ifu), .arvalid(arvalid_ifu), .arready(arready_ifu), .rvalid(rvalid_ifu), .rdata(rdata_ifu), .rready(rready_ifu), .rresp(rresp_ifu),
+    .araddr(araddr_arbiter), .arvalid(arvalid_arbiter), .arready(arready_arbiter), .rdata(rdata_arbiter), .rresp(rresp_arbiter), .rvalid(rvalid_arbiter), .rready(rready_arbiter),
+    .awaddr(awaddr_arbiter), .awvalid(awvalid_arbiter), .awready(awready_arbiter), .wdata(wdata_arbiter), .wstrb(wstrb_arbiter), .wvalid(wvalid_arbiter), .wready(wready_arbiter), .bresp(bresp_arbiter), .bvalid(bvalid_arbiter), .bready(bready_arbiter)
+);
+
+module arbiter(
+    input logic clk, rst,
+
+    //LSU    
+    // Read Addr Channel (AR)
+    input  logic [31:0] araddr_lsu,
+    input  logic        arvalid_lsu,
+    output logic        arready_lsu,
+    // Read Data Channel (R)
+    output logic [31:0] rdata_lsu,
+    output logic [1:0]  rresp_lsu,
+    output logic        rvalid_lsu,
+    input  logic        rready_lsu,
+    // Write Address Channel (AW)
+    input logic [31:0]  awaddr_lsu,
+    input logic         awvalid_lsu,
+    output  logic       awready_lsu,
+    // Write Data Channel (W)
+    input logic [31:0]  wdata_lsu,
+    input logic [3:0]   wstrb_lsu,
+    input logic         wvalid_lsu,
+    output logic        wready_lsu,
+    // Write Response Channel (B)
+    output logic [1:0]  bresp_lsu,
+    output logic        bvalid_lsu,
+    input logic         bready_lsu,
+
+
+    //IFU
+    // Read Addr Channel (AR)
+    input  logic [31:0] araddr_ifu,
+    input  logic        arvalid_ifu,
+    output logic        arready_ifu,
+    // Read Data Channel (R)
+    output logic [31:0] rdata_ifu,
+    output logic [1:0]  rresp_ifu,
+    output logic        rvalid_ifu,
+    input  logic        rready_ifu,
+
+
+    //OUT
+    // Read Address Channel (AR)
+    output logic [31:0] araddr,
+    output logic        arvalid,
+    input  logic        arready,
+    // Read Data Channel (R)
+    input  logic [31:0] rdata,
+    input  logic [1:0]  rresp,
+    input  logic        rvalid,
+    output logic        rready,
+    // Write Address Channel (AW)
+    output logic [31:0] awaddr,
+    output logic        awvalid,
+    input  logic        awready,
+    // Write Data Channel (W)
+    output logic [31:0] wdata,
+    output logic [3:0]  wstrb,
+    output logic        wvalid,
+    input  logic        wready,
+    // Write Response Channel (B)
+    input  logic [1:0]  bresp,
+    input  logic        bvalid,
+    output logic        bready
+);
 
 
 endmodule
