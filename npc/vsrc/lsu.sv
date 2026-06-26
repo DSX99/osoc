@@ -61,7 +61,7 @@ module lsu(
 
     always_comb begin
         valid_right = valid_left && (!bus_in.lsu_le || ready) && (!bus_in.lsu_we || ready);
-        ready_left = ready;
+        ready_left = ready_right && ready;
 
         bus_out.alu_out = bus_in.alu_out;
         bus_out.next_pc = bus_in.next_pc;
