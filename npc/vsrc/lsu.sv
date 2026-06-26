@@ -89,7 +89,7 @@ always_ff @(posedge clk) begin
         case(lsu_r)
             IDLE_R:begin
                 ready<=0;
-                if(bus_in.lsu_re) begin
+                if(bus_in.lsu_re && valid_left) begin
                     arvalid<=1;
                     araddr<=bus_in.alu_out;
                     lsu_r<=WAIT_AR;
@@ -167,7 +167,7 @@ always_ff @(posedge clk) begin
         case(lsu_w)
             IDLE_W:begin
                 ready<=0;
-                if(bus_in.lsu_we) begin
+                if(bus_in.lsu_we && valid_left) begin
                     awaddr<=bus_in.alu_out;
                     awvalid<=1;
                     wdata<=bus_in.data_rs2;

@@ -1494,14 +1494,14 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
             if (((IData)(vlSelfRef.__PVT__rvalid_ifu) 
                  & (IData)(vlSelfRef.__PVT__rready_ifu))) {
                 __Vdly__ifu_mod__DOT__ifu = 3U;
-                __Vdly__if_id_bus[0U] = vlSelfRef.__PVT__rdata_ifu;
-                __VdlyMask__if_id_bus[0U] = 0xffffffffU;
                 __Vdly__rready_ifu = 0U;
                 vlSelfRef.__PVT__if_id_valid = 1U;
             }
         } else if ((3U == vlSelfRef.__PVT__ifu_mod__DOT__ifu)) {
             if (vlSelfRef.__PVT__alu_mod__DOT__ready_right) {
                 vlSelfRef.__PVT__if_id_valid = 0U;
+                __Vdly__if_id_bus[0U] = vlSelfRef.__PVT__rdata_ifu;
+                __VdlyMask__if_id_bus[0U] = 0xffffffffU;
                 __Vdly__ifu_mod__DOT__ifu = 0U;
             }
         }
