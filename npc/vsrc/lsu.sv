@@ -105,7 +105,7 @@ always_ff @(posedge clk) begin
             WAIT_R: begin
                 if (rvalid) begin
                     rready <= 1'b0;
-                    lsu_l <= AWAIT;
+                    lsu_l <= IDLE;
                     case (bus_in.lsu_oper)
                         3'b000: bus_out.lsu_out <= {{24{rdata[7]}}, rdata[7:0]};
                         3'b001: bus_out.lsu_out <= {{16{rdata[15]}}, rdata[15:0]};
