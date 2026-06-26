@@ -1396,7 +1396,7 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
         } else if ((2U == vlSelfRef.__PVT__lsu_mod__DOT__lsu_l)) {
             if (vlSelfRef.__PVT__rvalid_lsu) {
                 vlSelfRef.__PVT__rready_lsu = 0U;
-                __Vdly__lsu_mod__DOT__lsu_l = 3U;
+                __Vdly__lsu_mod__DOT__lsu_l = 0U;
                 vlSelfRef.__Vdly__ls_wb_bus[2U] = (
                                                    (0x000000ffU 
                                                     & vlSelfRef.__Vdly__ls_wb_bus[2U]) 

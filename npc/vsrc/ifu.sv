@@ -37,6 +37,7 @@ always_comb begin
     bus_out.next_pc = next_pc;
     bus_out.opcode = opcode_reg;
     unused_bits = | |rresp;
+    araddr=bus_in.pc;
 end
 
 always_ff @(posedge clk) begin
@@ -44,7 +45,6 @@ always_ff @(posedge clk) begin
         ifu_state <= IFU_IDLE;
         opcode_reg <= 32'h0;
         arvalid <= 1'b0;
-        araddr <= 32'h0;
         rready <= 1'b0;
         valid <= 1'b0;
     end else begin
@@ -54,7 +54,6 @@ always_ff @(posedge clk) begin
                 valid <= 1'b0;
                 arvalid <= 1'b0;
                 if (ready) begin
-                    araddr <= pc;
                     arvalid <= 1'b1;
                     ifu_state <= IFU_WAIT_AR;
                 end
