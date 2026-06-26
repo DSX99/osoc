@@ -37,7 +37,7 @@ void Vtop_regs___nba_sequent__TOP__top__reg_mod__0(Vtop_regs* vlSelf) {
     __VdlySet__regs__v32 = 0U;
     if (vlSymsp->TOP.rst) {
         __VdlySet__regs__v0 = 1U;
-    } else if (vlSymsp->TOP__top.__PVT__if_id_valid) {
+    } else if (vlSymsp->TOP__top.__PVT__lsu_mod__DOT__valid_right) {
         __VdlyVal__regs__v32 = ((4U & vlSymsp->TOP__top.__PVT__ls_wb_bus[0U])
                                  ? ((2U & vlSymsp->TOP__top.__PVT__ls_wb_bus[0U])
                                      ? ((vlSymsp->TOP__top.__PVT__ls_wb_bus[1U] 
@@ -99,4 +99,12 @@ void Vtop_regs___nba_sequent__TOP__top__reg_mod__0(Vtop_regs* vlSelf) {
         vlSelfRef.regs[__VdlyDim0__regs__v32] = __VdlyVal__regs__v32;
         vlSelfRef.regs[0U] = 0U;
     }
+    vlSelfRef.__PVT__data_rs2 = vlSelfRef.regs[(0x0000001fU 
+                                                & ((vlSymsp->TOP__top.__PVT__id_ex_bus_decoded[1U] 
+                                                    << 2U) 
+                                                   | (vlSymsp->TOP__top.__PVT__id_ex_bus_decoded[0U] 
+                                                      >> 0x0000001eU)))];
+    vlSelfRef.__PVT__data_rs1 = vlSelfRef.regs[(0x0000001fU 
+                                                & (vlSymsp->TOP__top.__PVT__id_ex_bus_decoded[1U] 
+                                                   >> 3U))];
 }

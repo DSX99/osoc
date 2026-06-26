@@ -16,9 +16,9 @@ extern "C" {
 
 
     // DPI IMPORTS
-    // DPI import at vsrc/ifu.sv:11:33
+    // DPI import at vsrc/axi_slave_lsu.sv:32:29
     extern int memread(int addr);
-    // DPI import at vsrc/lsu.sv:21:34
+    // DPI import at vsrc/axi_slave_lsu.sv:33:30
     extern void memwrite(int addr, int data, int idk);
 
 #ifdef __cplusplus

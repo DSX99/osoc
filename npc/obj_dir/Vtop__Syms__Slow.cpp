@@ -11,7 +11,7 @@ Vtop__Syms::Vtop__Syms(VerilatedContext* contextp, const char* namep, Vtop* mode
     , TOP{this, namep}
 {
     // Check resources
-    Verilated::stackCheck(500);
+    Verilated::stackCheck(518);
     // Setup sub module instances
     TOP__top.ctor(this, "top");
     TOP__top__reg_mod.ctor(this, "top.reg_mod");
@@ -33,6 +33,7 @@ Vtop__Syms::Vtop__Syms(VerilatedContext* contextp, const char* namep, Vtop* mode
     // Setup public variables
     __Vscopep_top->varInsert("opcode", &(TOP__top.opcode), false, VLVT_UINT32, VLVD_NODIR|VLVF_PUB_RW|VLVF_CONTINUOUSLY, 0, 1 ,31,0);
     __Vscopep_top->varInsert("pc", &(TOP__top.pc), false, VLVT_UINT32, VLVD_NODIR|VLVF_PUB_RW|VLVF_CONTINUOUSLY, 0, 1 ,31,0);
+    __Vscopep_top->varInsert("reg_valid", &(TOP__top.reg_valid), false, VLVT_UINT8, VLVD_NODIR|VLVF_PUB_RW, 0, 0);
     __Vscopep_top__reg_mod->varInsert("regs", &(TOP__top__reg_mod.regs), false, VLVT_UINT32, VLVD_NODIR|VLVF_PUB_RW, 1, 1 ,31,0 ,31,0);
 }
 

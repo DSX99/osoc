@@ -38,7 +38,7 @@ module decode(
         ready_left = ready_right;
 
         bus_out = '0;
-
+    
         bus_out.pc = bus_in.pc;
         bus_out.next_pc = bus_in.next_pc;
 
@@ -79,7 +79,7 @@ module decode(
                 bus_out.imm      = imm_i;
                 bus_out.alu_op   = 8'b10000000;          
                 bus_out.lsu_oper = func3;
-                bus_out.lsu_le   = 1'b1;
+                bus_out.lsu_re   = 1'b1;
                 bus_out.mux_select = 2'b01;
             end
             7'b0100011: begin // STORE (SB, SH, SW)

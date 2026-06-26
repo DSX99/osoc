@@ -110,8 +110,6 @@ void Vtop___024root___eval_nba(Vtop___024root* vlSelf) {
         vlSelfRef.__Vm_traceActivity[2U] = 1U;
         Vtop_regs___nba_sequent__TOP__top__reg_mod__0((&vlSymsp->TOP__top__reg_mod));
         Vtop_top___nba_sequent__TOP__top__1((&vlSymsp->TOP__top));
-        Vtop_regs___ico_sequent__TOP__top__reg_mod__0((&vlSymsp->TOP__top__reg_mod));
-        Vtop_top___ico_sequent__TOP__top__1((&vlSymsp->TOP__top));
     }
 }
 

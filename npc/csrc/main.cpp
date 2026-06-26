@@ -119,7 +119,7 @@ int main(int argc, char** argv) {
     init_sdb();
     sdb_mainloop(&qexit);
   }
-  
+
   #ifdef CONFIG_FST
   tracep->close();
   #endif
@@ -184,7 +184,7 @@ void execute(uint32_t n){
       printf("time:%lu\n", contextp->time());
     }
 
-    if(!batch){
+    if(!batch && top->top->opcode!=0 && top->top->reg_valid){
       inst[0] = (top->top->opcode) & 0xff;
       inst[1] = (top->top->opcode >> 8) & 0xff;
       inst[2] = (top->top->opcode >> 16) & 0xff;
@@ -215,9 +215,12 @@ void execute(uint32_t n){
 
     bool current_cycle_is_skipped = skip_inst;
 
-    if((!batch) && (!current_cycle_is_skipped)) difftest_exec(1);
+    if((!batch) && (!current_cycle_is_skipped) && top->top->reg_valid) difftest_exec(1);
 
     if(contextp->gotFinish()){
+      #ifdef CONFIG_FST
+      tracep->close();
+      #endif
       if(!batch){
         inst[0] = (top->top->opcode) & 0xff;
         inst[1] = (top->top->opcode >> 8) & 0xff;

@@ -4,6 +4,9 @@ module top(
 );
 
 logic [31:0] pc /* verilator public */, opcode /* verilator public */;
+logic reg_valid /* verilator public */;
+
+logic reg_valid_e;
 
 assign opcode = if_id_bus.opcode;
 
@@ -27,17 +30,16 @@ logic [31:0] csr_data;
 
 logic [31:0] pc_in;
 pc pc_mod(
-    .clk(clk), .rst(rst), .branch(ex_ls_bus.branch), .data_in(pc_in), .pc(pc), .next_pc(next_pc)
+    .clk(clk), .rst(rst), .branch(ex_ls_bus.branch), .data_in(pc_in), .pc(pc), .next_pc(next_pc), .valid(ls_wb_valid)
 );
 assign pc_in = ls_wb_bus.mux_select_pc ? ls_wb_bus.csr_out : ls_wb_bus.alu_out;
 
 
 // IFU
 ifu ifu_mod(
-    .pc(pc), .next_pc(next_pc), .bus_out(if_id_bus), .valid(if_id_valid), .ready(if_id_ready)
+    .clk(clk), .rst(rst), .pc(pc), .next_pc(next_pc), .bus_out(if_id_bus), .valid(if_id_valid), .ready(if_id_ready),
+    .araddr(araddr_ifu), .arvalid(arvalid_ifu), .arready(arready_ifu), .rdata(rdata_ifu), .rresp(rresp_ifu), .rvalid(rvalid_ifu), .rready(rready_ifu)
 );
-
-
 
 // ID
 decode decode_mod(
@@ -74,7 +76,9 @@ assign ex_ls_valid = ex_ls_valid_alu & ex_ls_valid_csr;
 
 // LSU
 lsu lsu_mod(
-    .clk(clk), .bus_in(ex_ls_bus), .bus_out(ls_wb_bus), .valid_left(ex_ls_valid), .ready_left(ex_ls_ready), .valid_right(ls_wb_valid), .ready_right(ls_wb_ready)
+    .clk(clk), .rst(rst), .bus_in(ex_ls_bus), .bus_out(ls_wb_bus), .valid_left(ex_ls_valid), .ready_left(ex_ls_ready), .valid_right(ls_wb_valid), .ready_right(ls_wb_ready),
+    .araddr(araddr_lsu), .arvalid(arvalid_lsu), .arready(arready_lsu), .rdata(rdata_lsu), .rresp(rresp_lsu), .rvalid(rvalid_lsu), .rready(rready_lsu),
+    .awaddr(awaddr_lsu), .awvalid(awvalid_lsu), .awready(awready_lsu), .wdata(wdata_lsu), .wstrb(wstrb_lsu), .wvalid(wvalid_lsu), .wready(wready_lsu), .bresp(bresp_lsu), .bvalid(bvalid_lsu), .bready(bready_lsu)
 );
 
 
@@ -85,6 +89,8 @@ regs reg_mod(
     .clk(clk), .rst(rst), .data_in(reg_in), .rs1(id_ex_bus_decoded.rs1), .rs2(id_ex_bus_decoded.rs2), .rd(ls_wb_bus.rd), .data_rs1(reg_data_rs1), .data_rs2(reg_data_rs2), .valid(ls_wb_valid), .ready(ls_wb_ready)
 );
 
+assign reg_valid_e = ls_wb_valid;
+always_ff @(posedge clk) reg_valid <= reg_valid_e;
 // feed register values into id_ex_bus data fields before ALU
 always_comb begin
     id_ex_bus = id_ex_bus_decoded;
@@ -100,5 +106,41 @@ always_comb begin
 end
 
 assign csr_in = id_ex_bus.csr_oper[2] ? {27'b0, id_ex_bus.rs1} : id_ex_bus.data_rs1;
+
+logic [31:0] araddr_lsu, rdata_lsu;
+logic [1:0] rresp_lsu;
+logic arvalid_lsu, arready_lsu, rvalid_lsu, rready_lsu;
+
+logic [31:0] awaddr_lsu, wdata_lsu;
+logic [3:0] wstrb_lsu;
+logic [1:0] bresp_lsu;
+logic awvalid_lsu, awready_lsu, wvalid_lsu, wready_lsu, bvalid_lsu, bready_lsu;
+
+logic [31:0] araddr_ifu, rdata_ifu;
+logic [1:0] rresp_ifu;
+logic arvalid_ifu, arready_ifu, rvalid_ifu, rready_ifu;
+
+logic [31:0] araddr_arbiter, rdata_arbiter;
+logic [1:0] rresp_arbiter;
+logic arvalid_arbiter, arready_arbiter, rvalid_arbiter, rready_arbiter;
+
+logic [31:0] awaddr_arbiter, wdata_arbiter;
+logic [3:0] wstrb_arbiter;
+logic [1:0] bresp_arbiter;
+logic awvalid_arbiter, awready_arbiter, wvalid_arbiter, wready_arbiter, bvalid_arbiter, bready_arbiter;
+
+axi_slave_lsu axi_slave_lsu_mod (
+    .clk(clk), .rst(rst), .araddr(araddr_arbiter), .arvalid(arvalid_arbiter), .arready(arready_arbiter), .rdata(rdata_arbiter), .rresp(rresp_arbiter), .rvalid(rvalid_arbiter), .rready(rready_arbiter),
+    .awaddr(awaddr_arbiter), .awvalid(awvalid_arbiter), .awready(awready_arbiter), .wdata(wdata_arbiter), .wstrb(wstrb_arbiter), .wvalid(wvalid_arbiter), .wready(wready_arbiter), .bresp(bresp_arbiter), .bvalid(bvalid_arbiter), .bready(bready_arbiter)
+
+);
+
+arbiter arbiter_mod(
+    .clk(clk), .rst(rst), .araddr_lsu(araddr_lsu), .arvalid_lsu(arvalid_lsu), .arready_lsu(arready_lsu), .rdata_lsu(rdata_lsu), .rresp_lsu(rresp_lsu), .rvalid_lsu(rvalid_lsu), .rready_lsu(rready_lsu),
+    .awaddr_lsu(awaddr_lsu), .awvalid_lsu(awvalid_lsu), .awready_lsu(awready_lsu), .wdata_lsu(wdata_lsu), .wstrb_lsu(wstrb_lsu), .wvalid_lsu(wvalid_lsu), .wready_lsu(wready_lsu), .bresp_lsu(bresp_lsu), .bvalid_lsu(bvalid_lsu), .bready_lsu(bready_lsu),
+    .araddr_ifu(araddr_ifu), .arvalid_ifu(arvalid_ifu), .arready_ifu(arready_ifu), .rvalid_ifu(rvalid_ifu), .rdata_ifu(rdata_ifu), .rready_ifu(rready_ifu), .rresp_ifu(rresp_ifu),
+    .araddr(araddr_arbiter), .arvalid(arvalid_arbiter), .arready(arready_arbiter), .rdata(rdata_arbiter), .rresp(rresp_arbiter), .rvalid(rvalid_arbiter), .rready(rready_arbiter),
+    .awaddr(awaddr_arbiter), .awvalid(awvalid_arbiter), .awready(awready_arbiter), .wdata(wdata_arbiter), .wstrb(wstrb_arbiter), .wvalid(wvalid_arbiter), .wready(wready_arbiter), .bresp(bresp_arbiter), .bvalid(bvalid_arbiter), .bready(bready_arbiter)
+);
 
 endmodule

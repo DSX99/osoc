@@ -3,10 +3,38 @@ import pipeline_bus_pkg::ls_to_wb_bus_t;
 
 module lsu(
     input logic clk,
+    input logic rst,
     input pipeline_bus_pkg::ex_to_ls_bus_t bus_in,
     output pipeline_bus_pkg::ls_to_wb_bus_t bus_out,
     input logic valid_left, ready_right,
-    output logic ready_left, valid_right
+    output logic ready_left, valid_right,
+
+    // Read Address Channel (AR)
+    output logic [31:0] araddr,
+    output logic        arvalid,
+    input  logic        arready,
+
+    // Read Data Channel (R)
+    input  logic [31:0] rdata,
+    input  logic [1:0]  rresp,
+    input  logic        rvalid,
+    output logic        rready,
+
+    // Write Address Channel (AW)
+    output logic [31:0] awaddr,
+    output logic        awvalid,
+    input  logic        awready,
+
+    // Write Data Channel (W)
+    output logic [31:0] wdata,
+    output logic [3:0]  wstrb,
+    output logic        wvalid,
+    input  logic        wready,
+
+    // Write Response Channel (B)
+    input  logic [1:0]  bresp,
+    input  logic        bvalid,
+    output logic        bready
 );
 
     // LB 0
@@ -18,71 +46,164 @@ module lsu(
     // SH 6
     // SW 7
 
-    import "DPI-C" function void memwrite(int addr, int data, int idk);
-    import "DPI-C" function int memread(int addr);
+    typedef enum{
+        IDLE_R, WAIT_AR, WAIT_R, AWAIT_R
+    } LSU_state_R_t;
+    LSU_state_R_t lsu_r;
 
-    int A;
-    logic [31:0] lsu_out;
     logic unused_branch;
+    logic done_r, done_w;
 
     always_comb begin
-        valid_right = valid_left;
-        ready_left = ready_right;
-        unused_branch = bus_in.branch;
+        valid_right = valid_left && (!bus_in.lsu_re || done_r) && (!bus_in.lsu_we || done_w); //
+        ready_left = ready_right && (!bus_in.lsu_re || done_r) && (!bus_in.lsu_we || done_w);
+        unused_branch = bus_in.branch | |rresp | |bresp;
+
+        bus_out.alu_out = 0;
+        bus_out.next_pc = 0;
+        bus_out.csr_out = 0;
+        bus_out.rd = 0;
+        bus_out.mux_select = 0;
+        bus_out.mux_select_pc = 0;
 
 
-        bus_out = '0;
+        if(valid_left && ready_right) begin //should it be here or better to take out for future?                   !!check when doing pipeline                        
+            bus_out.alu_out = bus_in.alu_out;
+            bus_out.next_pc = bus_in.next_pc;
+            bus_out.csr_out = bus_in.csr_out;
+            bus_out.rd = bus_in.rd;
+            bus_out.mux_select = bus_in.mux_select;
+            bus_out.mux_select_pc = bus_in.mux_select_pc;
+        end 
+    end
 
-        if(bus_in.lsu_le) begin
-            case(bus_in.lsu_oper)
-                0: begin //LB
-                    A = memread(bus_in.alu_out);
-                    lsu_out = {{24{A[7]}},A[7:0]};
-                end 
-                1: begin //LH
-                    A = memread(bus_in.alu_out);
-                    lsu_out = {{16{A[15]}},A[15:0]};
-                end 
-                2: begin //LW
-                    A = memread(bus_in.alu_out);
-                    lsu_out = A[31:0];
-                end 
-                4: begin //LBU
-                    A = memread(bus_in.alu_out);
-                    lsu_out = {24'b0,A[7:0]};
-                end 
-                5: begin //LHU
-                    A = memread(bus_in.alu_out);
-                    lsu_out = {16'b0,A[15:0]};
-                end 
-            endcase
-        end
+//reading (load)
 
-        
-        bus_out.lsu_out = lsu_out;
-            
-        bus_out.alu_out = bus_in.alu_out;
-        bus_out.next_pc = bus_in.next_pc;
-        bus_out.csr_out = bus_in.csr_out;
-        bus_out.rd = bus_in.rd;
-        bus_out.mux_select = bus_in.mux_select;
-        bus_out.mux_select_pc = bus_in.mux_select_pc;
-    end 
-
-always_ff @( posedge clk ) begin
-    if(bus_in.lsu_we) begin
-        case(bus_in.lsu_oper)
-            0: begin //SB
-                memwrite(bus_in.alu_out, bus_in.data_rs2, 0);
-            end 
-            1: begin //SH
-                memwrite(bus_in.alu_out, bus_in.data_rs2, 1);
-            end 
-            2: begin //SW
-                memwrite(bus_in.alu_out, bus_in.data_rs2, 2);
+always_ff @(posedge clk) begin
+    if(rst) begin
+        bus_out.lsu_out<=0;
+        arvalid<=0;
+        araddr<=0;
+        rready<=0;
+        done_r<=1;
+    end else begin
+        case(lsu_r)
+            IDLE_R:begin
+                done_r<=0;
+                if(bus_in.lsu_re && valid_left) begin
+                    arvalid<=1;
+                    araddr<=bus_in.alu_out;
+                    lsu_r<=WAIT_AR;
+                end
+            end
+            WAIT_AR:begin
+                if(arready && arvalid)begin 
+                    arvalid<=0;
+                    rready<=1;
+                    lsu_r<=WAIT_R;
+                end
+            end
+            WAIT_R:begin
+                if(rvalid && rready) begin
+                    lsu_r<=AWAIT_R;
+                    case(bus_in.lsu_oper)
+                        0: begin //LB
+                            bus_out.lsu_out <= {{24{rdata[7]}},rdata[7:0]};
+                        end 
+                        1: begin //LH
+                            bus_out.lsu_out <= {{16{rdata[15]}},rdata[15:0]};
+                        end 
+                        2: begin //LW
+                            bus_out.lsu_out <= rdata[31:0];
+                        end 
+                        4: begin //LBU
+                            bus_out.lsu_out <= {24'b0,rdata[7:0]};
+                        end 
+                        5: begin //LHU
+                            bus_out.lsu_out <= {16'b0,rdata[15:0]};
+                        end 
+                    endcase
+                    rready<=0;
+                    done_r<=1;
+                end
+            end
+            AWAIT_R:begin
+                if(ready_right && valid_left) begin
+                    done_r<=0;
+                    lsu_r<=IDLE_R;
+                end
             end
         endcase
     end
 end
+
+
+//writing (save)
+
+
+logic done_aw, done_wdata;
+
+typedef enum{
+    IDLE_W, WAIT_W, WAIT_WRESP, AWAIT_W
+} LSU_state_w_t;
+LSU_state_w_t lsu_w;
+
+always_comb begin
+    case(bus_in.lsu_oper) 
+        3'b000: wstrb=4'b0001;
+        3'b001: wstrb=4'b0011;
+        3'b010: wstrb=4'b1111;
+        default: wstrb=0;
+    endcase
+end
+
+always_ff @(posedge clk) begin
+    if(rst) begin
+        bready<=1;
+        wdata<=0;
+        wvalid<=0;
+        awaddr<=0;
+        awvalid<=0;
+    end else begin
+        case(lsu_w)
+            IDLE_W:begin
+                done_w<=0;
+                if(bus_in.lsu_we && valid_left) begin
+                    awaddr<=bus_in.alu_out;
+                    awvalid<=1;
+                    wdata<=bus_in.data_rs2;
+                    wvalid<=1;
+                    lsu_w<=WAIT_W;
+                end
+            end
+            WAIT_W:begin
+                if(wready)begin 
+                    wvalid<=0;
+                    done_wdata<=1;
+                end
+                if(awready) begin
+                    awvalid<=0;
+                    done_aw<=1;
+                end
+                if((done_aw || awready) && (done_wdata || wready)) lsu_w <= WAIT_WRESP;
+            end
+            WAIT_WRESP:begin
+                done_aw<=0;
+                done_wdata<=0;
+                if(bvalid) begin
+                    lsu_w<=AWAIT_W;
+                    done_w<=1;
+                end
+            end
+            AWAIT_W:begin
+                if(ready_right && valid_left) begin
+                    done_w<=0;
+                    lsu_w<=IDLE_W;
+                end
+            end
+        endcase
+    end
+end
+
 
 endmodule

@@ -97,7 +97,7 @@ VL_ATTR_COLD bool Vtop___024root___trigger_anySet__stl(const VlUnpacked<QData/*6
     return (0U);
 }
 
-void Vtop_top___ico_sequent__TOP__top__0(Vtop_top* vlSelf);
+VL_ATTR_COLD void Vtop_top___stl_sequent__TOP__top__0(Vtop_top* vlSelf);
 void Vtop_regs___ico_sequent__TOP__top__reg_mod__0(Vtop_regs* vlSelf);
 void Vtop_top___ico_sequent__TOP__top__1(Vtop_top* vlSelf);
 
@@ -107,7 +107,7 @@ VL_ATTR_COLD void Vtop___024root___eval_stl(Vtop___024root* vlSelf) {
     auto& vlSelfRef = std::ref(*vlSelf).get();
     // Body
     if ((1ULL & vlSelfRef.__VstlTriggered[0U])) {
-        Vtop_top___ico_sequent__TOP__top__0((&vlSymsp->TOP__top));
+        Vtop_top___stl_sequent__TOP__top__0((&vlSymsp->TOP__top));
         Vtop___024root____Vm_traceActivitySetAll(vlSelf);
         Vtop_regs___ico_sequent__TOP__top__reg_mod__0((&vlSymsp->TOP__top__reg_mod));
         Vtop_top___ico_sequent__TOP__top__1((&vlSymsp->TOP__top));

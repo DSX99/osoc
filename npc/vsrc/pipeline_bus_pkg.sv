@@ -32,7 +32,7 @@ package pipeline_bus_pkg;
         
         // Control Signals passed through to LSU
         logic        lsu_we;     // Memory Write Enable (Store)
-        logic        lsu_le;     // Memory Read Enable (Load)
+        logic        lsu_re;     // Memory Read Enable (Load)
         logic [2:0]  lsu_oper;   // LSU width/sign extension code (LB, LH, LW, etc.)
         
         // Control Signals passed through to WBU
@@ -52,7 +52,7 @@ package pipeline_bus_pkg;
         
         // Control Signals for LSU
         logic        lsu_we;     // Memory Write Enable
-        logic        lsu_le;     // Memory Read Enable
+        logic        lsu_re;     // Memory Read Enable
         logic [2:0]  lsu_oper;   // LSU width/sign extension code
         
         // Control Signals passed through to WBU
