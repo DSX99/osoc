@@ -24,7 +24,7 @@ void Vtop___024root__trace_chg_0_sub_0(Vtop___024root* vlSelf, VerilatedFst::Buf
     uint32_t* const oldp VL_ATTR_UNUSED = bufp->oldp(vlSymsp->__Vm_baseCode + 0);
     if (VL_UNLIKELY(((vlSelfRef.__Vm_traceActivity[1U] 
                       | vlSelfRef.__Vm_traceActivity[2U])))) {
-        bufp->chgBit(oldp+0,(vlSymsp->TOP__top.__PVT__lsu_mod__DOT__valid_right));
+        bufp->chgBit(oldp+0,(vlSymsp->TOP__top.__PVT__lsu_mod__DOT__ready_right));
         bufp->chgIData(oldp+1,(vlSymsp->TOP__top.__PVT__if_id_bus[2U]),32);
         bufp->chgIData(oldp+2,(vlSymsp->TOP__top.__PVT__if_id_bus[1U]),32);
         bufp->chgIData(oldp+3,(vlSymsp->TOP__top.__PVT__if_id_bus[0U]),32);
