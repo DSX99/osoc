@@ -899,6 +899,12 @@ void Vtop_top___ico_sequent__TOP__top__1(Vtop_top* vlSelf) {
                                           | (0x00003ffeU 
                                              & (vlSelfRef.__PVT__alu_mod__DOT__bus_in[0U] 
                                                 << 1U)));
+    vlSelfRef.__PVT__lsu_mod__DOT__valid_right = ((IData)(vlSelfRef.__PVT__if_id_valid) 
+                                                  & ((~ 
+                                                      ((~ (IData)(vlSelfRef.__PVT__lsu_mod__DOT__prev_le)) 
+                                                       & (vlSelfRef.__PVT__ex_ls_bus_alu[0U] 
+                                                          >> 0x0000000cU))) 
+                                                     & (IData)(vlSelfRef.__PVT__lsu_mod__DOT__ready)));
     vlSelfRef.__PVT__lsu_mod__DOT__bus_in[0U] = ((vlSelfRef.__PVT__csr_data 
                                                   << 0x0000000eU) 
                                                  | (0x00003fffU 
@@ -1534,6 +1540,9 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
             }
         }
     }
+    vlSelfRef.__PVT__lsu_mod__DOT__prev_le = (1U & 
+                                              (vlSelfRef.__PVT__lsu_mod__DOT__bus_in[0U] 
+                                               >> 0x0000000cU));
     if (__VdlySet__csr_mod__DOT__regs__v0) {
         vlSelfRef.__PVT__csr_mod__DOT__regs[0U] = 0U;
         vlSelfRef.__PVT__csr_mod__DOT__regs[1U] = 0U;
@@ -2120,8 +2129,6 @@ void Vtop_top___nba_sequent__TOP__top__1(Vtop_top* vlSelf) {
     Vtop__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     auto& vlSelfRef = std::ref(*vlSelf).get();
     // Body
-    vlSelfRef.__PVT__lsu_mod__DOT__valid_right = ((IData)(vlSelfRef.__PVT__if_id_valid) 
-                                                  & (IData)(vlSelfRef.__PVT__lsu_mod__DOT__ready));
     vlSelfRef.__PVT__ls_wb_bus[0U] = ((vlSelfRef.__Vdly__ls_wb_bus[0U] 
                                        & vlSelfRef.__VdlyMask__ls_wb_bus[0U]) 
                                       | (vlSelfRef.__PVT__ls_wb_bus[0U] 
@@ -2519,6 +2526,12 @@ void Vtop_top___nba_sequent__TOP__top__1(Vtop_top* vlSelf) {
                                           | (0x00003ffeU 
                                              & (vlSelfRef.__PVT__alu_mod__DOT__bus_in[0U] 
                                                 << 1U)));
+    vlSelfRef.__PVT__lsu_mod__DOT__valid_right = ((IData)(vlSelfRef.__PVT__if_id_valid) 
+                                                  & ((~ 
+                                                      ((~ (IData)(vlSelfRef.__PVT__lsu_mod__DOT__prev_le)) 
+                                                       & (vlSelfRef.__PVT__ex_ls_bus_alu[0U] 
+                                                          >> 0x0000000cU))) 
+                                                     & (IData)(vlSelfRef.__PVT__lsu_mod__DOT__ready)));
     vlSelfRef.__PVT__lsu_mod__DOT__bus_in[0U] = ((vlSelfRef.__PVT__csr_data 
                                                   << 0x0000000eU) 
                                                  | (0x00003fffU 

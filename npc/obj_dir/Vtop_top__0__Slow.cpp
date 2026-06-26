@@ -53,8 +53,6 @@ VL_ATTR_COLD void Vtop_top___stl_sequent__TOP__top__0(Vtop_top* vlSelf) {
     vlSelfRef.__PVT__ifu_mod__DOT__next_pc = ((IData)(4U) 
                                               + vlSelfRef.pc);
     vlSelfRef.opcode = vlSelfRef.__PVT__ifu_mod__DOT__opcode_reg;
-    vlSelfRef.__PVT__lsu_mod__DOT__valid_right = ((IData)(vlSelfRef.__PVT__if_id_valid) 
-                                                  & (IData)(vlSelfRef.__PVT__lsu_mod__DOT__ready));
     vlSelfRef.__PVT__decode_mod__DOT__imm_i = (((- (IData)(
                                                            (vlSelfRef.__PVT__ifu_mod__DOT__opcode_reg 
                                                             >> 0x0000001fU))) 
@@ -614,6 +612,7 @@ VL_ATTR_COLD void Vtop_top___ctor_var_reset(Vtop_top* vlSelf) {
     vlSelf->__PVT__lsu_mod__DOT__lsu_l = 0;
     vlSelf->__PVT__lsu_mod__DOT__write_state = 0;
     vlSelf->__PVT__lsu_mod__DOT__ready = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 13064420644330996825ull);
+    vlSelf->__PVT__lsu_mod__DOT__prev_le = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 8179215459852384519ull);
     vlSelf->__PVT__lsu_mod__DOT__write_aw_done = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 2503046070205116447ull);
     vlSelf->__PVT__lsu_mod__DOT__write_w_done = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 4214452399770354284ull);
     vlSelf->__PVT__axi_slave_lsu_mod__DOT__slave = 0;
