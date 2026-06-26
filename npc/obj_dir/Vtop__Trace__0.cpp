@@ -195,15 +195,7 @@ void Vtop___024root__trace_chg_0_sub_0(Vtop___024root* vlSelf, VerilatedFst::Buf
                                        >> 1U))),2);
         bufp->chgBit(oldp+63,((1U & vlSymsp->TOP__top.__PVT__ls_wb_bus[0U])));
         bufp->chgIData(oldp+64,(vlSymsp->TOP__top.__PVT__csr_data),32);
-        bufp->chgIData(oldp+65,(((1U & vlSymsp->TOP__top.__PVT__ls_wb_bus[0U])
-                                  ? ((vlSymsp->TOP__top.__PVT__ls_wb_bus[1U] 
-                                      << 0x00000018U) 
-                                     | (vlSymsp->TOP__top.__PVT__ls_wb_bus[0U] 
-                                        >> 8U)) : (
-                                                   (vlSymsp->TOP__top.__PVT__ls_wb_bus[4U] 
-                                                    << 0x00000018U) 
-                                                   | (vlSymsp->TOP__top.__PVT__ls_wb_bus[3U] 
-                                                      >> 8U)))),32);
+        bufp->chgIData(oldp+65,(vlSymsp->TOP__top.__PVT__pc_mod__DOT__data_in),32);
         bufp->chgIData(oldp+66,(vlSymsp->TOP__top.__PVT__csr_mod__DOT__data_in),32);
         bufp->chgIData(oldp+67,(vlSymsp->TOP__top__reg_mod.__PVT__data_rs1),32);
         bufp->chgIData(oldp+68,(vlSymsp->TOP__top__reg_mod.__PVT__data_rs2),32);
@@ -377,16 +369,8 @@ void Vtop___024root__trace_chg_0_sub_0(Vtop___024root* vlSelf, VerilatedFst::Buf
     bufp->chgBit(oldp+171,(vlSymsp->TOP__top.reg_valid));
     bufp->chgIData(oldp+172,(((IData)(4U) + vlSymsp->TOP__top.pc)),32);
     bufp->chgIData(oldp+173,(((1U & vlSymsp->TOP__top.__PVT__ex_ls_bus_alu[0U])
-                               ? ((1U & vlSymsp->TOP__top.__PVT__ls_wb_bus[0U])
-                                   ? ((vlSymsp->TOP__top.__PVT__ls_wb_bus[1U] 
-                                       << 0x00000018U) 
-                                      | (vlSymsp->TOP__top.__PVT__ls_wb_bus[0U] 
-                                         >> 8U)) : 
-                                  ((vlSymsp->TOP__top.__PVT__ls_wb_bus[4U] 
-                                    << 0x00000018U) 
-                                   | (vlSymsp->TOP__top.__PVT__ls_wb_bus[3U] 
-                                      >> 8U))) : ((IData)(4U) 
-                                                  + vlSymsp->TOP__top.pc))),32);
+                               ? vlSymsp->TOP__top.__PVT__pc_mod__DOT__data_in
+                               : ((IData)(4U) + vlSymsp->TOP__top.pc))),32);
     bufp->chgIData(oldp+174,(((IData)(4U) + vlSymsp->TOP__top.pc)),32);
     bufp->chgIData(oldp+175,(vlSymsp->TOP__top__reg_mod.regs[31]),32);
     bufp->chgIData(oldp+176,(vlSymsp->TOP__top__reg_mod.regs[30]),32);

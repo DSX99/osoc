@@ -151,7 +151,7 @@ VL_ATTR_COLD void Vtop___024root__trace_init_sub__TOP__top__0(Vtop___024root* vl
     VL_TRACE_DECL_BIT(tracep,c+100,0,"wready_lsu",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::VAR, VerilatedTraceSigType::LOGIC);
     VL_TRACE_DECL_BIT(tracep,c+101,0,"bvalid_lsu",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::VAR, VerilatedTraceSigType::LOGIC);
     VL_TRACE_DECL_BIT(tracep,c+102,0,"bready_lsu",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::VAR, VerilatedTraceSigType::LOGIC);
-    VL_TRACE_DECL_BUS(tracep,c+169,0,"araddr_ifu",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::VAR, VerilatedTraceSigType::LOGIC, 31,0);
+    VL_TRACE_DECL_BUS(tracep,c+173,0,"araddr_ifu",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::VAR, VerilatedTraceSigType::LOGIC, 31,0);
     VL_TRACE_DECL_BUS(tracep,c+103,0,"rdata_ifu",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::VAR, VerilatedTraceSigType::LOGIC, 31,0);
     VL_TRACE_DECL_BUS(tracep,c+104,0,"rresp_ifu",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::VAR, VerilatedTraceSigType::LOGIC, 1,0);
     VL_TRACE_DECL_BIT(tracep,c+105,0,"arvalid_ifu",-1, VerilatedTraceSigDirection::NONE, VerilatedTraceSigKind::VAR, VerilatedTraceSigType::LOGIC);
@@ -230,7 +230,7 @@ VL_ATTR_COLD void Vtop___024root__trace_init_sub__TOP__top__0(Vtop___024root* vl
     VL_TRACE_PUSH_PREFIX(tracep, "axi_slave_mod", VerilatedTracePrefixType::SCOPE_MODULE, 0, 0);
     VL_TRACE_DECL_BIT(tracep,c+167,0,"clk",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC);
     VL_TRACE_DECL_BIT(tracep,c+168,0,"rst",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC);
-    VL_TRACE_DECL_BUS(tracep,c+169,0,"araddr",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, 31,0);
+    VL_TRACE_DECL_BUS(tracep,c+173,0,"araddr",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, 31,0);
     VL_TRACE_DECL_BIT(tracep,c+105,0,"arvalid",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC);
     VL_TRACE_DECL_BIT(tracep,c+106,0,"arready",-1, VerilatedTraceSigDirection::OUTPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC);
     VL_TRACE_DECL_BUS(tracep,c+103,0,"rdata",-1, VerilatedTraceSigDirection::OUTPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, 31,0);
@@ -313,7 +313,7 @@ VL_ATTR_COLD void Vtop___024root__trace_init_sub__TOP__top__0(Vtop___024root* vl
     VL_TRACE_POP_PREFIX(tracep);
     VL_TRACE_DECL_BIT(tracep,c+85,0,"valid",-1, VerilatedTraceSigDirection::OUTPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC);
     VL_TRACE_DECL_BIT(tracep,c+86,0,"ready",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC);
-    VL_TRACE_DECL_BUS(tracep,c+169,0,"araddr",-1, VerilatedTraceSigDirection::OUTPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, 31,0);
+    VL_TRACE_DECL_BUS(tracep,c+173,0,"araddr",-1, VerilatedTraceSigDirection::OUTPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, 31,0);
     VL_TRACE_DECL_BIT(tracep,c+105,0,"arvalid",-1, VerilatedTraceSigDirection::OUTPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC);
     VL_TRACE_DECL_BIT(tracep,c+106,0,"arready",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC);
     VL_TRACE_DECL_BUS(tracep,c+103,0,"rdata",-1, VerilatedTraceSigDirection::INPUT, VerilatedTraceSigKind::WIRE, VerilatedTraceSigType::LOGIC, 31,0);
@@ -625,14 +625,7 @@ VL_ATTR_COLD void Vtop___024root__trace_full_0_sub_0(Vtop___024root* vlSelf, Ver
                                     >> 1U))),2);
     bufp->fullBit(oldp+63,((1U & vlSymsp->TOP__top.__PVT__ls_wb_bus[0U])));
     bufp->fullIData(oldp+64,(vlSymsp->TOP__top.__PVT__csr_data),32);
-    bufp->fullIData(oldp+65,(((1U & vlSymsp->TOP__top.__PVT__ls_wb_bus[0U])
-                               ? ((vlSymsp->TOP__top.__PVT__ls_wb_bus[1U] 
-                                   << 0x00000018U) 
-                                  | (vlSymsp->TOP__top.__PVT__ls_wb_bus[0U] 
-                                     >> 8U)) : ((vlSymsp->TOP__top.__PVT__ls_wb_bus[4U] 
-                                                 << 0x00000018U) 
-                                                | (vlSymsp->TOP__top.__PVT__ls_wb_bus[3U] 
-                                                   >> 8U)))),32);
+    bufp->fullIData(oldp+65,(vlSymsp->TOP__top.__PVT__pc_mod__DOT__data_in),32);
     bufp->fullIData(oldp+66,(vlSymsp->TOP__top.__PVT__csr_mod__DOT__data_in),32);
     bufp->fullIData(oldp+67,(vlSymsp->TOP__top__reg_mod.__PVT__data_rs1),32);
     bufp->fullIData(oldp+68,(vlSymsp->TOP__top__reg_mod.__PVT__data_rs2),32);
@@ -806,16 +799,8 @@ VL_ATTR_COLD void Vtop___024root__trace_full_0_sub_0(Vtop___024root* vlSelf, Ver
     bufp->fullBit(oldp+171,(vlSymsp->TOP__top.reg_valid));
     bufp->fullIData(oldp+172,(((IData)(4U) + vlSymsp->TOP__top.pc)),32);
     bufp->fullIData(oldp+173,(((1U & vlSymsp->TOP__top.__PVT__ex_ls_bus_alu[0U])
-                                ? ((1U & vlSymsp->TOP__top.__PVT__ls_wb_bus[0U])
-                                    ? ((vlSymsp->TOP__top.__PVT__ls_wb_bus[1U] 
-                                        << 0x00000018U) 
-                                       | (vlSymsp->TOP__top.__PVT__ls_wb_bus[0U] 
-                                          >> 8U)) : 
-                                   ((vlSymsp->TOP__top.__PVT__ls_wb_bus[4U] 
-                                     << 0x00000018U) 
-                                    | (vlSymsp->TOP__top.__PVT__ls_wb_bus[3U] 
-                                       >> 8U))) : ((IData)(4U) 
-                                                   + vlSymsp->TOP__top.pc))),32);
+                                ? vlSymsp->TOP__top.__PVT__pc_mod__DOT__data_in
+                                : ((IData)(4U) + vlSymsp->TOP__top.pc))),32);
     bufp->fullIData(oldp+174,(((IData)(4U) + vlSymsp->TOP__top.pc)),32);
     bufp->fullIData(oldp+175,(vlSymsp->TOP__top__reg_mod.regs[31]),32);
     bufp->fullIData(oldp+176,(vlSymsp->TOP__top__reg_mod.regs[30]),32);

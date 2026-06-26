@@ -11,7 +11,7 @@ module pc(
 );
 
     initial begin
-        pc = 32'h80000000 - 4;
+        pc = 32'h80000000;
     end
 
     assign next_pc = pc + 4;
