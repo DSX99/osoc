@@ -613,6 +613,7 @@ VL_ATTR_COLD void Vtop_top___ctor_var_reset(Vtop_top* vlSelf) {
     vlSelf->__PVT__lsu_mod__DOT__write_state = 0;
     vlSelf->__PVT__lsu_mod__DOT__ready = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 13064420644330996825ull);
     vlSelf->__PVT__lsu_mod__DOT__prev_le = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 8179215459852384519ull);
+    vlSelf->__PVT__lsu_mod__DOT__prev_we = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 4933764160699790127ull);
     vlSelf->__PVT__lsu_mod__DOT__write_aw_done = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 2503046070205116447ull);
     vlSelf->__PVT__lsu_mod__DOT__write_w_done = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 4214452399770354284ull);
     vlSelf->__PVT__axi_slave_lsu_mod__DOT__slave = 0;

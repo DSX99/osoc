@@ -44,6 +44,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop_top final {
     CData/*0:0*/ __PVT__lsu_mod__DOT__valid_right;
     CData/*0:0*/ __PVT__lsu_mod__DOT__ready;
     CData/*0:0*/ __PVT__lsu_mod__DOT__prev_le;
+    CData/*0:0*/ __PVT__lsu_mod__DOT__prev_we;
     CData/*0:0*/ __PVT__lsu_mod__DOT__write_aw_done;
     CData/*0:0*/ __PVT__lsu_mod__DOT__write_w_done;
     CData/*0:0*/ __PVT__axi_slave_lsu_mod__DOT__done_aw;
