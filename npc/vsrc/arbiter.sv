@@ -104,7 +104,7 @@ always_comb begin //possible decouple reading and writing for non blocking writi
         rvalid_ifu=0;
     end
 
-    if(lsu_transfer || !chose) begin
+    if((lsu_transfer || !chose) && !ifu_transfer) begin
         araddr=araddr_lsu;
         arvalid=arvalid_lsu;
         arready_lsu=arready;
