@@ -47,7 +47,7 @@ module lsu(
     // SW 7
 
     typedef enum{
-        IDLE_R, WAIT_AR, WAIT_R, IDLE_R
+        IDLE_R, WAIT_AR, WAIT_R, AWAIT_R
     } LSU_state_R_t;
     LSU_state_R_t lsu_r;
 
@@ -145,7 +145,7 @@ end
 logic done_aw, done_w;
 
 typedef enum{
-    IDLE_W, WAIT_W, WAIT_WRESP, IDLE_W
+    IDLE_W, WAIT_W, WAIT_WRESP, AWAIT_W
 } LSU_state_w_t;
 LSU_state_w_t lsu_w;
 
