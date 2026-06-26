@@ -68,6 +68,7 @@ logic lsu_transfer, ifu_transfer;
 
 always_comb begin //possible decouple reading and writing for non blocking writing to memory
     chose=0;
+
     if(arvalid_ifu && !lsu_transfer) chose=1;
 
     araddr=0;
@@ -106,7 +107,7 @@ always_comb begin //possible decouple reading and writing for non blocking writi
     if(lsu_transfer || !chose) begin
         araddr=araddr_lsu;
         arvalid=arvalid_lsu;
-        arready_ifu=arready;
+        arready_lsu=arready;
 
         rready=rready_lsu;
         rdata_lsu=rdata;
