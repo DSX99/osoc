@@ -61,7 +61,7 @@ module lsu(
     logic prev_le;
 
     always_comb begin
-        valid_right = valid_left && ready && !(~prev_le && bus_in.lsu_le);
+        valid_right = valid_left && ready && !(~prev_le && bus_in.lsu_le) && !(~prev_se && bus_in.lsu_se);
         ready_left = ready;
 
         bus_out.alu_out = bus_in.alu_out;
@@ -77,6 +77,7 @@ module lsu(
 //reading
 always_ff @(posedge clk) begin
     prev_le<=bus_in.lsu_le;
+    prev_se<=bus_in.lsu_se;
     if(rst) begin
         bus_out.lsu_out <= 32'h0;
         arvalid <= 1'b0;
