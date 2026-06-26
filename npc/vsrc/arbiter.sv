@@ -67,9 +67,9 @@ logic chose; //0-lsu; 1-ifu;
 logic lsu_transfer, ifu_transfer;
 
 always_comb begin //possible decouple reading and writing for non blocking writing to memory
+    chose=0;
     if(arvalid_ifu && !lsu_transfer) chose=1;
 
-    chose=0;
     araddr=0;
     arvalid=0;
     rready=0;

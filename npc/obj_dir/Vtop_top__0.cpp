@@ -1064,9 +1064,9 @@ void Vtop_top___ico_sequent__TOP__top__1(Vtop_top* vlSelf) {
     }
 }
 
-extern const VlUnpacked<CData/*1:0*/, 128> Vtop__ConstPool__TABLE_hfbd30b60_0;
-extern const VlUnpacked<CData/*0:0*/, 128> Vtop__ConstPool__TABLE_hdfc2b09e_0;
-extern const VlUnpacked<CData/*0:0*/, 128> Vtop__ConstPool__TABLE_ha546e273_0;
+extern const VlUnpacked<CData/*1:0*/, 256> Vtop__ConstPool__TABLE_h787ed679_0;
+extern const VlUnpacked<CData/*0:0*/, 256> Vtop__ConstPool__TABLE_h973ce035_0;
+extern const VlUnpacked<CData/*0:0*/, 256> Vtop__ConstPool__TABLE_h9c32826d_0;
 
 void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
     VL_DEBUG_IF(VL_DBG_MSGF("+      Vtop_top___nba_sequent__TOP__top__0\n"); );
@@ -1075,7 +1075,7 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
     // Locals
     IData/*31:0*/ __Vfunc_axi_slave_lsu_mod__DOT__memread__0__Vfuncout;
     __Vfunc_axi_slave_lsu_mod__DOT__memread__0__Vfuncout = 0;
-    CData/*6:0*/ __Vtableidx1;
+    CData/*7:0*/ __Vtableidx1;
     __Vtableidx1 = 0;
     IData/*31:0*/ __Vdly__ifu_mod__DOT__ifu;
     __Vdly__ifu_mod__DOT__ifu = 0;
@@ -1174,16 +1174,16 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
                                   << 2U)) | (((IData)(vlSelfRef.__PVT__rvalid_arbiter) 
                                               << 1U) 
                                              | (IData)(vlSelfRef.__PVT__arbiter_mod__DOT__ifu_transfer))) 
-                     << 3U) | (((IData)(vlSelfRef.__PVT__arready_arbiter) 
-                                << 2U) | ((IData)(vlSelfRef.__PVT__arvalid_lsu) 
-                                          << 1U)));
-    if ((1U & Vtop__ConstPool__TABLE_hfbd30b60_0[__Vtableidx1])) {
-        __Vdly__arbiter_mod__DOT__ifu_transfer = Vtop__ConstPool__TABLE_hdfc2b09e_0
+                     << 4U) | (((IData)(vlSelfRef.__PVT__arready_arbiter) 
+                                << 3U) | (((IData)(vlSelfRef.__PVT__arvalid_lsu) 
+                                           << 2U) | (IData)(vlSymsp->TOP.rst))));
+    if ((1U & Vtop__ConstPool__TABLE_h787ed679_0[__Vtableidx1])) {
+        __Vdly__arbiter_mod__DOT__ifu_transfer = Vtop__ConstPool__TABLE_h973ce035_0
             [__Vtableidx1];
     }
-    if ((2U & Vtop__ConstPool__TABLE_hfbd30b60_0[__Vtableidx1])) {
+    if ((2U & Vtop__ConstPool__TABLE_h787ed679_0[__Vtableidx1])) {
         vlSelfRef.__PVT__arbiter_mod__DOT__lsu_transfer 
-            = Vtop__ConstPool__TABLE_ha546e273_0[__Vtableidx1];
+            = Vtop__ConstPool__TABLE_h9c32826d_0[__Vtableidx1];
     }
     vlSelfRef.reg_valid = vlSelfRef.__PVT__lsu_mod__DOT__valid_right;
     if (vlSymsp->TOP.rst) {
@@ -1373,7 +1373,22 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
         }
         if (vlSelfRef.__PVT__wvalid_lsu) {
             __Vdly__axi_slave_lsu_mod__DOT__w = vlSelfRef.__PVT__wdata_lsu;
-            __Vdly__axi_slave_lsu_mod__DOT__mask = vlSelfRef.__PVT__wstrb_arbiter;
+            __Vdly__axi_slave_lsu_mod__DOT__mask = 
+                ((0U == (7U & (vlSelfRef.__PVT__ex_ls_bus_alu[0U] 
+                               >> 9U))) ? 1U : ((1U 
+                                                 == 
+                                                 (7U 
+                                                  & (vlSelfRef.__PVT__ex_ls_bus_alu[0U] 
+                                                     >> 9U)))
+                                                 ? 3U
+                                                 : 
+                                                ((2U 
+                                                  == 
+                                                  (7U 
+                                                   & (vlSelfRef.__PVT__ex_ls_bus_alu[0U] 
+                                                      >> 9U)))
+                                                  ? 0x0fU
+                                                  : 0U)));
             __Vdly__axi_slave_lsu_mod__DOT__done_w = 1U;
         }
     } else if ((1U == vlSelfRef.__PVT__axi_slave_lsu_mod__DOT__slave_w)) {

@@ -32,7 +32,6 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop_top final {
     CData/*1:0*/ __PVT__rresp_arbiter;
     CData/*0:0*/ __PVT__arready_arbiter;
     CData/*0:0*/ __PVT__rvalid_arbiter;
-    CData/*3:0*/ __PVT__wstrb_arbiter;
     CData/*1:0*/ __PVT__bresp_arbiter;
     CData/*0:0*/ __PVT__awready_arbiter;
     CData/*0:0*/ __PVT__wready_arbiter;
