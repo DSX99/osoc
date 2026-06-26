@@ -15,7 +15,7 @@ module regs (
     logic [31:0] regs [31:0] /* verilator public */; 
 
     always_comb begin
-        ready=1;
+        ready=valid;
 
         data_rs1 = regs[rs1];
         data_rs2 = regs[rs2];
