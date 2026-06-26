@@ -52,11 +52,11 @@ module lsu(
     LSU_state_R_t lsu_r;
 
     logic unused_branch;
-    logic ready;
+    logic done_r, done_w;
 
     always_comb begin
-        valid_right = valid_left && (!(bus_in.lsu_re || bus_in.lsu_we) || ready); //
-        ready_left = ready_right && (!(bus_in.lsu_re || bus_in.lsu_we) || ready);
+        valid_right = valid_left && (!bus_in.lsu_re || done_r) && (!bus_in.lsu_we || done_w); //
+        ready_left = ready_right && (!bus_in.lsu_re || done_r) && (!bus_in.lsu_we || done_w);
         unused_branch = bus_in.branch | |rresp | |bresp;
 
         bus_out.alu_out = 0;
@@ -77,18 +77,19 @@ module lsu(
         end 
     end
 
-//reading
+//reading (load)
+
 always_ff @(posedge clk) begin
     if(rst) begin
         bus_out.lsu_out<=0;
         arvalid<=0;
         araddr<=0;
         rready<=0;
-        ready<=1;
+        done_r<=1;
     end else begin
         case(lsu_r)
             IDLE_R:begin
-                ready<=0;
+                done_r<=0;
                 if(bus_in.lsu_re && valid_left) begin
                     arvalid<=1;
                     araddr<=bus_in.alu_out;
@@ -123,12 +124,12 @@ always_ff @(posedge clk) begin
                         end 
                     endcase
                     rready<=0;
-                    ready<=1;
+                    done_r<=1;
                 end
             end
             AWAIT_R:begin
                 if(ready_right && valid_left) begin
-                    ready<=0;
+                    done_r<=0;
                     lsu_r<=IDLE_R;
                 end
             end
@@ -137,7 +138,7 @@ always_ff @(posedge clk) begin
 end
 
 
-//writing
+//writing (save)
 
 
 logic done_aw, done_w;
@@ -166,7 +167,7 @@ always_ff @(posedge clk) begin
     end else begin
         case(lsu_w)
             IDLE_W:begin
-                ready<=0;
+                done_w<=0;
                 if(bus_in.lsu_we && valid_left) begin
                     awaddr<=bus_in.alu_out;
                     awvalid<=1;
@@ -191,12 +192,12 @@ always_ff @(posedge clk) begin
                 done_w<=0;
                 if(bvalid) begin
                     lsu_w<=AWAIT_W;
-                    ready<=1;
+                    done_w<=1;
                 end
             end
             AWAIT_W:begin
                 if(ready_right && valid_left) begin
-                    ready<=0;
+                    done_w<=0;
                     lsu_w<=IDLE_W;
                 end
             end

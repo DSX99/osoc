@@ -1219,7 +1219,8 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
         }
         if ((0U == vlSelfRef.__PVT__lsu_mod__DOT__lsu_r)) {
             vlSelfRef.__PVT__lsu_mod__DOT__ready = 0U;
-            if ((0x00001000U & vlSelfRef.__PVT__lsu_mod__DOT__bus_in[0U])) {
+            if (((vlSelfRef.__PVT__lsu_mod__DOT__bus_in[0U] 
+                  >> 0x0000000cU) & (IData)(vlSelfRef.__PVT__if_id_valid))) {
                 __Vdly__arvalid_lsu = 1U;
                 __Vdly__araddr_lsu = ((vlSelfRef.__PVT__lsu_mod__DOT__bus_in[3U] 
                                        << 0x00000012U) 
@@ -1437,7 +1438,8 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
     } else {
         if ((0U == vlSelfRef.__PVT__lsu_mod__DOT__lsu_w)) {
             vlSelfRef.__PVT__lsu_mod__DOT__ready = 0U;
-            if ((0x00002000U & vlSelfRef.__PVT__lsu_mod__DOT__bus_in[0U])) {
+            if (((vlSelfRef.__PVT__lsu_mod__DOT__bus_in[0U] 
+                  >> 0x0000000dU) & (IData)(vlSelfRef.__PVT__if_id_valid))) {
                 vlSelfRef.__PVT__awaddr_lsu = ((vlSelfRef.__PVT__lsu_mod__DOT__bus_in[3U] 
                                                 << 0x00000012U) 
                                                | (vlSelfRef.__PVT__lsu_mod__DOT__bus_in[2U] 
@@ -1494,14 +1496,14 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
             if (((IData)(vlSelfRef.__PVT__rvalid_ifu) 
                  & (IData)(vlSelfRef.__PVT__rready_ifu))) {
                 __Vdly__ifu_mod__DOT__ifu = 3U;
+                __Vdly__if_id_bus[0U] = vlSelfRef.__PVT__rdata_ifu;
+                __VdlyMask__if_id_bus[0U] = 0xffffffffU;
                 __Vdly__rready_ifu = 0U;
                 vlSelfRef.__PVT__if_id_valid = 1U;
             }
         } else if ((3U == vlSelfRef.__PVT__ifu_mod__DOT__ifu)) {
             if (vlSelfRef.__PVT__alu_mod__DOT__ready_right) {
                 vlSelfRef.__PVT__if_id_valid = 0U;
-                __Vdly__if_id_bus[0U] = vlSelfRef.__PVT__rdata_ifu;
-                __VdlyMask__if_id_bus[0U] = 0xffffffffU;
                 __Vdly__ifu_mod__DOT__ifu = 0U;
             }
         }
