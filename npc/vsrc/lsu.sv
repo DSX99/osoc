@@ -85,11 +85,11 @@ always_ff @(posedge clk) begin
     end else begin
         case(lsu_l)
             IDLE: begin
-                ready <= 1'b0;
                 if (ready_right && valid_left && bus_in.lsu_le) begin
                     araddr <= bus_in.alu_out;
                     arvalid <= 1'b1;
                     lsu_l <= WAIT_AR;
+                    ready<=0;
                 end
             end
             WAIT_AR: begin
@@ -149,7 +149,6 @@ always_ff @(posedge clk) begin
     end else begin
         case (write_state)
             IDLE_S: begin
-                ready <= 1'b0;
                 if (ready_right && valid_left && bus_in.lsu_we) begin
                     awaddr <= bus_in.alu_out;
                     awvalid <= 1'b1;
@@ -158,6 +157,7 @@ always_ff @(posedge clk) begin
                     write_aw_done <= 1'b0;
                     write_w_done <= 1'b0;
                     write_state <= WAIT;
+                    ready<=0;
                 end
             end
             WAIT: begin
