@@ -120,6 +120,14 @@ logic [31:0] araddr_ifu, rdata_ifu;
 logic [1:0] rresp_ifu;
 logic arvalid_ifu, arready_ifu, rvalid_ifu, rready_ifu;
 
+logic [31:0] araddr_arbiter, rdata_arbiter;
+logic [1:0] rresp_arbiter;
+logic arvalid_arbiter, arready_arbiter, rvalid_arbiter, rready_arbiter;
+
+logic [31:0] awaddr_arbiter, wdata_arbiter;
+logic [3:0] wstrb_arbiter;
+logic [1:0] bresp_arbiter;
+logic awvalid_arbiter, awready_arbiter, wvalid_arbiter, wready_arbiter, bvalid_arbiter, bready_arbiter;
 
 axi_slave_lsu axi_slave_lsu_mod (
     .clk(clk), .rst(rst), .araddr(araddr_arbiter), .arvalid(arvalid_arbiter), .arready(arready_arbiter), .rdata(rdata_arbiter), .rresp(rresp_arbiter), .rvalid(rvalid_arbiter), .rready(rready_arbiter),
