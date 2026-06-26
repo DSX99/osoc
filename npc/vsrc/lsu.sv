@@ -200,7 +200,7 @@ always_ff @(posedge clk) begin
                 AWAIT_W:begin
                     if(ready) begin
                         ready<=0;
-                        lsu_W<=IDLE_W;
+                        lsu_w<=IDLE_W;
                     end
                 end
             endcase
