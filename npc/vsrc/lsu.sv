@@ -128,7 +128,7 @@ always_ff @(posedge clk) begin
                     end
                 end
                 AWAIT_R:begin
-                    if(ready) begin
+                    if(ready_right && valid_left) begin
                         ready<=0;
                         lsu_r<=IDLE_R;
                     end
@@ -198,7 +198,7 @@ always_ff @(posedge clk) begin
                     end
                 end
                 AWAIT_W:begin
-                    if(ready) begin
+                    if(ready_right && valid_left) begin
                         ready<=0;
                         lsu_w<=IDLE_W;
                     end
