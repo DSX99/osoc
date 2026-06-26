@@ -175,7 +175,7 @@ always_ff @(posedge clk) begin
             end
             WAIT_RESP: begin
                 if (bvalid) begin
-                    write_state <= AWAIT_S;
+                    write_state <= IDLE_S;
                     ready <= 1'b1;
                 end
             end
