@@ -1064,9 +1064,9 @@ void Vtop_top___ico_sequent__TOP__top__1(Vtop_top* vlSelf) {
     }
 }
 
-extern const VlUnpacked<CData/*1:0*/, 256> Vtop__ConstPool__TABLE_h787ed679_0;
+extern const VlUnpacked<CData/*1:0*/, 256> Vtop__ConstPool__TABLE_hd26319e6_0;
 extern const VlUnpacked<CData/*0:0*/, 256> Vtop__ConstPool__TABLE_h973ce035_0;
-extern const VlUnpacked<CData/*0:0*/, 256> Vtop__ConstPool__TABLE_h9c32826d_0;
+extern const VlUnpacked<CData/*0:0*/, 256> Vtop__ConstPool__TABLE_h4232b54f_0;
 
 void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
     VL_DEBUG_IF(VL_DBG_MSGF("+      Vtop_top___nba_sequent__TOP__top__0\n"); );
@@ -1173,13 +1173,13 @@ void Vtop_top___nba_sequent__TOP__top__0(Vtop_top* vlSelf) {
                                            << 2U)) 
                                | (((IData)(vlSelfRef.__PVT__arbiter_mod__DOT__chose) 
                                    << 1U) | (IData)(vlSymsp->TOP.rst))));
-    if ((1U & Vtop__ConstPool__TABLE_h787ed679_0[__Vtableidx1])) {
+    if ((1U & Vtop__ConstPool__TABLE_hd26319e6_0[__Vtableidx1])) {
         vlSelfRef.__PVT__arbiter_mod__DOT__ifu_transfer 
             = Vtop__ConstPool__TABLE_h973ce035_0[__Vtableidx1];
     }
-    if ((2U & Vtop__ConstPool__TABLE_h787ed679_0[__Vtableidx1])) {
+    if ((2U & Vtop__ConstPool__TABLE_hd26319e6_0[__Vtableidx1])) {
         vlSelfRef.__PVT__arbiter_mod__DOT__lsu_transfer 
-            = Vtop__ConstPool__TABLE_h9c32826d_0[__Vtableidx1];
+            = Vtop__ConstPool__TABLE_h4232b54f_0[__Vtableidx1];
     }
     vlSelfRef.reg_valid = vlSelfRef.__PVT__lsu_mod__DOT__valid_right;
     if (vlSymsp->TOP.rst) {
