@@ -21,65 +21,58 @@ module ifu(
     output logic        rready
 );
 
-typedef enum logic [1:0] {
-    IFU_IDLE,
-    IFU_WAIT_AR,
-    IFU_WAIT_R,
-    IFU_VALID
+typedef enum{
+    IDLE, WAIT_AR, WAIT_R
 } IFU_state_t;
-IFU_state_t ifu_state;
+IFU_state_t ifu;
 
 logic unused_bits;
-logic [31:0] opcode_reg;
 
 always_comb begin
+    unused_bits = |rresp;
     bus_out.pc = pc;
     bus_out.next_pc = next_pc;
-    bus_out.opcode = opcode_reg;
-    unused_bits = | |rresp;
-    araddr=pc;
 end
 
 always_ff @(posedge clk) begin
     if(rst) begin
-        ifu_state <= IFU_IDLE;
-        opcode_reg <= 32'h0;
-        arvalid <= 1'b0;
-        rready <= 1'b0;
-        valid <= 1'b0;
+        ifu<=IDLE;
+        bus_out.opcode<=0;
+        arvalid<=0;
+        araddr<=0;
+        rready<=0;
+        valid<=0;
     end else begin
-        case (ifu_state)
-            IFU_IDLE: begin
-                rready <= 1'b0;
-                valid <= 1'b0;
-                arvalid <= 1'b0;
-                if (ready) begin
-                    arvalid <= 1'b1;
-                    ifu_state <= IFU_WAIT_AR;
+        if(!ready) begin
+            valid<=1;
+        end
+        if(ready) begin
+            case(ifu)
+                IDLE:begin
+                    if(ready) begin
+                        valid<=0;
+                        arvalid<=1;
+                        araddr<=pc;
+                        ifu<=WAIT_AR;
+                    end
                 end
-            end
-            IFU_WAIT_AR: begin
-                if (arready && arvalid) begin
-                    arvalid <= 1'b0;
-                    rready <= 1'b1;
-                    ifu_state <= IFU_WAIT_R;
+                WAIT_AR:begin
+                    if(arready && arvalid)begin 
+                        arvalid<=0;
+                        ifu<=WAIT_R;
+                        rready<=1;
+                    end
                 end
-            end
-            IFU_WAIT_R: begin
-                if (rvalid) begin
-                    rready <= 1'b0;
-                    opcode_reg <= rdata;
-                    valid <= 1'b1;
-                    ifu_state <= IFU_VALID;
+                WAIT_R:begin
+                    if(rvalid && rready) begin
+                        ifu<=IDLE;
+                        bus_out.opcode<=rdata;
+                        rready<=0;
+                        valid<=1;
+                    end
                 end
-            end
-            IFU_VALID: begin
-                if (ready) begin
-                    valid <= 1'b0;
-                    ifu_state <= IFU_IDLE;
-                end
-            end
-        endcase
+            endcase
+        end
     end
 end
 

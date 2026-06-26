@@ -47,144 +47,152 @@ module lsu(
     // SW 7
 
     typedef enum{
-        IDLE, WAIT_AR, WAIT_R, AWAIT
-    } IFU_state_t;
-    IFU_state_t lsu_l;
-
-    typedef enum{
-        IDLE_S, WAIT, WAIT_RESP, AWAIT_S
-    } IFU_state_s_t;
-    IFU_state_s_t write_state;
+        IDLE_R, WAIT_AR, WAIT_R
+    } LSU_state_R_t;
+    IFU_state_R_t lsu_r;
 
     logic unused_branch;
     logic ready;
 
     always_comb begin
-        valid_right = valid_left && (!bus_in.lsu_le || ready) && (!bus_in.lsu_we || ready);
-        ready_left = ready_right && ready;
-
-        bus_out.alu_out = bus_in.alu_out;
-        bus_out.next_pc = bus_in.next_pc;
-        bus_out.csr_out = bus_in.csr_out;
-        bus_out.rd = bus_in.rd;
-        bus_out.mux_select = bus_in.mux_select;
-        bus_out.mux_select_pc = bus_in.mux_select_pc;
-
+        valid_right = valid_left && (!bus_in.lsu_re || !bus_in.lsu_we || ready); //
+        ready_left = ready_right && (!bus_in.lsu_re || !bus_in.lsu_we || ready);
         unused_branch = bus_in.branch | |rresp | |bresp;
+
+        bus_out.alu_out = 0;
+        bus_out.next_pc = 0;
+        bus_out.csr_out = 0;
+        bus_out.rd = 0;
+        bus_out.mux_select = 0;
+        bus_out.mux_select_pc = 0;
+
+
+        if(valid_left && ready_right) begin //should it be here or better to take out for future?                   !!check when doing pipeline                        
+            bus_out.alu_out = bus_in.alu_out;
+            bus_out.next_pc = bus_in.next_pc;
+            bus_out.csr_out = bus_in.csr_out;
+            bus_out.rd = bus_in.rd;
+            bus_out.mux_select = bus_in.mux_select;
+            bus_out.mux_select_pc = bus_in.mux_select_pc;
+        end 
     end
 
 //reading
 always_ff @(posedge clk) begin
     if(rst) begin
-        bus_out.lsu_out <= 32'h0;
-        arvalid <= 1'b0;
-        araddr <= 32'h0;
-        rready <= 1'b0;
-        ready <= 1'b1;
-        lsu_l <= IDLE;
+        bus_out.lsu_out<=0;
+        arvalid<=0;
+        araddr<=0;
+        rready<=0;
+        ready<=1;
     end else begin
-        case(lsu_l)
-            IDLE: begin
-                if (ready_right && valid_left && bus_in.lsu_le) begin
-                    araddr <= bus_in.alu_out;
-                    arvalid <= 1'b1;
-                    lsu_l <= WAIT_AR;
+        if(ready_right && valid_left) begin
+            case(lsu_r)
+                IDLE_R:begin
                     ready<=0;
+                    if(bus_in.lsu_re) begin
+                        arvalid<=1;
+                        araddr<=bus_in.alu_out;
+                        lsu_r<=WAIT_AR;
+                    end
                 end
-            end
-            WAIT_AR: begin
-                if (arready && arvalid) begin
-                    arvalid <= 1'b0;
-                    rready <= 1'b1;
-                    lsu_l <= WAIT_R;
+                WAIT_AR:begin
+                    if(arready && arvalid)begin 
+                        arvalid<=0;
+                        rready<=1;
+                        lsu_r<=WAIT_R;
+                    end
                 end
-            end
-            WAIT_R: begin
-                if (rvalid) begin
-                    rready <= 1'b0;
-                    lsu_l <= IDLE;
-                    case (bus_in.lsu_oper)
-                        3'b000: bus_out.lsu_out <= {{24{rdata[7]}}, rdata[7:0]};
-                        3'b001: bus_out.lsu_out <= {{16{rdata[15]}}, rdata[15:0]};
-                        3'b010: bus_out.lsu_out <= rdata;
-                        3'b011: bus_out.lsu_out <= {24'b0, rdata[7:0]};
-                        3'b100: bus_out.lsu_out <= {16'b0, rdata[15:0]};
-                        default: bus_out.lsu_out <= 32'h0;
-                    endcase
-                    ready <= 1'b1;
+                WAIT_R:begin
+                    if(rvalid && rready) begin
+                        lsu_r<=IDLE_R;
+                        case(bus_in.lsu_oper)
+                            0: begin //LB
+                                bus_out.lsu_out <= {{24{rdata[7]}},rdata[7:0]};
+                            end 
+                            1: begin //LH
+                                bus_out.lsu_out <= {{16{rdata[15]}},rdata[15:0]};
+                            end 
+                            2: begin //LW
+                                bus_out.lsu_out <= rdata[31:0];
+                            end 
+                            4: begin //LBU
+                                bus_out.lsu_out <= {24'b0,rdata[7:0]};
+                            end 
+                            5: begin //LHU
+                                bus_out.lsu_out <= {16'b0,rdata[15:0]};
+                            end 
+                        endcase
+                        rready<=0;
+                        ready<=1;
+                    end
                 end
-            end
-            AWAIT: begin
-                if (ready_right && valid_left) begin
-                    lsu_l <= IDLE;
-                end
-            end
-        endcase
+            endcase
+        end
     end
 end
 
 
-logic write_aw_done, write_w_done;
+//writing
+
+
+logic done_aw, done_w;
+
+typedef enum{
+    IDLE_W, WAIT_W, WAIT_WRESP
+} LSU_state_w_t;
+LSU_state_w_t lsu_w;
 
 always_comb begin
-    case(bus_in.lsu_oper)
-        3'b000: wstrb = 4'b0001;
-        3'b001: wstrb = 4'b0011;
-        3'b010: wstrb = 4'b1111;
-        default: wstrb = 4'b0000;
+    case(bus_in.lsu_oper) 
+        3'b000: wstrb=4'b0001;
+        3'b001: wstrb=4'b0011;
+        3'b010: wstrb=4'b1111;
+        default: wstrb=0;
     endcase
 end
 
 always_ff @(posedge clk) begin
     if(rst) begin
-        bready <= 1'b1;
-        wdata <= 32'h0;
-        wvalid <= 1'b0;
-        awaddr <= 32'h0;
-        awvalid <= 1'b0;
-        write_state <= IDLE_S;
-        write_aw_done <= 1'b0;
-        write_w_done <= 1'b0;
-        ready <= 1'b1;
+        bready<=1;
+        wdata<=0;
+        wvalid<=0;
+        awaddr<=0;
+        awvalid<=0;
     end else begin
-        case (write_state)
-            IDLE_S: begin
-                if (ready_right && valid_left && bus_in.lsu_we) begin
-                    awaddr <= bus_in.alu_out;
-                    awvalid <= 1'b1;
-                    wdata <= bus_in.data_rs2;
-                    wvalid <= 1'b1;
-                    write_aw_done <= 1'b0;
-                    write_w_done <= 1'b0;
-                    write_state <= WAIT;
+        if(ready_right && valid_left) begin
+            case(lsu_w)
+                IDLE_W:begin
                     ready<=0;
+                    if(bus_in.lsu_we) begin
+                        awaddr<=bus_in.alu_out;
+                        awvalid<=1;
+                        wdata<=bus_in.data_rs2;
+                        wvalid<=1;
+                        lsu_w<=WAIT_W;
+                    end
                 end
-            end
-            WAIT: begin
-                if (awready && awvalid) begin
-                    awvalid <= 1'b0;
-                    write_aw_done <= 1'b1;
+                WAIT_W:begin
+                    if(wready)begin 
+                        wvalid<=0;
+                        done_w<=1;
+                    end
+                    if(awready) begin
+                        awvalid<=0;
+                        done_aw<=1;
+                    end
+                    if((done_aw || awready) && (done_w || wready)) lsu_w <= WAIT_WRESP;
                 end
-                if (wready && wvalid) begin
-                    wvalid <= 1'b0;
-                    write_w_done <= 1'b1;
+                WAIT_WRESP:begin
+                    done_aw<=0;
+                    done_w<=0;
+                    if(bvalid) begin
+                        lsu_w<=IDLE_W;
+                        ready<=1;
+                    end
                 end
-                if ((write_aw_done || !bus_in.lsu_we) && (write_w_done || !bus_in.lsu_we)) begin
-                    write_state <= WAIT_RESP;
-                end
-            end
-            WAIT_RESP: begin
-                if (bvalid) begin
-                    write_state <= IDLE_S;
-                    ready <= 1'b1;
-                end
-            end
-            AWAIT_S: begin
-                if (ready_right && valid_left) begin
-                    write_state <= IDLE_S;
-                end
-            end
-        endcase
+            endcase
+        end
     end
 end
 
