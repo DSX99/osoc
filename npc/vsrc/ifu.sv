@@ -38,7 +38,7 @@ always_comb begin
     bus_out.next_pc = next_pc;
     bus_out.opcode = opcode_reg;
     unused_bits = | |rresp;
-    araddr=pc;
+    araddr=comb_pc;
 end
 
 always_ff @(posedge clk) begin
