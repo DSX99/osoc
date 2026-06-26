@@ -141,7 +141,7 @@ end
 //writing (save)
 
 
-logic done_aw, done_w;
+logic done_aw, done_wdata;
 
 typedef enum{
     IDLE_W, WAIT_W, WAIT_WRESP, AWAIT_W
@@ -179,17 +179,17 @@ always_ff @(posedge clk) begin
             WAIT_W:begin
                 if(wready)begin 
                     wvalid<=0;
-                    done_w<=1;
+                    done_wdata<=1;
                 end
                 if(awready) begin
                     awvalid<=0;
                     done_aw<=1;
                 end
-                if((done_aw || awready) && (done_w || wready)) lsu_w <= WAIT_WRESP;
+                if((done_aw || awready) && (done_wdata || wready)) lsu_w <= WAIT_WRESP;
             end
             WAIT_WRESP:begin
                 done_aw<=0;
-                done_w<=0;
+                done_wdata<=0;
                 if(bvalid) begin
                     lsu_w<=AWAIT_W;
                     done_w<=1;
