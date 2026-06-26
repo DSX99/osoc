@@ -28,18 +28,25 @@ void Vtop___024root__traceDeclTypesSub0(VerilatedFst* tracep) {
     }
     {
         const char* __VenumItemNames[]
-        = {"IDLE", "WAIT_AR", "WAIT_R", "AWAIT"};
+        = {"IFU_IDLE", "IFU_WAIT_AR", "IFU_WAIT_R", 
+                                "IFU_VALID"};
         const char* __VenumItemValues[]
         = {"0", "1", "10", "11"};
         tracep->declDTypeEnum(4, "ifu.IFU_state_t", 4, 2, __VenumItemNames, __VenumItemValues);
     }
     {
         const char* __VenumItemNames[]
-        = {"IDLE", "WAIT_AR", "WAIT_R", "WAIT_AW_W", 
-                                "WAIT_RESP"};
+        = {"IDLE", "WAIT_AR", "WAIT_R", "AWAIT"};
         const char* __VenumItemValues[]
-        = {"0", "1", "10", "11", "100"};
-        tracep->declDTypeEnum(5, "lsu.lsu_state_t", 5, 3, __VenumItemNames, __VenumItemValues);
+        = {"0", "1", "10", "11"};
+        tracep->declDTypeEnum(5, "lsu.IFU_state_t", 4, 32, __VenumItemNames, __VenumItemValues);
+    }
+    {
+        const char* __VenumItemNames[]
+        = {"IDLE_S", "WAIT", "WAIT_RESP", "AWAIT_S"};
+        const char* __VenumItemValues[]
+        = {"0", "1", "10", "11"};
+        tracep->declDTypeEnum(6, "lsu.IFU_state_s_t", 4, 32, __VenumItemNames, __VenumItemValues);
     }
 }
 
