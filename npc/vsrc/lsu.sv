@@ -49,7 +49,7 @@ module lsu(
     typedef enum{
         IDLE_R, WAIT_AR, WAIT_R
     } LSU_state_R_t;
-    IFU_state_R_t lsu_r;
+    LSU_state_R_t lsu_r;
 
     logic unused_branch;
     logic ready;
