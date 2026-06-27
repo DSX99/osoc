@@ -18,7 +18,7 @@ module pc(
 
     always_ff @(posedge clk) begin
         if(rst) begin
-            pc<=32'h80000000;
+            pc<=32'h20000000;
         end else begin
             if(valid) begin
                 pc<=next_pc;
