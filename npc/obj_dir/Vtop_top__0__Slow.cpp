@@ -642,6 +642,12 @@ VL_ATTR_COLD void Vtop_top___ctor_var_reset(Vtop_top* vlSelf) {
     vlSelf->__PVT__awready_arbiter = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 16730814839631524371ull);
     vlSelf->__PVT__wready_arbiter = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 3395782134897872593ull);
     vlSelf->__PVT__bvalid_arbiter = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 4083749381198651581ull);
+    vlSelf->__PVT__cwdata = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 12291527178367676863ull);
+    vlSelf->__PVT__crdata = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 17927932929912555336ull);
+    vlSelf->__PVT__caddr = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 1130972979955015548ull);
+    vlSelf->__PVT__cwvalid = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 6050811330779783603ull);
+    vlSelf->__PVT__crvalid = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 847591021498092698ull);
+    vlSelf->__PVT__cready = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 17562557534312533364ull);
     vlSelf->__PVT__ifu_mod__DOT__next_pc = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 9786868741865089741ull);
     vlSelf->__PVT__ifu_mod__DOT__ifu = 0;
     vlSelf->__PVT__decode_mod__DOT__imm_i = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 17728463912631228713ull);
@@ -674,6 +680,8 @@ VL_ATTR_COLD void Vtop_top___ctor_var_reset(Vtop_top* vlSelf) {
     vlSelf->__PVT__arbiter_mod__DOT__chose = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 2205145542997678515ull);
     vlSelf->__PVT__arbiter_mod__DOT__lsu_transfer = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 11264025650630922834ull);
     vlSelf->__PVT__arbiter_mod__DOT__ifu_transfer = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 3481642720368183497ull);
+    vlSelf->__PVT__CLINT_mod__DOT__mtime = VL_SCOPED_RAND_RESET_Q(64, __VscopeHash, 18248436977652874710ull);
+    vlSelf->__PVT__CLINT_mod__DOT__timecp = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 1476644059076731240ull);
     VL_ZERO_RESET_W(136, vlSelf->__Vdly__ls_wb_bus);
     VL_ZERO_RESET_W(136, vlSelf->__VdlyMask__ls_wb_bus);
 }

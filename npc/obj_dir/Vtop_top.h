@@ -45,6 +45,9 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop_top final {
         CData/*0:0*/ __PVT__awready_arbiter;
         CData/*0:0*/ __PVT__wready_arbiter;
         CData/*0:0*/ __PVT__bvalid_arbiter;
+        CData/*0:0*/ __PVT__cwvalid;
+        CData/*0:0*/ __PVT__crvalid;
+        CData/*0:0*/ __PVT__cready;
         CData/*3:0*/ decode_mod__DOT____VdfgRegularize_h901acc23_0_2;
         CData/*0:0*/ __PVT__alu_mod__DOT__ready_right;
         CData/*4:0*/ __PVT__csr_mod__DOT__working_reg;
@@ -71,26 +74,31 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop_top final {
         IData/*31:0*/ __PVT__rdata_ifu;
         IData/*31:0*/ __PVT__araddr_arbiter;
         IData/*31:0*/ __PVT__rdata_arbiter;
+        IData/*31:0*/ __PVT__cwdata;
+        IData/*31:0*/ __PVT__crdata;
+        IData/*31:0*/ __PVT__caddr;
         IData/*31:0*/ __PVT__ifu_mod__DOT__next_pc;
         IData/*31:0*/ __PVT__ifu_mod__DOT__ifu;
         IData/*31:0*/ __PVT__decode_mod__DOT__imm_i;
         IData/*31:0*/ __PVT__alu_mod__DOT__val1;
         IData/*31:0*/ __PVT__alu_mod__DOT__val2;
         IData/*31:0*/ __PVT__csr_mod__DOT__data_in;
+    };
+    struct {
         IData/*31:0*/ __PVT__lsu_mod__DOT__lsu_r;
         IData/*31:0*/ __PVT__lsu_mod__DOT__lsu_w;
         IData/*31:0*/ __PVT__axi_slave_lsu_mod__DOT__slave;
         IData/*31:0*/ __PVT__axi_slave_lsu_mod__DOT__slave_w;
         IData/*31:0*/ __PVT__axi_slave_lsu_mod__DOT__w;
         IData/*31:0*/ __PVT__axi_slave_lsu_mod__DOT__aw;
-    };
-    struct {
+        IData/*31:0*/ __PVT__CLINT_mod__DOT__timecp;
         VlWide<3>/*95:0*/ __PVT__if_id_bus;
         VlWide<7>/*199:0*/ __PVT__id_ex_bus_decoded;
         VlWide<5>/*141:0*/ __PVT__ex_ls_bus_alu;
         VlWide<5>/*135:0*/ __PVT__ls_wb_bus;
         VlWide<7>/*199:0*/ __PVT__alu_mod__DOT__bus_in;
         VlWide<5>/*141:0*/ __PVT__lsu_mod__DOT__bus_in;
+        QData/*63:0*/ __PVT__CLINT_mod__DOT__mtime;
         VlWide<5>/*135:0*/ __Vdly__ls_wb_bus;
         VlWide<5>/*135:0*/ __VdlyMask__ls_wb_bus;
         VlUnpacked<IData/*31:0*/, 32> __PVT__csr_mod__DOT__regs;
