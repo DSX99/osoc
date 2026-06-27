@@ -12,7 +12,10 @@
 // #define MTRACE
 #define ITRACE
 
-#define MAX_SIM_TIME 10*1024*1024*1024
+#define MAX_SIM_TIME 10*1024*1024*1024LL
 #define ROM_OFFSET 0x80000000
 #define MEM_SIZE 128*1024*1024
 #define ITRACE_VAL 16
+
+
+VysyxSoCFull_osoc_26000003 *top;

@@ -33,7 +33,6 @@ void print_ftrace();
 void reg_display();
 uint32_t expr(char *e, bool *success);
 void execute(uint32_t n);
-VysyxSoCFull_osoc_26000003 *top;
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {

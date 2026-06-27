@@ -10,7 +10,6 @@ uint8_t mem[MEM_SIZE];
 uint64_t curr_time;
 extern bool skip_inst;
 extern bool fail;
-VysyxSoCFull_osoc_26000003 *top;
 
 #define DEVICE_BASE 0xa0000000
 
@@ -87,7 +86,7 @@ extern "C" {
             putchar((uint8_t)data);
             fflush(stdout);
         }else{
-            printf("Illegal memory write access at addr:0x%08x at pc: 0x%08x\n",addr, top->top->pc);
+            printf("Illegal memory write access at addr:0x%08x at pc: 0x%08x\n",addr, top->pc);
             assert(0);
         }
     }
@@ -110,7 +109,7 @@ extern "C" {
             }
             if(addr == RTC_ADDR) return (uint32_t)curr_time;
         }else{
-            printf("Illegal memory read access at addr:0x%08x at pc: 0x%08x\n",addr, top->top->pc);
+            printf("Illegal memory read access at addr:0x%08x at pc: 0x%08x\n",addr, top->pc);
             fail=1;
         }
         return 0;
