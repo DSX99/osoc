@@ -56,6 +56,7 @@ void reset(VysyxSoCFull *soc,int n){
     soc->clock=0;
     soc->eval();
   }
+  soc->reset=0;
 }
 
 static int parse_args(int argc, char *argv[]) {
@@ -114,8 +115,6 @@ int main(int argc, char** argv) {
   }
 
   reset(soc, 100);
-  soc->reset=0;
-  soc->clock=0;
 
   if(batch){
     execute(-1);
