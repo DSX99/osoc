@@ -7,9 +7,6 @@
 #include "VysyxSoCFull_CPU.h"
 #include "VysyxSoCFull_regs.h"
 
-
-bool do_diff = 0;
-
 #define CONFIG_FST
 // #define MTRACE
 #define ITRACE

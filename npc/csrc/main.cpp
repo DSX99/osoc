@@ -15,6 +15,11 @@ struct CPU_state {
   uint32_t pc;
 };
 
+
+// KILLS DIFTEST
+bool do_diff = 0;
+
+
 bool batch=0;
 char *img_file;
 bool finished=0;
