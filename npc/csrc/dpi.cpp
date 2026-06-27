@@ -11,6 +11,7 @@ uint64_t curr_time;
 extern bool skip_inst;
 extern bool fail;
 extern VysyxSoCFull_osoc_26000003 *top;
+extern bool do_diff;
 
 #define DEVICE_BASE 0xa0000000
 
@@ -29,7 +30,7 @@ static const uint32_t img [] = {
 };
 
 extern "C" void flash_read(uint32_t addr, uint32_t *data) { assert(0); }
-extern "C" void mrom_read(uint32_t addr, uint32_t *data) { *data = 0x00100073; }
+extern "C" void mrom_read(uint32_t addr, uint32_t *data) { *data = mem[addr-0x20000000]; }
 
 extern "C" {
     void difftest_memcpy(uint32_t addr, void *buf, size_t n, bool direction);
@@ -37,7 +38,7 @@ extern "C" {
         if (img_file == NULL) {
             printf("No image is given.\n");
             memcpy(mem, img, sizeof(img));
-            if(!batch){
+            if(!batch && do_diff){
                 difftest_memcpy(0x80000000, mem, sizeof(img), 1);
             }
             return; // built-in image size
@@ -59,7 +60,7 @@ extern "C" {
 
         fclose(fp);
 
-        if(!batch){
+        if(!batch && do_diff){
             difftest_memcpy(0x80000000, mem, size, 1);
         }
     }
