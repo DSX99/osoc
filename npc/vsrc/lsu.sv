@@ -265,7 +265,7 @@ always_ff @(posedge clk) begin
                         awvalid<=0;
                         done_aw<=1;
                     end
-                    if((done_aw || awready) && (done_wdata || wready)) lsu_w <= AWAIT_W;
+                    if((done_aw || awready) && (done_wdata || wready)) lsu_w <= WAIT_WRESP;
                 end
                 WAIT_WRESP:begin
                     done_aw<=0;
