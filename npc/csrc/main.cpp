@@ -22,6 +22,7 @@ uint32_t ret = 0;
 static uint32_t qexit = 0;
 VerilatedContext *contextp;
 VerilatedFstC *tracep;
+VysyxSoCFull* soc; 
 bool skip_inst=0;
 CPU_state cpu;
 bool fail=0;
@@ -41,13 +42,13 @@ void init_disasm();
 void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 }
 
-void reset(VysyxSoCFull *top,int n){
-  top->reset=1;
+void reset(VysyxSoCFull *soc,int n){
+  soc->reset=1;
   for(int i=0; i<n; i++){
-    top->clock=1;
-    top->eval();
-    top->clock=0;
-    top->eval();
+    soc->clock=1;
+    soc->eval();
+    soc->clock=0;
+    soc->eval();
   }
 }
 
@@ -72,7 +73,6 @@ static int parse_args(int argc, char *argv[]) {
 }
 
 int main(int argc, char** argv) {
-  *top = top->ysyxSoCFull->asic->cpu->cpu;
   Verilated::commandArgs(argc, argv);
   printf("\n\033[1m\033[36mNPC\033[0m\n\n");
   parse_args(argc, argv);
@@ -91,24 +91,25 @@ int main(int argc, char** argv) {
   contextp = new VerilatedContext;
   contextp->threads(1); // can be used in future to increase speed
 
-  top = new VysyxSoCFull{contextp};
-
+  soc = new VysyxSoCFull{contextp};
+  top = soc->ysyxSoCFull->asic->cpu->cpu;
+  
 #ifdef CONFIG_FST
   Verilated::traceEverOn(true);
   tracep = new VerilatedFstC;
-  top->trace(tracep, 5);
+  soc->trace(tracep, 5);
   tracep->open("waveform.fst");
 #endif
 
 
-  if (top == NULL) {
+  if (soc == NULL) {
     fprintf(stderr, "Error: Simulation model instantiation failed!\n");
     return -1;
   }
 
-  reset(top, 100);
-  top->reset=0;
-  top->clock=0;
+  reset(soc, 100);
+  soc->reset=0;
+  soc->clock=0;
 
   if(batch){
     execute(-1);
@@ -120,7 +121,7 @@ int main(int argc, char** argv) {
   #ifdef CONFIG_FST
   tracep->close();
   #endif
-  delete top;
+  delete soc;
   return (ret || (!finished && qexit));
 }
 
@@ -198,12 +199,12 @@ void execute(uint32_t n){
     }
 
     contextp->timeInc(1);
-    top->clock=!top->clock;
-    top->eval();
+    soc->clock=!soc->clock;
+    soc->eval();
     tracep->dump(contextp->time());
     contextp->timeInc(1);
-    top->clock=!top->clock;
-    top->eval();
+    soc->clock=!soc->clock;
+    soc->eval();
 
     if(fail){ 
       printf("failed\n");
