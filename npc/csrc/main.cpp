@@ -23,6 +23,7 @@ static uint32_t qexit = 0;
 VerilatedContext *contextp;
 VerilatedFstC *tracep;
 VysyxSoCFull* soc; 
+VysyxSoCFull_osoc_26000003 *top;
 bool skip_inst=0;
 CPU_state cpu;
 bool fail=0;

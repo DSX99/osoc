@@ -16,6 +16,3 @@
 #define ROM_OFFSET 0x80000000
 #define MEM_SIZE 128*1024*1024
 #define ITRACE_VAL 16
-
-
-VysyxSoCFull_osoc_26000003 *top;
