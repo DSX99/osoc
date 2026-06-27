@@ -13,6 +13,9 @@ extern bool fail;
 extern VysyxSoCFull_osoc_26000003 *top;
 extern bool do_diff;
 
+#define ROM_OFFSET  0x80000000
+#define MROM_OFFSET 0x20000000
+
 #define DEVICE_BASE 0xa0000000
 
 #define SERIAL_PORT     (DEVICE_BASE + 0x00003f8)
@@ -30,7 +33,7 @@ static const uint32_t img [] = {
 };
 
 extern "C" void flash_read(uint32_t addr, uint32_t *data) { assert(0); }
-extern "C" void mrom_read(uint32_t addr, uint32_t *data) { *data = mem[addr-0x20000000]; }
+extern "C" void mrom_read(uint32_t addr, uint32_t *data) { *data = ((mem[addr-MROM_OFFSET+3]<<24)|(mem[addr-MROM_OFFSET+2]<<16)|(mem[addr-MROM_OFFSET+1]<<8)|(mem[addr-MROM_OFFSET])); }
 
 extern "C" {
     void difftest_memcpy(uint32_t addr, void *buf, size_t n, bool direction);
