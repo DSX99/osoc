@@ -39,3 +39,5 @@ enum { MODE_U, MODE_S, MODE_M = 3 };
 #define KBD_ADDR        (DEVICE_BASE + 0x0000060)
 #define RTC_ADDR        (DEVICE_BASE + 0x0000048)
 #define VGACTL_ADDR     (DEVICE_BASE + 0x0000100)
+
+#define CLINT_ADDR      (0x02000000)
