@@ -191,7 +191,7 @@ static int cmd_check(char *args) {
   difftest_regcpy(ref_regs, 0);
   for(int i=0;i<32;i++){
     if(ref_regs[i]-top->reg_mod->regs[i]!=0){
-      printf("Difference with REF %s, should:0x%08x, actually:0x%08x, pc: 0x%08x\n", regs[i], ref_regs[i], top->top->reg_mod->regs[i], top->top->pc);
+      printf("Difference with REF %s, should:0x%08x, actually:0x%08x, pc: 0x%08x\n", regs[i], ref_regs[i], top->reg_mod->regs[i], top->pc);
       return 0;
     }
   }
