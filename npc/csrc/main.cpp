@@ -2,10 +2,11 @@
 #include <stdlib.h>
 #include <getopt.h>
 #include <verilated.h>
-#include "Vtop.h"
-#include "Vtop___024root.h"
-#include "Vtop_top.h"
-#include "Vtop_regs.h"
+#include "VysyxSoCFull.h"
+#include "VysyxSoCFull___024root.h"
+#include "VysyxSoCFull_osoc_26000003.h"
+#include "VysyxSoCFull_ysyxSoCFull.h"
+#include "VysyxSoCFull_regs.h"
 #include "dpi.h"
 #include "common.h"
 
@@ -26,7 +27,7 @@ uint32_t ret = 0;
 static uint32_t qexit = 0;
 VerilatedContext *contextp;
 VerilatedFstC *tracep;
-Vtop* top; 
+VysyxSoCFull* top; 
 bool skip_inst=0;
 CPU_state cpu;
 bool fail=0;
@@ -46,12 +47,12 @@ void init_disasm();
 void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 }
 
-void reset(Vtop *top,int n){
-  top->rst=1;
+void reset(VysyxSoCFull *top,int n){
+  top->reset=1;
   for(int i=0; i<n; i++){
-    top->clk=1;
+    top->clock=1;
     top->eval();
-    top->clk=0;
+    top->clock=0;
     top->eval();
   }
 }
@@ -95,7 +96,7 @@ int main(int argc, char** argv) {
   contextp = new VerilatedContext;
   contextp->threads(1); // can be used in future to increase speed
 
-  top = new Vtop{contextp};
+  top = new VysyxSoCFull{contextp};
 
 #ifdef CONFIG_FST
   Verilated::traceEverOn(true);
@@ -105,14 +106,14 @@ int main(int argc, char** argv) {
 #endif
 
 
-  if (top == NULL || top->top == NULL) {
+  if (top == NULL) {
     fprintf(stderr, "Error: Simulation model instantiation failed!\n");
     return -1;
   }
 
   reset(top, 100);
-  top->rst=0;
-  top->clk=0;
+  top->reset=0;
+  top->clock=0;
 
   if(batch){
     execute(-1);
@@ -147,7 +148,7 @@ void execute(uint32_t n){
     printf("failed\n");
     difftest_regcpy(&ref_cpu, 0);
 
-    if (ref_cpu.pc != top->top->pc) {
+    if (ref_cpu.pc != top->ysyxSoCFull) {
       printf("Difference with REF pc, should:0x%08x, actually:0x%08x\n", ref_cpu.pc, top->top->pc);
       ret = 1;
       return; 
@@ -202,11 +203,11 @@ void execute(uint32_t n){
     }
 
     contextp->timeInc(1);
-    top->clk=!top->clk;
+    top->clock=!top->clock;
     top->eval();
     tracep->dump(contextp->time());
     contextp->timeInc(1);
-    top->clk=!top->clk;
+    top->clock=!top->clock;
     top->eval();
 
     if(fail){ 
