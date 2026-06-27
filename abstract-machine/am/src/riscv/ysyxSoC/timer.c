@@ -2,7 +2,7 @@
 #include "riscv.h"
 
 uint64_t __start_time;
-
+//SYSCLOCK
 // void __am_timer_init() {
 //   uint32_t high = *((volatile uint32_t *)(RTC_ADDR+4));
 //   uint32_t low = *((volatile uint32_t *)RTC_ADDR);

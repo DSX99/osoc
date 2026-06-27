@@ -78,7 +78,8 @@ assign ex_ls_valid = ex_ls_valid_alu & ex_ls_valid_csr;
 lsu lsu_mod(
     .clk(clk), .rst(rst), .bus_in(ex_ls_bus), .bus_out(ls_wb_bus), .valid_left(ex_ls_valid), .ready_left(ex_ls_ready), .valid_right(ls_wb_valid), .ready_right(ls_wb_ready),
     .araddr(araddr_lsu), .arvalid(arvalid_lsu), .arready(arready_lsu), .rdata(rdata_lsu), .rresp(rresp_lsu), .rvalid(rvalid_lsu), .rready(rready_lsu),
-    .awaddr(awaddr_lsu), .awvalid(awvalid_lsu), .awready(awready_lsu), .wdata(wdata_lsu), .wstrb(wstrb_lsu), .wvalid(wvalid_lsu), .wready(wready_lsu), .bresp(bresp_lsu), .bvalid(bvalid_lsu), .bready(bready_lsu)
+    .awaddr(awaddr_lsu), .awvalid(awvalid_lsu), .awready(awready_lsu), .wdata(wdata_lsu), .wstrb(wstrb_lsu), .wvalid(wvalid_lsu), .wready(wready_lsu), .bresp(bresp_lsu), .bvalid(bvalid_lsu), .bready(bready_lsu),
+    .cwdata(cwdata), .caddr(caddr), .cwvalid(cwvalid), .cready(cready), .crdata(crdata), .crvalid(crvalid)
 );
 
 
@@ -141,6 +142,14 @@ arbiter arbiter_mod(
     .araddr_ifu(araddr_ifu), .arvalid_ifu(arvalid_ifu), .arready_ifu(arready_ifu), .rvalid_ifu(rvalid_ifu), .rdata_ifu(rdata_ifu), .rready_ifu(rready_ifu), .rresp_ifu(rresp_ifu),
     .araddr(araddr_arbiter), .arvalid(arvalid_arbiter), .arready(arready_arbiter), .rdata(rdata_arbiter), .rresp(rresp_arbiter), .rvalid(rvalid_arbiter), .rready(rready_arbiter),
     .awaddr(awaddr_arbiter), .awvalid(awvalid_arbiter), .awready(awready_arbiter), .wdata(wdata_arbiter), .wstrb(wstrb_arbiter), .wvalid(wvalid_arbiter), .wready(wready_arbiter), .bresp(bresp_arbiter), .bvalid(bvalid_arbiter), .bready(bready_arbiter)
+);
+
+
+logic [31:0] cwdata, crdata, caddr;
+logic cwvalid, crvalid, cready;
+
+CLINT CLINT_mod(
+    .clk(clk), .rst(rst), .cwdata(cwdata), .crdata(crdata), .caddr(caddr), .cwvalid(cwvalid), .crvalid(crvalid), .cready(cready)
 );
 
 endmodule

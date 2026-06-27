@@ -34,7 +34,18 @@ module lsu(
     // Write Response Channel (B)
     input  logic [1:0]  bresp,
     input  logic        bvalid,
-    output logic        bready
+    output logic        bready,
+
+
+    //To CLINT
+
+    input  logic [31:0] crdata,
+    output logic        crvalid,
+    output logic [31:0] cwdata,
+    output logic        cwvalid,
+    input  logic        cready,
+    output logic [31:0] caddr
+
 );
 
     // LB 0
@@ -87,53 +98,96 @@ always_ff @(posedge clk) begin
         rready<=0;
         done_r<=1;
     end else begin
-        case(lsu_r)
-            IDLE_R:begin
-                done_r<=0;
-                if(bus_in.lsu_re && valid_left) begin
-                    arvalid<=1;
-                    araddr<=bus_in.alu_out;
-                    lsu_r<=WAIT_AR;
-                end
-            end
-            WAIT_AR:begin
-                if(arready && arvalid)begin 
-                    arvalid<=0;
-                    rready<=1;
-                    lsu_r<=WAIT_R;
-                end
-            end
-            WAIT_R:begin
-                if(rvalid && rready) begin
-                    lsu_r<=AWAIT_R;
-                    case(bus_in.lsu_oper)
-                        0: begin //LB
-                            bus_out.lsu_out <= {{24{rdata[7]}},rdata[7:0]};
-                        end 
-                        1: begin //LH
-                            bus_out.lsu_out <= {{16{rdata[15]}},rdata[15:0]};
-                        end 
-                        2: begin //LW
-                            bus_out.lsu_out <= rdata[31:0];
-                        end 
-                        4: begin //LBU
-                            bus_out.lsu_out <= {24'b0,rdata[7:0]};
-                        end 
-                        5: begin //LHU
-                            bus_out.lsu_out <= {16'b0,rdata[15:0]};
-                        end 
-                    endcase
-                    rready<=0;
-                    done_r<=1;
-                end
-            end
-            AWAIT_R:begin
-                if(ready_right && valid_left) begin
+        if(bus_in.alu_out[31:16] == 16'h0200)begin
+            case(lsu_r)
+                IDLE_R:begin
                     done_r<=0;
-                    lsu_r<=IDLE_R;
+                    if(bus_in.lsu_re && valid_left) begin
+                        crvalid<=1;
+                        caddr<=bus_in.alu_out;
+                        lsu_r<=WAIT_R;
+                    end
                 end
-            end
-        endcase
+                WAIT_R:begin
+                    if(crvalid && cready) begin
+                        lsu_r<=AWAIT_R;
+                        case(bus_in.lsu_oper)
+                            0: begin //LB
+                                bus_out.lsu_out <= {{24{crdata[7]}},crdata[7:0]};
+                            end 
+                            1: begin //LH
+                                bus_out.lsu_out <= {{16{crdata[15]}},crdata[15:0]};
+                            end 
+                            2: begin //LW
+                                bus_out.lsu_out <= crdata[31:0];
+                            end 
+                            4: begin //LBU
+                                bus_out.lsu_out <= {24'b0,crdata[7:0]};
+                            end 
+                            5: begin //LHU
+                                bus_out.lsu_out <= {16'b0,crdata[15:0]};
+                            end 
+                        endcase
+                        crvalid<=0;
+                        done_r<=1;
+                    end
+                end
+                AWAIT_R:begin
+                    if(ready_right && valid_left) begin
+                        done_r<=0;
+                        lsu_r<=IDLE_R;
+                    end
+                end
+            endcase            
+        end else begin
+            case(lsu_r)
+                IDLE_R:begin
+                    done_r<=0;
+                    if(bus_in.lsu_re && valid_left) begin
+                        arvalid<=1;
+                        araddr<=bus_in.alu_out;
+                        lsu_r<=WAIT_AR;
+                    end
+                end
+                WAIT_AR:begin
+                    if(arready && arvalid)begin 
+                        arvalid<=0;
+                        rready<=1;
+                        lsu_r<=WAIT_R;
+                    end
+                end
+                WAIT_R:begin
+                    if(rvalid && rready) begin
+                        lsu_r<=AWAIT_R;
+                        case(bus_in.lsu_oper)
+                            0: begin //LB
+                                bus_out.lsu_out <= {{24{rdata[7]}},rdata[7:0]};
+                            end 
+                            1: begin //LH
+                                bus_out.lsu_out <= {{16{rdata[15]}},rdata[15:0]};
+                            end 
+                            2: begin //LW
+                                bus_out.lsu_out <= rdata[31:0];
+                            end 
+                            4: begin //LBU
+                                bus_out.lsu_out <= {24'b0,rdata[7:0]};
+                            end 
+                            5: begin //LHU
+                                bus_out.lsu_out <= {16'b0,rdata[15:0]};
+                            end 
+                        endcase
+                        rready<=0;
+                        done_r<=1;
+                    end
+                end
+                AWAIT_R:begin
+                    if(ready_right && valid_left) begin
+                        done_r<=0;
+                        lsu_r<=IDLE_R;
+                    end
+                end
+            endcase
+        end
     end
 end
 
@@ -165,43 +219,70 @@ always_ff @(posedge clk) begin
         awaddr<=0;
         awvalid<=0;
     end else begin
-        case(lsu_w)
-            IDLE_W:begin
-                done_w<=0;
-                if(bus_in.lsu_we && valid_left) begin
-                    awaddr<=bus_in.alu_out;
-                    awvalid<=1;
-                    wdata<=bus_in.data_rs2;
-                    wvalid<=1;
-                    lsu_w<=WAIT_W;
-                end
-            end
-            WAIT_W:begin
-                if(wready)begin 
-                    wvalid<=0;
-                    done_wdata<=1;
-                end
-                if(awready) begin
-                    awvalid<=0;
-                    done_aw<=1;
-                end
-                if((done_aw || awready) && (done_wdata || wready)) lsu_w <= WAIT_WRESP;
-            end
-            WAIT_WRESP:begin
-                done_aw<=0;
-                done_wdata<=0;
-                if(bvalid) begin
-                    lsu_w<=AWAIT_W;
-                    done_w<=1;
-                end
-            end
-            AWAIT_W:begin
-                if(ready_right && valid_left) begin
+        if(bus_in.alu_out[31:16] == 16'h0200)begin
+            case(lsu_w)
+                IDLE_W:begin
                     done_w<=0;
-                    lsu_w<=IDLE_W;
+                    if(bus_in.lsu_we && valid_left) begin
+                        caddr<=bus_in.alu_out;
+                        cwdata<=bus_in.data_rs2;
+                        cwvalid<=1;
+                        lsu_w<=WAIT_W;
+                    end
                 end
-            end
-        endcase
+                WAIT_WRESP:begin
+                    if(cwvalid && cready) begin
+                        cwvalid<=0;
+                        lsu_w<=AWAIT_W;
+                        done_w<=1;
+                    end
+                end
+                AWAIT_W:begin
+                    if(ready_right && valid_left) begin
+                        done_w<=0;
+                        lsu_w<=IDLE_W;
+                    end
+                end
+            endcase
+        end else begin
+            case(lsu_w)
+                IDLE_W:begin
+                    done_w<=0;
+                    if(bus_in.lsu_we && valid_left) begin
+                        awaddr<=bus_in.alu_out;
+                        awvalid<=1;
+                        wdata<=bus_in.data_rs2;
+                        wvalid<=1;
+                        lsu_w<=WAIT_W;
+                    end
+                end
+                WAIT_W:begin
+                    if(wready)begin 
+                        wvalid<=0;
+                        done_wdata<=1;
+                    end
+                    if(awready) begin
+                        awvalid<=0;
+                        done_aw<=1;
+                    end
+                    if((done_aw || awready) && (done_wdata || wready)) lsu_w <= WAIT_WRESP;
+                end
+                WAIT_WRESP:begin
+                    done_aw<=0;
+                    done_wdata<=0;
+                    if(bvalid) begin
+                        lsu_w<=AWAIT_W;
+                        done_w<=1;
+                    end
+                end
+                AWAIT_W:begin
+                    if(ready_right && valid_left) begin
+                        done_w<=0;
+                        lsu_w<=IDLE_W;
+                    end
+                end
+            endcase
+        end
     end
 end
 
