@@ -38,10 +38,10 @@ build: sim
 	@mkdir -p obj_dir
 	@gcc -c $(VERILATOR_CFLAGS) -O2 $(NEMU_HOME)/src/utils/disasm.c -o obj_dir/disasm.o
 	@$(VERILATOR) $(VERILOG_SRC) $(VERILOG_FLAGS) $(CPP_SRC)
-	@$(MAKE) -j -C obj_dir -f Vtop.mk
+	@$(MAKE) -j -C obj_dir -f VysyxSoCFull.mk
 
 run: build
-	@LD_LIBRARY_PATH=$(NEMU_HOME)/tools/capstone/repo:$(NEMU_HOME)/build obj_dir/Vtop $(ARGS) $(IMG)
+	@LD_LIBRARY_PATH=$(NEMU_HOME)/tools/capstone/repo:$(NEMU_HOME)/build obj_dir/VysyxSoCFull $(ARGS) $(IMG)
 
 gdb: build
 	@--gdb -CFLAGS "-g"
