@@ -141,7 +141,7 @@ void execute(uint32_t n){
   uint8_t inst[4];
   CPU_state ref_cpu;
 
-  if(fail){ 
+  if(fail && do_diff){ 
     printf("failed\n");
     difftest_regcpy(&ref_cpu, 0);
 
@@ -165,7 +165,7 @@ void execute(uint32_t n){
 
   if(finished){
     printf("Program finished\n");
-    if(!batch) difftest_exec(1);
+    if(!batch  && do_diff) difftest_exec(1);
     return;
   }
 
@@ -202,7 +202,9 @@ void execute(uint32_t n){
     contextp->timeInc(1);
     soc->clock=!soc->clock;
     soc->eval();
+    #ifdef CONFIG_FST
     tracep->dump(contextp->time());
+    #endif
     contextp->timeInc(1);
     soc->clock=!soc->clock;
     soc->eval();
@@ -214,7 +216,7 @@ void execute(uint32_t n){
 
     bool current_cycle_is_skipped = skip_inst;
 
-    if((!batch) && (!current_cycle_is_skipped) && top->reg_valid) difftest_exec(1);
+    if((!batch) && (!current_cycle_is_skipped) && top->reg_valid && do_diff) difftest_exec(1);
 
     if(contextp->gotFinish()){
       #ifdef CONFIG_FST
@@ -243,7 +245,7 @@ void execute(uint32_t n){
     }
     n--;
     
-    if(!batch) {
+    if(!batch && do_diff) {
       if (!current_cycle_is_skipped) {
         difftest_regcpy(&ref_cpu, 0);
 
