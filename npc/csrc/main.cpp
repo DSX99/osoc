@@ -22,11 +22,9 @@ uint32_t ret = 0;
 static uint32_t qexit = 0;
 VerilatedContext *contextp;
 VerilatedFstC *tracep;
-VysyxSoCFull* top; 
 bool skip_inst=0;
 CPU_state cpu;
 bool fail=0;
-VysyxSoCFull_osoc_26000003 *top = top->ysyxSoCFull->asic->cpu->cpu;
 
 char itrace[16][128];
 int point=0;
@@ -74,6 +72,7 @@ static int parse_args(int argc, char *argv[]) {
 }
 
 int main(int argc, char** argv) {
+  *top = top->ysyxSoCFull->asic->cpu->cpu;
   Verilated::commandArgs(argc, argv);
   printf("\n\033[1m\033[36mNPC\033[0m\n\n");
   parse_args(argc, argv);
