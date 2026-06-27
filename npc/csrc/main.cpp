@@ -2,11 +2,6 @@
 #include <stdlib.h>
 #include <getopt.h>
 #include <verilated.h>
-#include "VysyxSoCFull.h"
-#include "VysyxSoCFull___024root.h"
-#include "VysyxSoCFull_osoc_26000003.h"
-#include "VysyxSoCFull_ysyxSoCFull.h"
-#include "VysyxSoCFull_regs.h"
 #include "dpi.h"
 #include "common.h"
 
@@ -31,6 +26,7 @@ VysyxSoCFull* top;
 bool skip_inst=0;
 CPU_state cpu;
 bool fail=0;
+VysyxSoCFull_osoc_26000003 *top = top->ysyxSoCFull->asic->cpu->cpu;
 
 char itrace[16][128];
 int point=0;
@@ -148,16 +144,16 @@ void execute(uint32_t n){
     printf("failed\n");
     difftest_regcpy(&ref_cpu, 0);
 
-    if (ref_cpu.pc != top->ysyxSoCFull) {
-      printf("Difference with REF pc, should:0x%08x, actually:0x%08x\n", ref_cpu.pc, top->top->pc);
+    if (ref_cpu.pc != top->pc) {
+      printf("Difference with REF pc, should:0x%08x, actually:0x%08x\n", ref_cpu.pc, top->pc);
       ret = 1;
       return; 
     }
 
     for(int i = 0; i < 32; i++){
-      if(ref_cpu.gpr[i] != top->top->reg_mod->regs[i]){
+      if(ref_cpu.gpr[i] != top->reg_mod->regs[i]){
         printf("Difference with REF %s, should:0x%08x, actually:0x%08x, pc: 0x%08x\n", 
-                regs[i], ref_cpu.gpr[i], top->top->reg_mod->regs[i], top->top->pc);
+                regs[i], ref_cpu.gpr[i], top->reg_mod->regs[i], top->pc);
         ret = 1;
         return;
       }
@@ -179,21 +175,21 @@ void execute(uint32_t n){
     #endif
     
     if(contextp->time() > MAX_SIM_TIME){
-      ret = top->top->reg_mod->regs[10];
+      ret = top->reg_mod->regs[10];
       break;
     }
     if(!((contextp->time()) % 100000000)&&batch){
       printf("time:%lu\n", contextp->time());
     }
 
-    if(!batch && top->top->opcode!=0 && top->top->reg_valid){
-      inst[0] = (top->top->opcode) & 0xff;
-      inst[1] = (top->top->opcode >> 8) & 0xff;
-      inst[2] = (top->top->opcode >> 16) & 0xff;
-      inst[3] = (top->top->opcode >> 24) & 0xff;
-      disassemble(str, 128, top->top->pc, inst, 4);
+    if(!batch && top->opcode!=0 && top->reg_valid){
+      inst[0] = (top->opcode) & 0xff;
+      inst[1] = (top->opcode >> 8) & 0xff;
+      inst[2] = (top->opcode >> 16) & 0xff;
+      inst[3] = (top->opcode >> 24) & 0xff;
+      disassemble(str, 128, top->pc, inst, 4);
       if(n<10){
-        printf("0x%08x: %02x %02x %02x %02x ", top->top->pc, inst[3], inst[2], inst[1], inst[0]);
+        printf("0x%08x: %02x %02x %02x %02x ", top->pc, inst[3], inst[2], inst[1], inst[0]);
         printf("%s\n", str);
       }
       #ifdef ITRACE
@@ -217,23 +213,23 @@ void execute(uint32_t n){
 
     bool current_cycle_is_skipped = skip_inst;
 
-    if((!batch) && (!current_cycle_is_skipped) && top->top->reg_valid) difftest_exec(1);
+    if((!batch) && (!current_cycle_is_skipped) && top->reg_valid) difftest_exec(1);
 
     if(contextp->gotFinish()){
       #ifdef CONFIG_FST
       tracep->close();
       #endif
       if(!batch){
-        inst[0] = (top->top->opcode) & 0xff;
-        inst[1] = (top->top->opcode >> 8) & 0xff;
-        inst[2] = (top->top->opcode >> 16) & 0xff;
-        inst[3] = (top->top->opcode >> 24) & 0xff;
-        printf("0x%08x: %02x %02x %02x %02x ", top->top->pc, inst[3], inst[2], inst[1], inst[0]);
-        disassemble(str, 128, top->top->pc, inst, 4);
+        inst[0] = (top->opcode) & 0xff;
+        inst[1] = (top->opcode >> 8) & 0xff;
+        inst[2] = (top->opcode >> 16) & 0xff;
+        inst[3] = (top->opcode >> 24) & 0xff;
+        printf("0x%08x: %02x %02x %02x %02x ", top->pc, inst[3], inst[2], inst[1], inst[0]);
+        disassemble(str, 128, top->pc, inst, 4);
         printf("%s\n", str);
       }
       finished = 1;
-      ret = top->top->reg_mod->regs[10];
+      ret = top->reg_mod->regs[10];
       if(ret){
         printf("\033[1m\033[31mNOT GOOD\033[0m\n");
       }else{
@@ -250,16 +246,16 @@ void execute(uint32_t n){
       if (!current_cycle_is_skipped) {
         difftest_regcpy(&ref_cpu, 0);
 
-        if (ref_cpu.pc != top->top->pc) {
-          printf("Difference with REF pc, should:0x%08x, actually:0x%08x\n", ref_cpu.pc, top->top->pc);
+        if (ref_cpu.pc != top->pc) {
+          printf("Difference with REF pc, should:0x%08x, actually:0x%08x\n", ref_cpu.pc, top->pc);
           ret = 1;
           return; 
         }
 
         for(int i = 0; i < 32; i++){
-          if(ref_cpu.gpr[i] != top->top->reg_mod->regs[i]){
+          if(ref_cpu.gpr[i] != top->reg_mod->regs[i]){
             printf("Difference with REF %s, should:0x%08x, actually:0x%08x, pc: 0x%08x\n", 
-                   regs[i], ref_cpu.gpr[i], top->top->reg_mod->regs[i], top->top->pc);
+                   regs[i], ref_cpu.gpr[i], top->reg_mod->regs[i], top->pc);
             ret = 1;
             return;
           }
@@ -267,9 +263,9 @@ void execute(uint32_t n){
       } 
       else {
         for(int i = 0; i < 32; i++){
-          cpu.gpr[i] = top->top->reg_mod->regs[i];
+          cpu.gpr[i] = top->reg_mod->regs[i];
         }
-        cpu.pc = top->top->pc;
+        cpu.pc = top->pc;
         difftest_regcpy(&cpu, 1);
         skip_inst = 0; 
       }
@@ -281,20 +277,20 @@ void reg_display() {
   printf("Regs values:\n");
   for(int i = 0; i<4; i++){
     for(int j = 0; j<8; j++){
-      printf("%s(%02d):%08x   ", regs[8*i+j],8*i+j,top->top->reg_mod->regs[8*i+j]);
+      printf("%s(%02d):%08x   ", regs[8*i+j],8*i+j,top->reg_mod->regs[8*i+j]);
     }
     printf("\n");
   }
-  printf("next pc:0x%08x\n",top->top->pc);
+  printf("next pc:0x%08x\n",top->pc);
 }
 
 uint32_t reg_str2val(const char *s, bool *success) {
   if(strcmp(s,"pc")==0){
-    return top->top->pc;
+    return top->pc;
   }
   for(int i=0;i<32;i++){
     if(strcmp(s,regs[i])==0){
-      return top->top->reg_mod->regs[i];
+      return top->reg_mod->regs[i];
     }
   }
 

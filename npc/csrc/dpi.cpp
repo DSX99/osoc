@@ -4,10 +4,6 @@
 #include <cstring>
 #include <chrono>
 #include "common.h"
-#include "Vtop.h"
-#include "Vtop___024root.h"
-#include "Vtop_top.h"
-#include "Vtop_regs.h"
 
 
 extern Vtop* top; 
@@ -15,6 +11,7 @@ uint8_t mem[MEM_SIZE];
 uint64_t curr_time;
 extern bool skip_inst;
 extern bool fail;
+VysyxSoCFull_osoc_26000003 *top;
 
 #define DEVICE_BASE 0xa0000000
 
