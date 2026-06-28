@@ -31,8 +31,9 @@ SECTIONS {
     *(.scommon)
   } >sram AT> mrom
   _stack_top = ORIGIN(sram) + 0x1000;
-  _stack_pointer = _stack_top + 0x1000;
-  end = _stack_pointer ;
-  _end = _stack_pointer ;
+  . = _stack_top + 0x1000;
+  _stack_pointer = .;
+  end = .;
+  _end = .;
   _heap_start = ALIGN(0x1000);
 }
