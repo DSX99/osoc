@@ -253,8 +253,6 @@ void execute(uint32_t n){
       if (!current_cycle_is_skipped) {
         difftest_regcpy(&ref_cpu, 0);
 
-        printf("Spike a5 status: 0x%08x | Your NPC a5: 0x%08x\n", ref_cpu.gpr[15], top->reg_mod->regs[15]);
-
         if (ref_cpu.pc != top->pc) {
           printf("Difference with REF pc, should:0x%08x, actually:0x%08x\n", ref_cpu.pc, top->pc);
           ret = 1;
