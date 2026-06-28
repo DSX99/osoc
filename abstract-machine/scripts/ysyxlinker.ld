@@ -7,7 +7,6 @@ MEMORY {
 }
 
 SECTIONS {
-  /* _pmem_start and _entry_offset are defined in LDFLAGS */
   . = ORIGIN(mrom);
   .text : {
     *(entry)
@@ -31,8 +30,8 @@ SECTIONS {
     *(.sbss*)
     *(.scommon)
   }
-  _stack_top = ORIGIN(sram);
-  . = _stack_top + 0x2000;
+  _stack_top = ORIGIN(sram) + 0x1000;
+  . = _stack_top + 0x1000;
   _stack_pointer = .;
   end = .;
   _end = .;
