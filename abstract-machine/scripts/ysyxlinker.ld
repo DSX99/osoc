@@ -30,7 +30,7 @@ SECTIONS {
     *(.sbss*)
     *(.scommon)
   }
-  _stack_top = _pmem_start;
+  _stack_top = ORIGIN(sram);
   . = _stack_top + 0x1000;
   _stack_pointer = .;
   end = .;
