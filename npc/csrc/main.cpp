@@ -84,14 +84,14 @@ int main(int argc, char** argv) {
   printf("\n\033[1m\033[36mNPC\033[0m\n\n");
   parse_args(argc, argv);
   init_disasm();
-  if(!batch){
+  if(!batch && do_diff){
     difftest_init(0);
   }
   loadmemory(img_file, batch);
   memset(&cpu, 0, sizeof(CPU_state));
   cpu.pc = 0x20000000;
 
-  if(!batch){
+  if(!batch && do_diff){
     difftest_regcpy(&cpu, 1);
   }
 
