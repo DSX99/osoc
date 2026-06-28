@@ -22,8 +22,7 @@
 
 static std::vector<std::pair<reg_t, abstract_device_t*>> difftest_plugin_devices;
 static std::vector<std::string> difftest_htif_args;
-static std::vector<std::pair<reg_t, mem_t*>> difftest_mem(
-    1, std::make_pair(reg_t(DRAM_BASE), new mem_t(CONFIG_MSIZE)));
+static std::vector<std::pair<reg_t, mem_t*>> difftest_mem;
 static debug_module_config_t difftest_dm_config = {
   .progbufsize = 2,
   .max_sba_data_width = 0,
@@ -103,14 +102,17 @@ __EXPORT void difftest_init(int port) {
   difftest_htif_args.push_back("");
   const char *isa = "RV" MUXDEF(CONFIG_RV64, "64", "32") MUXDEF(CONFIG_RVE, "E", "I") "MAFDC";
 
-  std::vector<mem_cfg_t> SoC_layout;
   reg_t mrom_base = 0x20000000;
   reg_t mrom_size = 0x00001000; // 4KB
   reg_t sram_base = 0x0f000000;
   reg_t sram_size = 0x00002000; // 8 KB
-
+  
+  std::vector<mem_cfg_t> SoC_layout;
   SoC_layout.push_back(mem_cfg_t(mrom_base, mrom_size));
   SoC_layout.push_back(mem_cfg_t(sram_base, sram_size));
+
+  difftest_mem.push_back(std::make_pair(mrom_base, new mem_t(mrom_size)));
+  difftest_mem.push_back(std::make_pair(sram_base, new mem_t(sram_size)));
 
   cfg_t *cfg = new cfg_t(/*default_initrd_bounds=*/std::make_pair((reg_t)0, (reg_t)0),
             /*default_bootargs=*/nullptr,
