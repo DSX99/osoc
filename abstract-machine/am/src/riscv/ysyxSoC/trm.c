@@ -29,8 +29,8 @@ extern char _data_start;
 extern char _data;
 
 void _trm_init() {
-  // uint32_t size = &_data - &_data_start;
-  // memcpy(&_pmem_start, &_data_start, size);
+  uint32_t size = &_data - &_data_start;
+  memcpy(&_pmem_start, &_data_start, size);
   int ret = main(mainargs);
   halt(ret);
 }
