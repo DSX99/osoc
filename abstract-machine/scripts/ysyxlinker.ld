@@ -31,7 +31,7 @@ SECTIONS {
     *(.scommon)
   }
   _stack_top = ORIGIN(sram);
-  . = _stack_top + 0x1000;
+  . = _stack_top + 0x2000;
   _stack_pointer = .;
   end = .;
   _end = .;
