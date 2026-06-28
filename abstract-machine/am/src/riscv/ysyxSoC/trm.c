@@ -27,10 +27,10 @@ void halt(int code) {
 
 extern char _data_start;
 extern char _data;
+extern char _data_size;
 
 void _trm_init() {
-  uint32_t size = &_data - &_data_start - 1;
-  memcpy(&_pmem_start, &_data_start, size);
+  memcpy(&_pmem_start, &_data_start, (uint32_t)&_data_size);
   int ret = main(mainargs);
   halt(ret);
 }
