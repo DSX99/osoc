@@ -20,6 +20,7 @@ struct CPU_state {
 bool do_diff = 1;
 
 extern sim_t sim;
+sim_t *simp = &sim;
 
 bool batch=0;
 char *img_file;
