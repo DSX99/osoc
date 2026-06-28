@@ -19,7 +19,7 @@ struct CPU_state {
 // KILLS DIFTEST
 bool do_diff = 1;
 
-extern sim_t sim;
+extern sim_t *sim;
 
 bool batch=0;
 char *img_file;
