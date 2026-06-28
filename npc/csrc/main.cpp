@@ -32,6 +32,7 @@ VysyxSoCFull_osoc_26000003 *top;
 bool skip_inst=0;
 CPU_state cpu;
 bool fail=0;
+bool valid_cycle=0;
 
 char itrace[16][128];
 int point=0;
@@ -212,6 +213,8 @@ void execute(uint32_t n){
     contextp->timeInc(1);
     soc->clock=!soc->clock;
     soc->eval();
+
+    valid_cycle = top->reg_valid;
 
     if(fail){ 
       printf("failed\n");
