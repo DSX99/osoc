@@ -17,7 +17,7 @@ CPP_SRC = csrc/*.cpp
 IMG ?= 
 ARGS ?= 
 #idk there should be some include search path of verilator for rtl of uart+spi, but there are only .v and they are already included
-VERILATOR_CFLAGS += -I$(NEMU_HOME)/tools/capstone/repo/include -I$(NEMU_HOME)/include -g
+VERILATOR_CFLAGS += -I$(NEMU_HOME)/tools/capstone/repo/include -I$(NEMU_HOME)/include -g -I$(NEMU_HOME)/tools/spike-diff/repo
 VERILATOR_CFLAGS += -DCONFIG_ISA_riscv32
 
 DISASM_OBJ = $(abspath obj_dir/disasm.o)

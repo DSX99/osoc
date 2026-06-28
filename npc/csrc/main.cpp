@@ -4,7 +4,7 @@
 #include <verilated.h>
 #include "dpi.h"
 #include "common.h"
-
+#include "../../nemu/tools/spike-diff/repo/riscv/sim.h"
 
 #ifdef CONFIG_FST
 #include <verilated_fst_c.h>
@@ -19,6 +19,7 @@ struct CPU_state {
 // KILLS DIFTEST
 bool do_diff = 1;
 
+extern sim_t sim;
 
 bool batch=0;
 char *img_file;
@@ -212,6 +213,11 @@ void execute(uint32_t n){
     contextp->timeInc(1);
     soc->clock=!soc->clock;
     soc->eval();
+
+    printf("Spike a5: 0x%08lx\n", sim->get_core(0)->get_state()->XPR[15]);
+    uint64_t mcause = sim->get_core(0)->get_state()->mcause->read();
+    uint64_t mtval = sim->get_core(0)->get_state()->mtval->read();
+    printf("Spike Trapped! mcause: 0x%lx, mtval: 0x%lx\n", mcause, mtval);
 
     if(fail){ 
       printf("failed\n");

@@ -105,7 +105,7 @@ __EXPORT void difftest_init(int port) {
   reg_t mrom_base = 0x20000000;
   reg_t mrom_size = 0x00001000; // 4KB
   reg_t sram_base = 0x0f000000;
-  reg_t sram_size = 0x00002000; // 8 KB
+  reg_t sram_size = 0x00002000; // 8KB
   
   std::vector<mem_cfg_t> SoC_layout;
   SoC_layout.push_back(mem_cfg_t(mrom_base, mrom_size));
