@@ -8,48 +8,31 @@ MEMORY {
 
 SECTIONS {
   . = ORIGIN(mrom);
-
   .text : {
     *(entry)
     *(.text*)
-  } >mrom : text
-
+  } >mrom AT> mrom : text
+  etext = .;
+  _etext = .;
   .rodata : {
     *(.rodata*)
-  } >mrom
-
-  /* Keep a strict record of where we are in MROM for the flash payload */
-  _mrom_data_flash_start = .; 
-
-  /* VMA is SRAM, but LMA is explicitly forced to our current MROM tracking spot */
+  }
+  _data_start = .;
   .data : {
-    _data_start = .;   /* Writable VMA start address in SRAM */
     *(.data*)
-    _data_end = .;     /* Writable VMA end address in SRAM */
   } >sram AT> mrom : data
-
-  /* Calculate size using the section-bound symbols */
-  _data_size = _data_end - _data_start;
-  
-  /* Retain your compatibility hooks safely */
-  _data = _data_start;
-  edata = _data_end;
-  etext = _mrom_data_flash_start;
-  _etext = _mrom_data_flash_start;
-
+  _data_size = SIZEOF(.data);
+  edata = .;
+  _data = .;
   .bss : {
-    _bss_start = .;
+	_bss_start = .;
     *(.bss*)
     *(.sbss*)
     *(.scommon)
-    . = ALIGN(4);
-    _bss_end = .;
-  } >sram AT> sram
-
-  /* Absolute math definitions - completely detached from the counter '.' */
-  _stack_top      = ORIGIN(sram) + 0x1000;
-  _stack_pointer  = _stack_top + 0x1000;
-  end             = _stack_pointer;
-  _end            = _stack_pointer;
-  _heap_start     = (_stack_pointer + 0xFFF) & ~0xFFF;
+  } >sram AT> mrom
+  _stack_top = ORIGIN(sram) + 0x1000;
+  _stack_pointer = _stack_top + 0x1000;
+  end = _stack_pointer ;
+  _end = _stack_pointer ;
+  _heap_start = ALIGN(0x1000);
 }
