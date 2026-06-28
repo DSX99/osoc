@@ -42,7 +42,7 @@ extern "C" {
             printf("No image is given.\n");
             memcpy(mem, img, sizeof(img));
             if(!batch && do_diff){
-                difftest_memcpy(0x80000000, mem, sizeof(img), 1);
+                difftest_memcpy(MROM_OFFSET, mem, sizeof(img), 1);
             }
             return; // built-in image size
         }
@@ -64,10 +64,11 @@ extern "C" {
         fclose(fp);
 
         if(!batch && do_diff){
-            difftest_memcpy(0x80000000, mem, size, 1);
+            difftest_memcpy(MROM_OFFSET, mem, size, 1);
         }
     }
 
+    //deprecated, works for npc, not SoC
     void memwrite(uint32_t addr, uint32_t data, uint32_t type){
         #ifdef MTRACE
         printf("\033[034mCall to write to memory at %08x\033[0m\n", addr);
@@ -96,6 +97,7 @@ extern "C" {
         }
     }
 
+    //deprecated, works for npc, not SoC
     uint32_t memread(uint32_t addr){
         #ifdef MTRACE
         printf("\n\033[034mCall to read from memory at %08x\033[0m\n", addr);
