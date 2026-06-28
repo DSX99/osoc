@@ -29,7 +29,7 @@ SECTIONS {
     *(.bss*)
     *(.sbss*)
     *(.scommon)
-  }
+  } >sram AT> sram
   _stack_top = ORIGIN(sram) + 0x1000;
   . = _stack_top + 0x1000;
   _stack_pointer = .;
