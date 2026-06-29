@@ -67,7 +67,8 @@ module osoc_26000003 (
 );
 
 logic [31:0] pc /* verilator public */, opcode /* verilator public */, prev_pc /* verilator public */;
-logic reg_valid /* verilator public */, reg_valid_e /* verilator public */;
+logic reg_valid /* verilator public */, reg_valid_e /* verilator public */, lsu_device_call /* verilator public */;
+
 assign opcode = if_id_bus.opcode;
 
 logic [31:0] next_pc;
@@ -131,7 +132,7 @@ lsu lsu_mod(
     .clk(clock), .rst(reset), .bus_in(ex_ls_bus), .bus_out(ls_wb_bus), .valid_left(ex_ls_valid), .ready_left(ex_ls_ready), .valid_right(ls_wb_valid), .ready_right(ls_wb_ready),
     .araddr(araddr_lsu), .arvalid(arvalid_lsu), .arready(arready_lsu), .rdata(rdata_lsu), .rresp(rresp_lsu), .rvalid(rvalid_lsu), .rready(rready_lsu),
     .awaddr(awaddr_lsu), .awvalid(awvalid_lsu), .awready(awready_lsu), .wdata(wdata_lsu), .wstrb(wstrb_lsu), .wvalid(wvalid_lsu), .wready(wready_lsu), .bresp(bresp_lsu), .bvalid(bvalid_lsu), .bready(bready_lsu),
-    .cwdata(cwdata), .caddr(caddr), .cwvalid(cwvalid), .cready(cready), .crdata(crdata), .crvalid(crvalid)
+    .cwdata(cwdata), .caddr(caddr), .cwvalid(cwvalid), .cready(cready), .crdata(crdata), .crvalid(crvalid), .lsu_device_call(lsu_device_call)
 );
 
 // WB / Regfile

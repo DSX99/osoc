@@ -268,7 +268,7 @@ void execute(uint32_t n){
     n--;
     
     if(!batch && do_diff) {
-      if (!current_cycle_is_skipped) {
+      if (!current_cycle_is_skipped && !(top->lsu_device_call)) {
         difftest_regcpy(&ref_cpu, 0);
 
         if (ref_cpu.pc != top->pc) {

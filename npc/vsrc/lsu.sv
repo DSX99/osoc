@@ -44,7 +44,12 @@ module lsu(
     output logic [31:0] cwdata,
     output logic        cwvalid,
     input  logic        cready,
-    output logic [31:0] caddr
+    output logic [31:0] caddr,
+
+
+
+    //fix
+    output logic lsu_device_call
 
 );
 
@@ -66,6 +71,10 @@ module lsu(
     logic done_r, done_w;
 
     always_comb begin
+        //fix for devices
+        lsu_device_call=0;
+        if((((bus_in.alu_out >= 32'h10000000) && (bus_in.alu_out < 32'h10001000))||1'b0) && (bus_in.lsu_we || bus_in.lsu_re)) lsu_device_call=1;
+
         valid_right = valid_left && (!bus_in.lsu_re || done_r) && (!bus_in.lsu_we || done_w); //
         ready_left = ready_right && (!bus_in.lsu_re || done_r) && (!bus_in.lsu_we || done_w);
         unused_branch = bus_in.branch | |rresp | |bresp;
