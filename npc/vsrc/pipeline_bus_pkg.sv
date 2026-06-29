@@ -1,3 +1,6 @@
+`ifndef PIPELINE_BUS_PKG_SV
+`define PIPELINE_BUS_PKG_SV
+
 package pipeline_bus_pkg;
 
     // =========================================================================
@@ -80,3 +83,5 @@ package pipeline_bus_pkg;
     } ls_to_wb_bus_t;
 
 endpackage : pipeline_bus_pkg
+
+`endif // PIPELINE_BUS_PKG_SV

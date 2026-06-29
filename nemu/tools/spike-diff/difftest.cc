@@ -22,8 +22,7 @@
 
 static std::vector<std::pair<reg_t, abstract_device_t*>> difftest_plugin_devices;
 static std::vector<std::string> difftest_htif_args;
-static std::vector<std::pair<reg_t, mem_t*>> difftest_mem(
-    1, std::make_pair(reg_t(DRAM_BASE), new mem_t(CONFIG_MSIZE)));
+static std::vector<std::pair<reg_t, mem_t*>> difftest_mem;
 static debug_module_config_t difftest_dm_config = {
   .progbufsize = 2,
   .max_sba_data_width = 0,
@@ -102,6 +101,27 @@ __EXPORT void difftest_exec(uint64_t n) {
 __EXPORT void difftest_init(int port) {
   difftest_htif_args.push_back("");
   const char *isa = "RV" MUXDEF(CONFIG_RV64, "64", "32") MUXDEF(CONFIG_RVE, "E", "I") "MAFDC";
+
+  reg_t mrom_base = 0x20000000;
+  reg_t mrom_size = 0x00001000; // 4KB
+  reg_t sram_base = 0x0f000000;
+  reg_t sram_size = 0x00002000; // 8KB
+  reg_t flash_base = 0x30000000;
+  reg_t flash_size = 0x10000000; // IDKB
+  reg_t uart_base = 0x10000000;
+  reg_t uart_size = 0x00001000; // 8KB
+  
+  std::vector<mem_cfg_t> SoC_layout;
+  SoC_layout.push_back(mem_cfg_t(mrom_base, mrom_size));
+  SoC_layout.push_back(mem_cfg_t(sram_base, sram_size));
+  SoC_layout.push_back(mem_cfg_t(flash_base, flash_size));
+  SoC_layout.push_back(mem_cfg_t(uart_base, uart_size));
+
+  difftest_mem.push_back(std::make_pair(mrom_base, new mem_t(mrom_size)));
+  difftest_mem.push_back(std::make_pair(sram_base, new mem_t(sram_size)));
+  difftest_mem.push_back(std::make_pair(flash_base, new mem_t(flash_size)));
+  difftest_mem.push_back(std::make_pair(uart_base, new mem_t(uart_size)));
+
   cfg_t *cfg = new cfg_t(/*default_initrd_bounds=*/std::make_pair((reg_t)0, (reg_t)0),
             /*default_bootargs=*/nullptr,
             /*default_isa=*/isa,
@@ -110,7 +130,7 @@ __EXPORT void difftest_init(int port) {
             /*default_misaligned=*/false,
             /*default_endianness*/endianness_little,
             /*default_pmpregions=*/16,
-            /*default_mem_layout=*/std::vector<mem_cfg_t>(),
+            /*default_mem_layout=*/SoC_layout,
             /*default_hartids=*/std::vector<size_t>(1),
             /*default_real_time_clint=*/false,
             /*default_trigger_count=*/4);

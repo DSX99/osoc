@@ -18,9 +18,11 @@
 #include <cstdlib>
 #include <cstdint>
 #include "dpi.h"
+#include "common.h"
 
 static int is_batch_mode = false;
 static char prev_cmd[128];
+extern VysyxSoCFull_osoc_26000003 *top;
 
 void init_regex();
 void init_wp_pool();
@@ -175,11 +177,6 @@ static int cmd_sir(char *args) {
   return 0;
 }
 
-#include "Vtop.h"
-#include "Vtop___024root.h"
-#include "Vtop_top.h"
-#include "Vtop_regs.h"
-
 const static char *regs[] = {
   "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
   "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
@@ -187,15 +184,14 @@ const static char *regs[] = {
   "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
 };
 extern "C" void difftest_regcpy(void *regs, bool direction);
-extern Vtop* top; 
 uint32_t ref_regs[32];
 
 static int cmd_check(char *args) {
 
   difftest_regcpy(ref_regs, 0);
   for(int i=0;i<32;i++){
-    if(ref_regs[i]-top->top->reg_mod->regs[i]!=0){
-      printf("Difference with REF %s, should:0x%08x, actually:0x%08x, pc: 0x%08x\n", regs[i], ref_regs[i], top->top->reg_mod->regs[i], top->top->pc);
+    if(ref_regs[i]-top->reg_mod->regs[i]!=0){
+      printf("Difference with REF %s, should:0x%08x, actually:0x%08x, pc: 0x%08x\n", regs[i], ref_regs[i], top->reg_mod->regs[i], top->pc);
       return 0;
     }
   }

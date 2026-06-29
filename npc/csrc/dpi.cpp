@@ -4,17 +4,19 @@
 #include <cstring>
 #include <chrono>
 #include "common.h"
-#include "Vtop.h"
-#include "Vtop___024root.h"
-#include "Vtop_top.h"
-#include "Vtop_regs.h"
 
 
-extern Vtop* top; 
 uint8_t mem[MEM_SIZE];
 uint64_t curr_time;
 extern bool skip_inst;
 extern bool fail;
+extern VysyxSoCFull_osoc_26000003 *top;
+extern bool do_diff;
+
+#define ROM_OFFSET  0x80000000
+#define MROM_OFFSET 0x20000000
+#define FLASH_OFFSET 0x30000000
+
 
 #define DEVICE_BASE 0xa0000000
 
@@ -32,14 +34,26 @@ static const uint32_t img [] = {
   0xdeadbeef,  // some data
 };
 
+uint8_t flash[] = {
+    0x63,
+    0x30,
+    0x66,
+    0x66,
+    0x65,
+    0x65
+};
+
+extern "C" void flash_read(uint32_t addr, uint32_t *data) { addr = addr & 0xfffffffc; *data = ((flash[addr+3]<<24)|(flash[addr+2]<<16)|(flash[addr+1]<<8)|(flash[addr])); }
+extern "C" void mrom_read(uint32_t addr, uint32_t *data) { addr = addr & 0xfffffffc; *data = ((mem[addr-MROM_OFFSET+3]<<24)|(mem[addr-MROM_OFFSET+2]<<16)|(mem[addr-MROM_OFFSET+1]<<8)|(mem[addr-MROM_OFFSET])); }
+
 extern "C" {
     void difftest_memcpy(uint32_t addr, void *buf, size_t n, bool direction);
     void loadmemory(char *img_file, bool batch) {
         if (img_file == NULL) {
             printf("No image is given.\n");
             memcpy(mem, img, sizeof(img));
-            if(!batch){
-                difftest_memcpy(0x80000000, mem, sizeof(img), 1);
+            if(!batch && do_diff){
+                difftest_memcpy(MROM_OFFSET, mem, sizeof(img), 1);
             }
             return; // built-in image size
         }
@@ -60,11 +74,12 @@ extern "C" {
 
         fclose(fp);
 
-        if(!batch){
-            difftest_memcpy(0x80000000, mem, size, 1);
+        if(!batch && do_diff){
+            difftest_memcpy(MROM_OFFSET, mem, size, 1);
         }
     }
 
+    //deprecated, works for npc, not SoC
     void memwrite(uint32_t addr, uint32_t data, uint32_t type){
         #ifdef MTRACE
         printf("\033[034mCall to write to memory at %08x\033[0m\n", addr);
@@ -88,11 +103,12 @@ extern "C" {
             putchar((uint8_t)data);
             fflush(stdout);
         }else{
-            printf("Illegal memory write access at addr:0x%08x at pc: 0x%08x\n",addr, top->top->pc);
+            printf("Illegal memory write access at addr:0x%08x at pc: 0x%08x\n",addr, top->pc);
             assert(0);
         }
     }
 
+    //deprecated, works for npc, not SoC
     uint32_t memread(uint32_t addr){
         #ifdef MTRACE
         printf("\n\033[034mCall to read from memory at %08x\033[0m\n", addr);
@@ -111,7 +127,7 @@ extern "C" {
             }
             if(addr == RTC_ADDR) return (uint32_t)curr_time;
         }else{
-            printf("Illegal memory read access at addr:0x%08x at pc: 0x%08x\n",addr, top->top->pc);
+            printf("Illegal memory read access at addr:0x%08x at pc: 0x%08x\n",addr, top->pc);
             fail=1;
         }
         return 0;

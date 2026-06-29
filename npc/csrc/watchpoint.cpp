@@ -20,7 +20,7 @@
 #include <cstring>
 #define NR_WP 6
 
-
+extern bool valid_cycle;
 
 uint32_t expr(char *e, bool *success);
 
@@ -179,6 +179,8 @@ bool check_wp(WP *wp, bool *success)
 
 bool check_watchpoints()
 {
+  if(!valid_cycle) return 0;
+
   bool success = 1;
   uint32_t val;
   WP *head_wp = head;
