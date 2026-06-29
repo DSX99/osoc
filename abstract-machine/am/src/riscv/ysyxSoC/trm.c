@@ -58,7 +58,9 @@ void _trm_init() {
 
   temp = *(volatile uint8_t *)(UART_BASE + 3);
   temp = *(volatile uint8_t *)(UART_BASE + 0);
-  putch(temp);
+
+  *(char *)(UART_BASE) = temp;
+
   int ret = main(mainargs);
   halt(ret);
 }
