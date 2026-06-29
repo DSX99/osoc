@@ -14,27 +14,48 @@ SECTIONS {
   } >mrom AT> mrom : text
   etext = .;
   _etext = .;
+
   .rodata : {
     *(.rodata*)
-  }
-  _data_start = .;
+  } >mrom AT> mrom
+
+  /* =========================================================================
+     A. FORCE LINKER CONTEXT TO SRAM BEFORE DEFINING RAM SYMBOLS
+     ========================================================================= */
+  . = ORIGIN(sram);
+  _data_VMA = .;
+
   .data : {
+    _data_start = .; /* Correct: Now explicitly captures 0x0F000000 in SRAM */
     *(.data*)
+    *(.sdata*)
+    . = ALIGN(4);
+    edata = .;
   } >sram AT> mrom : data
+  
   _data_size = SIZEOF(.data);
-  edata = .;
-  _data = .;
+  _data = LOADADDR(.data); /* Correct: Safely gets the storage address in MROM */
+
   .bss : {
-	_bss_start = .;
+    _bss_start = .;
     *(.bss*)
     *(.sbss*)
     *(.scommon)
-  } >sram AT> mrom
-  _data_VMA = ORIGIN(sram);
-  _stack_top = ORIGIN(sram) + LENGTH(sram) - 0x1000; 
-  . = ORIGIN(sram) + LENGTH(sram);
-  _stack_pointer = .;
+    . = ALIGN(4);
+    _bss_end = .;
+  } >sram
+  
+  /* =========================================================================
+     B. DYNAMIC HEAP & STACK BOUNDARY GENERATION
+     ========================================================================= */
+  
+  /* The heap starts exactly where .bss ends, avoiding all variables */
+  _heap_start = .; 
+
+  /* Set stack definitions cleanly relative to the physical memory footprint */
+  _stack_top     = ORIGIN(sram) + LENGTH(sram) - 0x1000; /* Protect top 4KB */
+  _stack_pointer = ORIGIN(sram) + LENGTH(sram);          /* Top edge of RAM */
+  
   end = .;
   _end = .;
-  _heap_start = ORIGIN(sram) + SIZEOF(.data);
 }
