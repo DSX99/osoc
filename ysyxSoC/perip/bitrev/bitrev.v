@@ -16,7 +16,7 @@ module bitrev (
       end else if(count==4'd7)begin
         miso <= mosi;
       end else begin
-        buff <= {buff[5:1],1'b0};
+        buff <= {buff[5:0],1'b0};
         miso <= buff[6];
       end
       count<=count+1;
