@@ -281,7 +281,7 @@ always_ff @(posedge clk) begin
                 IDLE_W:begin
                     done_w<=0;
                     if(bus_in.lsu_we && valid_left) begin
-                        awaddr<=(bus_in.alu_out & 32'hFFFFFFFC);
+                        awaddr<=(bus_in.alu_out & 32'hFFFFFFFF);
                         awvalid<=1;
                         wdata<=(bus_in.data_rs2 << (bus_in.alu_out[1:0]*8));
                         wvalid<=1;
