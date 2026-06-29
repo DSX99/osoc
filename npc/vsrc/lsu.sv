@@ -161,7 +161,7 @@ always_ff @(posedge clk) begin
                     done_r<=0;
                     if(bus_in.lsu_re && valid_left) begin
                         arvalid<=1;
-                        araddr<=(bus_in.alu_out & 32'hFFFFFFFCS);
+                        araddr<=(bus_in.alu_out & 32'hFFFFFFFC);
                         lsu_r<=WAIT_AR;
                     end
                 end
