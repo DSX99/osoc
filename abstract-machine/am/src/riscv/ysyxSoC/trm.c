@@ -44,7 +44,7 @@ void _trm_init() {
 
   *(volatile char *)(UART_BASE + UART_LC) = 0b10000011;
   *(volatile char *)(UART_BASE + UART_IER) = 0x00; // DLM (MSB) = 0
-  *(volatile char *)(UART_BASE + UART_TX)  = 0x01; // DLL (LSB) = 1 (Counter starts now)
+  *(volatile char *)(UART_BASE + UART_TX)  = 0x11; // DLL (LSB) = 1 (Counter starts now)
   *(volatile char *)(UART_BASE + UART_LC) = 0b00000011;
   *(volatile char *)(UART_BASE + UART_FCR) = 0b11000110;
 
