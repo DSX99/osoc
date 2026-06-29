@@ -315,11 +315,11 @@ uint32_t reg_str2val(const char *s, bool *success) {
 
 void print_itrace(){
   for(int i=0;i<ITRACE_VAL;i++){
+    printf("%s\n",itrace[point]);
     point=point+1;
     if(point==ITRACE_VAL){
       point=0;
     }
-    printf("%s\n",itrace[point]);
   }
 }
 
