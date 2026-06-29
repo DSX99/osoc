@@ -69,7 +69,6 @@ module osoc_26000003 (
 logic [31:0] pc /* verilator public */, opcode /* verilator public */;
 logic reg_valid /* verilator public */, reg_valid_e /* verilator public */;
 
-logic reg_valid_e;
 assign opcode = if_id_bus.opcode;
 
 logic [31:0] next_pc;
