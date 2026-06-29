@@ -15,6 +15,8 @@ extern bool do_diff;
 
 #define ROM_OFFSET  0x80000000
 #define MROM_OFFSET 0x20000000
+#define FLASH_OFFSET 0x30000000
+
 
 #define DEVICE_BASE 0xa0000000
 
@@ -32,7 +34,14 @@ static const uint32_t img [] = {
   0xdeadbeef,  // some data
 };
 
-extern "C" void flash_read(uint32_t addr, uint32_t *data) { assert(0); }
+uint8_t flash[] = {
+    0xc0,
+    0xff,
+    0xee,
+    0x00
+};
+
+extern "C" void flash_read(uint32_t addr, uint32_t *data) { addr = addr & 0xfffffffc; *data = ((flash[addr-FLASH_OFFSET+3]<<24)|(flash[addr-FLASH_OFFSET+2]<<16)|(flash[addr-FLASH_OFFSET+1]<<8)|(flash[addr-FLASH_OFFSET])); }
 extern "C" void mrom_read(uint32_t addr, uint32_t *data) { addr = addr & 0xfffffffc; *data = ((mem[addr-MROM_OFFSET+3]<<24)|(mem[addr-MROM_OFFSET+2]<<16)|(mem[addr-MROM_OFFSET+1]<<8)|(mem[addr-MROM_OFFSET])); }
 
 extern "C" {
