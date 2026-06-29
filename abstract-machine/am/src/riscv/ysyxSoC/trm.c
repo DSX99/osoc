@@ -45,7 +45,7 @@ void _trm_init() {
   memcpy(&_data_VMA, &_data_start, (uint32_t)&_data_size);
 
   *(volatile uint8_t *)(UART_BASE + UART_IER) = 0;
-  uint16_t divisor = 1;
+  uint16_t divisor = 2;
   *(volatile uint8_t *)(UART_BASE + UART_LC) = 0b10000000;
   *(volatile uint8_t *)(UART_BASE + 1) = (uint8_t)((divisor & 0xff00)>>2);
   *(volatile uint8_t *)(UART_BASE + 0) = (uint8_t)(divisor & 0xff);
