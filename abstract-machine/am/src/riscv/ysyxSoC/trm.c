@@ -23,9 +23,7 @@ static const char mainargs[MAINARGS_MAX_LEN] = TOSTRING(MAINARGS_PLACEHOLDER); /
 void putch(char ch) {
   volatile char *data = (char *)(UART_BASE);
   volatile char *status = (char *)(UART_BASE + UART_LS);
-  while(1){
-    if( ((*status)&&(1<<5)) ==1) break;
-  }
+  while((*status&(1<<5)) == 0);
   *data = ch;
 }
 
