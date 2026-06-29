@@ -29,7 +29,7 @@ SECTIONS {
     *(.bss*)
     *(.sbss*)
     *(.scommon)
-  } >sram AT> mrom
+  } >sram
   _data_VMA = ORIGIN(sram);
   _stack_top = ORIGIN(sram) + LENGTH(sram) - 0x1000; 
   . = ORIGIN(sram) + LENGTH(sram);
