@@ -16,9 +16,7 @@ SECTIONS {
   _etext = .;
   .rodata : {
     *(.rodata*)
-  } >mrom AT> mrom
-
-  . = ORIGIN(sram);
+  }
   _data_start = .;
   .data : {
     *(.data*)
@@ -26,21 +24,16 @@ SECTIONS {
   _data_size = SIZEOF(.data);
   edata = .;
   _data = .;
-
-
   .bss : {
 	_bss_start = .;
     *(.bss*)
     *(.sbss*)
     *(.scommon)
-  } >sram
-  
+  } >sram AT> mrom
   _data_VMA = ORIGIN(sram);
-
   _stack_top = ORIGIN(sram) + LENGTH(sram) - 0x1000; 
   . = ORIGIN(sram) + LENGTH(sram);
   _stack_pointer = .;
-  
   end = .;
   _end = .;
   _heap_start = ORIGIN(sram) + SIZEOF(.data);
