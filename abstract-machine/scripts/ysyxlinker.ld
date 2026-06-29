@@ -21,6 +21,7 @@ SECTIONS {
   .data : {
     *(.data*)
   } >sram AT> mrom : data
+  _data_size = SIZEOF(.data);
   edata = .;
   _data = .;
   .bss : {

@@ -27,10 +27,10 @@ void halt(int code) {
 
 extern char _data_start;
 extern char _data_VMA;
-extern char edata;
+extern char _data_size;
 
 void _trm_init() {
-  memcpy(&_data_VMA, &_data_start, (uint32_t)&edata - (uint32_t)&_data_start);
+  memcpy(&_data_VMA, &_data_start, (uint32_t)&_data_size);
   int ret = main(mainargs);
   halt(ret);
 }
