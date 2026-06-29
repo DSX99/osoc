@@ -26,11 +26,11 @@ void halt(int code) {
 }
 
 extern char _data_start;
-extern char _stack_top;
+extern char _data_VMA;
 extern char _data_size;
 
 void _trm_init() {
-  memcpy(&_stack_top, &_data_start, (uint32_t)&_data_size);
+  memcpy(&_data_VMA, &_data_start, (uint32_t)&_data_size);
   int ret = main(mainargs);
   halt(ret);
 }

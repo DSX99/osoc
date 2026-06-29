@@ -30,7 +30,8 @@ SECTIONS {
     *(.sbss*)
     *(.scommon)
   } >sram AT> mrom
-  _stack_top = ORIGIN(sram);
+  _data_VMA = ORIGIN(sram);
+  _stack_top = ORIGIN(sram) + LENGTH(sram) - 0x1000; 
   . = ORIGIN(sram) + LENGTH(sram);
   _stack_pointer = .;
   end = .;
