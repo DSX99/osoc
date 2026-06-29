@@ -19,7 +19,7 @@ static const char mainargs[MAINARGS_MAX_LEN] = TOSTRING(MAINARGS_PLACEHOLDER); /
 #define UART_LS   5
 
 void putch(char ch) {
-  while(((*(volatile char *)(UART_BASE + UART_LS)) & (0b10000))) asm volatile("nop");
+  while(!((*(volatile char *)(UART_BASE + UART_LS)) & (0b10000))) asm volatile("nop");
   *(volatile char *)(UART_BASE + UART_TX) = ch;
 }
 
@@ -41,8 +41,8 @@ void _trm_init() {
   memcpy(&_data_VMA, &_data_start, (uint32_t)&_data_size);
 
   *(volatile char *)(UART_BASE + UART_LC) = 0b10000011;
-  *(volatile char *)(UART_BASE + UART_TX) = 1;
-  *(volatile char *)(UART_BASE + UART_TX+1) = 0;
+  *(volatile char *)(UART_BASE + UART_TX) = 0b11111111;
+  *(volatile char *)(UART_BASE + UART_TX+1) = 0b11111111;
   *(volatile char *)(UART_BASE + UART_LC) = 0b00000011;
 
   int ret = main(mainargs);
