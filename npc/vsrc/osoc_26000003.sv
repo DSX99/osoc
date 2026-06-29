@@ -67,7 +67,7 @@ module osoc_26000003 (
 );
 
 logic [31:0] pc /* verilator public */, opcode /* verilator public */;
-logic reg_valid /* verilator public */, reg_valid_e /* verilator public */;
+logic reg_valid /* verilator public */, reg_valid_e /* verilator public */, prev_pc /* verilator public */;
 
 assign opcode = if_id_bus.opcode;
 
@@ -142,8 +142,10 @@ regs reg_mod(
 );
 
 assign reg_valid_e = ls_wb_valid;
-always_ff @(posedge clock) reg_valid <= reg_valid_e;
-
+always_ff @(posedge clock) begin
+    reg_valid <= reg_valid_e;
+    prev_pc<=pc;
+end
 always_comb begin
     id_ex_bus = id_ex_bus_decoded; 
     id_ex_bus.data_rs1 = reg_data_rs1;
