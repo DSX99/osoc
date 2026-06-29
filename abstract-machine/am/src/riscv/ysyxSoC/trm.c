@@ -51,8 +51,8 @@ uint16_t divisor = 1;
 *(volatile uint8_t *)(UART_BASE + 0)         = (uint8_t)(divisor & 0xFF);      // DLL
 *(volatile uint8_t *)(UART_BASE + UART_LC)  = 0x03;   // LCR: 8N1, clear DLAB
 // *(volatile uint8_t *)(UART_BASE + UART_FCR) = 0x07;   // FCR: enable + clear FIFOs (optional)
-*(volatile uint8_t *)(UART_BASE + 4)         = 0x00;  // MCR (optional)
-*(volatile uint8_t *)(UART_BASE + UART_IER) = 0x00;   // IER: leave 0 unless using IRQs
+// *(volatile uint8_t *)(UART_BASE + 4)         = 0x00;  // MCR (optional)
+// *(volatile uint8_t *)(UART_BASE + UART_IER) = 0x00;   // IER: leave 0 unless using IRQs
 
   int ret = main(mainargs);
   halt(ret);
