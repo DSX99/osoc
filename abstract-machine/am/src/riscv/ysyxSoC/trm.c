@@ -13,18 +13,18 @@ extern char _pmem_start;
 Area heap = RANGE(&_heap_start, PMEM_END);
 static const char mainargs[MAINARGS_MAX_LEN] = TOSTRING(MAINARGS_PLACEHOLDER); // defined in CFLAGS
 
-#define UART_BASE 0x10000000L
-#define UART_TX   0   // THR (W) / RBR (R) / DLL (RW when DLAB=1)
-#define UART_IER  1   // Interrupt Enable Register / DLM (RW when DLAB=1)
-#define UART_FCR  2   // FIFO Control Register (W)
-#define UART_LC   3   // Line Control Register (RW)
-#define UART_LS   4
+// #define UART_BASE 0x10000000L
+// #define UART_TX   0   // THR (W) / RBR (R) / DLL (RW when DLAB=1)
+// #define UART_IER  1   // Interrupt Enable Register / DLM (RW when DLAB=1)
+// #define UART_FCR  2   // FIFO Control Register (W)
+// #define UART_LC   3   // Line Control Register (RW)
+// #define UART_LS   4
+
+#define UART_BASE ((volatile unsigned char *)0x10000000ul)
 
 void putch(char ch) {
-  volatile char *data = (char *)(UART_BASE);
-  volatile char *status = (char *)(UART_BASE + UART_LS);
-  while((*status&(1<<5)) == 0);
-  *data = ch;
+  while ((UART_BASE[5] & 0x20) == 0); // wait until TX is empty
+  UART_BASE[0] = ch;
 }
 
 void halt(int code) {
@@ -44,10 +44,11 @@ void _trm_init() {
   }
   memcpy(&_data_VMA, &_data_start, (uint32_t)&_data_size);
 
-  *(volatile char *)(UART_BASE + UART_LC) = 0b10000011;
-  *(volatile char *)(UART_BASE + UART_IER) = 0x00;
-  *(volatile char *)(UART_BASE + UART_TX)  = 0x01;
-  *(volatile char *)(UART_BASE + UART_LC) = 0b00000011;
+  unsigned char lcr = UART_BASE[3];
+  UART_BASE[3] = lcr | 0x80;
+  UART_BASE[1] = 0;
+  UART_BASE[0] = 13;
+  UART_BASE[3] = lcr;
 
 
   int ret = main(mainargs);
