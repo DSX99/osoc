@@ -15,8 +15,11 @@ static const char mainargs[MAINARGS_MAX_LEN] = TOSTRING(MAINARGS_PLACEHOLDER); /
 
 #define UART_BASE 0x10000000L
 #define UART_TX   0
+#define UART_LC   3
+#define UART_LS   5
 
 void putch(char ch) {
+  if(!(*(volatile char *)(UART_BASE + UART_LS) & (0b10000))) asm volatile("nop");
   *(volatile char *)(UART_BASE + UART_TX) = ch;
 }
 
@@ -31,6 +34,12 @@ extern char _data_size;
 
 void _trm_init() {
   memcpy(&_data_VMA, &_data_start, (uint32_t)&_data_size);
+
+  *(volatile char *)(UART_BASE + UART_LC) = 0b10000011;
+  *(volatile char *)(UART_BASE + UART_TX) = 0b1;
+  *(volatile char *)(UART_BASE + UART_TX) = 0b0;
+  *(volatile char *)(UART_BASE + UART_LC) = 0b00000011;
+
   int ret = main(mainargs);
   halt(ret);
 }
