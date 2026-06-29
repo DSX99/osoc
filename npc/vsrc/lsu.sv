@@ -113,19 +113,35 @@ always_ff @(posedge clk) begin
                         lsu_r<=AWAIT_R;
                         case(bus_in.lsu_oper)
                             0: begin //LB
-                                bus_out.lsu_out <= {{24{crdata[7]}},crdata[7:0]};
+                                case(bus_in.alu_out[1:0])
+                                    2'b00: bus_out.lsu_out <= {{24{crdata[7]}},crdata[7:0]};
+                                    2'b01: bus_out.lsu_out <= {{24{crdata[15]}},crdata[15:8]};
+                                    2'b10: bus_out.lsu_out <= {{24{crdata[23]}},crdata[23:16]};
+                                    2'b11: bus_out.lsu_out <= {{24{crdata[31]}},crdata[31:24]};
+                                endcase
                             end 
                             1: begin //LH
-                                bus_out.lsu_out <= {{16{crdata[15]}},crdata[15:0]};
+                                case(bus_in.alu_out[1])
+                                    1'b0: bus_out.lsu_out <= {{16{crdata[15]}},crdata[15:0]};
+                                    1'b1: bus_out.lsu_out <= {{16{crdata[31]}},crdata[31:16]};
+                                endcase
                             end 
                             2: begin //LW
                                 bus_out.lsu_out <= crdata[31:0];
                             end 
                             4: begin //LBU
-                                bus_out.lsu_out <= {24'b0,crdata[7:0]};
+                                case(bus_in.alu_out[1:0])
+                                    2'b00: bus_out.lsu_out <= {{24'b0},crdata[7:0]};
+                                    2'b01: bus_out.lsu_out <= {{24'b0},crdata[15:8]};
+                                    2'b10: bus_out.lsu_out <= {{24'b0},crdata[23:16]};
+                                    2'b11: bus_out.lsu_out <= {{24'b0},crdata[31:24]};
+                                endcase
                             end 
                             5: begin //LHU
-                                bus_out.lsu_out <= {16'b0,crdata[15:0]};
+                                case(bus_in.alu_out[1])
+                                    1'b0: bus_out.lsu_out <= {{16'b0},crdata[15:0]};
+                                    1'b1: bus_out.lsu_out <= {{16'b0},crdata[31:16]};
+                                endcase
                             end 
                         endcase
                         crvalid<=0;
@@ -161,19 +177,35 @@ always_ff @(posedge clk) begin
                         lsu_r<=AWAIT_R;
                         case(bus_in.lsu_oper)
                             0: begin //LB
-                                bus_out.lsu_out <= {{24{rdata[7]}},rdata[7:0]};
+                                case(bus_in.alu_out[1:0])
+                                    2'b00: bus_out.lsu_out <= {{24{rdata[7]}},rdata[7:0]};
+                                    2'b01: bus_out.lsu_out <= {{24{rdata[15]}},rdata[15:8]};
+                                    2'b10: bus_out.lsu_out <= {{24{rdata[23]}},rdata[23:16]};
+                                    2'b11: bus_out.lsu_out <= {{24{rdata[31]}},rdata[31:24]};
+                                endcase
                             end 
                             1: begin //LH
-                                bus_out.lsu_out <= {{16{rdata[15]}},rdata[15:0]};
+                                case(bus_in.alu_out[1])
+                                    1'b0: bus_out.lsu_out <= {{16{rdata[15]}},rdata[15:0]};
+                                    1'b1: bus_out.lsu_out <= {{16{rdata[31]}},rdata[31:16]};
+                                endcase
                             end 
                             2: begin //LW
                                 bus_out.lsu_out <= rdata[31:0];
                             end 
                             4: begin //LBU
-                                bus_out.lsu_out <= {24'b0,rdata[7:0]};
+                                case(bus_in.alu_out[1:0])
+                                    2'b00: bus_out.lsu_out <= {{24'b0},rdata[7:0]};
+                                    2'b01: bus_out.lsu_out <= {{24'b0},rdata[15:8]};
+                                    2'b10: bus_out.lsu_out <= {{24'b0},rdata[23:16]};
+                                    2'b11: bus_out.lsu_out <= {{24'b0},rdata[31:24]};
+                                endcase
                             end 
                             5: begin //LHU
-                                bus_out.lsu_out <= {16'b0,rdata[15:0]};
+                                case(bus_in.alu_out[1])
+                                    1'b0: bus_out.lsu_out <= {{16'b0},rdata[15:0]};
+                                    1'b1: bus_out.lsu_out <= {{16'b0},rdata[31:16]};
+                                endcase
                             end 
                         endcase
                         rready<=0;
@@ -204,8 +236,8 @@ LSU_state_w_t lsu_w;
 
 always_comb begin
     case(bus_in.lsu_oper) 
-        3'b000: wstrb=(4'b1 << bus_in.alu_out[1:0]);
-        3'b001: wstrb=4'b0011;
+        3'b000: wstrb=(4'b0001 << bus_in.alu_out[1:0]);
+        3'b001: wstrb=(4'b0011 << bus_in.alu_out[1:0]);
         3'b010: wstrb=4'b1111;
         default: wstrb=0;
     endcase
@@ -251,7 +283,7 @@ always_ff @(posedge clk) begin
                     if(bus_in.lsu_we && valid_left) begin
                         awaddr<=bus_in.alu_out;
                         awvalid<=1;
-                        wdata<=bus_in.data_rs2;
+                        wdata<=(bus_in.data_rs2 << bus_in.alu_out[1:0]);
                         wvalid<=1;
                         lsu_w<=WAIT_W;
                     end
