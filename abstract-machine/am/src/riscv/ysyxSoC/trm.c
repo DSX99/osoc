@@ -47,7 +47,7 @@ void _trm_init() {
   *(volatile uint8_t *)(UART_BASE + UART_IER) = 0;
   uint16_t divisor = 115200/9600;
   *(volatile uint8_t *)(UART_BASE + UART_LC) = 0b10000011;
-  *(volatile uint8_t *)(UART_BASE + 0) = (uint8_t)divisor & 0xff;
+  *(volatile uint8_t *)(UART_BASE + 0) = (uint8_t)(divisor & 0xff);
   *(volatile uint8_t *)(UART_BASE + 1) = (uint8_t)((divisor & 0xff00)>>2);
   *(volatile uint8_t *)(UART_BASE + UART_LC) = 0b00000011;
   
@@ -58,7 +58,8 @@ void _trm_init() {
 
   temp = *(volatile uint8_t *)(UART_BASE + 3);
   temp = *(volatile uint8_t *)(UART_BASE + 0);
-  putch(temp);
+
+  temp = temp+1;
 
   int ret = main(mainargs);
   halt(ret);
