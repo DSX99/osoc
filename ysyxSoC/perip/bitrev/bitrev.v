@@ -5,8 +5,8 @@ module bitrev (
   output reg miso
 );
 
-  reg buff [6:0];
-  reg count [3:0];
+  reg [6:0] buff;
+  reg [3:0] count;
 
   always @(posedge sck) begin
     miso <= 1;
