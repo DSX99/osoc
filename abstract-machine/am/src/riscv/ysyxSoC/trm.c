@@ -42,21 +42,12 @@ void _trm_init() {
   }
   memcpy(&_data_VMA, &_data_start, (uint32_t)&_data_size);
 
-*(volatile char *)(UART_BASE + UART_LC) = 0b10000011;
-
-  // 2. Set the Divisor Latches: MSB (DLM) first, then LSB (DLL) last
+  *(volatile char *)(UART_BASE + UART_LC) = 0b10000011;
   *(volatile char *)(UART_BASE + UART_IER) = 0x00; // DLM (MSB) = 0
   *(volatile char *)(UART_BASE + UART_TX)  = 0x01; // DLL (LSB) = 1 (Counter starts now)
-
-  // 3. Clear DLAB to restore normal register access
   *(volatile char *)(UART_BASE + UART_LC) = 0b00000011;
-
-  // 4. Set the FIFO trigger level and clear FIFOs (FCR)
-  // 0b11000110 -> Trigger level 14 bytes, clear TX & RX FIFOs
   *(volatile char *)(UART_BASE + UART_FCR) = 0b11000110;
 
-  // 5. Explicitly disable interrupts if you plan to poll (optional but safe)
-  *(volatile char *)(UART_BASE + UART_IER) = 0b00000000;
 
   int ret = main(mainargs);
   halt(ret);
