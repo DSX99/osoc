@@ -33,7 +33,7 @@ static const uint32_t img [] = {
 };
 
 extern "C" void flash_read(uint32_t addr, uint32_t *data) { assert(0); }
-extern "C" void mrom_read(uint32_t addr, uint32_t *data) { *data = ((mem[addr-MROM_OFFSET+3]<<24)|(mem[addr-MROM_OFFSET+2]<<16)|(mem[addr-MROM_OFFSET+1]<<8)|(mem[addr-MROM_OFFSET])); }
+extern "C" void mrom_read(uint32_t addr, uint32_t *data) { addr = addr & 0xfffffffc; *data = ((mem[addr-MROM_OFFSET+3]<<24)|(mem[addr-MROM_OFFSET+2]<<16)|(mem[addr-MROM_OFFSET+1]<<8)|(mem[addr-MROM_OFFSET])); }
 
 extern "C" {
     void difftest_memcpy(uint32_t addr, void *buf, size_t n, bool direction);
