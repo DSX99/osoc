@@ -35,10 +35,13 @@ static const uint32_t img [] = {
 };
 
 uint8_t flash[] = {
-    0xc0,
-    0xff,
+    0x63,
+    0x30,
     0xee,
-    0x00
+    0x66,
+    0x66,
+    0x65,
+    0x65
 };
 
 extern "C" void flash_read(uint32_t addr, uint32_t *data) { printf("calling %d\n", addr); addr = addr & 0xfffffffc; *data = ((flash[addr+3]<<24)|(flash[addr+2]<<16)|(flash[addr+1]<<8)|(flash[addr])); }
