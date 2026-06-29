@@ -18,7 +18,7 @@ static const char mainargs[MAINARGS_MAX_LEN] = TOSTRING(MAINARGS_PLACEHOLDER); /
 #define UART_IER  1   // Interrupt Enable Register / DLM (RW when DLAB=1)
 #define UART_FCR  2   // FIFO Control Register (W)
 #define UART_LC   3   // Line Control Register (RW)
-#define UART_LS   4
+#define UART_LS   5
 
 void putch(char ch) {
   volatile char *data = (char *)(UART_BASE);
@@ -48,7 +48,7 @@ void _trm_init() {
   *(volatile char *)(UART_BASE + UART_IER) = 0x0;
   *(volatile char *)(UART_BASE + UART_TX)  = 0x1;
   *(volatile char *)(UART_BASE + UART_LC) = 0b00000011;
-  *(volatile char *)(UART_BASE + UART_FCR) = 0b00000110;
+  *(volatile char *)(UART_BASE + UART_FCR) = 0b00000000;
 
 
   int ret = main(mainargs);
