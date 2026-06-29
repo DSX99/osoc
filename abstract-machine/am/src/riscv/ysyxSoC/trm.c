@@ -42,7 +42,7 @@ void _trm_init() {
 
   *(volatile char *)(UART_BASE + UART_LC) = 0b10000011;
   *(volatile char *)(UART_BASE + UART_TX) = 0b1;
-  *(volatile char *)(UART_BASE + UART_TX+1) = 0b1;
+  *(volatile char *)(UART_BASE + UART_TX+1) = 0b0;
   *(volatile char *)(UART_BASE + UART_LC) = 0b00000011;
 
   int ret = main(mainargs);
