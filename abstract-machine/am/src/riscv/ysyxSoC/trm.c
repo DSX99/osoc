@@ -21,7 +21,7 @@ static const char mainargs[MAINARGS_MAX_LEN] = TOSTRING(MAINARGS_PLACEHOLDER); /
 #define UART_LS   5
 
 void putch(char ch) {
-  while(!((*(volatile char *)(UART_BASE + UART_LS)) & (0b100000))) asm volatile("nop");
+  while(!((*(volatile char *)(UART_BASE + UART_LS)) & (1 << 5))) asm volatile("nop");
   *(volatile char *)(UART_BASE + UART_TX) = ch;
 }
 
