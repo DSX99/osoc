@@ -44,20 +44,21 @@ void _trm_init() {
   }
   memcpy(&_data_VMA, &_data_start, (uint32_t)&_data_size);
 
-  *(volatile char *)(UART_BASE ) = 0b00000000;
-  *(volatile char *)(UART_BASE +1) = 0b00000000;
-  *(volatile char *)(UART_BASE +2) = 0b00000000;
-  *(volatile char *)(UART_BASE +3) = 0b00000000;
-  *(volatile char *)(UART_BASE +4) = 0b00000000;
-  *(volatile char *)(UART_BASE +5) = 0b00000000;
-  *(volatile char *)(UART_BASE +6) = 0b00000000;
-  *(volatile char *)(UART_BASE +7) = 0b00000000;
+  *(volatile uint8_t *)(UART_BASE + UART_IER) = 0;
+  uint16_t divisor = 115200/9600;
+  *(volatile uint8_t *)(UART_BASE + UART_LC) = 0b10000011;
+  *(volatile uint8_t *)(UART_BASE + 0) = (uint8_t)divisor & 0xff;
+  *(volatile uint8_t *)(UART_BASE + 1) = (uint8_t)((divisor & 0xff00)>>2);
+  *(volatile uint8_t *)(UART_BASE + UART_LC) = 0b00000011;
+  
+  *(volatile uint8_t *)(UART_BASE + 4) = 0;
+  *(volatile uint8_t *)(UART_BASE + UART_IER) = 1;
 
-  *(volatile char *)(UART_BASE + UART_LC) = 0b10000011;
-  *(volatile char *)(UART_BASE + UART_IER) = 0x00;
-  *(volatile char *)(UART_BASE + UART_TX)  = 0x01;
-  *(volatile char *)(UART_BASE + UART_LC) = 0b00000011;
+  volatile uint8_t temp;
 
+  temp = *(volatile uint8_t *)(UART_BASE + 3);
+  temp = *(volatile uint8_t *)(UART_BASE + 0);
+  putch(temp);
 
   int ret = main(mainargs);
   halt(ret);
