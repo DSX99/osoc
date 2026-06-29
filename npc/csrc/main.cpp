@@ -272,7 +272,7 @@ void execute(uint32_t n){
         difftest_regcpy(&ref_cpu, 0);
 
         if (ref_cpu.pc != top->pc) {
-          printf("Difference with REF pc, should:0x%08x, actually:0x%08x\n", ref_cpu.pc, top->pc);
+          printf("Difference with REF pc, should:0x%08x, actually:0x%08x\n", ref_cpu.pc, top->prev_pc);
           ret = 1;
           inst[0] = (top->opcode) & 0xff;
           inst[1] = (top->opcode >> 8) & 0xff;
@@ -291,7 +291,7 @@ void execute(uint32_t n){
         for(int i = 0; i < 32; i++){
           if(ref_cpu.gpr[i] != top->reg_mod->regs[i]){
             printf("Difference with REF %s, should:0x%08x, actually:0x%08x, pc: 0x%08x\n", 
-                   regs[i], ref_cpu.gpr[i], top->reg_mod->regs[i], top->pc);
+                   regs[i], ref_cpu.gpr[i], top->reg_mod->regs[i], top->prev_pc);
             ret = 1;
             inst[0] = (top->opcode) & 0xff;
             inst[1] = (top->opcode >> 8) & 0xff;
