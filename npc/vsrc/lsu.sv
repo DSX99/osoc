@@ -161,7 +161,7 @@ always_ff @(posedge clk) begin
                     done_r<=0;
                     if(bus_in.lsu_re && valid_left) begin
                         arvalid<=1;
-                        araddr<=bus_in.alu_out;
+                        araddr<=(bus_in.alu_out & 32'hFFFFFFFCS);
                         lsu_r<=WAIT_AR;
                     end
                 end
@@ -281,7 +281,7 @@ always_ff @(posedge clk) begin
                 IDLE_W:begin
                     done_w<=0;
                     if(bus_in.lsu_we && valid_left) begin
-                        awaddr<=bus_in.alu_out;
+                        awaddr<=(bus_in.alu_out & 32'hFFFFFFFC);
                         awvalid<=1;
                         wdata<=(bus_in.data_rs2 << (bus_in.alu_out[1:0]*8));
                         wvalid<=1;
