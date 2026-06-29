@@ -18,11 +18,11 @@ static const char mainargs[MAINARGS_MAX_LEN] = TOSTRING(MAINARGS_PLACEHOLDER); /
 #define UART_IER  1   // Interrupt Enable Register / DLM (RW when DLAB=1)
 #define UART_FCR  2   // FIFO Control Register (W)
 #define UART_LC   3   // Line Control Register (RW)
-#define UART_LS   5
+#define UART_LS   4
 
 void putch(char ch) {
-  volatile char *data = (char *)0x10000000ul;
-  volatile char *status = (char *)0x10000004ul;
+  volatile char *data = (char *)(UART_BASE);
+  volatile char *status = (char *)(UART_BASE + UART_LS);
   while(*status == 0);
   *data = ch;
 }
