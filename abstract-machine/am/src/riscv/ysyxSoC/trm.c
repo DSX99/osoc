@@ -31,8 +31,13 @@ void halt(int code) {
 extern char _data_start;
 extern char _data_VMA;
 extern char _data_size;
+extern char _bss_start;
+extern char _bss_end;
 
 void _trm_init() {
+  for (char *p = &_bss_start; p < &_bss_end; p++) {
+    *p = 0;
+  }
   memcpy(&_data_VMA, &_data_start, (uint32_t)&_data_size);
 
   *(volatile char *)(UART_BASE + UART_LC) = 0b10000011;

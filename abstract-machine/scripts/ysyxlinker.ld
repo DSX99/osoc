@@ -24,12 +24,13 @@ SECTIONS {
   _data_size = SIZEOF(.data);
   edata = .;
   _data = .;
-  .bss : {
+  .bss (NOLOAD) : {
 	_bss_start = .;
     *(.bss*)
     *(.sbss*)
     *(.scommon)
-  }
+  _bss_end = .;
+  } >sram AT>mrom
   _data_VMA = ORIGIN(sram);
   _stack_top = ORIGIN(sram) + LENGTH(sram) - 0x1000; 
   . = ORIGIN(sram) + LENGTH(sram);
