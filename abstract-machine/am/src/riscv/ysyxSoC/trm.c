@@ -14,9 +14,11 @@ Area heap = RANGE(&_heap_start, PMEM_END);
 static const char mainargs[MAINARGS_MAX_LEN] = TOSTRING(MAINARGS_PLACEHOLDER); // defined in CFLAGS
 
 #define UART_BASE 0x10000000L
-#define UART_TX   0
-#define UART_LC   3
-#define UART_LS   4
+#define UART_TX   0   // THR (W) / RBR (R) / DLL (RW when DLAB=1)
+#define UART_IER  1   // Interrupt Enable Register / DLM (RW when DLAB=1)
+#define UART_FCR  2   // FIFO Control Register (W)
+#define UART_LC   3   // Line Control Register (RW)
+#define UART_LS   5
 
 void putch(char ch) {
   while(!((*(volatile char *)(UART_BASE + UART_LS)) & (0b100000))) asm volatile("nop");
@@ -40,11 +42,21 @@ void _trm_init() {
   }
   memcpy(&_data_VMA, &_data_start, (uint32_t)&_data_size);
 
-  *(volatile char *)(UART_BASE + UART_LC) = 0b10000011;
-  *(volatile char *)(UART_BASE + 2) = 0b11000110;
-  *(volatile char *)(UART_BASE + UART_TX+1) = 0b0;
-  *(volatile char *)(UART_BASE + UART_TX) = 0b1;
+*(volatile char *)(UART_BASE + UART_LC) = 0b10000011;
+
+  // 2. Set the Divisor Latches: MSB (DLM) first, then LSB (DLL) last
+  *(volatile char *)(UART_BASE + UART_IER) = 0x00; // DLM (MSB) = 0
+  *(volatile char *)(UART_BASE + UART_TX)  = 0x01; // DLL (LSB) = 1 (Counter starts now)
+
+  // 3. Clear DLAB to restore normal register access
   *(volatile char *)(UART_BASE + UART_LC) = 0b00000011;
+
+  // 4. Set the FIFO trigger level and clear FIFOs (FCR)
+  // 0b11000110 -> Trigger level 14 bytes, clear TX & RX FIFOs
+  *(volatile char *)(UART_BASE + UART_FCR) = 0b11000110;
+
+  // 5. Explicitly disable interrupts if you plan to poll (optional but safe)
+  *(volatile char *)(UART_BASE + UART_IER) = 0b00000000;
 
   int ret = main(mainargs);
   halt(ret);
