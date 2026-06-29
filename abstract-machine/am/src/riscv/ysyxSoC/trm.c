@@ -41,7 +41,7 @@ void _trm_init() {
   memcpy(&_data_VMA, &_data_start, (uint32_t)&_data_size);
 
   *(volatile char *)(UART_BASE + UART_LC) = 0b10000011;
-  *(volatile char *)(UART_BASE + UART_TX) = 0b11111111;
+  *(volatile char *)(UART_BASE + UART_TX) = 0b11;
   *(volatile char *)(UART_BASE + UART_TX+1) = 0b11;
   *(volatile char *)(UART_BASE + UART_LC) = 0b00000011;
 
