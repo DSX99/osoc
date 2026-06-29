@@ -236,8 +236,8 @@ LSU_state_w_t lsu_w;
 
 always_comb begin
     case(bus_in.lsu_oper) 
-        3'b000: wstrb=(4'b0001 << bus_in.alu_out[1:0]);
-        3'b001: wstrb=(4'b0011 << bus_in.alu_out[1:0]);
+        3'b000: wstrb=(4'b0001);//<< bus_in.alu_out[1:0]
+        3'b001: wstrb=(4'b0011);// << bus_in.alu_out[1:0]
         3'b010: wstrb=4'b1111;
         default: wstrb=0;
     endcase
@@ -281,9 +281,9 @@ always_ff @(posedge clk) begin
                 IDLE_W:begin
                     done_w<=0;
                     if(bus_in.lsu_we && valid_left) begin
-                        awaddr<=(bus_in.alu_out & 32'hFFFFFFFC);
+                        awaddr<=(bus_in.alu_out & 32'hFFFFFFFF);
                         awvalid<=1;
-                        wdata<=(bus_in.data_rs2 << (bus_in.alu_out[1:0]*8));
+                        wdata<=(bus_in.data_rs2);//<< bus_in.alu_out[1:0] *8
                         wvalid<=1;
                         lsu_w<=WAIT_W;
                     end
