@@ -188,7 +188,7 @@ void execute(uint32_t n){
       printf("time:%lu\n", contextp->time());
     }
 
-    if(!batch && top->opcode!=0 && top->reg_valid){
+    if(!batch && top->opcode!=0 && top->reg_valid_e){
       inst[0] = (top->opcode) & 0xff;
       inst[1] = (top->opcode >> 8) & 0xff;
       inst[2] = (top->opcode >> 16) & 0xff;
@@ -214,7 +214,7 @@ void execute(uint32_t n){
     soc->clock=!soc->clock;
     soc->eval();
 
-    valid_cycle = top->reg_valid;
+    valid_cycle = top->reg_valid_e;
 
     if(fail){ 
       printf("failed\n");
@@ -223,7 +223,7 @@ void execute(uint32_t n){
 
     bool current_cycle_is_skipped = skip_inst;
 
-    if((!batch) && (!current_cycle_is_skipped) && top->reg_valid && do_diff) difftest_exec(1);
+    if((!batch) && (!current_cycle_is_skipped) && top->reg_valid_e && do_diff) difftest_exec(1);
 
     if(contextp->gotFinish()){
       #ifdef CONFIG_FST
