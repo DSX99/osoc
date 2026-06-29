@@ -66,9 +66,8 @@ module osoc_26000003 (
     output [3:0]   io_slave_rid
 );
 
-logic [31:0] pc /* verilator public */, opcode /* verilator public */;
-logic reg_valid /* verilator public */, reg_valid_e /* verilator public */, prev_pc /* verilator public */;
-
+logic [31:0] pc /* verilator public */, opcode /* verilator public */, prev_pc /* verilator public */;
+logic reg_valid /* verilator public */, reg_valid_e /* verilator public */;
 assign opcode = if_id_bus.opcode;
 
 logic [31:0] next_pc;
