@@ -34,7 +34,7 @@ SECTIONS {
     *(.bss*)
     *(.sbss*)
     *(.scommon)
-  } >sram AT>sram :bss
+  } >sram
   _bss_end = .;
   _data_VMA = ORIGIN(sram);
   
