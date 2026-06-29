@@ -236,8 +236,8 @@ LSU_state_w_t lsu_w;
 
 always_comb begin
     case(bus_in.lsu_oper) 
-        3'b000: wstrb=(4'b0001 << bus_in.alu_out[1:0]);
-        3'b001: wstrb=(4'b0011 << bus_in.alu_out[1:0]);
+        3'b000: wstrb=(4'b0001); // << bus_in.alu_out[1:0]
+        3'b001: wstrb=(4'b0011);
         3'b010: wstrb=4'b1111;
         default: wstrb=0;
     endcase
