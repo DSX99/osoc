@@ -35,5 +35,5 @@ SECTIONS {
   _stack_pointer = .;
   end = .;
   _end = .;
-  _heap_start = .;
+  _heap_start = ORIGIN(sram) + SIZEOF(.data);
 }
