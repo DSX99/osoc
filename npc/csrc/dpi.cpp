@@ -37,7 +37,6 @@ static const uint32_t img [] = {
 uint8_t flash[] = {
     0x63,
     0x30,
-    0xee,
     0x66,
     0x66,
     0x65,
