@@ -41,7 +41,7 @@ uint8_t flash[] = {
     0x00
 };
 
-extern "C" void flash_read(uint32_t addr, uint32_t *data) { printf("calling %d", addr); addr = addr & 0xfffffffc; *data = ((flash[addr-FLASH_OFFSET+3]<<24)|(flash[addr-FLASH_OFFSET+2]<<16)|(flash[addr-FLASH_OFFSET+1]<<8)|(flash[addr-FLASH_OFFSET])); }
+extern "C" void flash_read(uint32_t addr, uint32_t *data) { printf("calling %d\n", addr); addr = addr & 0xfffffffc; *data = ((flash[addr-FLASH_OFFSET+3]<<24)|(flash[addr-FLASH_OFFSET+2]<<16)|(flash[addr-FLASH_OFFSET+1]<<8)|(flash[addr-FLASH_OFFSET])); }
 extern "C" void mrom_read(uint32_t addr, uint32_t *data) { addr = addr & 0xfffffffc; *data = ((mem[addr-MROM_OFFSET+3]<<24)|(mem[addr-MROM_OFFSET+2]<<16)|(mem[addr-MROM_OFFSET+1]<<8)|(mem[addr-MROM_OFFSET])); }
 
 extern "C" {
