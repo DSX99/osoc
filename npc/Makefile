@@ -41,7 +41,7 @@ build: sim
 	@$(MAKE) -j -C obj_dir -f VysyxSoCFull.mk 
 
 run: build
-	@LD_LIBRARY_PATH=$(NEMU_HOME)/tools/capstone/repo:$(NEMU_HOME)/build obj_dir/VysyxSoCFull $(ARGS) $(IMG) +v
+	@LD_LIBRARY_PATH=$(NEMU_HOME)/tools/capstone/repo:$(NEMU_HOME)/build obj_dir/VysyxSoCFull $(ARGS) $(IMG)
 
 gdb: build
 	@--gdb -CFLAGS "-g"
