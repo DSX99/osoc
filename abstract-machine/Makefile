@@ -16,7 +16,7 @@ endif
 ### Override checks when `make clean/clean-all/html`
 ifeq ($(findstring $(MAKECMDGOALS),clean|clean-all|html),)
 
-SILENT = 
+SILENT = 0
 
 ### Print build info message
 ifndef SILENT
