@@ -82,24 +82,24 @@ always @(posedge clock) begin
     fsm_state<=0;
     set<=0;
   end else begin
-    if(fsm_state==0)begin
-      if(paddr > flash_addr_start && paddr < flash_addr_end) begin
-        if(set) fsm_state<= 3;
-        else fsm_state<=1;
-      end else begin
-        paddr <= in_paddr;
-        psel <= in_psel;
-        penable <= in_penable;
-        pwrite <= in_pwrite;
-        pwdata <= in_pwdata;
-        pstrb <= in_pstrb;
-
-        pready <= out_pready;
-        prdata <= out_prdata;
-        pslverr <= out_pslverr;
-      end
-    end else begin
       case(fsm_state)
+        3'd0: begin
+          if(paddr > flash_addr_start && paddr < flash_addr_end) begin
+            if(set) fsm_state<= 3;
+            else fsm_state<=1;
+          end else begin
+            paddr <= in_paddr;
+            psel <= in_psel;
+            penable <= in_penable;
+            pwrite <= in_pwrite;
+            pwdata <= in_pwdata;
+            pstrb <= in_pstrb;
+
+            pready <= out_pready;
+            prdata <= out_prdata;
+            pslverr <= out_pslverr;
+          end
+        end
         3'd1: begin
           paddr<=32'h10001014;
           penable<=1;
