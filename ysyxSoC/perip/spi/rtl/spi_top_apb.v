@@ -157,7 +157,7 @@ always @(posedge clock) begin
           end
         end
         3'd7:begin
-          in_pready<=0
+          in_pready<=0;
           fsm_state<=0;
         end
       endcase
