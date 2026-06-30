@@ -90,9 +90,9 @@ always @(posedge clock) begin
         pwdata <= in_pwdata;
         pstrb <= in_pstrb;
 
-        in_pready <= pready;
-        in_prdata <= prdata;
-        in_pslverr <= pslverr;
+        pready <= out_pready;
+        prdata <= out_prdata;
+        pslverr <= out_pslverr;
       end
     end else begin
       case(fsm_state)
@@ -102,7 +102,7 @@ always @(posedge clock) begin
           psel<=1;
           pwdata<=32'h00000002;
           pstrb<=4'hf;
-          if(pready) begin
+          if(out_pready) begin
             fsm_state<=2;
           end
         end
@@ -111,7 +111,7 @@ always @(posedge clock) begin
           penable<=1;
           psel<=1;
           pwdata<=32'h00000001; //set divisor rate, should be changed to proper divisor
-          if(pready) begin
+          if(out_pready) begin
             fsm_state<=3;
             set<=1;
           end
@@ -121,7 +121,7 @@ always @(posedge clock) begin
           penable<=1;
           psel<=1;
           pwdata<={8'h03,paddr[23:0]}; 
-          if(pready) begin
+          if(out_pready) begin
             fsm_state<=4;
           end
         end
@@ -130,7 +130,7 @@ always @(posedge clock) begin
           penable<=1;
           psel<=1;
           pwdata<=32'h00002140;
-          if(pready) begin
+          if(out_pready) begin
             fsm_state<=5;
           end
         end
@@ -152,12 +152,12 @@ always @(posedge clock) begin
             fsm_state<=7;
             psel<=0;
             penable<=0;
-            in_prdata<=prdata;
-            in_pready<=1;
+            prdata<=prdata;
+            pready<=1;
           end
         end
         3'd7:begin
-          in_pready<=0;
+          pready<=0;
           fsm_state<=0;
         end
       endcase
@@ -175,13 +175,13 @@ spi_top u0_spi_top (
   .wb_rst_i(reset),
   .wb_adr_i(paddr[4:0]),
   .wb_dat_i(pwdata),
-  .wb_dat_o(prdata),
+  .wb_dat_o(out_prdata),
   .wb_sel_i(pstrb),
   .wb_we_i (pwrite),
   .wb_stb_i(psel),
   .wb_cyc_i(penable),
-  .wb_ack_o(pready),
-  .wb_err_o(pslverr),
+  .wb_ack_o(out_pready),
+  .wb_err_o(out_pslverr),
   .wb_int_o(spi_irq_out),
 
   .ss_pad_o(spi_ss),
