@@ -161,7 +161,8 @@ always @(posedge clock) begin
         end
       end
       3'd6:begin
-        fsm_state<=5;
+        if(out_prdata==32'h00002040) fsm_state<=7;
+        else fsm_state<=5;
       end
       3'd7:begin
         pready<=0;
