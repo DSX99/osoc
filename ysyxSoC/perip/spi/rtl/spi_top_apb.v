@@ -62,6 +62,10 @@ reg        pslverr;
 reg [2:0] fsm_state;
 reg set;
 
+wire out_pready;
+wire [31:0] prdata;
+wire pslverr;
+
 always @(posedge clock) begin
   if(reset) begin
     paddr<=0;
