@@ -9,7 +9,7 @@ module bitrev (
   reg [3:0] count;
 
   always @(posedge sck) begin
-    miso <= 0;
+    miso <= 1;
     if(~ss) begin
       if(count<4'd7)begin
         buff <= {mosi, buff[6:1]};
