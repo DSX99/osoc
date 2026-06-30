@@ -82,90 +82,89 @@ always @(posedge clock) begin
     fsm_state<=0;
     set<=0;
   end else begin
-      case(fsm_state)
-        3'd0: begin
-          if(paddr > flash_addr_start && paddr < flash_addr_end) begin
-            if(set) fsm_state<= 3;
-            else fsm_state<=1;
-          end else begin
-            paddr <= in_paddr;
-            psel <= in_psel;
-            penable <= in_penable;
-            pwrite <= in_pwrite;
-            pwdata <= in_pwdata;
-            pstrb <= in_pstrb;
+    case(fsm_state)
+      3'd0: begin
+        if(paddr > flash_addr_start && paddr < flash_addr_end) begin
+          if(set) fsm_state<= 3;
+          else fsm_state<=1;
+        end else begin
+          paddr <= in_paddr;
+          psel <= in_psel;
+          penable <= in_penable;
+          pwrite <= in_pwrite;
+          pwdata <= in_pwdata;
+          pstrb <= in_pstrb;
 
-            pready <= out_pready;
-            prdata <= out_prdata;
-            pslverr <= out_pslverr;
-          end
+          pready <= out_pready;
+          prdata <= out_prdata;
+          pslverr <= out_pslverr;
         end
-        3'd1: begin
-          paddr<=32'h10001014;
-          penable<=1;
-          psel<=1;
-          pwdata<=32'h00000002;
-          pstrb<=4'hf;
-          if(out_pready) begin
-            fsm_state<=2;
-          end
+      end
+      3'd1: begin
+        paddr<=32'h10001014;
+        penable<=1;
+        psel<=1;
+        pwdata<=32'h00000002;
+        pstrb<=4'hf;
+        if(out_pready) begin
+          fsm_state<=2;
         end
-        3'd2:begin
-          paddr<=32'h10001018;
-          penable<=1;
-          psel<=1;
-          pwdata<=32'h00000001; //set divisor rate, should be changed to proper divisor
-          if(out_pready) begin
-            fsm_state<=3;
-            set<=1;
-          end
+      end
+      3'd2:begin
+        paddr<=32'h10001018;
+        penable<=1;
+        psel<=1;
+        pwdata<=32'h00000001; //set divisor rate, should be changed to proper divisor
+        if(out_pready) begin
+          fsm_state<=3;
+          set<=1;
         end
-        3'd3:begin
-          paddr<=32'h10001004;
-          penable<=1;
-          psel<=1;
-          pwdata<={8'h03,paddr[23:0]}; 
-          if(out_pready) begin
-            fsm_state<=4;
-          end
+      end
+      3'd3:begin
+        paddr<=32'h10001004;
+        penable<=1;
+        psel<=1;
+        pwdata<={8'h03,paddr[23:0]}; 
+        if(out_pready) begin
+          fsm_state<=4;
         end
-        3'd4:begin
-          paddr<=32'h10001010;
-          penable<=1;
-          psel<=1;
-          pwdata<=32'h00002140;
-          if(out_pready) begin
-            fsm_state<=5;
-          end
+      end
+      3'd4:begin
+        paddr<=32'h10001010;
+        penable<=1;
+        psel<=1;
+        pwdata<=32'h00002140;
+        if(out_pready) begin
+          fsm_state<=5;
         end
-        3'd5:begin
-          paddr<=32'h10001010;
-          penable<=1;
-          psel<=1;
-          pwdata<=32'h00002140;
-          if(prdata==32'h00002040) begin
-            fsm_state<=6;
-          end
+      end
+      3'd5:begin
+        paddr<=32'h10001010;
+        penable<=1;
+        psel<=1;
+        pwdata<=32'h00002140;
+        if(prdata==32'h00002040) begin
+          fsm_state<=6;
         end
-        3'd6:begin
-          paddr<=32'h10001010;
-          penable<=1;
-          psel<=1;
-          pwdata<=32'h00002140;
-          if(prdata==32'h00002040) begin
-            fsm_state<=7;
-            psel<=0;
-            penable<=0;
-            prdata<=prdata;
-            pready<=1;
-          end
+      end
+      3'd6:begin
+        paddr<=32'h10001010;
+        penable<=1;
+        psel<=1;
+        pwdata<=32'h00002140;
+        if(prdata==32'h00002040) begin
+          fsm_state<=7;
+          psel<=0;
+          penable<=0;
+          prdata<=prdata;
+          pready<=1;
         end
-        3'd7:begin
-          pready<=0;
-          fsm_state<=0;
-        end
-      endcase
-    end
+      end
+      3'd7:begin
+        pready<=0;
+        fsm_state<=0;
+      end
+    endcase
   end
 end
 
