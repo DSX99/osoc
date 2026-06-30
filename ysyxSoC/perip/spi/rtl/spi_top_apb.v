@@ -84,7 +84,7 @@ always @(posedge clock) begin
   end else begin
     case(fsm_state)
       3'd0: begin
-        if(paddr > flash_addr_start && paddr < flash_addr_end) begin
+        if(paddr >= flash_addr_start && paddr < flash_addr_end) begin
           if(set) fsm_state<= 3;
           else fsm_state<=1;
         end else begin
