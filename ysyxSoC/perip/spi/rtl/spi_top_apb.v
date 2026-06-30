@@ -48,69 +48,18 @@ assign in_prdata  = data[31:0];
 
 `else
 
-reg [31:0] paddr;
-reg        psel;
-reg        penable;
-reg [2:0]  pprot;
-reg        pwrite;
-reg [31:0] pwdata;
-reg [3:0]  pstrb;
-
-reg        pready;
-reg [31:0] prdata;
-reg        pslverr;
-
-reg flash_access;
-
-always @(*) begin
-  flash_access = 0;
-  paddr = 0; 
-  psel = 0;
-  penable = 0;
-  pprot = 0;
-  pwrite = 0;
-  pwdata = 0;
-  pstrb = 0;
-
-  in_pready = 0;
-  in_prdata = 0;
-  in_pslverr = 0;
-  if(paddr[31:28] == 4'h3) begin
-    flash_access = 1;
-  end else begin
-    paddr = in_paddr;
-    psel = in_psel;
-    penable = in_penable;
-    pprot = in_pprot;
-    pwrite = in_pwrite;
-    pwdata = in_pwdata;
-    pstrb = in_pstrb;
-
-    in_pready = pready;
-    in_prdata = prdata;
-    in_pslverr = pslverr;
-  end
-end
-
-always @(posedge clk)
-
-// Drive output ports from internal wires
-assign in_pready  = pready;
-assign in_prdata  = prdata;
-assign in_pslverr = pslverr;
-
 spi_top u0_spi_top (
   .wb_clk_i(clock),
   .wb_rst_i(reset),
-  .wb_adr_i(paddr[4:0]),
-  .wb_dat_i(pwdata),
-  .wb_dat_o(prdata),
-  .wb_sel_i(pstrb),
-  .wb_we_i (pwrite),
-  .wb_stb_i(psel),
-  .wb_cyc_i(penable),
-  .wb_ack_o(pready),
-  .wb_err_o(pslverr),
+  .wb_adr_i(in_paddr[4:0]),
+  .wb_dat_i(in_pwdata),
+  .wb_dat_o(in_prdata),
+  .wb_sel_i(in_pstrb),
+  .wb_we_i (in_pwrite),
+  .wb_stb_i(in_psel),
+  .wb_cyc_i(in_penable),
+  .wb_ack_o(in_pready),
+  .wb_err_o(in_pslverr),
   .wb_int_o(spi_irq_out),
 
   .ss_pad_o(spi_ss),
