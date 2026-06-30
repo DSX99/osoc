@@ -17,7 +17,7 @@ endif
 ifeq ($(findstring $(MAKECMDGOALS),clean|clean-all|html),)
 
 ### Print build info message
-ifndef S
+ifdef S
 $(info # Building $(NAME)-$(MAKECMDGOALS) [$(ARCH)])
 endif
 
