@@ -71,9 +71,9 @@ always @(posedge clock) begin
     pwdata<=0;
     pstrb<=0;
     
-    in_pready<=0;
-    in_prdata<=0;
-    in_pslverr<=0;
+    pready<=0;
+    prdata<=0;
+    pslverr<=0;
 
     fsm_state<=0;
     set<=0;
