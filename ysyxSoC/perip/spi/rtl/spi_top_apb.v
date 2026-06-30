@@ -85,7 +85,8 @@ always @(posedge clock) begin
     case(fsm_state)
       3'd0: begin
         if(paddr >= flash_addr_start && paddr < flash_addr_end) begin
-          fsm_state<=1;
+          if(set) fsm_state<= 3;
+          else fsm_state<=1;
         end else begin
           paddr <= in_paddr;
           psel <= in_psel;
@@ -99,11 +100,11 @@ always @(posedge clock) begin
           pslverr <= out_pslverr;
         end
       end
-      3'd1:begin
-        paddr<=32'h10001004;
+      3'd1: begin
+        paddr<=32'h10001014;
         penable<=1;
         psel<=1;
-        pwdata<={8'h03,paddr[23:0]}; 
+        pwdata<=32'h00000001;
         pstrb<=4'hf;
         pwrite<=1;
         if(out_pready) begin
@@ -112,22 +113,23 @@ always @(posedge clock) begin
           penable<=0;
         end
       end
-      3'd2: begin
-        paddr<=32'h10001014;
+      3'd2:begin
+        paddr<=32'h10001018;
         penable<=1;
         psel<=1;
-        pwdata<=32'h00000001;
+        pwdata<=32'h00000000; //set divisor rate, should be changed to proper divisor
         if(out_pready) begin
           fsm_state<=3;
+          set<=1;
           psel<=0;
           penable<=0;
         end
       end
       3'd3:begin
-        paddr<=32'h10001018;
+        paddr<=32'h10001004;
         penable<=1;
         psel<=1;
-        pwdata<=32'h00000000; //set divisor rate, should be changed to proper divisor
+        pwdata<={8'h03,paddr[23:0]}; 
         if(out_pready) begin
           fsm_state<=4;
           psel<=0;
@@ -143,11 +145,18 @@ always @(posedge clock) begin
           fsm_state<=5;
           psel<=0;
           penable<=0;
-          if(prdata == 32'h00002040) fsm_state<=6;
         end
       end
       3'd5:begin
-        fsm_state<=4;
+        paddr<=32'h10001010;
+        penable<=1;
+        psel<=1;
+        pwdata<=32'h00002140;
+        if(prdata==32'h00002040) begin
+          fsm_state<=6;
+          psel<=0;
+          penable<=0;
+        end
       end
       3'd6:begin
         paddr<=32'h10001010;
