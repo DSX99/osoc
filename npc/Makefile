@@ -30,6 +30,10 @@ ifndef NS
 VERILOG_FLAGS += --quiet
 endif
 
+ifdef FAST
+VERILOG_FLAGS += -O3
+endif
+
 LIBCAPSTONE = $(NEMU_HOME)/tools/capstone/repo/libcapstone.so.5
 
 sim:
