@@ -48,35 +48,18 @@ assign in_prdata  = data[31:0];
 
 `else
 
-wire [31:0] paddr   = in_paddr;
-wire        psel    = in_psel;
-wire        penable = in_penable;
-wire [2:0]  pprot   = in_pprot;
-wire        pwrite  = in_pwrite;
-wire [31:0] pwdata  = in_pwdata;
-wire [3:0]  pstrb   = in_pstrb;
-
-wire        pready;
-wire [31:0] prdata;
-wire        pslverr;
-
-// Drive output ports from internal wires
-assign in_pready  = pready;
-assign in_prdata  = prdata;
-assign in_pslverr = pslverr;
-
 spi_top u0_spi_top (
   .wb_clk_i(clock),
   .wb_rst_i(reset),
-  .wb_adr_i(paddr[4:0]),
-  .wb_dat_i(pwdata),
-  .wb_dat_o(prdata),
-  .wb_sel_i(pstrb),
-  .wb_we_i (pwrite),
-  .wb_stb_i(psel),
-  .wb_cyc_i(penable),
-  .wb_ack_o(pready),
-  .wb_err_o(pslverr),
+  .wb_adr_i(in_paddr[4:0]),
+  .wb_dat_i(in_pwdata),
+  .wb_dat_o(in_prdata),
+  .wb_sel_i(in_pstrb),
+  .wb_we_i (in_pwrite),
+  .wb_stb_i(in_psel),
+  .wb_cyc_i(in_penable),
+  .wb_ack_o(in_pready),
+  .wb_err_o(in_pslverr),
   .wb_int_o(spi_irq_out),
 
   .ss_pad_o(spi_ss),
