@@ -48,128 +48,17 @@ assign in_prdata  = data[31:0];
 
 `else
 
-reg [31:0] paddr;
-reg        psel;
-reg        penable;
-reg        pwrite;
-reg [31:0] pwdata;
-reg [3:0]  pstrb;
+wire [31:0] paddr   = in_paddr;
+wire        psel    = in_psel;
+wire        penable = in_penable;
+wire [2:0]  pprot   = in_pprot;
+wire        pwrite  = in_pwrite;
+wire [31:0] pwdata  = in_pwdata;
+wire [3:0]  pstrb   = in_pstrb;
 
-reg        pready;
-reg [31:0] prdata;
-reg        pslverr;
-
-reg [2:0] fsm_state;
-reg set;
-
-wire out_pready;
-wire [31:0] out_prdata;
-wire out_pslverr;
-
-always @(posedge clock) begin
-  if(reset) begin
-    paddr<=0;
-    psel<=0;
-    penable<=0;
-    pwrite<=0;
-    pwdata<=0;
-    pstrb<=0;
-    
-    pready<=0;
-    prdata<=0;
-    pslverr<=0;
-
-    fsm_state<=0;
-    set<=0;
-  end else begin
-    case(fsm_state)
-      3'd0: begin
-        if(paddr >= flash_addr_start && paddr < flash_addr_end) begin
-          if(set) fsm_state<= 3;
-          else fsm_state<=1;
-        end else begin
-          paddr <= in_paddr;
-          psel <= in_psel;
-          penable <= in_penable;
-          pwrite <= in_pwrite;
-          pwdata <= in_pwdata;
-          pstrb <= in_pstrb;
-
-          pready <= out_pready;
-          prdata <= out_prdata;
-          pslverr <= out_pslverr;
-        end
-      end
-      3'd1: begin
-        paddr<=32'h10001014;
-        penable<=1;
-        psel<=1;
-        pwdata<=32'h00000001;
-        pstrb<=4'hf;
-        if(out_pready) begin
-          fsm_state<=2;
-          psel<=0;
-          penable<=0;
-        end
-      end
-      3'd2:begin
-        paddr<=32'h10001018;
-        penable<=1;
-        psel<=1;
-        pwdata<=32'h00000000; //set divisor rate, should be changed to proper divisor
-        if(out_pready) begin
-          fsm_state<=3;
-          set<=1;
-          psel<=0;
-          penable<=0;
-        end
-      end
-      3'd3:begin
-        paddr<=32'h10001004;
-        penable<=1;
-        psel<=1;
-        pwdata<={8'h03,paddr[23:0]}; 
-        if(out_pready) begin
-          fsm_state<=4;
-          psel<=0;
-          penable<=0;
-        end
-      end
-      3'd4:begin
-        paddr<=32'h10001010;
-        penable<=1;
-        psel<=1;
-        pwdata<=32'h00002140;
-        if(out_pready) begin
-          fsm_state<=5;
-          psel<=0;
-          penable<=0;
-          if(prdata == 32'h00002040) fsm_state<=6;
-        end
-      end
-      3'd5:begin
-        fsm_state<=4;
-      end
-      3'd6:begin
-        paddr<=32'h10001010;
-        penable<=1;
-        psel<=1;
-        pwdata<=32'h00002140;
-        if(prdata==32'h00002040) begin
-          fsm_state<=7;
-          psel<=0;
-          penable<=0;
-          prdata<=prdata;
-          pready<=1;
-        end
-      end
-      3'd7:begin
-        pready<=0;
-        fsm_state<=0;
-      end
-    endcase
-  end
-end
+wire        pready;
+wire [31:0] prdata;
+wire        pslverr;
 
 // Drive output ports from internal wires
 assign in_pready  = pready;
@@ -181,13 +70,13 @@ spi_top u0_spi_top (
   .wb_rst_i(reset),
   .wb_adr_i(paddr[4:0]),
   .wb_dat_i(pwdata),
-  .wb_dat_o(out_prdata),
+  .wb_dat_o(prdata),
   .wb_sel_i(pstrb),
   .wb_we_i (pwrite),
   .wb_stb_i(psel),
   .wb_cyc_i(penable),
-  .wb_ack_o(out_pready),
-  .wb_err_o(out_pslverr),
+  .wb_ack_o(pready),
+  .wb_err_o(pslverr),
   .wb_int_o(spi_irq_out),
 
   .ss_pad_o(spi_ss),
