@@ -104,6 +104,7 @@ always @(posedge clock) begin
         penable<=1;
         psel<=1;
         pwdata<={8'h03,paddr[23:0]}; 
+        pstrb<=4'hf;
         if(out_pready) begin
           fsm_state<=2;
           psel<=0;
@@ -115,7 +116,6 @@ always @(posedge clock) begin
         penable<=1;
         psel<=1;
         pwdata<=32'h00000001;
-        pstrb<=4'hf;
         if(out_pready) begin
           fsm_state<=3;
           psel<=0;
