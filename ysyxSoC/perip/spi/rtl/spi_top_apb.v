@@ -82,7 +82,7 @@ always @(posedge clock) begin
     fsm_state<=0;
     set<=0;
   end else begin
-    if(in_penable && in_psel && in_pwrite) begin
+    if(in_penable && in_psel && !in_pwrite) begin
       case(fsm_state)
         3'd0: begin
           if(paddr >= flash_addr_start && paddr < flash_addr_end) begin
