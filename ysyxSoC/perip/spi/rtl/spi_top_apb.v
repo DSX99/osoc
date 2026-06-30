@@ -105,6 +105,7 @@ always @(posedge clock) begin
         psel<=1;
         pwdata<={8'h03,paddr[23:0]}; 
         pstrb<=4'hf;
+        pwrite<=1;
         if(out_pready) begin
           fsm_state<=2;
           psel<=0;
@@ -164,6 +165,7 @@ always @(posedge clock) begin
       3'd7:begin
         pready<=0;
         fsm_state<=0;
+        pwrite<=0;
       end
     endcase
   end
