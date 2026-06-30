@@ -108,6 +108,8 @@ always @(posedge clock) begin
         pstrb<=4'hf;
         if(out_pready) begin
           fsm_state<=2;
+          psel<=0;
+          penable<=0;
         end
       end
       3'd2:begin
@@ -118,6 +120,8 @@ always @(posedge clock) begin
         if(out_pready) begin
           fsm_state<=3;
           set<=1;
+          psel<=0;
+          penable<=0;
         end
       end
       3'd3:begin
@@ -127,6 +131,8 @@ always @(posedge clock) begin
         pwdata<={8'h03,paddr[23:0]}; 
         if(out_pready) begin
           fsm_state<=4;
+          psel<=0;
+          penable<=0;
         end
       end
       3'd4:begin
@@ -136,6 +142,8 @@ always @(posedge clock) begin
         pwdata<=32'h00002140;
         if(out_pready) begin
           fsm_state<=5;
+          psel<=0;
+          penable<=0;
         end
       end
       3'd5:begin
@@ -145,6 +153,8 @@ always @(posedge clock) begin
         pwdata<=32'h00002140;
         if(prdata==32'h00002040) begin
           fsm_state<=6;
+          psel<=0;
+          penable<=0;
         end
       end
       3'd6:begin
