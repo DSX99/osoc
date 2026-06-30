@@ -149,7 +149,6 @@ always @(posedge clock) begin
       end
       3'd5:begin
         fsm_state<=4;
-        end
       end
       3'd6:begin
         paddr<=32'h10001010;
