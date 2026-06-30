@@ -130,6 +130,7 @@ always @(posedge clock) begin
           paddr<=32'h10001004;
           penable<=1;
           psel<=1;
+          pwrite<=1;
           pwdata<={8'h03,in_paddr[23:0]}; 
           if(out_pready) begin
             fsm_state<=4;
