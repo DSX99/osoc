@@ -168,6 +168,7 @@ always @(posedge clock) begin
           psel<=0;
           penable<=0;
           prdata<=prdata;
+          pwdata<=32'h00002040;
           pready<=1;
         end
       end
