@@ -34,16 +34,15 @@ static const uint32_t img [] = {
   0xdeadbeef,  // some data
 };
 
-uint8_t flash[] = {
-    0x63,
-    0x30,
-    0x66,
-    0x66,
-    0x65,
-    0x65
+uint32_t flash[] = {
+    0x10000737,
+    0x04100793,
+    0x00f70023,
+    0x00f70023,
+    0x00f70023,
 };
 
-extern "C" void flash_read(uint32_t addr, uint32_t *data) { addr = addr & 0xfffffffc; *data = ((flash[addr+3]<<24)|(flash[addr+2]<<16)|(flash[addr+1]<<8)|(flash[addr])); }
+extern "C" void flash_read(uint32_t addr, uint32_t *data) { addr = addr & 0xfffffffc; *data = (flash[addr]); }
 extern "C" void mrom_read(uint32_t addr, uint32_t *data) { addr = addr & 0xfffffffc; *data = ((mem[addr-MROM_OFFSET+3]<<24)|(mem[addr-MROM_OFFSET+2]<<16)|(mem[addr-MROM_OFFSET+1]<<8)|(mem[addr-MROM_OFFSET])); }
 
 extern "C" {
