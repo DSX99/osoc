@@ -36,21 +36,21 @@ module psram(
       8'd5: oper[5]<=dio[0];
       8'd6: oper[6]<=dio[0];      
       8'd7: oper[7]<=dio[0];
-      8'd8: saddr[(23-4*(counter-8)):(20-4*(counter-8))] <= dio;
-      8'd9: saddr[(23-4*(counter-8)):(20-4*(counter-8))] <= dio;
-      8'd10: saddr[(23-4*(counter-8)):(20-4*(counter-8))] <= dio;
-      8'd11: saddr[(23-4*(counter-8)):(20-4*(counter-8))] <= dio;
-      8'd12: saddr[(23-4*(counter-8)):(20-4*(counter-8))] <= dio;
-      8'd13: saddr[(23-4*(counter-8)):(20-4*(counter-8))] <= dio;
+      8'd8: saddr[23:20] <= dio;
+      8'd9: saddr[19:16] <= dio;
+      8'd10: saddr[15:12] <= dio;
+      8'd11: saddr[11:8] <= dio;
+      8'd12: saddr[7:4] <= dio;
+      8'd13: saddr[3:0] <= dio;
       default: begin
         if(rw) begin
-          psram_write(saddr, dio, counter[0]);
+          psram_write({8'b0,saddr}, {28'b0,dio}, {31'b0,counter[0]});
           if(counter[0]) saddr<=saddr+1;
         end else if(counter>=20) begin
           if(counter[0]) begin
             saddr<=saddr+1;
           end else begin
-            psram_read(saddr, buff);
+            psram_read({8'b0,saddr}, {24'b0,buff});
           end
         end
       end
