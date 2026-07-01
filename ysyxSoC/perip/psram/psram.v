@@ -1,7 +1,7 @@
 module psram(
   input sck,
   input ce_n,
-  inout reg [3:0] dio
+  inout wire [3:0] dio
 );
 
   import "DPI-C" function void psram_write(input int addr, input int data, input int half);
@@ -59,17 +59,7 @@ module psram(
     endcase 
   end
                           // change zeros here to z's when moving to icarus
-  always @* begin
-    if(counter < 20) begin
-      dio = 4'b0;
-    end else begin
-      if(rw)begin
-        dio = 4'b0;
-      end else begin
-        if(counter[0]) dio = buff[3:0];
-        else dio = buff[7:4];
-      end
-    end
-  end
+  assign dio =  (counter < 20 || rw) ? 4'b0 :
+                (counter[0])         ? buff[3:0] : buff[7:4];
 
 endmodule
