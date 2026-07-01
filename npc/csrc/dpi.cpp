@@ -34,8 +34,7 @@ static const uint32_t img [] = {
   0xdeadbeef,  // some data
 };
 
-uint32_t flash[] = {
-};
+uint32_t flash[MEM_SIZE];
 
 extern "C" void flash_read(uint32_t addr, uint32_t *data) { addr = addr & 0xfffffffc; *data = ((flash[addr])|(flash[addr+1]<<8)|(flash[addr+2]<<16)|(flash[addr+3]<<24)); }
 extern "C" void mrom_read(uint32_t addr, uint32_t *data) { addr = addr & 0xfffffffc; *data = ((mem[addr-MROM_OFFSET+3]<<24)|(mem[addr-MROM_OFFSET+2]<<16)|(mem[addr-MROM_OFFSET+1]<<8)|(mem[addr-MROM_OFFSET])); }
