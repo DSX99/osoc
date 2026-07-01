@@ -20,6 +20,7 @@ SECTIONS {
   _data_start = .;
   .data : {
     *(.data*)
+    *(.sdata*)
   } >sram AT> flash : data
   _data_size = SIZEOF(.data);
   edata = .;
