@@ -150,18 +150,22 @@ always @(posedge clock) begin
           end
         end
         3'd5:begin
-          paddr<=32'h10001010;
-          penable<=1;
-          psel<=1;
-          pwdata<=32'h00002140;
-          fsm_state<=6;
-        end
-        3'd6:begin
           pwrite<=0;
           penable<=0;
           psel<=0;
           if(spi_irq_out) begin
+            fsm_state<=6;
+          end
+        end
+        3'd6:begin
+          paddr<=32'h10001000;
+          penable<=1;
+          psel<=1;
+          pwrite<=0; 
+          if(out_pready) begin
             fsm_state<=7;
+            penable<=0
+            psel<=0;
             pready<=1;
             prdata<=out_prdata;
             pslverr<=out_pslverr;
