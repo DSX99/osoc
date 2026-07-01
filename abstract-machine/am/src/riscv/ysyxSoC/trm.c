@@ -54,6 +54,8 @@ void _trm_init() {
   *(volatile uint8_t *)(UART_BASE + 4)         = 0x00;  // MCR (optional)
   *(volatile uint8_t *)(UART_BASE + UART_IER) = 0x00;   // IER: leave 0 unless using IRQs
 
+  *(uint32_t *)(0x80000000) = 0;
+
   int ret = main(mainargs);
   halt(ret);
 }
