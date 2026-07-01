@@ -142,7 +142,7 @@ always @(posedge clock) begin
           paddr<=32'h10001010;
           penable<=1;
           psel<=1;
-          pwdata<=32'h00002140;
+          pwdata<=32'h00003140;
           if(out_pready) begin
             fsm_state<=5;
             psel<=0;
