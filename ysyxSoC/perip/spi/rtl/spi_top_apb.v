@@ -99,6 +99,8 @@ always @(posedge clock) begin
             pready <= out_pready;
             prdata <= out_prdata;
             pslverr <= out_pslverr;
+
+            sent<=0;
           end
         end
         3'd1: begin
