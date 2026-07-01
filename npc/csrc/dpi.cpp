@@ -67,7 +67,7 @@ extern "C" {
 
         fclose(fp);
 
-        printf("%d",(flash[0])|(flash[0+1]<<8)|(flash[0+2]<<16)|(flash[0+3]<<24));
+        printf("0x%08x\n",(flash[0])|(flash[0+1]<<8)|(flash[0+2]<<16)|(flash[0+3]<<24));
 
         assert(0);
 
