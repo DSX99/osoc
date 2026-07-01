@@ -1,7 +1,7 @@
 module psram(
   input sck,
   input ce_n,
-  inout [3:0] dio
+  inout reg [3:0] dio
 );
 
   import "DPI-C" function void psram_write(input int addr, input int data, input int half);
