@@ -21,6 +21,7 @@ module psram(
 
     if(counter==8) begin
       if(oper == 8'h38) rw<=1;
+    end else if (counter==2) begin
       else if(oper == 8'heb) rw<=0;
       else if(oper == 8'h35) set<=1;
       else begin
