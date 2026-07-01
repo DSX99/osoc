@@ -163,6 +163,8 @@ always @(posedge clock) begin
           if(spi_irq_out) begin
             fsm_state<=7;
             pready<=1;
+            prdata<=out_prdata;
+            pslverr<=out_pslverr;
           end
         end
         3'd7:begin
