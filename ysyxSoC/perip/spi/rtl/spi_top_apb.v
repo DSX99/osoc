@@ -160,7 +160,10 @@ always @(posedge clock) begin
           pwrite<=0;
           penable<=0;
           psel<=0;
-          if(spi_irq_out) fsm_state<=7;
+          if(spi_irq_out) begin
+            fsm_state<=7;
+            pready<=1;
+          end
         end
         3'd7:begin
           pready<=0;
