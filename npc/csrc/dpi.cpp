@@ -35,6 +35,8 @@ static const uint32_t img [] = {
 };
 
 extern "C" void flash_read(uint32_t addr, uint32_t *data) { addr = addr & 0xfffffffc; *data = ((flash[addr]<<24)|(flash[addr+1]<<16)|(flash[addr+2]<<8)|(flash[addr+3])); }
+extern "C" void mrom_read(uint32_t addr, uint32_t *data) { assert(0); }
+
 
 extern "C" {
     void difftest_memcpy(uint32_t addr, void *buf, size_t n, bool direction);
