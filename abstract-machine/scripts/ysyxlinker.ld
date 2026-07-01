@@ -16,7 +16,7 @@ SECTIONS {
   _etext = .;
   .rodata : {
     *(.rodata*)
-  }
+  } >flash
   _data_start = .;
   .data : {
     *(.data*)
