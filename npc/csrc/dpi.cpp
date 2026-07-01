@@ -6,7 +6,8 @@
 #include "common.h"
 
 
-uint8_t flash[MEM_SIZE];
+uint8_t flash[FLASH_SIZE];
+uint8_t psram[PSRAM_SIZE];
 uint64_t curr_time;
 extern bool skip_inst;
 extern bool fail;
@@ -16,6 +17,7 @@ extern bool do_diff;
 #define ROM_OFFSET  0x80000000
 #define MROM_OFFSET 0x20000000
 #define FLASH_OFFSET 0x30000000
+#define PSRAM_OFFSET 0x80000000
 
 
 #define DEVICE_BASE 0xa0000000
@@ -36,6 +38,17 @@ static const uint32_t img [] = {
 
 extern "C" void flash_read(uint32_t addr, uint32_t *data) { addr = addr & 0xfffffffc; *data = ((flash[addr]<<24)|(flash[addr+1]<<16)|(flash[addr+2]<<8)|(flash[addr+3])); }
 extern "C" void mrom_read(uint32_t addr, uint32_t *data) { assert(0); }
+extern "C" void psram_write(uint32_t addr, uint32_t data, uint32_t half) {
+    if(half == 1) psram[addr]=(psram[addr]&0x0f) | ((data <<4) & 0xf0);
+    else if(half == 0) psram[addr] = (psram[addr]&0xf0) | data & 0x0f;
+    else printf("idk how you accesed half\n");
+}
+
+extern "C" void psram_read(uint32_t addr, uint32_t *data, uint32_t half) {
+    if(half == 1) *data=(psram[addr]&0x0f);
+    else if(half == 0) *data = (psram[addr]&0xf0);
+    else printf("idk how you accesed half\n");
+}
 
 
 extern "C" {
@@ -76,7 +89,7 @@ extern "C" {
     //     #ifdef MTRACE
     //     printf("\033[034mCall to write to memory at %08x\033[0m\n", addr);
     //     #endif
-    //     if(addr>=ROM_OFFSET && addr<(ROM_OFFSET + MEM_SIZE)){
+    //     if(addr>=ROM_OFFSET && addr<(ROM_OFFSET + FLASH_SIZE)){
     //         if(type ==0){
     //             mem[addr-ROM_OFFSET] = data & 0xFF;
     //         }else if (type ==1){
@@ -104,11 +117,16 @@ extern "C" {
         #ifdef MTRACE
         printf("\n\033[034mCall to read from memory at %08x\033[0m\n", addr);
         #endif
-        if(addr>=FLASH_OFFSET && addr<(FLASH_OFFSET + MEM_SIZE)){
+        if(addr>=FLASH_OFFSET && addr<(FLASH_OFFSET + FLASH_SIZE)){
             return ((flash[addr-FLASH_OFFSET+3]<<24)|
                     (flash[addr-FLASH_OFFSET+2]<<16)|
                     (flash[addr-FLASH_OFFSET+1]<<8)|
                     (flash[addr-FLASH_OFFSET]));
+        }else if(addr>=PSRAM_OFFSET && addr<(PSRAM_OFFSET + 0x20000000)){
+            return ((psram[addr-PSRAM_OFFSET+3]<<24)|
+                    (psram[addr-PSRAM_OFFSET+2]<<16)|
+                    (psram[addr-PSRAM_OFFSET+1]<<8)|
+                    (psram[addr-PSRAM_OFFSET]));    
         }else{
             printf("Illegal memory read access at addr:0x%08x at pc: 0x%08x\n",addr, top->pc);
             fail=1;

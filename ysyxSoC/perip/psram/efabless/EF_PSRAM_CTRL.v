@@ -126,7 +126,7 @@ module PSRAM_READER (
                         (counter == 11) ?   saddr[11:8]         :
                         (counter == 12) ?   saddr[7:4]          :
                         (counter == 13) ?   saddr[3:0]          :
-                        4'h0;
+                        4'hz;                                       //was 0 but changed to z to ease make life easier with Icarus
 
     assign douten   = (counter < 14);
 
