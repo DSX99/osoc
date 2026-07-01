@@ -45,7 +45,7 @@ extern "C" void psram_write(uint32_t addr, uint32_t data, uint32_t half) {
 }
 
 extern "C" void psram_read(uint32_t addr, uint32_t *data) {
-    printf("Call to write to addr:0x%x\n",addr);
+    printf("Call to read from addr:0x%x\n",addr);
     *data=(psram[addr]);
 }
 
