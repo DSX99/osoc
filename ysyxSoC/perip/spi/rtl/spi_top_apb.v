@@ -154,28 +154,10 @@ always @(posedge clock) begin
           penable<=1;
           psel<=1;
           pwdata<=32'h00002140;
-          if(out_pready && out_prdata==32'h00002040) begin
-            fsm_state<=7;
-            pwdata<=32'h0;
-            prdata<=out_prdata; 
-            psel<=0;
-            penable<=0;
-            pready<=1;
-            pslverr<=out_pslverr;
-          end else if(out_pready) begin
-            fsm_state<=6;
-          end
+          fsm_state<=6;
         end
         3'd6:begin
-          if(out_prdata==32'h00002040) begin
-            fsm_state<=7;
-            pwdata<=32'h0;
-            prdata<=out_prdata;
-            psel<=0;
-            penable<=0;
-            pready<=1;
-            pslverr<=out_pslverr;
-          end else fsm_state<=5;
+          if(spi_irq_out) fsm_state<=7;
         end
         3'd7:begin
           pready<=0;
