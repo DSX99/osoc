@@ -22,7 +22,7 @@ module psram(
       if(oper == 8'h38) rw<=1;
       else if(oper == 8'heb) rw<=0;
       else begin
-        $display("Wrong code for psram %d",oper);
+        $display("Wrong code for psram %x",oper);
         $finish;
       end
     end
@@ -58,13 +58,13 @@ module psram(
       end
     endcase 
   end
-
+                          // change zeros here to z's when moving to icarus
   always @* begin
     if(counter < 20) begin
-      dio = 4'bz;
+      dio = 4'b0;
     end else begin
       if(rw)begin
-        dio = 4'bz;
+        dio = 4'b0;
       end else begin
         if(counter[0]) dio = buff[3:0];
         else dio = buff[7:4];
