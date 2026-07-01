@@ -164,7 +164,7 @@ always @(posedge clock) begin
           pwrite<=0; 
           if(out_pready) begin
             fsm_state<=7;
-            penable<=0
+            penable<=0;
             psel<=0;
             pready<=1;
             prdata<=out_prdata;
