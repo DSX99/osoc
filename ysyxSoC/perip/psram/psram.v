@@ -36,12 +36,12 @@ module psram(
       8'd5: oper[5]<=dio[0];
       8'd6: oper[6]<=dio[0];      
       8'd7: oper[7]<=dio[0];
-      8'd8: saddr[(23-4*(counter-8)):(23-4*(counter-8))] <= dio;
-      8'd9: saddr[(23-4*(counter-8)):(23-4*(counter-8))] <= dio;
-      8'd10: saddr[(23-4*(counter-8)):(23-4*(counter-8))] <= dio;
-      8'd11: saddr[(23-4*(counter-8)):(23-4*(counter-8))] <= dio;
-      8'd12: saddr[(23-4*(counter-8)):(23-4*(counter-8))] <= dio;
-      8'd13: saddr[(23-4*(counter-8)):(23-4*(counter-8))] <= dio;
+      8'd8: saddr[(23-4*(counter-8)):(20-4*(counter-8))] <= dio;
+      8'd9: saddr[(23-4*(counter-8)):(20-4*(counter-8))] <= dio;
+      8'd10: saddr[(23-4*(counter-8)):(20-4*(counter-8))] <= dio;
+      8'd11: saddr[(23-4*(counter-8)):(20-4*(counter-8))] <= dio;
+      8'd12: saddr[(23-4*(counter-8)):(20-4*(counter-8))] <= dio;
+      8'd13: saddr[(23-4*(counter-8)):(20-4*(counter-8))] <= dio;
       default: begin
         if(rw) begin
           psram_write(saddr, dio, counter[0]);
