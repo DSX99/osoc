@@ -39,14 +39,11 @@ static const uint32_t img [] = {
 extern "C" void flash_read(uint32_t addr, uint32_t *data) { addr = addr & 0xfffffffc; *data = ((flash[addr]<<24)|(flash[addr+1]<<16)|(flash[addr+2]<<8)|(flash[addr+3])); }
 extern "C" void mrom_read(uint32_t addr, uint32_t *data) { assert(0); }
 extern "C" void psram_write(uint32_t addr, uint32_t data, uint32_t half) {
-    printf("Call to write to addr:0x%x ,data:0x%x ,half:%x\n",addr, data, half);
-    if(half == 1) psram[addr]=(psram[addr]&0x0f) | ((data <<4) & 0xf0);
-    else if(half == 0) psram[addr] = (psram[addr]&0xf0) | data & 0x0f;
-    else printf("idk how you accesed half\n");
+    if(half) psram[addr]=(psram[addr]&0x0f) | ((data <<4) & 0xf0);
+    else psram[addr] = (psram[addr]&0xf0) | data & 0x0f;
 }
 
 extern "C" void psram_read(uint32_t addr, uint32_t *data) {
-    printf("Call to read from addr:0x%x\n",addr);
     *data=(psram[addr]);
 }
 
