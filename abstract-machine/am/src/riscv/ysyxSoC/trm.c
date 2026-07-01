@@ -42,6 +42,7 @@ void _trm_init() {
   for (char *p = &_bss_start; p < &_bss_end; p++) {
     *p = 0;
   }
+  printf("%d\n",((uint32_t)&_bss_start - (uint32_t)&_data_start));
   memcpy(&_data_VMA, &_data_start, ((uint32_t)&_bss_start - (uint32_t)&_data_start));
 
   *(volatile uint8_t *)(UART_BASE + UART_IER) = 0;      // disable interrupts
