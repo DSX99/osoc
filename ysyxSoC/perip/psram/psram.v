@@ -11,6 +11,7 @@ module psram(
   reg [7:0] counter;
   reg [7:0] oper;
   reg rw; //0-read 1-write
+  reg set;
 
   reg[7:0] buff;
 
@@ -21,13 +22,14 @@ module psram(
     if(counter==8) begin
       if(oper == 8'h38) rw<=1;
       else if(oper == 8'heb) rw<=0;
+      else if(oper == 8'h35) set<=1;
       else begin
         $display("Wrong code for psram %x",oper);
         $finish;
       end
     end
-
-    case(counter)
+    if(!set) begin
+      case(counter)
       8'd0: oper[7]<=dio[0];      
       8'd1: oper[6]<=dio[0];
       8'd2: oper[5]<=dio[0];      
@@ -36,12 +38,17 @@ module psram(
       8'd5: oper[2]<=dio[0];
       8'd6: oper[1]<=dio[0];      
       8'd7: oper[0]<=dio[0];
-      8'd8: saddr[23:20] <= dio;
-      8'd9: saddr[19:16] <= dio;
-      8'd10: saddr[15:12] <= dio;
-      8'd11: saddr[11:8] <= dio;
-      8'd12: saddr[7:4] <= dio;
-      8'd13: saddr[3:0] <= dio;
+    endcase 
+    end else begin
+      case(counter)
+      8'd0: oper[7:4]<=dio;      
+      8'd1: oper[3:0]<=dio;
+      8'd2: saddr[23:20] <= dio;
+      8'd3: saddr[19:16] <= dio;
+      8'd4: saddr[15:12] <= dio;
+      8'd5: saddr[11:8] <= dio;
+      8'd6: saddr[7:4] <= dio;
+      8'd7: saddr[3:0] <= dio;
       default: begin
         if(rw && !ce_n) begin
           psram_write({8'b0,saddr}, {28'b0,dio}, {31'b0,counter[0]});
@@ -57,6 +64,7 @@ module psram(
         end
       end
     endcase 
+    end
   end
                           // change zeros here to z's when moving to icarus
   assign dio =  (counter < 20 || rw) ? 4'b0 :
