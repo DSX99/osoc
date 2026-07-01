@@ -161,7 +161,7 @@ module PSRAM_WRITER (
     //localparam  DATA_START = 14;
     localparam  IDLE = 2'b0,
                 WRITE = 2'b1,
-                PREPARE = 2'b2;
+                PREPARE = 2'b10;
 
     wire[7:0]        FINAL_COUNT = 7 + size*2;
 
@@ -226,7 +226,7 @@ module PSRAM_WRITER (
         else if((state == IDLE) && wr)
             saddr <= addr;
 
-    assign dout     =   (state == PREPARE) ? (counter < 8)   ?   {3'b0, CMD_35H[7 - counter]}:
+    assign dout     =   (state == PREPARE) ? {3'b0, CMD_35H[7 - counter]}:
                         (counter == 0)   ?   {CMD_38H[7:4]}      :
                         (counter == 1)   ?   {CMD_38H[3:0]}      :
                         (counter == 2)  ?   saddr[23:20]        :
