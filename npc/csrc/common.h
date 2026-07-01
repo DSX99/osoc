@@ -7,7 +7,7 @@
 #include "VysyxSoCFull_CPU.h"
 #include "VysyxSoCFull_regs.h"
 
-#define CONFIG_FST
+// #define CONFIG_FST
 // #define MTRACE
 // #define ITRACE
 
