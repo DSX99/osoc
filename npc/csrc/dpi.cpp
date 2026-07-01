@@ -45,11 +45,9 @@ extern "C" void psram_write(uint32_t addr, uint32_t data, uint32_t half) {
     else printf("idk how you accesed half\n");
 }
 
-extern "C" void psram_read(uint32_t addr, uint32_t *data, uint32_t half) {
-    printf("Call to write to addr:0x%x ,data:0x%x ,half:%x\n",addr, data, half);
-    if(half == 1) *data=(psram[addr]&0x0f);
-    else if(half == 0) *data = (psram[addr]&0xf0);
-    else printf("idk how you accesed half\n");
+extern "C" void psram_read(uint32_t addr, uint32_t *data) {
+    printf("Call to write to addr:0x%x ,data:0x%x\n",addr, data);
+    *data=(psram[addr]);
 }
 
 
