@@ -109,7 +109,7 @@ static int cmd_x(char *args) {
   }else{
     long size = strtol(size_str, &endptr_size, 0);
     long val = expr(args,&success);
-    if(val < 0x80000000){
+    if(!(val < 0x30000000 || val > 0x3fffffff)){
       printf("Calling not a memory space\n");
       return 0;
     }
