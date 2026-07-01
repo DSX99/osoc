@@ -67,6 +67,10 @@ extern "C" {
 
         fclose(fp);
 
+        printf("%d",(flash[0])|(flash[0+1]<<8)|(flash[0+2]<<16)|(flash[0+3]<<24));
+
+        assert(0);
+
         if(!batch && do_diff){
             difftest_memcpy(FLASH_OFFSET, flash, size, 1);
         }
