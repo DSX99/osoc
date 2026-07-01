@@ -19,17 +19,14 @@ module psram(
     if(ce_n) counter<=0;
     else counter<=counter+1;
 
-    if(counter==8) begin
-      if(oper == 8'h35) set<=1;
-    end else begin
-      $display("Wrong code for psram %x",oper);
-      $finish;
+    if(counter==2) begin
+      if(oper == 8'h38) rw<=1;
+      else if(oper == 8'heb) rw<=0;
     end
 
-    if (counter==2) begin
-      if(oper == 8'heb) rw<=0;
-      else if(oper == 8'h38) rw<=1;
-      else if(set) begin
+    if(counter==8) begin
+      else if(oper == 8'h35) set<=1;
+      else if(oper != 8'h38 && oper != 8'heb)begin
         $display("Wrong code for psram %x",oper);
         $finish;
       end
