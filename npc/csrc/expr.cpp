@@ -290,8 +290,8 @@ unsigned eval(int p, int q, bool *success)
       if (tokens[p].type == DEREF && (tokens[p + 1].type == 'v' || tokens[p + 1].type == 'h' || tokens[p + 1].type == 'r' || (tokens[p + 1].type == '(' && tokens[q].type == ')')))
       {
         uint32_t addr = eval(p + 1, q, success);
-        if(addr < 0x80000000){
-          printf("Calling not physical memory\n");
+        if(addr < 0x30000000 || addr > 0x3fffffff ){
+          printf("Calling not accessible memory\n");
           *success = false;
           return 0;
         }

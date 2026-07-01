@@ -25,6 +25,13 @@ DISASM_OBJ = $(abspath obj_dir/disasm.o)
 LDFLAGS += -lreadline -L$(NEMU_HOME)/tools/capstone/repo -lcapstone $(DISASM_OBJ) $(NEMU_HOME)/tools/spike-diff/build/riscv32-spike-so
 
 VERILOG_FLAGS := -cc --exe -Wno-EOFNEWLINE --top-module ysyxSoCFull --trace-fst -LDFLAGS "$(LDFLAGS)" -CFLAGS "$(VERILATOR_CFLAGS)" --trace-structs --timescale "1ns/1ns" --no-timing $(INCLUDES) --autoflush
+ifndef NS
+VERILOG_FLAGS += --quiet
+endif
+
+ifdef FAST
+VERILOG_FLAGS += -O3
+endif
 
 LIBCAPSTONE = $(NEMU_HOME)/tools/capstone/repo/libcapstone.so.5
 
@@ -38,7 +45,7 @@ build: sim
 	@mkdir -p obj_dir
 	@gcc -c $(VERILATOR_CFLAGS) -O2 $(NEMU_HOME)/src/utils/disasm.c -o obj_dir/disasm.o
 	@$(VERILATOR) $(VERILOG_SRC) $(VERILOG_FLAGS) $(CPP_SRC)
-	@$(MAKE) -j -C obj_dir -f VysyxSoCFull.mk
+	@$(MAKE) -j -C obj_dir -f VysyxSoCFull.mk 
 
 run: build
 	@LD_LIBRARY_PATH=$(NEMU_HOME)/tools/capstone/repo:$(NEMU_HOME)/build obj_dir/VysyxSoCFull $(ARGS) $(IMG)

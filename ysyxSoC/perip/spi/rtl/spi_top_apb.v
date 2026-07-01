@@ -48,18 +48,157 @@ assign in_prdata  = data[31:0];
 
 `else
 
+reg [31:0] paddr;
+reg        psel;
+reg        penable;
+reg        pwrite;
+reg [31:0] pwdata;
+reg [3:0]  pstrb;
+
+reg        pready;
+reg [31:0] prdata;
+reg        pslverr;
+
+reg [2:0] fsm_state;
+reg set;
+
+wire out_pready;
+wire [31:0] out_prdata;
+wire out_pslverr;
+
+always @(posedge clock) begin
+  if(reset) begin
+    paddr<=0;
+    psel<=0;
+    penable<=0;
+    pwrite<=0;
+    pwdata<=0;
+    pstrb<=0;
+    
+    pready<=0;
+    prdata<=0;
+    pslverr<=0;
+
+    fsm_state<=0;
+    set<=0;
+  end else begin
+    if(in_penable && in_psel) begin
+      case(fsm_state)
+        3'd0: begin
+          if(in_paddr >= flash_addr_start && in_paddr < flash_addr_end) begin
+            if(set) fsm_state<= 3;
+            else fsm_state<=1;
+          end else begin
+            paddr <= in_paddr;
+            psel <= in_psel;
+            penable <= in_penable;
+            pwrite <= in_pwrite;
+            pwdata <= in_pwdata;
+            pstrb <= in_pstrb;
+
+            pready <= out_pready;
+            prdata <= out_prdata;
+            pslverr <= out_pslverr;
+
+            set<=0;
+          end
+        end
+        3'd1: begin
+          paddr<=32'h10001014;
+          penable<=1;
+          psel<=1;
+          pwdata<=32'h00000002;
+          pstrb<=4'hf;
+          pwrite<=1;
+          if(out_pready) begin
+            fsm_state<=2;
+            psel<=0;
+            penable<=0;
+          end
+        end
+        3'd2:begin
+          paddr<=32'h10001018;
+          penable<=1;
+          psel<=1;
+          pwdata<=32'h00000001; //set divisor rate, should be changed to proper divisor
+          if(out_pready) begin
+            fsm_state<=3;
+            set<=1;
+            psel<=0;
+            penable<=0;
+          end
+        end
+        3'd3:begin
+          paddr<=32'h10001004;
+          penable<=1;
+          psel<=1;
+          pwrite<=1;
+          pwdata<={8'h03,in_paddr[23:0]}; 
+          if(out_pready) begin
+            fsm_state<=4;
+            psel<=0;
+            penable<=0;
+          end
+        end
+        3'd4:begin
+          paddr<=32'h10001010;
+          penable<=1;
+          psel<=1;
+          pwdata<=32'h00003140;
+          if(out_pready) begin
+            fsm_state<=5;
+            psel<=0;
+            penable<=0;
+          end
+        end
+        3'd5:begin
+          pwrite<=0;
+          penable<=0;
+          psel<=0;
+          if(spi_irq_out) begin
+            fsm_state<=6;
+          end
+        end
+        3'd6:begin
+          paddr<=32'h10001000;
+          penable<=1;
+          psel<=1;
+          pwrite<=0; 
+          if(out_pready) begin
+            fsm_state<=7;
+            penable<=0;
+            psel<=0;
+            pready<=1;
+            prdata<=out_prdata;
+            pslverr<=out_pslverr;
+          end
+        end
+        3'd7:begin
+          pready<=0;
+          fsm_state<=0;
+        end
+      endcase
+    end
+  end
+end
+
+// Drive output ports from internal wires
+assign in_pready  = pready;
+assign in_prdata  = prdata;
+assign in_pslverr = pslverr;
+
 spi_top u0_spi_top (
   .wb_clk_i(clock),
   .wb_rst_i(reset),
-  .wb_adr_i(in_paddr[4:0]),
-  .wb_dat_i(in_pwdata),
-  .wb_dat_o(in_prdata),
-  .wb_sel_i(in_pstrb),
-  .wb_we_i (in_pwrite),
-  .wb_stb_i(in_psel),
-  .wb_cyc_i(in_penable),
-  .wb_ack_o(in_pready),
-  .wb_err_o(in_pslverr),
+  .wb_adr_i(paddr[4:0]),
+  .wb_dat_i(pwdata),
+  .wb_dat_o(out_prdata),
+  .wb_sel_i(pstrb),
+  .wb_we_i (pwrite),
+  .wb_stb_i(psel),
+  .wb_cyc_i(penable),
+  .wb_ack_o(out_pready),
+  .wb_err_o(out_pslverr),
   .wb_int_o(spi_irq_out),
 
   .ss_pad_o(spi_ss),

@@ -109,18 +109,19 @@ static int cmd_x(char *args) {
   }else{
     long size = strtol(size_str, &endptr_size, 0);
     long val = expr(args,&success);
-    if(val < 0x80000000){
+    if((val > 0x30000000 && val<0x3fffffff)||(val > 0x80000000 && val < 0x9fffffff)){
+      if( !(success) || *endptr_size != '\0'){
+        printf("Correct use x N ECPR , where N is an integer and EXPR is a expression.\n");
+        return 0;
+      }
+      for(int i=0; i<size; i++){
+        printf("mem[%x]=%x\n",(uint32_t)(val+i*4),memread(val+i*4));
+      }
+      return 0;
+    }else{
       printf("Calling not a memory space\n");
       return 0;
     }
-    if( !(success) || *endptr_size != '\0'){
-      printf("Correct use x N ECPR , where N is an integer and EXPR is a expression.\n");
-      return 0;
-    }
-    for(int i=0; i<size; i++){
-      printf("mem[%x]=%x\n",(uint32_t)(val+i*4),memread(val+i*4));
-    }
-    return 0;
   }
 }
 

@@ -6,7 +6,8 @@
 #include "common.h"
 
 
-uint8_t mem[MEM_SIZE];
+uint8_t flash[FLASH_SIZE];
+uint8_t psram[PSRAM_SIZE];
 uint64_t curr_time;
 extern bool skip_inst;
 extern bool fail;
@@ -16,6 +17,7 @@ extern bool do_diff;
 #define ROM_OFFSET  0x80000000
 #define MROM_OFFSET 0x20000000
 #define FLASH_OFFSET 0x30000000
+#define PSRAM_OFFSET 0x80000000
 
 
 #define DEVICE_BASE 0xa0000000
@@ -34,26 +36,28 @@ static const uint32_t img [] = {
   0xdeadbeef,  // some data
 };
 
-uint8_t flash[] = {
-    0x63,
-    0x30,
-    0x66,
-    0x66,
-    0x65,
-    0x65
-};
+extern "C" void flash_read(uint32_t addr, uint32_t *data) { addr = addr & 0xfffffffc; *data = ((flash[addr]<<24)|(flash[addr+1]<<16)|(flash[addr+2]<<8)|(flash[addr+3])); }
+extern "C" void mrom_read(uint32_t addr, uint32_t *data) { assert(0); }
+extern "C" void psram_write(uint32_t addr, uint32_t data, uint32_t half) {
+    // printf("Call to write to addr:0x%x ,data:0x%x ,half:%x\n",addr, data, half);
+    if(half) psram[addr]=(psram[addr]&0x0f) | ((data <<4) & 0xf0);
+    else psram[addr] = (psram[addr]&0xf0) | data & 0x0f;
+}
 
-extern "C" void flash_read(uint32_t addr, uint32_t *data) { addr = addr & 0xfffffffc; *data = ((flash[addr+3]<<24)|(flash[addr+2]<<16)|(flash[addr+1]<<8)|(flash[addr])); }
-extern "C" void mrom_read(uint32_t addr, uint32_t *data) { addr = addr & 0xfffffffc; *data = ((mem[addr-MROM_OFFSET+3]<<24)|(mem[addr-MROM_OFFSET+2]<<16)|(mem[addr-MROM_OFFSET+1]<<8)|(mem[addr-MROM_OFFSET])); }
+extern "C" void psram_read(uint32_t addr, uint32_t *data) {
+    // printf("Call to read from addr:0x%x\n",addr);
+    *data=(psram[addr]);
+}
+
 
 extern "C" {
     void difftest_memcpy(uint32_t addr, void *buf, size_t n, bool direction);
     void loadmemory(char *img_file, bool batch) {
         if (img_file == NULL) {
             printf("No image is given.\n");
-            memcpy(mem, img, sizeof(img));
+            memcpy(flash, img, sizeof(img));
             if(!batch && do_diff){
-                difftest_memcpy(MROM_OFFSET, mem, sizeof(img), 1);
+                difftest_memcpy(FLASH_OFFSET, flash, sizeof(img), 1);
             }
             return; // built-in image size
         }
@@ -69,63 +73,59 @@ extern "C" {
         printf("The image is %s, size = %ld\n", img_file, size);
 
         fseek(fp, 0, SEEK_SET);
-        int ret = fread(mem, size, 1, fp);
+        int ret = fread(flash, size, 1, fp);
         assert(ret == 1);
 
         fclose(fp);
 
         if(!batch && do_diff){
-            difftest_memcpy(MROM_OFFSET, mem, size, 1);
+            difftest_memcpy(FLASH_OFFSET, flash, size, 1);
         }
     }
 
     //deprecated, works for npc, not SoC
-    void memwrite(uint32_t addr, uint32_t data, uint32_t type){
-        #ifdef MTRACE
-        printf("\033[034mCall to write to memory at %08x\033[0m\n", addr);
-        #endif
-        if(addr>=ROM_OFFSET && addr<(ROM_OFFSET + MEM_SIZE)){
-            if(type ==0){
-                mem[addr-ROM_OFFSET] = data & 0xFF;
-            }else if (type ==1){
-                mem[addr-ROM_OFFSET] = data & 0xFF;
-                mem[addr-ROM_OFFSET+1] = (data>>8) & 0xFF;
-            }else if (type ==2){
-                mem[addr-ROM_OFFSET] = data & 0xFF;
-                mem[addr-ROM_OFFSET+1] = (data>>8) & 0xFF;
-                mem[addr-ROM_OFFSET+2] = (data>>16) & 0xFF;
-                mem[addr-ROM_OFFSET+3] = (data>>24) & 0xFF;
-            }else{
-                printf("strange data access addr:%u, data:%u, type:%u\n", addr, data, type);
-            }
-        }else if(addr == SERIAL_PORT){
-            skip_inst = 1;
-            putchar((uint8_t)data);
-            fflush(stdout);
-        }else{
-            printf("Illegal memory write access at addr:0x%08x at pc: 0x%08x\n",addr, top->pc);
-            assert(0);
-        }
-    }
+    // void memwrite(uint32_t addr, uint32_t data, uint32_t type){
+    //     #ifdef MTRACE
+    //     printf("\033[034mCall to write to memory at %08x\033[0m\n", addr);
+    //     #endif
+    //     if(addr>=ROM_OFFSET && addr<(ROM_OFFSET + FLASH_SIZE)){
+    //         if(type ==0){
+    //             mem[addr-ROM_OFFSET] = data & 0xFF;
+    //         }else if (type ==1){
+    //             mem[addr-ROM_OFFSET] = data & 0xFF;
+    //             mem[addr-ROM_OFFSET+1] = (data>>8) & 0xFF;
+    //         }else if (type ==2){
+    //             mem[addr-ROM_OFFSET] = data & 0xFF;
+    //             mem[addr-ROM_OFFSET+1] = (data>>8) & 0xFF;
+    //             mem[addr-ROM_OFFSET+2] = (data>>16) & 0xFF;
+    //             mem[addr-ROM_OFFSET+3] = (data>>24) & 0xFF;
+    //         }else{
+    //             printf("strange data access addr:%u, data:%u, type:%u\n", addr, data, type);
+    //         }
+    //     }else if(addr == SERIAL_PORT){
+    //         skip_inst = 1;
+    //         putchar((uint8_t)data);
+    //         fflush(stdout);
+    //     }else{
+    //         printf("Illegal memory write access at addr:0x%08x at pc: 0x%08x\n",addr, top->pc);
+    //         assert(0);
+    //     }
+    // }
 
-    //deprecated, works for npc, not SoC
     uint32_t memread(uint32_t addr){
         #ifdef MTRACE
         printf("\n\033[034mCall to read from memory at %08x\033[0m\n", addr);
         #endif
-        if(addr>=ROM_OFFSET && addr<(ROM_OFFSET + MEM_SIZE)){
-            return ((mem[addr-ROM_OFFSET+3]<<24)|
-                    (mem[addr-ROM_OFFSET+2]<<16)|
-                    (mem[addr-ROM_OFFSET+1]<<8)|
-                    (mem[addr-ROM_OFFSET]));
-        }else if(addr == RTC_ADDR || addr == RTC_ADDR + 4){
-            skip_inst = 1;
-            if(addr == RTC_ADDR + 4){
-                auto now = std::chrono::system_clock::now().time_since_epoch();
-                curr_time = std::chrono::duration_cast<std::chrono::microseconds>(now).count();
-                return curr_time>>32;
-            }
-            if(addr == RTC_ADDR) return (uint32_t)curr_time;
+        if(addr>=FLASH_OFFSET && addr<(FLASH_OFFSET + FLASH_SIZE)){
+            return ((flash[addr-FLASH_OFFSET+3]<<24)|
+                    (flash[addr-FLASH_OFFSET+2]<<16)|
+                    (flash[addr-FLASH_OFFSET+1]<<8)|
+                    (flash[addr-FLASH_OFFSET]));
+        }else if(addr>=PSRAM_OFFSET && addr<(PSRAM_OFFSET + 0x20000000)){
+            return ((psram[addr-PSRAM_OFFSET+3]<<24)|
+                    (psram[addr-PSRAM_OFFSET+2]<<16)|
+                    (psram[addr-PSRAM_OFFSET+1]<<8)|
+                    (psram[addr-PSRAM_OFFSET]));    
         }else{
             printf("Illegal memory read access at addr:0x%08x at pc: 0x%08x\n",addr, top->pc);
             fail=1;

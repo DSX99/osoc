@@ -22,7 +22,7 @@ insert-arg: image
 
 image: image-dep
 	@$(OBJDUMP) -d $(IMAGE).elf > $(IMAGE).txt
-	@echo + OBJCOPY "->" $(IMAGE_REL).bin
+# 	@echo + OBJCOPY "->" $(IMAGE_REL).bin
 	@$(OBJCOPY) -S -O binary $(IMAGE).elf $(IMAGE).bin
 
 ifeq ($(B),)
@@ -32,7 +32,7 @@ NPCFLAG = ""
 endif
 
 run: insert-arg
-	@$(MAKE) -C $(NPC_HOME) run ARGS="$(NPCFLAG)" IMG=$(IMAGE).bin
+	$(MAKE) -C $(NPC_HOME) run ARGS="$(NPCFLAG)" IMG=$(IMAGE).bin
 		
 
 .PHONY: insert-arg

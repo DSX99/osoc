@@ -15,7 +15,7 @@ module csr(
 logic [31:0] regs [31:0];
 
 typedef enum bit [4:0]{
-    UNUSED, MEPS, MSTATUS, MCAUSE, MTVEC
+    UNUSED, MEPS, MSTATUS, MCAUSE, MTVEC, MVENDORID, MARCHID
 } csr_t;
 
 logic [4:0] working_reg;
@@ -25,6 +25,8 @@ initial begin
         regs[i] = 32'h0;
     end
     regs[MSTATUS] = 32'h00001800;
+    regs[MVENDORID] = 32'h20445358;
+    regs[MARCHID] = 32'h20393920;
 end
 
 always_comb begin
@@ -38,6 +40,8 @@ always_comb begin
         12'h305: working_reg = MTVEC;
         12'h341: working_reg = MEPS;
         12'h342: working_reg = MCAUSE;
+        12'hF11: working_reg = MVENDORID;
+        12'hF12: working_reg = MARCHID;
         default working_reg = UNUSED;
     endcase
     if(cause != 0) working_reg = MTVEC;

@@ -9,8 +9,9 @@
 
 #define CONFIG_FST
 // #define MTRACE
-#define ITRACE
+// #define ITRACE
 
 #define MAX_SIM_TIME 10*1024*1024*1024LL
-#define MEM_SIZE 128*1024*1024
+#define FLASH_SIZE 16*1024*1024
+#define PSRAM_SIZE 4*1024*1024
 #define ITRACE_VAL 16
