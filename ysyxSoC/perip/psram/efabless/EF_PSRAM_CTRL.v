@@ -182,6 +182,7 @@ module PSRAM_WRITER (
             end else nstate = IDLE;
             WRITE: if(done) nstate = IDLE; else nstate = WRITE;
             PREPARE: if(done) nstate = IDLE; else nstate = PREPARE;
+            default: nstate = IDLE;
         endcase
 
     always @ (posedge clk or negedge rst_n)

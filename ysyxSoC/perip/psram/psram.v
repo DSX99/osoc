@@ -38,6 +38,7 @@ module psram(
       8'd5: oper[2]<=dio[0];
       8'd6: oper[1]<=dio[0];      
       8'd7: oper[0]<=dio[0];
+      default: ;
     endcase 
     end else begin
       case(counter)
@@ -67,7 +68,7 @@ module psram(
     end
   end
                           // change zeros here to z's when moving to icarus
-  assign dio =  (counter < 20 || rw) ? 4'b0 :
+  assign dio =  (counter < 14 || rw) ? 4'b0 :
                 (counter[0])         ? buff[3:0] : buff[7:4];
 
 endmodule
