@@ -14,9 +14,9 @@ module psram(
 
   reg[7:0] buff;
 
-  always @(posedge sck) begin
-    if(!ce_n) counter<=counter+1;
-    else counter<=0;
+  always @(posedge sck or posedge ce_n) begin
+    if(ce_n) counter<=0;
+    else counter<=counter+1;
 
     if(counter==8) begin
       if(oper == 8'h38) rw<=1;
