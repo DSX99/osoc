@@ -100,7 +100,7 @@ always @(posedge clock) begin
             prdata <= out_prdata;
             pslverr <= out_pslverr;
 
-            sent<=0;
+            set<=0;
           end
         end
         3'd1: begin
