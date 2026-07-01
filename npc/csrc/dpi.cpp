@@ -51,9 +51,9 @@ extern "C" {
     void loadmemory(char *img_file, bool batch) {
         if (img_file == NULL) {
             printf("No image is given.\n");
-            memcpy(mem, img, sizeof(img));
+            memcpy(flash, img, sizeof(img));
             if(!batch && do_diff){
-                difftest_memcpy(MROM_OFFSET, mem, sizeof(img), 1);
+                difftest_memcpy(MROM_OFFSET, flash, sizeof(img), 1);
             }
             return; // built-in image size
         }
@@ -69,13 +69,13 @@ extern "C" {
         printf("The image is %s, size = %ld\n", img_file, size);
 
         fseek(fp, 0, SEEK_SET);
-        int ret = fread(mem, size, 1, fp);
+        int ret = fread(flash, size, 1, fp);
         assert(ret == 1);
 
         fclose(fp);
 
         if(!batch && do_diff){
-            difftest_memcpy(MROM_OFFSET, mem, size, 1);
+            difftest_memcpy(MROM_OFFSET, flash, size, 1);
         }
     }
 
