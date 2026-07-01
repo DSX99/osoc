@@ -28,14 +28,14 @@ module psram(
     end
 
     case(counter)
-      8'd0: oper[0]<=dio[0];      
-      8'd1: oper[1]<=dio[0];
-      8'd2: oper[2]<=dio[0];      
-      8'd3: oper[3]<=dio[0];
-      8'd4: oper[4]<=dio[0];      
-      8'd5: oper[5]<=dio[0];
-      8'd6: oper[6]<=dio[0];      
-      8'd7: oper[7]<=dio[0];
+      8'd0: oper[7]<=dio[0];      
+      8'd1: oper[6]<=dio[0];
+      8'd2: oper[5]<=dio[0];      
+      8'd3: oper[4]<=dio[0];
+      8'd4: oper[3]<=dio[0];      
+      8'd5: oper[2]<=dio[0];
+      8'd6: oper[1]<=dio[0];      
+      8'd7: oper[0]<=dio[0];
       8'd8: saddr[23:20] <= dio;
       8'd9: saddr[19:16] <= dio;
       8'd10: saddr[15:12] <= dio;
