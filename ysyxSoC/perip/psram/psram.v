@@ -7,7 +7,7 @@ module psram(
   import "DPI-C" function void psram_write(input int addr, input int data, input int half);
   import "DPI-C" function void psram_read(input int addr, output int data);
 
-  reg [23:0] addr;
+  reg [23:0] saddr;
   reg [7:0] counter;
   reg [7:0] oper;
   reg rw; //0-read 1-write
@@ -44,13 +44,13 @@ module psram(
       8'd13: saddr[(23-4*(counter-8)):(23-4*(counter-8))] <= dio;
       default: begin
         if(rw) begin
-          psram_write(saddr, dio, count[0]);
-          if(count[0]) saddr<=saddr+1;
-        end else if(count>=20) begin
-          if(count[0]) begin
+          psram_write(saddr, dio, counter[0]);
+          if(counter[0]) saddr<=saddr+1;
+        end else if(counter>=20) begin
+          if(counter[0]) begin
             saddr<=saddr+1;
           end else begin
-            prsram_read(saddr, buff);
+            psram_read(saddr, buff);
           end
         end
       end
@@ -58,13 +58,13 @@ module psram(
   end
 
   always @* begin
-    if(count < 20) begin
+    if(counter < 20) begin
       dio = 4'bz;
     end else begin
       if(rw)begin
         dio = 4'bz;
       end else begin
-        if(count[0]) dio = buff[3:0];
+        if(counter[0]) dio = buff[3:0];
         else dio = buff[7:4];
       end
     end
