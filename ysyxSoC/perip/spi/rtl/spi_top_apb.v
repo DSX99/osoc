@@ -105,7 +105,7 @@ always @(posedge clock) begin
           paddr<=32'h10001014;
           penable<=1;
           psel<=1;
-          pwdata<=32'h00000001;
+          pwdata<=32'h00000002;
           pstrb<=4'hf;
           pwrite<=1;
           if(out_pready) begin
@@ -118,7 +118,7 @@ always @(posedge clock) begin
           paddr<=32'h10001018;
           penable<=1;
           psel<=1;
-          pwdata<=32'h00000000; //set divisor rate, should be changed to proper divisor
+          pwdata<=32'h00000001; //set divisor rate, should be changed to proper divisor
           if(out_pready) begin
             fsm_state<=3;
             set<=1;
