@@ -6,7 +6,7 @@
 #include "common.h"
 
 
-uint8_t mem[MEM_SIZE];
+uint8_t flash[MEM_SIZE];
 uint64_t curr_time;
 extern bool skip_inst;
 extern bool fail;
@@ -34,10 +34,7 @@ static const uint32_t img [] = {
   0xdeadbeef,  // some data
 };
 
-uint8_t flash[MEM_SIZE];
-
 extern "C" void flash_read(uint32_t addr, uint32_t *data) { addr = addr & 0xfffffffc; *data = ((flash[addr]<<24)|(flash[addr+1]<<16)|(flash[addr+2]<<8)|(flash[addr+3])); }
-extern "C" void mrom_read(uint32_t addr, uint32_t *data) { addr = addr & 0xfffffffc; *data = ((mem[addr-MROM_OFFSET+3]<<24)|(mem[addr-MROM_OFFSET+2]<<16)|(mem[addr-MROM_OFFSET+1]<<8)|(mem[addr-MROM_OFFSET])); }
 
 extern "C" {
     void difftest_memcpy(uint32_t addr, void *buf, size_t n, bool direction);
@@ -73,56 +70,56 @@ extern "C" {
     }
 
     //deprecated, works for npc, not SoC
-    void memwrite(uint32_t addr, uint32_t data, uint32_t type){
-        #ifdef MTRACE
-        printf("\033[034mCall to write to memory at %08x\033[0m\n", addr);
-        #endif
-        if(addr>=ROM_OFFSET && addr<(ROM_OFFSET + MEM_SIZE)){
-            if(type ==0){
-                mem[addr-ROM_OFFSET] = data & 0xFF;
-            }else if (type ==1){
-                mem[addr-ROM_OFFSET] = data & 0xFF;
-                mem[addr-ROM_OFFSET+1] = (data>>8) & 0xFF;
-            }else if (type ==2){
-                mem[addr-ROM_OFFSET] = data & 0xFF;
-                mem[addr-ROM_OFFSET+1] = (data>>8) & 0xFF;
-                mem[addr-ROM_OFFSET+2] = (data>>16) & 0xFF;
-                mem[addr-ROM_OFFSET+3] = (data>>24) & 0xFF;
-            }else{
-                printf("strange data access addr:%u, data:%u, type:%u\n", addr, data, type);
-            }
-        }else if(addr == SERIAL_PORT){
-            skip_inst = 1;
-            putchar((uint8_t)data);
-            fflush(stdout);
-        }else{
-            printf("Illegal memory write access at addr:0x%08x at pc: 0x%08x\n",addr, top->pc);
-            assert(0);
-        }
-    }
+    // void memwrite(uint32_t addr, uint32_t data, uint32_t type){
+    //     #ifdef MTRACE
+    //     printf("\033[034mCall to write to memory at %08x\033[0m\n", addr);
+    //     #endif
+    //     if(addr>=ROM_OFFSET && addr<(ROM_OFFSET + MEM_SIZE)){
+    //         if(type ==0){
+    //             mem[addr-ROM_OFFSET] = data & 0xFF;
+    //         }else if (type ==1){
+    //             mem[addr-ROM_OFFSET] = data & 0xFF;
+    //             mem[addr-ROM_OFFSET+1] = (data>>8) & 0xFF;
+    //         }else if (type ==2){
+    //             mem[addr-ROM_OFFSET] = data & 0xFF;
+    //             mem[addr-ROM_OFFSET+1] = (data>>8) & 0xFF;
+    //             mem[addr-ROM_OFFSET+2] = (data>>16) & 0xFF;
+    //             mem[addr-ROM_OFFSET+3] = (data>>24) & 0xFF;
+    //         }else{
+    //             printf("strange data access addr:%u, data:%u, type:%u\n", addr, data, type);
+    //         }
+    //     }else if(addr == SERIAL_PORT){
+    //         skip_inst = 1;
+    //         putchar((uint8_t)data);
+    //         fflush(stdout);
+    //     }else{
+    //         printf("Illegal memory write access at addr:0x%08x at pc: 0x%08x\n",addr, top->pc);
+    //         assert(0);
+    //     }
+    // }
 
-    //deprecated, works for npc, not SoC
-    uint32_t memread(uint32_t addr){
-        #ifdef MTRACE
-        printf("\n\033[034mCall to read from memory at %08x\033[0m\n", addr);
-        #endif
-        if(addr>=ROM_OFFSET && addr<(ROM_OFFSET + MEM_SIZE)){
-            return ((mem[addr-ROM_OFFSET+3]<<24)|
-                    (mem[addr-ROM_OFFSET+2]<<16)|
-                    (mem[addr-ROM_OFFSET+1]<<8)|
-                    (mem[addr-ROM_OFFSET]));
-        }else if(addr == RTC_ADDR || addr == RTC_ADDR + 4){
-            skip_inst = 1;
-            if(addr == RTC_ADDR + 4){
-                auto now = std::chrono::system_clock::now().time_since_epoch();
-                curr_time = std::chrono::duration_cast<std::chrono::microseconds>(now).count();
-                return curr_time>>32;
-            }
-            if(addr == RTC_ADDR) return (uint32_t)curr_time;
-        }else{
-            printf("Illegal memory read access at addr:0x%08x at pc: 0x%08x\n",addr, top->pc);
-            fail=1;
-        }
-        return 0;
-    }
+    // //deprecated, works for npc, not SoC
+    // uint32_t memread(uint32_t addr){
+    //     #ifdef MTRACE
+    //     printf("\n\033[034mCall to read from memory at %08x\033[0m\n", addr);
+    //     #endif
+    //     if(addr>=ROM_OFFSET && addr<(ROM_OFFSET + MEM_SIZE)){
+    //         return ((mem[addr-ROM_OFFSET+3]<<24)|
+    //                 (mem[addr-ROM_OFFSET+2]<<16)|
+    //                 (mem[addr-ROM_OFFSET+1]<<8)|
+    //                 (mem[addr-ROM_OFFSET]));
+    //     }else if(addr == RTC_ADDR || addr == RTC_ADDR + 4){
+    //         skip_inst = 1;
+    //         if(addr == RTC_ADDR + 4){
+    //             auto now = std::chrono::system_clock::now().time_since_epoch();
+    //             curr_time = std::chrono::duration_cast<std::chrono::microseconds>(now).count();
+    //             return curr_time>>32;
+    //         }
+    //         if(addr == RTC_ADDR) return (uint32_t)curr_time;
+    //     }else{
+    //         printf("Illegal memory read access at addr:0x%08x at pc: 0x%08x\n",addr, top->pc);
+    //         fail=1;
+    //     }
+    //     return 0;
+    // }
 }
