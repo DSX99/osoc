@@ -21,11 +21,15 @@ module psram(
 
     if(counter==8) begin
       if(oper == 8'h35) set<=1;
-    end 
+    end else begin
+      $display("Wrong code for psram %x",oper);
+      $finish;
+    end
+
     if (counter==2) begin
       if(oper == 8'heb) rw<=0;
       else if(oper == 8'h38) rw<=1;
-      else begin
+      else if(set) begin
         $display("Wrong code for psram %x",oper);
         $finish;
       end
