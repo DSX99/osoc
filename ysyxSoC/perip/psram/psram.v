@@ -54,7 +54,7 @@ module psram(
         if(rw && !ce_n) begin
           psram_write({8'b0,saddr}, {28'b0,dio}, {31'b0,counter[0]});
           if(counter[0]) saddr<=saddr+1;
-        end else if(counter>=20) begin
+        end else if(counter>=14) begin
           if(!ce_n) begin
             if(counter[0]) begin
               saddr<=saddr+1;
