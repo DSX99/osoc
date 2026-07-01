@@ -22,7 +22,7 @@ module psram(
       if(oper == 8'h38) rw<=1;
       else if(oper == 8'heb) rw<=0;
       else begin
-        $display("Wrong code for psram");
+        $display("Wrong code for psram %d",oper);
         $finish;
       end
     end
