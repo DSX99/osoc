@@ -34,16 +34,10 @@ static const uint32_t img [] = {
   0xdeadbeef,  // some data
 };
 
-uint8_t flash[] = {
-    0x37,0x07,0x00,0x10,
-    0x93,0x07,0x20,0x04,
-    0x23,0x00,0xf7,0x00,
-    0x23,0x00,0xf7,0x00,
-    0x23,0x00,0xf7,0x00,
-    0x67,0x80,0x00,0x00
+uint32_t flash[] = {
 };
 
-extern "C" void flash_read(uint32_t addr, uint32_t *data) { addr = addr & 0xfffffffc; *data = ((flash[addr+3])|(flash[addr+2]<<8)|(flash[addr+1]<<16)|(flash[addr]<<24)); }
+extern "C" void flash_read(uint32_t addr, uint32_t *data) { addr = addr & 0xfffffffc; *data = ((flash[addr])|(flash[addr+1]<<8)|(flash[addr+2]<<16)|(flash[addr+3]<<24)); }
 extern "C" void mrom_read(uint32_t addr, uint32_t *data) { addr = addr & 0xfffffffc; *data = ((mem[addr-MROM_OFFSET+3]<<24)|(mem[addr-MROM_OFFSET+2]<<16)|(mem[addr-MROM_OFFSET+1]<<8)|(mem[addr-MROM_OFFSET])); }
 
 extern "C" {
@@ -53,7 +47,7 @@ extern "C" {
             printf("No image is given.\n");
             memcpy(flash, img, sizeof(img));
             if(!batch && do_diff){
-                difftest_memcpy(MROM_OFFSET, flash, sizeof(img), 1);
+                difftest_memcpy(FLASH_OFFSET, flash, sizeof(img), 1);
             }
             return; // built-in image size
         }
@@ -75,7 +69,7 @@ extern "C" {
         fclose(fp);
 
         if(!batch && do_diff){
-            difftest_memcpy(MROM_OFFSET, flash, size, 1);
+            difftest_memcpy(FLASH_OFFSET, flash, size, 1);
         }
     }
 
