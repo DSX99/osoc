@@ -157,12 +157,14 @@ always @(posedge clock) begin
           fsm_state<=6;
         end
         3'd6:begin
+          pwrite<=0;
+          penable<=0;
+          psel<=0;
           if(spi_irq_out) fsm_state<=7;
         end
         3'd7:begin
           pready<=0;
           fsm_state<=0;
-          pwrite<=0;
         end
       endcase
     end
