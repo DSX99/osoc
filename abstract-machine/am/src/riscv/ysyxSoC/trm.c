@@ -34,7 +34,7 @@ void halt(int code) {
 
 extern char _data_start;
 extern char _data_VMA;
-extern char _data_size;
+// extern char _data_size;
 extern char _bss_start;
 extern char _bss_end;
 
@@ -42,7 +42,7 @@ void _trm_init() {
   for (char *p = &_bss_start; p < &_bss_end; p++) {
     *p = 0;
   }
-  memcpy(&_data_VMA, &_data_start, (uint32_t)&_data_size);
+  memcpy(&_data_VMA, &_data_start, ((uint32_t)&_bss_start - (uint32_t)&_data_start));
 
   *(volatile uint8_t *)(UART_BASE + UART_IER) = 0;      // disable interrupts
   uint16_t divisor = 1;
