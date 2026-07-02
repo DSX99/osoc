@@ -81,7 +81,7 @@ import "DPI-C" function void sdram_read(input int addr, output int data);
             addr[23:9] <= {a[12:0], ba};
           end
           read_t: begin
-            if(ba != addr[12:11]) begin
+            if(ba != addr[10:9]) begin
               $display("discrepancies in ba in read");
               $finish;
             end
@@ -90,7 +90,7 @@ import "DPI-C" function void sdram_read(input int addr, output int data);
             burst_read<=1;
           end
           write_t: begin
-            if(ba != addr[12:11]) begin
+            if(ba != addr[10:9]) begin
               $display("discrepancies in ba in write");
               $finish;
             end
