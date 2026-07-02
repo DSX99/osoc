@@ -63,7 +63,6 @@ import "DPI-C" function void sdram_read(input int addr, output int data);
   always @(posedge clk) begin
     if(!cke) begin
       count<=0;
-      buff<=0;
       will_stop_burst<=0;
       burst_read<=0;
       cas_lat<=0;
