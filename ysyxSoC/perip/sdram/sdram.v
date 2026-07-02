@@ -11,7 +11,7 @@ module sdram(
   inout [15:0] dq
 );
   
-import "DPI-C" function void sdram_write(input int addr, input int data, input mask);
+import "DPI-C" function void sdram_write(input int addr, input int data, input int mask);
 import "DPI-C" function void sdram_read(input int addr, output int data);
 
   typedef enum [2:0] { nop_t, addr_t, read_t, write_t, term_t, reg_t } state_t;
