@@ -32,12 +32,14 @@ void halt(int code) {
   while (1);
 }
 
-extern char _text_start;
-extern char _bss_end;
-extern char _sram_start;
+extern char _text_flash_start; 
+extern char _text_start;       
+extern char _data_end;
+
+void _trm_init(void) __attribute__((section(".boot")));
 
 void _trm_init() {
-  memcpy(&_sram_start, &_text_start, (uint32_t)(&_bss_end - &_text_start));
+  memcpy(&_text_start, &_text_flash_start, (uint32_t)(&_data_end - &_text_start));
 
   *(volatile uint8_t *)(UART_BASE + UART_IER) = 0;      // disable interrupts
   uint16_t divisor = 1;

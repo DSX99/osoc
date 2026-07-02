@@ -9,36 +9,47 @@ MEMORY {
 
 SECTIONS {
   . = ORIGIN(flash);
-  _text_start = .;
-  .text : {
+
+  .boot : {
+    _boot_start = .;
     *(entry)
+    *(.boot*)
+    _boot_end = .;
+  } >flash : text
+
+
+  _text_flash_start = .;
+
+  .text : {
+    _text_start = .;
     *(.text*)
-  } >sram AT> flash : text
-  etext = .;
-  _etext = .;
-  .rodata : {
     *(.rodata*)
-  } >sram AT>flash
-  _data_start = .;
+    _text_end = .;
+  } >sram AT> flash : text
+
+  _data_flash_start = .;
+
   .data : {
+    _data_start = .;
     *(.data*)
     *(.sdata*)
+    _data_end = .;
   } >sram AT> flash : data
-  _data_size = SIZEOF(.data);
-  edata = .;
-  _data = .;
+
   .bss (NOLOAD) : {
-	_bss_start = .;
+	  _bss_start = .;
     *(.bss*)
     *(.sbss*)
     *(.scommon)
-  _bss_end = .;
-  } >sram AT>flash
+    _bss_end = .;
+  } >sram
+  
+  
   _sram_start = ORIGIN(sram);
   _stack_top = ORIGIN(sram) + LENGTH(sram) - 0x1000; 
   . = ORIGIN(sram) + LENGTH(sram);
   _stack_pointer = .;
   end = .;
   _end = .;
-  _heap_start = ORIGIN(sram) + SIZEOF(.data);
+  _heap_start = _bss_end;
 }
