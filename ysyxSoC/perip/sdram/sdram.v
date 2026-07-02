@@ -121,6 +121,10 @@ import "DPI-C" function void sdram_read(input int addr, output int data);
               $display("discrepancies in cas_lat");
               $finish;
             end
+          default: begin
+              $display("strange state");
+              $finish;
+          end
           endcase
         end
       endcase
