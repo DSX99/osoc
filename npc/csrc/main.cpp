@@ -90,7 +90,7 @@ int main(int argc, char** argv) {
   }
   loadmemory(img_file, batch);
   memset(&cpu, 0, sizeof(CPU_state));
-  cpu.pc = 0x20000000;
+  cpu.pc = 0x30000000;
 
   if(!batch && do_diff){
     difftest_regcpy(&cpu, 1);

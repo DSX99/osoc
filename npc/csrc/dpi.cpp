@@ -8,6 +8,7 @@
 
 uint8_t flash[FLASH_SIZE];
 uint8_t psram[PSRAM_SIZE];
+uint8_t sdram[SDRAM_SIZE];
 uint64_t curr_time;
 extern bool skip_inst;
 extern bool fail;
@@ -18,6 +19,7 @@ extern bool do_diff;
 #define MROM_OFFSET 0x20000000
 #define FLASH_OFFSET 0x30000000
 #define PSRAM_OFFSET 0x80000000
+#define SDRAM_OFFSET 0xa0000000
 
 
 #define DEVICE_BASE 0xa0000000
@@ -43,12 +45,23 @@ extern "C" void psram_write(uint32_t addr, uint32_t data, uint32_t half) {
     if(half) psram[addr]=(psram[addr]&0x0f) | ((data <<4) & 0xf0);
     else psram[addr] = (psram[addr]&0xf0) | data & 0x0f;
 }
-
 extern "C" void psram_read(uint32_t addr, uint32_t *data) {
     // printf("Call to read from addr:0x%x\n",addr);
     *data=(psram[addr]);
 }
+extern "C" void sdram_write(uint32_t addr, uint32_t data, uint32_t mask) {
+    // printf("Call to write to addr:0x%x ,data:0x%04x ,half:%x\n",addr, data, mask);
+    if (!(mask & 0x01)) sdram[addr] = data & 0xFF;
+    if (!(mask & 0x02)) sdram[addr + 1] = (data >> 8) & 0xFF;
 
+    // for(int i=0;i<10;i++){
+    //     printf("i:%d,mem:%02x\n",i,sdram[i]);
+    // }
+}
+extern "C" void sdram_read(uint32_t addr, uint32_t *data) {
+    // printf("Call to read from addr:0x%x\n",addr);
+    *data = sdram[addr] | (sdram[addr + 1] << 8);
+}
 
 extern "C" {
     void difftest_memcpy(uint32_t addr, void *buf, size_t n, bool direction);

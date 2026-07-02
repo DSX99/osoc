@@ -110,17 +110,21 @@ __EXPORT void difftest_init(int port) {
   reg_t flash_size = 0x10000000; // IDKB
   reg_t uart_base = 0x10000000;
   reg_t uart_size = 0x00001000; // 8KB
+  reg_t psram_base = 0x80000000;
+  reg_t psram_size = 0x10000000; // IDKB
   
   std::vector<mem_cfg_t> SoC_layout;
   SoC_layout.push_back(mem_cfg_t(mrom_base, mrom_size));
   SoC_layout.push_back(mem_cfg_t(sram_base, sram_size));
   SoC_layout.push_back(mem_cfg_t(flash_base, flash_size));
   SoC_layout.push_back(mem_cfg_t(uart_base, uart_size));
+  SoC_layout.push_back(mem_cfg_t(psram_base, psram_size));
 
   difftest_mem.push_back(std::make_pair(mrom_base, new mem_t(mrom_size)));
   difftest_mem.push_back(std::make_pair(sram_base, new mem_t(sram_size)));
   difftest_mem.push_back(std::make_pair(flash_base, new mem_t(flash_size)));
   difftest_mem.push_back(std::make_pair(uart_base, new mem_t(uart_size)));
+  difftest_mem.push_back(std::make_pair(psram_base, new mem_t(psram_size)));
 
   cfg_t *cfg = new cfg_t(/*default_initrd_bounds=*/std::make_pair((reg_t)0, (reg_t)0),
             /*default_bootargs=*/nullptr,
