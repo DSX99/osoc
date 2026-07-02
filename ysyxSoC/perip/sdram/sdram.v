@@ -126,7 +126,7 @@ import "DPI-C" function void sdram_read(input int addr, output int data);
 
       if(will_stop_burst) burst_read<=0;
 
-      if(count==1 & burst_read==0) sdram_write({addr[25:11],addr[10:2],2'b0},dq, dqm)
+      if(count==1 & burst_read==0) sdram_write({addr[25:11],addr[10:2],2'b0},dq, dqm);
 
       if(count>=cas_lat & burst_read==1) sdram_read(addr+count-cas_lat,buff);
 
