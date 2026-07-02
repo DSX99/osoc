@@ -24,11 +24,11 @@ import "DPI-C" function void sdram_read(input int addr, output int data);
   reg [2:0] cas_lat;
   reg [9:0] burst_len;
 
-  reg [23:0] addr; // addr : {addr row[12:0],ba[1:0],addr col[8:0],1'b0(dqm[1:0], 1 means dont, 0 is lowest, 1 is highest)}
+  reg [25:0] addr; // addr : {addr row[12:0],ba[1:0],addr col[8:0],1'b0(dqm[1:0], 1 means dont, 0 is lowest, 1 is highest)}
 
   always @* begin
     if(cs) begin
-      ;//do nothing
+      state = nop_t;
     end else begin
       case({ras,cas,we})
         3'b111: begin //NOP
@@ -55,6 +55,7 @@ import "DPI-C" function void sdram_read(input int addr, output int data);
         3'b000: begin //LOAD MODE REGISTERS
           state = reg_t;
         end
+        default: state = nop_t;
       endcase
     end
   end
