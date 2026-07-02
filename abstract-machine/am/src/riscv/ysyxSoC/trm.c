@@ -34,12 +34,14 @@ void halt(int code) {
 
 extern char _text_flash_start; 
 extern char _text_start;       
+extern char _text_end;
+extern char _data_start;
 extern char _data_end;
 
 void _trm_init(void) __attribute__((section(".boot")));
 
 void _trm_init() {
-  memcpy(&_text_start, &_text_flash_start, (uint32_t)(&_data_end - &_text_start));
+  memcpy(&_text_start, &_text_flash_start, (uint32_t)((&_data_end - & _data_start) + (&_text_end - &_text_start)));
 
   *(volatile uint8_t *)(UART_BASE + UART_IER) = 0;      // disable interrupts
   uint16_t divisor = 1;
