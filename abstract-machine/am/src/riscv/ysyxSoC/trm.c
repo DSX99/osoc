@@ -7,7 +7,7 @@ extern char _heap_start;
 int main(const char *args);
 
 extern char _pmem_start;
-#define PMEM_SIZE (8 * 1024)
+#define PMEM_SIZE (4 * 1024)
 #define PMEM_END  ((uintptr_t)&_pmem_start + PMEM_SIZE)
 
 Area heap = RANGE(&_heap_start, PMEM_END);
@@ -35,14 +35,64 @@ void halt(int code) {
 extern char _text_flash_start; 
 extern char _text_start;       
 extern char _text_end;
+extern char _data_flash_start; 
 extern char _data_start;
 extern char _data_end;
 
 void _trm_init(void) __attribute__((section(".boot")));
-void *memcpy(void *dest, const void *src, unsigned int count) __attribute__((section(".boot")));
+void *memcpy_boot(void *out, const void *in, size_t n) __attribute__((section(".boot")));
+
+void *memcpy_boot(void *out, const void *in, size_t n) {
+  unsigned char *p = (unsigned char *)out;
+  unsigned char *q = (unsigned char *)in;
+  if(n<8 || ((uint32_t)p & 3)!=((uint32_t)q & 3)){
+    while(n--){
+      *p++ = *q++;
+    }
+    return out;
+  }
+
+  while(((uint32_t)p & 3) != 0 && n>0){
+    *p++ = *q++;
+    n--;
+  }
+
+  uint32_t *p32 = (uint32_t *)p;
+  uint32_t *q32 = (uint32_t *)q;
+
+  while(n>=16){
+    uint32_t w0 = *q32;
+    uint32_t w1 = *(q32+1);
+    uint32_t w2 = *(q32+2);
+    uint32_t w3 = *(q32+3);
+
+    *p32 = w0;
+    *(p32+1) = w1;
+    *(p32+2) = w2;
+    *(p32+3) = w3;
+    q32 += 4;
+    p32 += 4;
+    n -= 16;
+  }
+
+  while(n>=4){
+    *p32++ = *q32++;
+    n -= 4;
+  }
+
+  p = (unsigned char *)p32;
+  q = (unsigned char *)q32;
+
+  while(n--){
+    *p++ = *q++;
+  }
+  
+  return out;
+}
 
 void _trm_init() {
-  memcpy(&_text_start, &_text_flash_start, (uint32_t)((&_data_end - & _data_start) + (&_text_end - &_text_start)));
+  memcpy_boot(&_text_start, &_text_flash_start, (uint32_t)(&_text_end - &_text_start));
+  memcpy_boot(&_data_start, &_data_flash_start, (uint32_t)(&_data_end - &_data_start));
 
   *(volatile uint8_t *)(UART_BASE + UART_IER) = 0;      // disable interrupts
   uint16_t divisor = 1;

@@ -17,7 +17,7 @@ SECTIONS {
   } >flash
 
 
-  _text_flash_start = .;
+  _text_flash_start = LOADADDR(.text);
 
   .text : {
     _text_start = .;
@@ -26,7 +26,7 @@ SECTIONS {
     _text_end = .;
   } >sram AT> flash
 
-  _data_flash_start = .;
+  _data_flash_start = LOADADDR(.data);
 
   .data : {
     _data_start = .;
