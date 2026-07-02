@@ -24,7 +24,7 @@ import "DPI-C" function void sdram_read(input int addr, output int data);
   reg [2:0] cas_lat;
   reg [9:0] burst_len;
 
-  reg [25:0] addr; // addr : {addr row[12:0],ba[1:0],addr col[8:0],1'b0(dqm[1:0], 1 means dont, 0 is lowest, 1 is highest)}
+  reg [23:0] addr; // addr : {addr row[12:0],ba[1:0],addr col[8:0],1'b0(dqm[1:0], 1 means dont, 0 is lowest, 1 is highest)}
 
   always @* begin
     if(cs) begin
@@ -79,14 +79,14 @@ import "DPI-C" function void sdram_read(input int addr, output int data);
             ;
           end
           addr_t: begin
-            addr[25:11]<={a[12:0],ba};
+            addr[23:9] <= {a[12:0], ba};
           end
           read_t: begin
             if(ba != addr[12:11]) begin
               $display("discrepancies in ba in read");
               $finish;
             end
-            addr[10:2] <= a[8:0];
+            addr[8:0] <= a[8:0];
             count<=1;
             burst_read<=1;
           end
@@ -95,8 +95,8 @@ import "DPI-C" function void sdram_read(input int addr, output int data);
               $display("discrepancies in ba in write");
               $finish;
             end
-            sdram_write({6'b0,addr[25:11],addr[8:0],2'b0},{16'b0,dq}, {30'b0,dqm});
-            addr[10:2] <= a[8:0];
+            sdram_write({8'b0, addr[23:9], a[8:0], 1'b0}, {16'b0, dq}, {30'b0, dqm});
+            addr[8:0] <= a[8:0];
             count<=1;
           end
           term_t: begin
@@ -132,9 +132,9 @@ import "DPI-C" function void sdram_read(input int addr, output int data);
 
         if(will_stop_burst) burst_read<=0;
 
-        if(count==1 & burst_read==0) sdram_write({6'b0,addr[25:11],addr[10:2],1'b1,1'b0},{16'b0,dq}, {30'b0,dqm});
+        if(count==1 & burst_read==0) sdram_write({8'b0, addr[23:9], addr[8:0], 1'b0} + 32'd2, {16'b0, dq}, {30'b0, dqm});
 
-        if(count>={7'b0,cas_lat} & burst_read==1) sdram_read({6'b0,addr+{16'b0,count-{7'b0,cas_lat}}},{16'b0,buff});
+        if(count>={7'b0,cas_lat} & burst_read==1) sdram_read({8'b0, addr[23:0], 1'b0} + ({22'b0, count} - {22'b0, cas_lat}) * 32'd2, buff);
 
         if(count=={7'b0,cas_lat}+burst_len-1) burst_read<=0;
 
