@@ -140,7 +140,8 @@ import "DPI-C" function void sdram_read(input int addr, output int data);
   end
 
   always @* begin
-            if(count>={7'b0,cas_lat} & burst_read==1) sdram_read({7'b0, addr[23:0], 1'b0} + ({22'b0, count} - {29'b0, cas_lat}) * 32'd2, {16'b0,buff});
+    buff=0;
+    if(count>={7'b0,cas_lat} & burst_read==1) sdram_read({7'b0, addr[23:0], 1'b0} + ({22'b0, count} - {29'b0, cas_lat}) * 32'd2, {16'b0,buff});
   end
 
   assign dq = (count>={7'b0,cas_lat} & burst_read==1) ? buff : 16'bz;
