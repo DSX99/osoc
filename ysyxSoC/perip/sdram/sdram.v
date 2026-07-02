@@ -61,7 +61,7 @@ import "DPI-C" function void sdram_read(input int addr, output int data);
   end
 
   always @(posedge clk) begin
-    if(cs & cke) begin
+    if(!cke) begin
       count<=0;
       buff<=0;
       will_stop_burst<=0;
@@ -69,74 +69,76 @@ import "DPI-C" function void sdram_read(input int addr, output int data);
       cas_lat<=0;
       burst_len<=0;
     end else begin
-      if(count!=0) count<=count+1;
+      if(!cs)begin
+        if(count!=0) count<=count+1;
 
-      if(!burst_read)count<=0;
+        if(!burst_read)count<=0;
 
-      case(state)
-        nop_t: begin
-          ;
-        end
-        addr_t: begin
-          addr[25:11]<={a[12:0],ba};
-        end
-        read_t: begin
-          if(ba != addr[12:11]) begin
-            $display("discrepancies in ba in read");
-            $finish;
+        case(state)
+          nop_t: begin
+            ;
           end
-          addr[10:2] <= a[8:0];
-          count<=1;
-          burst_read<=1;
-        end
-        write_t: begin
-          if(ba != addr[12:11]) begin
-            $display("discrepancies in ba in write");
-            $finish;
+          addr_t: begin
+            addr[25:11]<={a[12:0],ba};
           end
-          sdram_write({6'b0,addr[25:11],addr[8:0],2'b0},{16'b0,dq}, {30'b0,dqm});
-          addr[10:2] <= a[8:0];
-          count<=1;
-        end
-        term_t: begin
-          will_stop_burst<=1;
-        end
-        reg_t: begin
-          case(a[2:0])
-            3'b000: burst_len<=1;
-            3'b001: burst_len<=2;
-            3'b010: burst_len<=4;
-            3'b011: burst_len<=8;
-            3'b111: burst_len<=1023;
-            default: begin
-              $display("discrepancies in burst_len");
+          read_t: begin
+            if(ba != addr[12:11]) begin
+              $display("discrepancies in ba in read");
               $finish;
             end
-          endcase
-          case(a[6:4])
-            3'b001: cas_lat<=1;
-            3'b010: cas_lat<=2;
-            3'b011: cas_lat<=3;
-            default: begin
-              $display("discrepancies in cas_lat");
+            addr[10:2] <= a[8:0];
+            count<=1;
+            burst_read<=1;
+          end
+          write_t: begin
+            if(ba != addr[12:11]) begin
+              $display("discrepancies in ba in write");
               $finish;
             end
-          endcase
-        end
-        default: begin
-            $display("strange state");
-            $finish;
-        end
-      endcase
+            sdram_write({6'b0,addr[25:11],addr[8:0],2'b0},{16'b0,dq}, {30'b0,dqm});
+            addr[10:2] <= a[8:0];
+            count<=1;
+          end
+          term_t: begin
+            will_stop_burst<=1;
+          end
+          reg_t: begin
+            case(a[2:0])
+              3'b000: burst_len<=1;
+              3'b001: burst_len<=2;
+              3'b010: burst_len<=4;
+              3'b011: burst_len<=8;
+              3'b111: burst_len<=1023;
+              default: begin
+                $display("discrepancies in burst_len");
+                $finish;
+              end
+            endcase
+            case(a[6:4])
+              3'b001: cas_lat<=1;
+              3'b010: cas_lat<=2;
+              3'b011: cas_lat<=3;
+              default: begin
+                $display("discrepancies in cas_lat");
+                $finish;
+              end
+            endcase
+          end
+          default: begin
+              $display("strange state");
+              $finish;
+          end
+        endcase
 
-      if(will_stop_burst) burst_read<=0;
+        if(will_stop_burst) burst_read<=0;
 
-      if(count==1 & burst_read==0) sdram_write({6'b0,addr[25:11],addr[10:2],2'b0},{16'b0,dq}, {30'b0,dqm});
+        if(count==1 & burst_read==0) sdram_write({6'b0,addr[25:11],addr[10:2],2'b0},{16'b0,dq}, {30'b0,dqm});
 
-      if(count>={7'b0,cas_lat} & burst_read==1) sdram_read({6'b0,addr+{16'b0,count-{7'b0,cas_lat}}},{16'b0,buff});
+        if(count>={7'b0,cas_lat} & burst_read==1) sdram_read({6'b0,addr+{16'b0,count-{7'b0,cas_lat}}},{16'b0,buff});
 
-      if(count=={7'b0,cas_lat}+burst_len-1) burst_read<=0;
+        if(count=={7'b0,cas_lat}+burst_len-1) burst_read<=0;
 
+      end
     end
   end
 
