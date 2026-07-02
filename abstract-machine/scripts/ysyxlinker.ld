@@ -42,7 +42,7 @@ SECTIONS {
     *(.sbss*)
     *(.scommon)
     _bss_end = .;
-  } >sram
+  } >sram AT> flash
   
   
   _sram_start = ORIGIN(sram);
