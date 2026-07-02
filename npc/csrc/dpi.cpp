@@ -50,12 +50,12 @@ extern "C" void psram_read(uint32_t addr, uint32_t *data) {
     *data=(psram[addr]);
 }
 extern "C" void sdram_write(uint32_t addr, uint32_t data, uint32_t mask) {
-    // printf("Call to read from addr:0x%x\n",addr);
+    printf("Call to read from addr:0x%x\n",addr);
     if (!(mask & 0x01)) sdram[addr] = data & 0xFF;
     if (!(mask & 0x02)) sdram[addr + 1] = (data >> 8) & 0xFF;
 }
 extern "C" void sdram_read(uint32_t addr, uint32_t *data) {
-    // printf("Call to read from addr:0x%x\n",addr);
+    printf("Call to read from addr:0x%x\n",addr);
     *data = sdram[addr] | (sdram[addr + 1] << 8);
 }
 
