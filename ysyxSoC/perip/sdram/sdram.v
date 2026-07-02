@@ -142,6 +142,6 @@ import "DPI-C" function void sdram_read(input int addr, output int data);
     end
   end
 
-  assign dq = (count>={7'b0,cas_lat} & burst_read==1) ? buff : 16'bz;
+  assign dq = ((count>={7'b0,cas_lat}+1) & burst_read==1) ? buff : 16'bz;
 
 endmodule
