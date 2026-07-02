@@ -121,11 +121,11 @@ import "DPI-C" function void sdram_read(input int addr, output int data);
               $display("discrepancies in cas_lat");
               $finish;
             end
-          default: begin
-              $display("strange state");
-              $finish;
-          end
           endcase
+        end
+        default: begin
+            $display("strange state");
+            $finish;
         end
       endcase
 
@@ -140,6 +140,6 @@ import "DPI-C" function void sdram_read(input int addr, output int data);
     end
   end
 
-  assign dq = (count>=cas_lat & burst_read==1) ? buff : 16'bz;
+  assign dq = (count>={7'b0,cas_lat} & burst_read==1) ? buff : 16'bz;
 
 endmodule
