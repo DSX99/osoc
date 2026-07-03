@@ -1,6 +1,4 @@
-module #(
-  SHIFT=0
-)sdram_chip(
+module sdram_chip(
   input        clk,
   input        cke,
   input        cs,
@@ -15,6 +13,9 @@ module #(
   
 import "DPI-C" function void sdram_write(input int addr, input int data, input int mask);
 import "DPI-C" function void sdram_read(input int addr, output int data);
+
+  parameter SHIFT = 0;
+
 
   typedef enum [2:0] { nop_t, addr_t, read_t, write_t, term_t, reg_t } state_t;
   
