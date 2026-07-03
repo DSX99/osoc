@@ -167,15 +167,18 @@ wire ras_0, ras_1, cas_0, cas_1, we_0, we_1;
 
 reg chose; // 0-0 1-1
 wire comb_chose;
+wire both
 
 assign comb_chose = (!ras && cas && we) ? a[13] : chose;
+assign both = (!ras && !cas && !we);
 
-assign ras_0 =  comb_chose ? 1'b1 : ras;
-assign ras_1 = !comb_chose ? 1'b1 : ras;
-assign cas_0 =  comb_chose ? 1'b1 : cas;
-assign cas_1 = !comb_chose ? 1'b1 : cas;
-assign we_0  =  comb_chose ? 1'b1 : we;
-assign we_1  = !comb_chose ? 1'b1 : we;
+assign ras_0 =  (comb_chose | both) ? 1'b1 : ras;
+assign cas_0 =  (comb_chose | both) ? 1'b1 : cas;
+assign we_0  =  (comb_chose | both) ? 1'b1 : we;
+
+assign ras_1 = (!comb_chose | both) ? 1'b1 : ras;
+assign cas_1 = (!comb_chose | both) ? 1'b1 : cas;
+assign we_1  = (!comb_chose | both) ? 1'b1 : we;
 
 always @(posedge clk) begin
   if(!ras && cas && we) chose <= a[13];
