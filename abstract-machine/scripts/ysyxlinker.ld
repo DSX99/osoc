@@ -23,6 +23,7 @@ SECTIONS {
     _boot_end = .;
   } >sram AT>flash
 
+  . = ALIGN(0x1000);
 
   _text_flash_start = LOADADDR(.text);
 
@@ -32,6 +33,8 @@ SECTIONS {
     *(.rodata*)
     _text_end = .;
   } >sdram AT> flash
+
+  . = ALIGN(0x1000);
 
   _data_flash_start = LOADADDR(.data);
 
