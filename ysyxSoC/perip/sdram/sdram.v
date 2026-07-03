@@ -1,4 +1,6 @@
-module sdram(
+module #(
+  SHIFT=0
+)sdram_chip(
   input        clk,
   input        cke,
   input        cs,
@@ -94,7 +96,7 @@ import "DPI-C" function void sdram_read(input int addr, output int data);
               $display("discrepancies in ba in write");
               $finish;
             end
-            sdram_write({7'b0, addr[23:9], a[8:0], 1'b0}, {16'b0, dq}, {30'b0, dqm});
+            sdram_write({7'b0, addr[23:9], a[8:0], 1'b0}+SHIFT, {16'b0, dq}, {30'b0, dqm});
             addr[8:0] <= a[8:0];
             count<=1;
           end
@@ -131,8 +133,6 @@ import "DPI-C" function void sdram_read(input int addr, output int data);
 
         if(will_stop_burst) burst_read<=0;
 
-        if(count==1 & burst_read==0) sdram_write({7'b0, addr[23:9], addr[8:0], 1'b0} + 32'd2, {16'b0, dq}, {30'b0, dqm});
-
         if(count=={7'b0,cas_lat}+burst_len-1) burst_read<=0;
 
       end
@@ -141,9 +141,36 @@ import "DPI-C" function void sdram_read(input int addr, output int data);
 
   always @* begin
     buff=0;
-    if(count>={7'b0,cas_lat} & burst_read==1) sdram_read({7'b0, addr[23:0], 1'b0} + ({22'b0, count} - {29'b0, cas_lat}) * 32'd2, {16'b0,buff});
+    if(count>={7'b0,cas_lat} & burst_read==1) sdram_read({7'b0, addr[23:0], 1'b0} + SHIFT + ({22'b0, count} - {29'b0, cas_lat}) * 32'd2, {16'b0,buff});
   end
 
   assign dq = (count>={7'b0,cas_lat} & burst_read==1) ? buff : 16'bz;
+
+endmodule
+
+module sdram(
+  input        clk,
+  input        cke,
+  input        cs,
+  input        ras,
+  input        cas,
+  input        we,
+  input [12:0] a,
+  input [ 1:0] ba,
+  input [ 3:0] dqm,
+  inout [31:0] dq
+);
+
+sdram_chip #(
+  .SHIFT(0)
+) sdram1(
+  .clk(clk), .cke(cke), .cs(cs), .ras(ras), .cas(cas), .we(we), .a(a), .ba(ba), .dqm(dqm[1:0]), .dq(dq[15:0])
+);
+
+sdram_chip #(
+  .SHIFT(2)
+)sdram2(
+  .clk(clk), .cke(cke), .cs(cs), .ras(ras), .cas(cas), .we(we), .a(a), .ba(ba), .dqm(dqm[3:2]), .dq(dq[31:16])
+);
 
 endmodule
