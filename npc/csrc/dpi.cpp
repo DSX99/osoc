@@ -54,9 +54,9 @@ extern "C" void sdram_write(uint32_t addr, uint32_t data, uint32_t mask) {
     if (!(mask & 0x01)) sdram[addr] = data & 0xFF;
     if (!(mask & 0x02)) sdram[addr + 1] = (data >> 8) & 0xFF;
 
-    for(int i=0;i<10;i++){
-        printf("i:%d,mem:%02x\n",i,sdram[i]);
-    }
+    // for(int i=0;i<10;i++){
+    //     printf("i:%d,mem:%02x\n",i,sdram[i]);
+    // }
 }
 extern "C" void sdram_read(uint32_t addr, uint32_t *data) {
     // printf("Call to read from addr:0x%x\n",addr);
