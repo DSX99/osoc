@@ -27,7 +27,9 @@ import "DPI-C" function void sdram_read(input int addr, output int data);
   reg [2:0] cas_lat;
   reg [9:0] burst_len;
 
-  reg [23:0] addr; // addr : {addr row[12:0],ba[1:0],addr col[8:0],1'b0(dqm[1:0], 1 means dont, 0 is lowest, 1 is highest)}
+  reg [1:0] ba_reg;
+  reg [12:0] ba_rows [3:0];
+  reg [8:0] addr; // addr : {addr row[12:0],ba[1:0],addr col[8:0],1'b0(dqm[1:0], 1 means dont, 0 is lowest, 1 is highest)}
 
   always @* begin
     if(cs) begin
@@ -81,15 +83,16 @@ import "DPI-C" function void sdram_read(input int addr, output int data);
             ;
           end
           addr_t: begin
-            addr[23:9] <= {a[12:0], ba};
+            ba_rows[ba]<=a[12:0];
           end
           read_t: begin
             addr[8:0] <= a[8:0];
+            ba_reg <= ba;
             count<=1;
             burst_read<=1;
           end
           write_t: begin
-            sdram_write({6'b0, addr[23:9], a[8:0], 2'b0}+SHIFT, {16'b0, dq}, {30'b0, dqm});
+            sdram_write({6'b0, ba_rows[ba], ba, a[8:0], 2'b0}+SHIFT, {16'b0, dq}, {30'b0, dqm});
             count<=1;
           end
           term_t: begin
@@ -133,7 +136,7 @@ import "DPI-C" function void sdram_read(input int addr, output int data);
 
   always @* begin
     buff=0;
-    if(count>={7'b0,cas_lat} & burst_read==1) sdram_read({6'b0, addr[23:0], 2'b0} + SHIFT + ({22'b0, count} - {29'b0, cas_lat}) * 32'd4, {16'b0,buff});
+    if(count>={7'b0,cas_lat} & burst_read==1) sdram_read({6'b0, ba_rows[ba], ba_reg, addr[8:0], 2'b0} + SHIFT + ({22'b0, count} - {29'b0, cas_lat}) * 32'd4, {16'b0,buff});
   end
 
   assign dq = (count>={7'b0,cas_lat} & burst_read==1) ? buff : 16'bz;
@@ -157,11 +160,11 @@ module sdram_subchip(
 
 wire ras_0, ras_1, cas_0, cas_1, we_0, we_1;
 
-reg chose; // 0-0 1-1
+reg [3:0] chose; // 0-0 1-1
 wire comb_chose;
 wire both;
 
-assign comb_chose = (!ras && cas && we) ? a[13] : chose;
+assign comb_chose = (!ras && cas && we) ? a[13] : chose[ba];
 assign both = (!ras && !cas && !we);
 
 assign ras_0 = (!comb_chose | both) ? ras  : 1'b1;
@@ -173,7 +176,7 @@ assign cas_1 =  (comb_chose | both) ? cas  : 1'b1;
 assign we_1  =  (comb_chose | both) ? we   : 1'b1;
 
 always @(posedge clk) begin
-  if(!ras && cas && we) chose <= a[13];
+  if(!ras && cas && we) chose[ba] <= a[13];
 end
 
 sdram_chip #(
