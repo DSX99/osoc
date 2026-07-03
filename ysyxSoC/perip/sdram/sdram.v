@@ -188,7 +188,7 @@ sdram_chip #(
 );
 
 sdram_chip #(
-  .SHIFT(SHIFT + 24'h4000000)
+  .SHIFT(SHIFT + 27'h4000000)
 )sdram1(
   .clk(clk), .cke(cke), .cs(cs), .ras(ras_1), .cas(cas_1), .we(we_1), .a(a[12:0]), .ba(ba), .dqm(dqm), .dq(dq)
 );
