@@ -166,7 +166,7 @@ module sdram_subchip(
 wire ras_0, ras_1, cas_0, cas_1, we_0, we_1;
 
 reg chose; // 0-0 1-1
-wire comb_chose
+wire comb_chose;
 
 assign comb_chose = (!ras && cas && we) ? a[13] : chose;
 
