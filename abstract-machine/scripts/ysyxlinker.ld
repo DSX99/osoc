@@ -1,6 +1,7 @@
 ENTRY(_start)
 
 PHDRS{
+  preboot PT_LOAD;
   boot PT_LOAD;
   text PT_LOAD;
   data PT_LOAD;
@@ -19,7 +20,7 @@ SECTIONS {
   .preboot : {
     *(entry)
     *(.preboot)
-  } >flash : boot
+  } >flash : preboot
 
   _boot_flash_start = LOADADDR(.boot);
 
@@ -53,7 +54,7 @@ SECTIONS {
     *(.sbss*)
     *(.scommon)
     _bss_end = .;
-  } >sdram AT> flash : data
+  } >sdram AT> flash
   
   
   _sram_start = ORIGIN(sram);
