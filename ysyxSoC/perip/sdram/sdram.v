@@ -148,6 +148,53 @@ import "DPI-C" function void sdram_read(input int addr, output int data);
 
 endmodule
 
+module sdram_subchip(
+  input        clk,
+  input        cke,
+  input        cs,
+  input        ras,
+  input        cas,
+  input        we,
+  input [13:0] a,
+  input [ 1:0] ba,
+  input [ 1:0] dqm,
+  inout [15:0] dq
+);
+
+  parameter SHIFT = 0;
+
+wire ras_0, ras_1, cas_0, cas_1, we_0, we_1;
+
+reg chose; // 0-0 1-1
+wire comb_chose
+
+assign comb_chose = (!ras && cas && we) ? a[13] : chose;
+
+assign ras_0 =  comb_chose ? 1'b1 : ras;
+assign ras_1 = !comb_chose ? 1'b1 : ras;
+assign cas_0 =  comb_chose ? 1'b1 : cas;
+assign cas_1 = !comb_chose ? 1'b1 : cas;
+assign we_0  =  comb_chose ? 1'b1 : we;
+assign we_1  = !comb_chose ? 1'b1 : we;
+
+always @(posedge clk) begin
+  if(!ras && cas && we) chose <= a[13];
+end
+
+sdram_chip #(
+  .SHIFT(SHIFT)
+) sdram0(
+  .clk(clk), .cke(cke), .cs(cs), .ras(ras_0), .cas(cas_0), .we(we_0), .a(a[12:0]), .ba(ba), .dqm(dqm), .dq(dq)
+);
+
+sdram_chip #(
+  .SHIFT(SHIFT + 24'h4000000)
+)sdram1(
+  .clk(clk), .cke(cke), .cs(cs), .ras(ras_1), .cas(cas_1), .we(we_1), .a(a[12:0]), .ba(ba), .dqm(dqm), .dq(dq)
+);
+
+endmodule
+
 module sdram(
   input        clk,
   input        cke,
@@ -155,21 +202,21 @@ module sdram(
   input        ras,
   input        cas,
   input        we,
-  input [12:0] a,
+  input [13:0] a,
   input [ 1:0] ba,
   input [ 3:0] dqm,
   inout [31:0] dq
 );
 
-sdram_chip #(
+sdram_subchip #(
   .SHIFT(0)
-) sdram1(
+) sdramsub1(
   .clk(clk), .cke(cke), .cs(cs), .ras(ras), .cas(cas), .we(we), .a(a), .ba(ba), .dqm(dqm[1:0]), .dq(dq[15:0])
 );
 
-sdram_chip #(
+sdram_subchip #(
   .SHIFT(2)
-)sdram2(
+)sdramsub2(
   .clk(clk), .cke(cke), .cs(cs), .ras(ras), .cas(cas), .we(we), .a(a), .ba(ba), .dqm(dqm[3:2]), .dq(dq[31:16])
 );
 
