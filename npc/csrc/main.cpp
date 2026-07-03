@@ -82,7 +82,7 @@ static int parse_args(int argc, char *argv[]) {
 
 int main(int argc, char** argv) {
   #ifdef CONFIG_FST
-  printf("\n\t\t\033[31RUNNING WITH FST\033[0m\n");
+  printf("\n\t\t\033[31mRUNNING WITH FST\033[0m\n");
   #endif
   Verilated::commandArgs(argc, argv);
   printf("\n\033[1m\033[36mNPC\033[0m\n\n");
