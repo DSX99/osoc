@@ -97,7 +97,7 @@ import "DPI-C" function void sdram_read(input int addr, output int data);
               $display("discrepancies in ba in write");
               $finish;
             end
-            sdram_write({7'b0, addr[23:9], a[8:0], 1'b0}+SHIFT, {16'b0, dq}, {30'b0, dqm});
+            sdram_write({6'b0, addr[23:9], a[8:0], 2'b0}+SHIFT, {16'b0, dq}, {30'b0, dqm});
             addr[8:0] <= a[8:0];
             count<=1;
           end
@@ -142,7 +142,7 @@ import "DPI-C" function void sdram_read(input int addr, output int data);
 
   always @* begin
     buff=0;
-    if(count>={7'b0,cas_lat} & burst_read==1) sdram_read({7'b0, addr[23:0], 1'b0} + SHIFT + ({22'b0, count} - {29'b0, cas_lat}) * 32'd2, {16'b0,buff});
+    if(count>={7'b0,cas_lat} & burst_read==1) sdram_read({6'b0, addr[23:0], 2'b0} + SHIFT + ({22'b0, count} - {29'b0, cas_lat}) * 32'd4, {16'b0,buff});
   end
 
   assign dq = (count>={7'b0,cas_lat} & burst_read==1) ? buff : 16'bz;
