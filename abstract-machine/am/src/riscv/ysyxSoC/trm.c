@@ -6,10 +6,10 @@
 extern char _heap_start;
 int main(const char *args);
 
-#define PMEM_SIZE (16 * 1024)
-#define PMEM_END  ((uintptr_t)&_heap_start + PMEM_SIZE)
+#define HEAP_SIZE (4 * 1024 * 1024)
+#define HEAP_END  ((uintptr_t)&_heap_start + HEAP_SIZE)
 
-Area heap = RANGE(&_heap_start, PMEM_END);
+Area heap = RANGE(&_heap_start, HEAP_END);
 static const char mainargs[MAINARGS_MAX_LEN] = TOSTRING(MAINARGS_PLACEHOLDER); // defined in CFLAGS
 
 #define UART_BASE 0x10000000L
