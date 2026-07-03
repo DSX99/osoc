@@ -21,7 +21,7 @@ SECTIONS {
     _boot_start = .;
     *(.boot*)
     _boot_end = .;
-  } >flash
+  } >sram AT>flash
 
 
   _text_flash_start = LOADADDR(.text);
