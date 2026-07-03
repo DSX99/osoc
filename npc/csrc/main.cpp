@@ -82,7 +82,7 @@ static int parse_args(int argc, char *argv[]) {
 
 int main(int argc, char** argv) {
   #ifdef CONFIG_FST
-  printf("\t\t\033[34RUNNING WITH FST\033[0m\t\t");
+  printf("\t\t\033[35RUNNING WITH FST\033[0m\n");
   #endif
   Verilated::commandArgs(argc, argv);
   printf("\n\033[1m\033[36mNPC\033[0m\n\n");
@@ -252,6 +252,7 @@ void execute(uint32_t n){
       }else{
         printf("\033[032mGOOD\033[0m\n");
       }
+      printf("Finished in %ld",contextp->time());
       break;
     }
     if(check_watchpoints()){
