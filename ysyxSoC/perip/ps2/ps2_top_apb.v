@@ -22,7 +22,7 @@ module ps2_top_apb(
   reg prev;
   reg [7:0] out;
   
-  assign in_prdata = (in_paddr[3:0] == 4'h4) ? {16'b0,gpio_in} : 32'h0;
+  assign in_prdata = (in_paddr[3:0] == 4'h0) ? {24'b0,out} : 32'h0;
   assign in_pslverr = 0;
   assign in_pready = (in_psel && in_penable) ? 1'b1 : 1'b0;
 
