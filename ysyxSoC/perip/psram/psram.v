@@ -27,7 +27,7 @@ module psram(
     if(counter==8) begin
       if(oper == 8'h35) set<=1;
       else if(oper != 8'h38 && oper != 8'heb)begin
-        $display("Wrong code for psram %x",oper);
+        $display("Wrong code for psram %x\n",oper);
         $finish;
       end
     end
