@@ -5,6 +5,7 @@ PHDRS{
   boot PT_LOAD;
   text PT_LOAD;
   data PT_LOAD;
+  data_extra PT_LOAD;
 }
 
 MEMORY {
