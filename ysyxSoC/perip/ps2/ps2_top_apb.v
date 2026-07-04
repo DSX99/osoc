@@ -21,14 +21,18 @@ module ps2_top_apb(
   reg [3:0] count;  // count ps2_data bits
   reg prev;
   reg [7:0] out;
+  
+  assign in_prdata = (in_paddr[3:0] == 4'h4) ? {16'b0,gpio_in} : 32'h0;
+  assign in_pslverr = 0;
+  assign in_pready = (in_psel && in_penable) ? 1'b1 : 1'b0;
 
-  always @(posedge clk) begin
+  always @(posedge clock) begin
     prev<=ps2_clk;
   end
 
   wire sampling = prev && !ps2_clk;
 
-  always @(posedge clk) begin
+  always @(posedge clock) begin
     if (reset) begin // reset
         count <= 0;
     end else begin
@@ -51,5 +55,5 @@ module ps2_top_apb(
       out <= 0;
     end 
   end
-  
+
 endmodule
