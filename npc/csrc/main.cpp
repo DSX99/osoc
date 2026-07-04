@@ -183,10 +183,12 @@ void execute(uint32_t n){
     tracep->dump(contextp->time());
     #endif
     
-    if(contextp->time() > MAX_SIM_TIME){
-      ret = top->reg_mod->regs[10];
-      break;
-    }
+    // if(contextp->time() > MAX_SIM_TIME){
+    //   printf("MAX SIMTIME\n");
+    //   ret = top->reg_mod->regs[10];
+    //   break;
+    // }
+
     if(!((contextp->time()) % 100000000)&&batch){
       printf("time:%lu\n", contextp->time());
     }
