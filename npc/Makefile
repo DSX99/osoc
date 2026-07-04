@@ -36,10 +36,10 @@ endif
 NVB_HEAD_SRC = 
 
 ifdef NVB
-CPP_SRC += csrc/main_nvb.cpp
-else
-CPP_SRC += csrc/main.cpp $(NVBOARD_HOME)/src/*.cpp 
+CPP_SRC += csrc/main_nvb.cpp $(NVBOARD_HOME)/src/*.cpp 
 NVB_HEAD_SRC += $(NVBOARD_HOME)/include/*.h 
+else
+CPP_SRC += csrc/main.cpp 
 endif
 
 LIBCAPSTONE = $(NEMU_HOME)/tools/capstone/repo/libcapstone.so.5
