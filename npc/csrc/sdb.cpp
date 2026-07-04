@@ -33,7 +33,7 @@ void print_itrace();
 void print_ftrace();
 void reg_display();
 uint32_t expr(char *e, bool *success);
-void execute(uint32_t n);
+void execute(uint64_t n);
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {

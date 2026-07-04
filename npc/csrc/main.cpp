@@ -37,7 +37,7 @@ bool valid_cycle=0;
 char itrace[16][128];
 int point=0;
 
-void execute(uint32_t n);
+void execute(uint64_t n);
 void init_sdb();
 void sdb_mainloop(uint32_t *ret);
 bool check_watchpoints();
@@ -121,7 +121,7 @@ int main(int argc, char** argv) {
   reset(soc, 100);
 
   if(batch){
-    execute(-1);
+    execute(-1LL);
   }else{
     init_sdb();
     sdb_mainloop(&qexit);
@@ -143,7 +143,7 @@ const char *regs[] = {
 };
 
 
-void execute(uint32_t n){
+void execute(uint64_t n){
 
   char str[128];
   uint8_t inst[4];
