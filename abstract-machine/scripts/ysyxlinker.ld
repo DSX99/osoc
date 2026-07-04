@@ -98,8 +98,8 @@ SECTIONS {
   } >sdram AT> flash
   
   
-  _sram_start = ORIGIN(sram);
-  _stack_top = ORIGIN(sram) + LENGTH(sram); 
+  _sram_start = ORIGIN(sram)+ LENGTH(sdram) - 0x20000;
+  _stack_top = ORIGIN(sdram) + LENGTH(sdram); 
   . = ORIGIN(sram) + LENGTH(sram);
   _stack_pointer = .;
   end = .;
