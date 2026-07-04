@@ -12,7 +12,7 @@ INCLUDES = -I$(SOC_HOME)/perip/uart16550/rtl -I$(SOC_HOME)/perip/spi/rtl
 .DEFAULT_GOAL  := lint
 VERILATOR = verilator
 VERILOG_SRC = vsrc/pipeline_bus_pkg.sv vsrc/*.sv $(SoC_VSRC) 
-CPP_SRC = csrc/*.cpp
+CPP_SRC = $(shell find csrc/*.cpp -not -name main* )
 
 IMG ?= 
 ARGS ?= 
@@ -31,6 +31,12 @@ endif
 
 ifdef FAST
 VERILOG_FLAGS += -O3 --x-assign fast --x-initial fast --noassert
+endif
+
+ifdef NVB
+CPP_SRC += csrc/main_nvb.cpp
+else
+CPP_SRC += csrc/main.cpp $(NVBOARD_HOME)/src/* $(NVBOARD_HOME)/include/* 
 endif
 
 LIBCAPSTONE = $(NEMU_HOME)/tools/capstone/repo/libcapstone.so.5
