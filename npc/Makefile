@@ -33,10 +33,13 @@ ifdef FAST
 VERILOG_FLAGS += -O3 --x-assign fast --x-initial fast --noassert
 endif
 
+NVB_HEAD_SRC = 
+
 ifdef NVB
 CPP_SRC += csrc/main_nvb.cpp
 else
-CPP_SRC += csrc/main.cpp $(NVBOARD_HOME)/src/* $(NVBOARD_HOME)/include/* 
+CPP_SRC += csrc/main.cpp $(NVBOARD_HOME)/src/* 
+NVB_HEAD_SRC += $(NVBOARD_HOME)/include/* 
 endif
 
 LIBCAPSTONE = $(NEMU_HOME)/tools/capstone/repo/libcapstone.so.5
@@ -50,7 +53,7 @@ lint:
 build: sim 
 	@mkdir -p obj_dir
 	@gcc -c $(VERILATOR_CFLAGS) -O2 $(NEMU_HOME)/src/utils/disasm.c -o obj_dir/disasm.o
-	@$(VERILATOR) $(VERILOG_SRC) $(VERILOG_FLAGS) $(CPP_SRC)
+	@$(VERILATOR) $(VERILOG_SRC) $(VERILOG_FLAGS) $(CPP_SRC) -I NVB_HEAD_SRC
 	@$(MAKE) -j -C obj_dir -f VysyxSoCFull.mk 
 
 run: build
