@@ -30,7 +30,7 @@ VERILOG_FLAGS += --quiet
 endif
 
 ifdef FAST
-VERILOG_FLAGS += -O3
+VERILOG_FLAGS += -O3 --x-assign fast --x-initial fast --noassert
 endif
 
 LIBCAPSTONE = $(NEMU_HOME)/tools/capstone/repo/libcapstone.so.5
