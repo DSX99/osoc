@@ -12,3 +12,8 @@
 !README.md
 build/
 obj_dir
+sta_res/*/*
+!sta_res/*/*.rpt
+!sta_res/*/*.pwr
+!sta_res/*/synth_stat.txt
+

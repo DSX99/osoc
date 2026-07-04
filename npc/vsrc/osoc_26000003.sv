@@ -3,7 +3,7 @@ module osoc_26000003 (
     input          reset,
     input          io_interrupt,
 
-    // AXI4 Master Interface
+    // External AXI4 Master Interface (To System Memory/Peripherals)
     input          io_master_awready,
     output         io_master_awvalid,
     output [31:0]  io_master_awaddr,
@@ -34,7 +34,7 @@ module osoc_26000003 (
     input          io_master_rlast,
     input  [3:0]   io_master_rid,
 
-    // AXI4 Slave Interface
+    // External AXI4 Slave Interface (Pass-through straight to Core)
     output         io_slave_awready,
     input          io_slave_awvalid,
     input  [31:0]  io_slave_awaddr,
@@ -66,208 +66,234 @@ module osoc_26000003 (
     output [3:0]   io_slave_rid
 );
 
-logic [31:0] pc /* verilator public */, opcode /* verilator public */, prev_pc /* verilator public */;
-logic reg_valid /* verilator public */, reg_valid_e /* verilator public */, lsu_device_call /* verilator public */;
+    // =========================================================================
+    // Core Internal AXI Master Wires
+    // =========================================================================
+    logic         core_awvalid;
+    logic [31:0]  core_awaddr;
+    logic [3:0]   core_awid;
+    logic [7:0]   core_awlen;
+    logic [2:0]   core_awsize;
+    logic [1:0]   core_awburst;
+    logic         core_awready;
 
-assign opcode = if_id_bus.opcode;
+    logic         core_wvalid;
+    logic [31:0]  core_wdata;
+    logic [3:0]   core_wstrb;
+    logic         core_wlast;
+    logic         core_wready;
 
-logic [31:0] next_pc;
+    logic         core_bready;
+    logic         core_bvalid;
+    logic [1:0]   core_bresp;
+    logic [3:0]   core_bid;
 
-// Pipeline buses and valid/ready signals
-if_to_id_bus_t if_id_bus;
-logic if_id_valid, if_id_ready;
+    logic         core_arvalid;
+    logic [31:0]  core_araddr;
+    logic [3:0]   core_arid;
+    logic [7:0]   core_arlen;
+    logic [2:0]   core_arsize;
+    logic [1:0]   core_arburst;
+    logic         core_arready;
 
-id_to_ex_bus_t id_ex_bus_decoded;
-id_to_ex_bus_t id_ex_bus;
-logic id_ex_valid, id_ex_ready;
+    logic         core_rready;
+    logic         core_rvalid;
+    logic [1:0]   core_rresp;
+    logic [31:0]  core_rdata;
+    logic         core_rlast;
+    logic [3:0]   core_rid;
 
-ex_to_ls_bus_t ex_ls_bus_alu;
-ex_to_ls_bus_t ex_ls_bus;
-logic ex_ls_valid, ex_ls_ready;
+    // Custom CLINT Interconnect Signals
+    logic [31:0]  cwdata, crdata, caddr;
+    logic         cwvalid, crvalid, cready;
 
-ls_to_wb_bus_t ls_wb_bus;
-logic ls_wb_valid, ls_wb_ready;
-logic [31:0] csr_data;
+    // Address Decoding Attributes
+    logic match_aw, match_ar;
+    assign match_aw = (core_awaddr[31:16] == 16'h0200);
+    assign match_ar = (core_araddr[31:16] == 16'h0200);
 
-logic [31:0] pc_in;
-pc pc_mod(
-    .clk(clock), .rst(reset), .branch(ex_ls_bus.branch), .data_in(pc_in), .pc(pc), .next_pc(next_pc), .valid(ls_wb_valid)
-);
-assign pc_in = ls_wb_bus.mux_select_pc ? ls_wb_bus.csr_out : ls_wb_bus.alu_out;
+    // =========================================================================
+    // XBAR Routing Logic
+    // =========================================================================
+    always_comb begin
+        // --- Write Address Channel (AW) Routing ---
+        if (match_aw) begin
+            io_master_awvalid = 1'b0;
+            io_master_awaddr  = 32'b0;
+            io_master_awid    = 4'b0;
+            io_master_awlen   = 8'b0;
+            io_master_awsize  = 3'b0;
+            io_master_awburst = 2'b0;
+            core_awready      = 1'b1; // Auto-handshake internal core target
+        end else begin
+            io_master_awvalid = core_awvalid;
+            io_master_awaddr  = core_awaddr;
+            io_master_awid    = core_awid;
+            io_master_awlen   = core_awlen;
+            io_master_awsize  = core_awsize;
+            io_master_awburst = core_awburst;
+            core_awready      = io_master_awready;
+        end
 
-// IFU
-ifu ifu_mod(
-    .clk(clock), .rst(reset), .pc(pc), .next_pc(next_pc), .bus_out(if_id_bus), .valid(if_id_valid), .ready(if_id_ready),
-    .araddr(araddr_ifu), .arvalid(arvalid_ifu), .arready(arready_ifu), .rdata(rdata_ifu), .rresp(rresp_ifu), .rvalid(rvalid_ifu), .rready(rready_ifu)
-);
+        // --- Write Data Channel (W) Routing ---
+        // CLINT captures data directly when address matched during write sequence
+        if (match_aw) begin
+            io_master_wvalid  = 1'b0;
+            io_master_wdata   = 32'b0;
+            io_master_wstrb   = 4'b0;
+            io_master_wlast   = 1'b0;
+            core_wready       = 1'b1; 
+        end else begin
+            io_master_wvalid  = core_wvalid;
+            io_master_wdata   = core_wdata;
+            io_master_wstrb   = core_wstrb;
+            io_master_wlast   = core_wlast;
+            core_wready       = io_master_wready;
+        end
 
-// ID
-decode decode_mod(
-    .bus_in(if_id_bus), .bus_out(id_ex_bus_decoded), .valid_left(if_id_valid), .ready_left(if_id_ready), .valid_right(id_ex_valid), .ready_right(id_ex_ready)
-);
+        // --- Write Response Channel (B) Routing ---
+        if (match_aw) begin
+            io_master_bready  = 1'b0;
+            core_bvalid       = 1'b1; // Immediate pseudo-response to unblock single-cycle loop
+            core_bresp        = 2'b00; // OKAY status
+            core_bid          = core_awid;
+        end else begin
+            io_master_bready  = core_bready;
+            core_bvalid       = io_master_bvalid;
+            core_bresp        = io_master_bresp;
+            core_bid          = io_master_bid;
+        end
 
-// EXU
-logic id_ex_ready_alu, id_ex_ready_csr, ex_ls_valid_alu, ex_ls_valid_csr;
+        // --- Read Address Channel (AR) Routing ---
+        if (match_ar) begin
+            io_master_arvalid = 1'b0;
+            io_master_araddr  = 32'b0;
+            io_master_arid    = 4'b0;
+            io_master_arlen   = 8'b0;
+            io_master_arsize  = 3'b0;
+            io_master_arburst = 2'b0;
+            core_arready      = 1'b1; 
+        end else begin
+            io_master_arvalid = core_arvalid;
+            io_master_araddr  = core_araddr;
+            io_master_arid    = core_arid;
+            io_master_arlen   = core_arlen;
+            io_master_arsize  = core_arsize;
+            io_master_arburst = core_arburst;
+            core_arready      = io_master_arready;
+        end
 
-alu alu_mod(
-    .bus_in(id_ex_bus), .bus_out(ex_ls_bus_alu), .valid_left(id_ex_valid), .ready_left(id_ex_ready_alu), .valid_right(ex_ls_valid_alu), .ready_right(ex_ls_ready)
-);
+        // --- Read Data Channel (R) Routing ---
+        if (match_ar) begin
+            io_master_rready  = 1'b0;
+            core_rvalid       = cready; // Interlocked with custom peripheral transaction cycle
+            core_rdata        = crdata;
+            core_rresp        = 2'b00; 
+            core_rlast        = 1'b1;
+            core_rid          = core_arid;
+        end else begin
+            io_master_rready  = core_rready;
+            core_rvalid       = io_master_rvalid;
+            core_rdata        = io_master_rdata;
+            core_rresp        = io_master_rresp;
+            core_rlast        = io_master_rlast;
+            core_rid          = io_master_rid;
+        end
+    end
 
-logic [31:0] csr_in;
-csr csr_mod(
-    .clk(clock), .rst(reset), .oper(id_ex_bus.csr_oper[1:0]), .addr(id_ex_bus.imm[11:0]),
-    .data_in(csr_in), .data_out(csr_data), .pc(pc), .cause(id_ex_bus.cause), .valid_left(id_ex_valid), .ready_left(id_ex_ready_csr), .valid_right(ex_ls_valid_csr), .ready_right(ex_ls_ready)
-);
+    // =========================================================================
+    // Core Interface Extraction To Custom Peripheral Bus Conversion Engine
+    // =========================================================================
+    always_comb begin
+        cwvalid = core_wvalid && match_aw;
+        cwdata  = core_wdata;
+        crvalid = core_arvalid && match_ar;
+        caddr   = match_aw ? core_awaddr : (match_ar ? core_araddr : 32'b0);
+    end
 
-always_comb begin
-    ex_ls_bus = ex_ls_bus_alu;
-    ex_ls_bus.csr_out = csr_data;
-end
+    // =========================================================================
+    // Core Module Instantiation
+    // =========================================================================
+    osoc_26000003_core core_inst (
+        .clock(clock),
+        .reset(reset),
+        .io_interrupt(io_interrupt),
 
-assign id_ex_ready = id_ex_ready_alu & id_ex_ready_csr;
-assign ex_ls_valid = ex_ls_valid_alu & ex_ls_valid_csr;
+        // Core to XBAR Master Routing Ports
+        .io_master_awready(core_awready),
+        .io_master_awvalid(core_awvalid),
+        .io_master_awaddr(core_awaddr),
+        .io_master_awid(core_awid),
+        .io_master_awlen(core_awlen),
+        .io_master_awsize(core_awsize),
+        .io_master_awburst(core_awburst),
+        .io_master_wready(core_wready),
+        .io_master_wvalid(core_wvalid),
+        .io_master_wdata(core_wdata),
+        .io_master_wstrb(core_wstrb),
+        .io_master_wlast(core_wlast),
+        .io_master_bready(core_bready),
+        .io_master_bvalid(core_bvalid),
+        .io_master_bresp(core_bresp),
+        .io_master_bid(core_bid),
+        .io_master_arready(core_arready),
+        .io_master_arvalid(core_arvalid),
+        .io_master_araddr(core_araddr),
+        .io_master_arid(core_arid),
+        .io_master_arlen(core_arlen),
+        .io_master_arsize(core_arsize),
+        .io_master_arburst(core_arburst),
+        .io_master_rready(core_rready),
+        .io_master_rvalid(core_rvalid),
+        .io_master_rresp(core_rresp),
+        .io_master_rdata(core_rdata),
+        .io_master_rlast(core_rlast),
+        .io_master_rid(core_rid),
 
-// LSU
-lsu lsu_mod(
-    .clk(clock), .rst(reset), .bus_in(ex_ls_bus), .bus_out(ls_wb_bus), .valid_left(ex_ls_valid), .ready_left(ex_ls_ready), .valid_right(ls_wb_valid), .ready_right(ls_wb_ready),
-    .araddr(araddr_lsu), .arvalid(arvalid_lsu), .arready(arready_lsu), .rdata(rdata_lsu), .rresp(rresp_lsu), .rvalid(rvalid_lsu), .rready(rready_lsu),
-    .awaddr(awaddr_lsu), .awvalid(awvalid_lsu), .awready(awready_lsu), .wdata(wdata_lsu), .wstrb(wstrb_lsu), .wvalid(wvalid_lsu), .wready(wready_lsu), .bresp(bresp_lsu), .bvalid(bvalid_lsu), .bready(bready_lsu),
-    .cwdata(cwdata), .caddr(caddr), .cwvalid(cwvalid), .cready(cready), .crdata(crdata), .crvalid(crvalid), .lsu_device_call(lsu_device_call)
-);
+        // Straight Pass-through Slave Ports
+        .io_slave_awready(io_slave_awready),
+        .io_slave_awvalid(io_slave_awvalid),
+        .io_slave_awaddr(io_slave_awaddr),
+        .io_slave_awid(io_slave_awid),
+        .io_slave_awlen(io_slave_awlen),
+        .io_slave_awsize(io_slave_awsize),
+        .io_slave_awburst(io_slave_awburst),
+        .io_slave_wready(io_slave_wready),
+        .io_slave_wvalid(io_slave_wvalid),
+        .io_slave_wdata(io_slave_wdata),
+        .io_slave_wstrb(io_slave_wstrb),
+        .io_slave_wlast(io_slave_wlast),
+        .io_slave_bready(io_slave_bready),
+        .io_slave_bvalid(io_slave_bvalid),
+        .io_slave_bresp(io_slave_bresp),
+        .io_slave_bid(io_slave_bid),
+        .io_slave_arready(io_slave_arready),
+        .io_slave_arvalid(io_slave_arvalid),
+        .io_slave_araddr(io_slave_araddr),
+        .io_slave_arid(io_slave_arid),
+        .io_slave_arlen(io_slave_arlen),
+        .io_slave_arsize(io_slave_arsize),
+        .io_slave_arburst(io_slave_arburst),
+        .io_slave_rready(io_slave_rready),
+        .io_slave_rvalid(io_slave_rvalid),
+        .io_slave_rresp(io_slave_rresp),
+        .io_slave_rdata(io_slave_rdata),
+        .io_slave_rlast(io_slave_rlast),
+        .io_slave_rid(io_slave_rid)
+    );
 
-// WB / Regfile
-logic [31:0] reg_data_rs1, reg_data_rs2, reg_in;
-regs reg_mod(
-    .clk(clock), .rst(reset), .data_in(reg_in), .rs1(id_ex_bus_decoded.rs1), .rs2(id_ex_bus_decoded.rs2), .rd(ls_wb_bus.rd), .data_rs1(reg_data_rs1), .data_rs2(reg_data_rs2), .valid(ls_wb_valid), .ready(ls_wb_ready)
-);
-
-assign reg_valid_e = ls_wb_valid;
-always_ff @(posedge clock) begin
-    reg_valid <= reg_valid_e;
-    prev_pc<=pc;
-end
-always_comb begin
-    id_ex_bus = id_ex_bus_decoded; 
-    id_ex_bus.data_rs1 = reg_data_rs1;
-    id_ex_bus.data_rs2 = reg_data_rs2;
-
-    case(ls_wb_bus.mux_select)
-        2'b00: reg_in = ls_wb_bus.alu_out;
-        2'b01: reg_in = ls_wb_bus.lsu_out;
-        2'b10: reg_in = ls_wb_bus.next_pc;
-        2'b11: reg_in = ls_wb_bus.csr_out;
-    endcase
-end
-
-assign csr_in = id_ex_bus.csr_oper[2] ? {27'b0, id_ex_bus.rs1} : id_ex_bus.data_rs1;
-
-// Internal Interconnect Wires
-logic [31:0] araddr_lsu, rdata_lsu;
-logic [1:0]  rresp_lsu;
-logic        arvalid_lsu, arready_lsu, rvalid_lsu, rready_lsu;
-
-logic [31:0] awaddr_lsu, wdata_lsu;
-logic [3:0]  wstrb_lsu;
-logic [1:0]  bresp_lsu;
-logic        awvalid_lsu, awready_lsu, wvalid_lsu, wready_lsu, bvalid_lsu, bready_lsu;
-
-logic [31:0] araddr_ifu, rdata_ifu;
-logic [1:0]  rresp_ifu;
-logic        arvalid_ifu, arready_ifu, rvalid_ifu, rready_ifu;
-
-// Arbiter Module
-// Connected directly to the top-level io_master pins instead of the simulation slave module
-arbiter arbiter_mod(
-    .clk(clock), .rst(reset),
-    .araddr_lsu(araddr_lsu), .arvalid_lsu(arvalid_lsu), .arready_lsu(arready_lsu), .rdata_lsu(rdata_lsu), .rresp_lsu(rresp_lsu), .rvalid_lsu(rvalid_lsu), .rready_lsu(rready_lsu),
-    .awaddr_lsu(awaddr_lsu), .awvalid_lsu(awvalid_lsu), .awready_lsu(awready_lsu), .wdata_lsu(wdata_lsu), .wstrb_lsu(wstrb_lsu), .wvalid_lsu(wvalid_lsu), .wready_lsu(wready_lsu), .bresp_lsu(bresp_lsu), .bvalid_lsu(bvalid_lsu), .bready_lsu(bready_lsu),
-    .araddr_ifu(araddr_ifu), .arvalid_ifu(arvalid_ifu), .arready_ifu(arready_ifu), .rvalid_ifu(rvalid_ifu), .rdata_ifu(rdata_ifu), .rready_ifu(rready_ifu), .rresp_ifu(rresp_ifu),
-    
-    // External Master Port Interconnections
-    .araddr(io_master_araddr),
-    .arvalid(io_master_arvalid),
-    .arready(io_master_arready),
-    .rdata(io_master_rdata),
-    .rresp(io_master_rresp),
-    .rvalid(io_master_rvalid),
-    .rready(io_master_rready),
-    .awaddr(io_master_awaddr),
-    .awvalid(io_master_awvalid),
-    .awready(io_master_awready),
-    .wdata(io_master_wdata),
-    .wstrb(io_master_wstrb),
-    .wvalid(io_master_wvalid),
-    .wready(io_master_wready),
-    .bresp(io_master_bresp),
-    .bvalid(io_master_bvalid),
-    .bready(io_master_bready)
-);
-
-// CLINT
-logic [31:0] cwdata, crdata, caddr;
-logic        cwvalid, crvalid, cready;
-
-CLINT CLINT_mod(
-    .clk(clock), .rst(reset), .cwdata(cwdata), .crdata(crdata), .caddr(caddr), .cwvalid(cwvalid), .crvalid(crvalid), .cready(cready)
-);
-
-// -------------------------------------------------------------------------
-// Unused Top-level Outputs (Assigned to Constant 0)
-// -------------------------------------------------------------------------
-// Unused Master Extensions
-assign io_master_awid    = 4'b0;
-assign io_master_awlen   = 8'b0;
-assign io_master_awsize  = 3'b0;
-assign io_master_awburst = 2'b0;
-assign io_master_wlast   = 1'b0;
-assign io_master_arid    = 4'b0;
-assign io_master_arlen   = 8'b0;
-assign io_master_arsize  = 3'b0;
-assign io_master_arburst = 2'b0;
-
-// Entirely Unused Slave Output Interface
-assign io_slave_awready  = 1'b0;
-assign io_slave_wready   = 1'b0;
-assign io_slave_bvalid   = 1'b0;
-assign io_slave_bresp    = 2'b0;
-assign io_slave_bid      = 4'b0;
-assign io_slave_arready  = 1'b0;
-assign io_slave_rvalid   = 1'b0;
-assign io_slave_rresp    = 2'b0;
-assign io_slave_rdata    = 32'b0;
-assign io_slave_rlast    = 1'b0;
-assign io_slave_rid      = 4'b0;
-
-// -------------------------------------------------------------------------
-// Unused Top-level Inputs (Combined into a dummy vector to prevent Lint errors)
-// -------------------------------------------------------------------------
-/* verilator lint_off UNUSED */
-logic [150:0] unused_signals;
-/* verilator lint_on UNUSED */
-
-assign unused_signals = {
-    io_interrupt,
-    io_master_bid,
-    io_master_rlast,
-    io_master_rid,
-    io_slave_awvalid,
-    io_slave_awaddr,
-    io_slave_awid,
-    io_slave_awlen,
-    io_slave_awsize,
-    io_slave_awburst,
-    io_slave_wvalid,
-    io_slave_wdata,
-    io_slave_wstrb,
-    io_slave_wlast,
-    io_slave_bready,
-    io_slave_arvalid,
-    io_slave_araddr,
-    io_slave_arid,
-    io_slave_arlen,
-    io_slave_arsize,
-    io_slave_arburst,
-    io_slave_rready, 1'b0
-};
+    // =========================================================================
+    // Isolated CLINT Instantiation
+    // =========================================================================
+    CLINT CLINT_mod (
+        .clk(clock),
+        .rst(reset),
+        .cwdata(cwdata),
+        .crdata(crdata),
+        .caddr(caddr),
+        .cwvalid(cwvalid),
+        .crvalid(crvalid),
+        .cready(cready)
+    );
 
 endmodule

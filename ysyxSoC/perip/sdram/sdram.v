@@ -106,7 +106,7 @@ import "DPI-C" function void sdram_read(input int addr, output int data);
               3'b011: burst_len<=8;
               3'b111: burst_len<=1023;
               default: begin
-                $display("discrepancies in burst_len");
+                $display("discrepancies in burst_len\n");
                 $finish;
               end
             endcase
@@ -115,13 +115,13 @@ import "DPI-C" function void sdram_read(input int addr, output int data);
               3'b010: cas_lat<=2;
               3'b011: cas_lat<=3;
               default: begin
-                $display("discrepancies in cas_lat");
+                $display("discrepancies in cas_lat\n");
                 $finish;
               end
             endcase
           end
           default: begin
-              $display("strange state");
+              $display("strange state\n");
               $finish;
           end
         endcase

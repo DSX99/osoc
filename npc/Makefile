@@ -11,8 +11,9 @@ INCLUDES = -I$(SOC_HOME)/perip/uart16550/rtl -I$(SOC_HOME)/perip/spi/rtl
 
 .DEFAULT_GOAL  := lint
 VERILATOR = verilator
-VERILOG_SRC = vsrc/pipeline_bus_pkg.sv vsrc/*.sv $(SoC_VSRC) 
-CPP_SRC = csrc/*.cpp
+VERILOG_SRC = vsrc/pipeline_bus_pkg.sv vsrc/*.sv $(SoC_VSRC)
+STA_SRC = vsrc/pipeline_bus_pkg.sv $(filter-out vsrc/pipeline_bus_pkg.sv vsrc/axi_%, $(wildcard vsrc/*.sv))
+CPP_SRC = $(shell find csrc/*.cpp -not -name main* )
 
 IMG ?= 
 ARGS ?= 
@@ -30,8 +31,19 @@ VERILOG_FLAGS += --quiet
 endif
 
 ifdef FAST
-VERILOG_FLAGS += -O3
+VERILOG_FLAGS += -O3 --x-assign fast --x-initial fast --no-assert
 endif
+
+NVB_HEAD_SRC ?= 
+
+ifdef NVB
+CPP_SRC += csrc/main_nvb.cpp $(NVBOARD_HOME)/src/*.cpp 
+INC_PATH += $(NVBOARD_HOME)/include/ /usr/include/SDL2 $(NPC_HOME)/usr/include
+else
+CPP_SRC += csrc/main.cpp 
+endif
+
+INCFLAGS = $(addprefix -I, $(INC_PATH))
 
 LIBCAPSTONE = $(NEMU_HOME)/tools/capstone/repo/libcapstone.so.5
 
@@ -44,7 +56,7 @@ lint:
 build: sim 
 	@mkdir -p obj_dir
 	@gcc -c $(VERILATOR_CFLAGS) -O2 $(NEMU_HOME)/src/utils/disasm.c -o obj_dir/disasm.o
-	@$(VERILATOR) $(VERILOG_SRC) $(VERILOG_FLAGS) $(CPP_SRC)
+	@$(VERILATOR) $(VERILOG_SRC) $(VERILOG_FLAGS) $(CPP_SRC) $(addprefix -CFLAGS , $(INCFLAGS))
 	@$(MAKE) -j -C obj_dir -f VysyxSoCFull.mk 
 
 run: build
@@ -54,7 +66,13 @@ gdb: build
 	@--gdb -CFLAGS "-g"
 	@gdb --args obj_dir/Vtop $(ARGS) $(IMG)
 
+sta:
+	make -C /home/dsx99/osoc/ysyx-workbench/yosys-sta sta\
+	 DESIGN=osoc_26000003 SDC_FILE=/home/dsx99/osoc/ysyx-workbench/npc/sta_res/default.sdc\
+	  CLK_FREQ_MHZ=300 CLK_PORT_NAME=clock O=/home/dsx99/osoc/ysyx-workbench/npc/sta_res\
+	  RTL_FILES='$(foreach file, $(STA_SRC), $(abspath $(file)))'
+
 clean:
 	rm -rf obj_dir
 
-.PHONY: sim build run lint clean disasm
+.PHONY: sim build run lint clean disasm sta syn

@@ -53,14 +53,16 @@ always @(posedge clock) begin
       if(in_pwrite) begin
         if(in_paddr[3:0] == 4'h0) led <= in_pwdata[15:0];
         if(in_paddr[3:0] == 4'h8) begin
-          for(int i = 0; i < 4; i = i + 1)begin
-            hex[i] <= in_pwdata[(8*i)+7:(8*i)];
-          end
+          hex[0]<=in_pwdata[7:0];
+          hex[1]<=in_pwdata[15:8];
+          hex[2]<=in_pwdata[23:16];
+          hex[3]<=in_pwdata[31:24];
         end
         if(in_paddr[3:0] == 4'hc) begin
-          for(int i = 0; i < 4; i = i + 1)begin
-            hex[4+i] <= in_pwdata[(8*i)+7:(8*i)];
-          end
+          hex[4]<=in_pwdata[7:0];
+          hex[5]<=in_pwdata[15:8];
+          hex[6]<=in_pwdata[23:16];
+          hex[7]<=in_pwdata[31:24];
         end
       end
     end
