@@ -11,7 +11,8 @@ INCLUDES = -I$(SOC_HOME)/perip/uart16550/rtl -I$(SOC_HOME)/perip/spi/rtl
 
 .DEFAULT_GOAL  := lint
 VERILATOR = verilator
-VERILOG_SRC = vsrc/pipeline_bus_pkg.sv vsrc/*.sv $(SoC_VSRC) 
+VERILOG_SRC = vsrc/pipeline_bus_pkg.sv vsrc/*.sv $(SoC_VSRC)
+STA_SRC = vsrc/pipeline_bus_pkg.sv $(filter-out vsrc/pipeline_bus_pkg.sv vsrc/axi_%, $(wildcard vsrc/*.sv))
 CPP_SRC = $(shell find csrc/*.cpp -not -name main* )
 
 IMG ?= 
@@ -30,7 +31,7 @@ VERILOG_FLAGS += --quiet
 endif
 
 ifdef FAST
-VERILOG_FLAGS += -O3 --x-assign fast --x-initial fast --noassert
+VERILOG_FLAGS += -O3 --x-assign fast --x-initial fast --no-assert
 endif
 
 NVB_HEAD_SRC ?= 
@@ -65,7 +66,13 @@ gdb: build
 	@--gdb -CFLAGS "-g"
 	@gdb --args obj_dir/Vtop $(ARGS) $(IMG)
 
+sta:
+	make -C /home/dsx99/osoc/ysyx-workbench/yosys-sta sta\
+	 DESIGN=osoc_26000003 SDC_FILE=/home/dsx99/osoc/ysyx-workbench/npc/sta_res/default.sdc\
+	  CLK_FREQ_MHZ=300 CLK_PORT_NAME=clock O=/home/dsx99/osoc/ysyx-workbench/npc/sta_res\
+	  RTL_FILES='$(foreach file, $(STA_SRC), $(abspath $(file)))'
+
 clean:
 	rm -rf obj_dir
 
-.PHONY: sim build run lint clean disasm
+.PHONY: sim build run lint clean disasm sta syn
