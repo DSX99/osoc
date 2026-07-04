@@ -38,8 +38,8 @@ NVB_HEAD_SRC =
 ifdef NVB
 CPP_SRC += csrc/main_nvb.cpp
 else
-CPP_SRC += csrc/main.cpp $(NVBOARD_HOME)/src/* 
-NVB_HEAD_SRC += $(NVBOARD_HOME)/include/* 
+CPP_SRC += csrc/main.cpp $(NVBOARD_HOME)/src/*.cpp 
+NVB_HEAD_SRC += $(NVBOARD_HOME)/include/*.h 
 endif
 
 LIBCAPSTONE = $(NEMU_HOME)/tools/capstone/repo/libcapstone.so.5
