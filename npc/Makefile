@@ -37,7 +37,7 @@ NVB_HEAD_SRC ?=
 
 ifdef NVB
 CPP_SRC += csrc/main_nvb.cpp $(NVBOARD_HOME)/src/*.cpp 
-INC_PATH += $(NVBOARD_HOME)/include/ /usr/include/SDL2
+INC_PATH += $(NVBOARD_HOME)/include/ /usr/include/SDL2 $(NPC_HOME)/usr/include
 else
 CPP_SRC += csrc/main.cpp 
 endif
