@@ -4,7 +4,7 @@
 #include <verilated.h>
 #include "dpi.h"
 #include "common.h"
-#include <nvboard.h>
+#include "nvboard.h"
 
 #ifdef CONFIG_FST
 #include <verilated_fst_c.h>
