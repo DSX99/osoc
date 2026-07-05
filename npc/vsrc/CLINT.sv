@@ -45,6 +45,7 @@ CLINT_W clint_w;
 always_ff @(posedge clk) begin
     if(rst) begin
         mtime<=0;
+        clint_r<=IDLE_R;
     end else begin
         if(divisor == DEN) divisor<=1;
         else divisor<= divisor+1;
@@ -55,7 +56,7 @@ always_ff @(posedge clk) begin
             IDLE_R:begin
                 if(caddr && carvalid) clint_r<=WAIT_RR;
             end
-            WAIT_R:begin
+            WAIT_RR:begin
                 if(caddr[15:0] == 16'hbffc) begin
                     crdata <= mtime[63:32];
                     buff <= mtime[31:0];
