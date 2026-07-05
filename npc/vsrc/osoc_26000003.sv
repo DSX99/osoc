@@ -188,12 +188,12 @@ module osoc_26000003 (
 
     logic[1:0] trans; // 0-write 1-read
 
-    always_ff @(posedge clk) begin
-        if(rst)begin
+    always_ff @(posedge clock) begin
+        if(reset)begin
             trans<=0;
         end else begin
             if((match_ar) && ((carvalid && carready))) trans<=2;
-            if((match_a2) && ((cawvalid && cawready))) trans<=1;
+            if((match_aw) && ((cawvalid && cawready))) trans<=1;
             
             if(trans[1] && crready && crvalid) trans<=0;
             if(trans[0] && core_bready && core_bvalid) trans<=0;
