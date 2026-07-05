@@ -16,7 +16,7 @@ struct CPU_state {
 
 
 // KILLS DIFTEST
-bool do_diff = 0;
+bool do_diff = 1;
 
 
 bool batch=0;
