@@ -13,7 +13,7 @@ INCLUDES = -I$(SOC_HOME)/perip/uart16550/rtl -I$(SOC_HOME)/perip/spi/rtl
 VERILATOR = verilator
 VERILOG_SRC = $(filter-out osoc*, vsrc/*.sv)
 OSOC_SRC = vsrc/osoc_26000003_core.sv vsrc/osoc_26000003.sv $(VERILOG_SRC) $(SoC_VSRC)
-NPC_SRC = $(VERILOG_SRC) vsrc/osoc_26000003_func.sv
+NPC_SRC = vsrc/osoc_26000003_func.sv $(VERILOG_SRC)
 STA_SRC = $(wildcard vsrc/*.sv)
 CPP_SRC = $(shell find csrc/*.cpp -not -name main* )
 
