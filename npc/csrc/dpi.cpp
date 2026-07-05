@@ -163,10 +163,12 @@ extern "C" void sdram_write(uint32_t addr, uint32_t data, uint32_t mask) {
     extern "C" void memwrite(uint32_t addr, uint32_t data, uint32_t type){
         // printf("\033[034mCall to write to memory at %08x\033[0m\n", addr);
         if(addr>=ROM_OFFSET && addr<(ROM_OFFSET + FLASH_SIZE)){
-            if (type & 0x1) mem[addr - ROM_OFFSET]     = data & 0xFF;
-            if (type & 0x2) mem[addr - ROM_OFFSET + 1] = (data >> 8) & 0xFF;
-            if (type & 0x4) mem[addr - ROM_OFFSET + 2] = (data >> 16) & 0xFF;
-            if (type & 0x8) mem[addr - ROM_OFFSET + 3] = (data >> 24) & 0xFF;
+            int working_addr = (addr - ROM_OFFSET) & (~3);
+
+            if (type & 0x1) mem[working_addr]     = data & 0xFF;
+            if (type & 0x2) mem[working_addr + 1] = (data >> 8) & 0xFF;
+            if (type & 0x4) mem[working_addr + 2] = (data >> 16) & 0xFF;
+            if (type & 0x8) mem[working_addr + 3] = (data >> 24) & 0xFF;
         }else if(addr == SERIAL_PORT){
             skip_inst = 1;
             putchar((uint8_t)data);
