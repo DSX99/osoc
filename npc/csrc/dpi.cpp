@@ -125,6 +125,41 @@ extern "C" void sdram_write(uint32_t addr, uint32_t data, uint32_t mask) {
     
     extern Vosoc_26000003_func_osoc_26000003_func *top;
     uint8_t mem[MEM_SIZE]; 
+
+    extern "C" {
+        void difftest_memcpy(uint32_t addr, void *buf, size_t n, bool direction);
+        void loadmemory(char *img_file, bool batch) {
+            if (img_file == NULL) {
+                printf("No image is given.\n");
+                memcpy(mem, img, sizeof(img));
+                if(!batch && do_diff){
+                    difftest_memcpy(ROM_OFFSET, mem, sizeof(img), 1);
+                }
+                return; // built-in image size
+            }
+            
+            FILE *fp = fopen(img_file, "rb");
+            if(!fp){
+                printf("Can not open '%s'\n", img_file);
+            }
+            
+            fseek(fp, 0, SEEK_END);
+            long size = ftell(fp);
+            
+            printf("The image is %s, size = %ld\n", img_file, size);
+            
+            fseek(fp, 0, SEEK_SET);
+            int ret = fread(mem, size, 1, fp);
+            assert(ret == 1);
+            
+            fclose(fp);
+            
+            if(!batch && do_diff){
+                difftest_memcpy(ROM_OFFSET, mem, size, 1);
+            }
+        }
+    }
+
     extern "C" void memwrite(uint32_t addr, uint32_t data, uint32_t type){
         #ifdef MTRACE
         printf("\033[034mCall to write to memory at %08x\033[0m\n", addr);
