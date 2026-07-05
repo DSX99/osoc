@@ -196,7 +196,7 @@ module osoc_26000003 (
             if((match_a2) && ((cawvalid && cawready))) trans<=1;
             
             if(trans[1] && crready && crvalid) trans<=0;
-            if(trans[0] && bready && bvalid) trans<=0;
+            if(trans[0] && core_bready && core_bvalid) trans<=0;
         end
     end
 
