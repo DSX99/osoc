@@ -31,7 +31,6 @@ VysyxSoCFull* soc;
 VysyxSoCFull_osoc_26000003_core *top;
 CPU_state cpu;
 bool fail=0;
-bool valid_cycle=0;
 
 Performance_t program[3];
 uint64_t cycles[3];
@@ -267,14 +266,12 @@ void execute(uint64_t n){
       cycles[1] = (contextp->time()>>1) - cycles[0];
     }
 
-    valid_cycle = top->reg_valid_e;
-
     if(fail){ 
       printf("failed\n");
       return;
     }
 
-    if((!batch) && top->reg_valid_e && do_diff) difftest_exec(1);
+    if((!batch) && top->reg_valid && do_diff) difftest_exec(1);
 
     if(contextp->gotFinish()){
       #ifdef CONFIG_FST
