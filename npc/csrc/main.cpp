@@ -277,8 +277,6 @@ void execute(uint64_t n){
 
     bool current_cycle_is_skipped = skip_inst;
 
-    if((!batch) && (!current_cycle_is_skipped) && top->reg_valid_e && do_diff) difftest_exec(1);
-
     if(contextp->gotFinish()){
       #ifdef CONFIG_FST
       tracep->close();
@@ -323,7 +321,8 @@ void execute(uint64_t n){
     n--;
     
     if(!batch && do_diff) {
-      if (!current_cycle_is_skipped && !(top->lsu_device_call) && top->reg_valid_e) {
+      if (!current_cycle_is_skipped && !(top->lsu_device_call)) {
+        difftest_exec(1);
         difftest_regcpy(&ref_cpu, 0);
 
         if (ref_cpu.pc != top->pc) {
