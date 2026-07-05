@@ -11,8 +11,10 @@ INCLUDES = -I$(SOC_HOME)/perip/uart16550/rtl -I$(SOC_HOME)/perip/spi/rtl
 
 .DEFAULT_GOAL  := lint
 VERILATOR = verilator
-VERILOG_SRC = vsrc/pipeline_bus_pkg.sv vsrc/*.sv $(SoC_VSRC)
-STA_SRC = vsrc/pipeline_bus_pkg.sv $(filter-out vsrc/pipeline_bus_pkg.sv vsrc/axi_%, $(wildcard vsrc/*.sv))
+VERILOG_SRC = $(filter-out osoc*, vsrc/*.sv)
+OSOC_SRC = vsrc/osoc_26000003_core.sv vsrc/osoc_26000003.sv $(VERILOG_SRC) $(SoC_VSRC)
+NPC_SRC = $(VERILOG_SRC) vsrc/osoc_26000003_func.sv
+STA_SRC = $(wildcard vsrc/*.sv)
 CPP_SRC = $(shell find csrc/*.cpp -not -name main* )
 
 IMG ?= 
@@ -25,7 +27,7 @@ DISASM_OBJ = $(abspath obj_dir/disasm.o)
 
 LDFLAGS += -lreadline -L$(NEMU_HOME)/tools/capstone/repo -lcapstone $(DISASM_OBJ) $(NEMU_HOME)/tools/spike-diff/build/riscv32-spike-so
 
-VERILOG_FLAGS := -cc --exe -Wno-EOFNEWLINE --top-module ysyxSoCFull --trace-fst -LDFLAGS "$(LDFLAGS)" -CFLAGS "$(VERILATOR_CFLAGS)" --trace-structs --timescale "1ns/1ns" --no-timing $(INCLUDES) --autoflush
+VERILOG_FLAGS := -cc --exe -Wno-EOFNEWLINE --trace-fst -LDFLAGS "$(LDFLAGS)" -CFLAGS "$(VERILATOR_CFLAGS)" --trace-structs --timescale "1ns/1ns" --no-timing $(INCLUDES) --autoflush
 ifndef NS
 VERILOG_FLAGS += --quiet
 endif
@@ -56,10 +58,19 @@ lint:
 build: sim 
 	@mkdir -p obj_dir
 	@gcc -c $(VERILATOR_CFLAGS) -O2 $(NEMU_HOME)/src/utils/disasm.c -o obj_dir/disasm.o
-	@$(VERILATOR) $(VERILOG_SRC) $(VERILOG_FLAGS) $(CPP_SRC) $(addprefix -CFLAGS , $(INCFLAGS))
+	@$(VERILATOR) $(OSOC_SRC) $(VERILOG_FLAGS) --top-module ysyxSoCFull  $(CPP_SRC) $(addprefix -CFLAGS , $(INCFLAGS))
 	@$(MAKE) -j -C obj_dir -f VysyxSoCFull.mk 
 
 run: build
+	@LD_LIBRARY_PATH=$(NEMU_HOME)/tools/capstone/repo:$(NEMU_HOME)/build obj_dir/VysyxSoCFull $(ARGS) $(IMG)
+
+npc_build: sim 
+	@mkdir -p obj_dir
+	@gcc -c $(VERILATOR_CFLAGS) -O2 $(NEMU_HOME)/src/utils/disasm.c -o obj_dir/disasm.o
+	@$(VERILATOR) $(NPC_SRC) $(VERILOG_FLAGS) --top-module osoc_26000003_func  $(CPP_SRC) $(addprefix -CFLAGS , $(INCFLAGS))
+	@$(MAKE) -j -C obj_dir -f Vosoc_26000003_func.mk 
+
+npc_run: npc_build
 	@LD_LIBRARY_PATH=$(NEMU_HOME)/tools/capstone/repo:$(NEMU_HOME)/build obj_dir/VysyxSoCFull $(ARGS) $(IMG)
 
 gdb: build

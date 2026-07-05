@@ -1,69 +1,6 @@
-module osoc_26000003_core (
+module osoc_26000003_func (
     input  logic         clock,
-    input  logic         reset,
-    input  logic         io_interrupt,
-
-    // AXI4 Master Interface
-    input  logic         io_master_awready,
-    output logic         io_master_awvalid,
-    output logic [31:0]  io_master_awaddr,
-    output logic [3:0]   io_master_awid,
-    output logic [7:0]   io_master_awlen,
-    output logic [2:0]   io_master_awsize,
-    output logic [1:0]   io_master_awburst,
-    input  logic         io_master_wready,
-    output logic         io_master_wvalid,
-    output logic [31:0]  io_master_wdata,
-    output logic [3:0]   io_master_wstrb,
-    output logic         io_master_wlast,
-    output logic         io_master_bready,
-    input  logic         io_master_bvalid,
-    input  logic [1:0]   io_master_bresp,
-    input  logic [3:0]   io_master_bid,
-    input  logic         io_master_arready,
-    output logic         io_master_arvalid,
-    output logic [31:0]  io_master_araddr,
-    output logic [3:0]   io_master_arid,
-    output logic [7:0]   io_master_arlen,
-    output logic [2:0]   io_master_arsize,
-    output logic [1:0]   io_master_arburst,
-    output logic         io_master_rready,
-    input  logic         io_master_rvalid,
-    input  logic [1:0]   io_master_rresp,
-    input  logic [31:0]  io_master_rdata,
-    input  logic         io_master_rlast,
-    input  logic [3:0]   io_master_rid,
-
-    // AXI4 Slave Interface
-    output logic         io_slave_awready,
-    input  logic         io_slave_awvalid,
-    input  logic [31:0]  io_slave_awaddr,
-    input  logic [3:0]   io_slave_awid,
-    input  logic [7:0]   io_slave_awlen,
-    input  logic [2:0]   io_slave_awsize,
-    input  logic [1:0]   io_slave_awburst,
-    output logic         io_slave_wready,
-    input  logic         io_slave_wvalid,
-    input  logic [31:0]  io_slave_wdata,
-    input  logic [3:0]   io_slave_wstrb,
-    input  logic         io_slave_wlast,
-    input  logic         io_slave_bready,
-    output logic         io_slave_bvalid,
-    output logic [1:0]   io_slave_bresp,
-    output logic [3:0]   io_slave_bid,
-    output logic         io_slave_arready,
-    input  logic         io_slave_arvalid,
-    input  logic [31:0]  io_slave_araddr,
-    input  logic [3:0]   io_slave_arid,
-    input  logic [7:0]   io_slave_arlen,
-    input  logic [2:0]   io_slave_arsize,
-    input  logic [1:0]   io_slave_arburst,
-    input  logic         io_slave_rready,
-    output logic         io_slave_rvalid,
-    output logic [1:0]   io_slave_rresp,
-    output logic [31:0]  io_slave_rdata,
-    output logic         io_slave_rlast,
-    output logic [3:0]   io_slave_rid
+    input  logic         reset
 );
 
     logic [31:0] pc /* verilator public */, opcode /* verilator public */, prev_pc /* verilator public */;
@@ -382,28 +319,23 @@ module osoc_26000003_core (
         .araddr_ifu(araddr_ifu), .arvalid_ifu(arvalid_ifu), .arready_ifu(arready_ifu), .rvalid_ifu(rvalid_ifu), .rdata_ifu(rdata_ifu), .rready_ifu(rready_ifu), .rresp_ifu(rresp_ifu),
         
         // External Master Port Interconnections
-        .araddr(araddr_arbiter),
-        .arvalid(arvalid_arbiter),
-        .arready(arready_arbiter),
-        .rdata(rdata_arbiter),
-        .rresp(rresp_arbiter),
-        .rvalid(rvalid_arbiter),
-        .rready(rready_arbiter),
-        .awaddr(awaddr_arbiter),
-        .awvalid(awvalid_arbiter),
-        .awready(awready_arbiter),
-        .wdata(wdata_arbiter),
-        .wstrb(wstrb_arbiter),
-        .wvalid(wvalid_arbiter),
-        .wready(wready_arbiter),
-        .bresp(bresp_arbiter),
-        .bvalid(bvalid_arbiter),
-        .bready(bready_arbiter)
-    );
-
-    axi_slave_lsu axi_slave_lsu_mod (
-        .clk(clk), .rst(rst), .araddr(araddr_arbiter), .arvalid(arvalid_arbiter), .arready(arready_arbiter), .rdata(rdata_arbiter), .rresp(rresp_arbiter), .rvalid(rvalid_arbiter), .rready(rready_arbiter),
-        .awaddr(awaddr_arbiter), .awvalid(awvalid_arbiter), .awready(awready_arbiter), .wdata(wdata_arbiter), .wstrb(wstrb_arbiter), .wvalid(wvalid_arbiter), .wready(wready_arbiter), .bresp(bresp_arbiter), .bvalid(bvalid_arbiter), .bready(bready_arbiter)
+        .araddr(io_master_araddr),
+        .arvalid(io_master_arvalid),
+        .arready(io_master_arready),
+        .rdata(io_master_rdata),
+        .rresp(io_master_rresp),
+        .rvalid(io_master_rvalid),
+        .rready(io_master_rready),
+        .awaddr(io_master_awaddr),
+        .awvalid(io_master_awvalid),
+        .awready(io_master_awready),
+        .wdata(io_master_wdata),
+        .wstrb(io_master_wstrb),
+        .wvalid(io_master_wvalid),
+        .wready(io_master_wready),
+        .bresp(io_master_bresp),
+        .bvalid(io_master_bvalid),
+        .bready(io_master_bready)
     );
 
     // -------------------------------------------------------------------------
