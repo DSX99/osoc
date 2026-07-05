@@ -189,10 +189,10 @@ extern "C" void sdram_write(uint32_t addr, uint32_t data, uint32_t mask) {
     extern "C" uint32_t memread(uint32_t addr){
         printf("\n\033[034mCall to read from memory at %08x\033[0m\n", addr);
         if(addr>=ROM_OFFSET && addr<(ROM_OFFSET + MEM_SIZE)){
-            return ((mem[addr-MEM_SIZE+3]<<24)|
-            (mem[addr-MEM_SIZE+2]<<16)|
-            (mem[addr-MEM_SIZE+1]<<8)|
-            (mem[addr-MEM_SIZE]));
+            return ((mem[addr-ROM_OFFSET+3]<<24)|
+            (mem[addr-ROM_OFFSET+2]<<16)|
+            (mem[addr-ROM_OFFSET+1]<<8)|
+            (mem[addr-ROM_OFFSET]));
         }{
             printf("Illegal memory read access at addr:0x%08x at pc: 0x%08x\n",addr, top->pc);
             fail=1;
