@@ -6,11 +6,17 @@
 // #include "VysyxSoCFull_ysyxSoCASIC.h"
 // #include "VysyxSoCFull_CPU.h"
 // #include "VysyxSoCFull_regs.h"
+// #define SOC
+
+
 
 #include "Vosoc_26000003_func.h"
 #include "Vosoc_26000003_func___024root.h"
 #include "Vosoc_26000003_func_osoc_26000003_func.h"
 #include "Vosoc_26000003_func_regs.h"
+#define NPC
+
+
 
 #define CONFIG_FST
 // #define MTRACE

@@ -108,12 +108,7 @@ always_ff @(posedge clk) begin
                 if((done_aw || awvalid)&&(done_w || wvalid)) slave_w<=WAIT;
             end
             WAIT: begin
-                case(mask)
-                    4'b0001:memwrite(aw, w,0);
-                    4'b0011:memwrite(aw, w,1);
-                    4'b1111:memwrite(aw, w,2);
-                    default:;
-                endcase
+                memwrite(aw, w, {28'b0, mask});
                 done_aw<=0;
                 done_w<=0;
                 bvalid<=1;
