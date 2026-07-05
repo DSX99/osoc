@@ -11,11 +11,15 @@ extern bool fail;
 extern bool do_diff;
 
 static const uint32_t img [] = {
-  0x00000297,  // auipc t0,0
-  0x00028823,  // sb  zero,16(t0)
-  0x0102c503,  // lbu a0,16(t0)
-  0x00100073,  // ebreak (used as nemu_trap)
-  0xdeadbeef,  // some data
+0x800002b7,         // lui t0, 0x80000
+0xdeade3b7,         // lui t2, 0xdeade
+0xeef38313,         // addi t1, t2, -273
+0x0262a023,         // sw t1, 32(t0)
+0x0202c283,         // lbu t0, 32(t0)
+0x800002b7,         // lui t0, 0x80000
+0x00028123,         // sb zero, 32(t0)
+0x0202a503,         // lw a0, 32(t0)
+0x00100073          // ebreak
 };
 
 
