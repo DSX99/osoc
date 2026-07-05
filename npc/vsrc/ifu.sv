@@ -75,6 +75,7 @@ module ifu (
                 WAIT_R: begin
                     if (rvalid && rready) begin
                         bus_out_opcode <= rdata;
+                        ifu     <= AWAIT;
                     end
                 end
                 AWAIT: begin

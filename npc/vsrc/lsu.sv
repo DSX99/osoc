@@ -99,6 +99,7 @@ module lsu (
         bus_out_lsu_out = 0;
         done_r = 0;
 
+        if(!rst) begin
         //read
         if(bus_in_lsu_re) begin
         case(lsu_r)
@@ -216,6 +217,7 @@ module lsu (
                 default: ;
             endcase
         end
+    end
 
         valid_right   = valid_left && (!bus_in_lsu_re || done_r) && (!bus_in_lsu_we || done_w); 
         ready_left    = ready_right && (!bus_in_lsu_re || done_r) && (!bus_in_lsu_we || done_w);
