@@ -5,7 +5,6 @@
 #include "dpi.h"
 #include "common.h"
 
-
 #ifdef CONFIG_FST
 #include <verilated_fst_c.h>
 #endif
@@ -27,17 +26,12 @@ uint32_t ret = 0;
 static uint32_t qexit = 0;
 VerilatedContext *contextp;
 VerilatedFstC *tracep;
-VysyxSoCFull* soc; 
-VysyxSoCFull_osoc_26000003_core *top;
+Vosoc_26000003_func* soc; 
+Vosoc_26000003_func_osoc_26000003_func *top;
+bool skip_inst=0;
 CPU_state cpu;
 bool fail=0;
-
-Performance_t program[3];
-uint64_t cycles[3];
-
-int stage=0;
-int prev_ifu=0,prev_lsu_r=0,prev_lsu_w=0;
-
+bool valid_cycle=0;
 
 char itrace[16][128];
 int point=0;
@@ -54,7 +48,7 @@ void init_disasm();
 void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 }
 
-void reset(VysyxSoCFull *soc,int n){
+void reset(Vosoc_26000003_func *soc,int n){
   soc->reset=1;
   for(int i=0; i<n; i++){
     soc->clock=1;
@@ -98,7 +92,7 @@ int main(int argc, char** argv) {
   }
   loadmemory(img_file, batch);
   memset(&cpu, 0, sizeof(CPU_state));
-  cpu.pc = 0x30000000;
+  cpu.pc = 0x80000000;
 
   if(!batch && do_diff){
     difftest_regcpy(&cpu, 1);
@@ -107,8 +101,8 @@ int main(int argc, char** argv) {
   contextp = new VerilatedContext;
   // contextp->threads(4); // can be used in future to increase speed
 
-  soc = new VysyxSoCFull{contextp};
-  top = soc->ysyxSoCFull->asic->cpu->cpu->core;
+  soc = new Vosoc_26000003_func{contextp};
+  top = soc->osoc_26000003_func;
   
 #ifdef CONFIG_FST
   Verilated::traceEverOn(true);
@@ -132,16 +126,11 @@ int main(int argc, char** argv) {
     sdb_mainloop(&qexit);
   }
 
-  //printing perf data
-  cycles[2] = (contextp->time()>>1) - cycles[1] - cycles[0];
-  
-  print_stage_performance_table(cycles, program);
-
   #ifdef CONFIG_FST
   tracep->close();
   #endif
   delete soc;
-  return (ret || (!finished && qexit));
+  return (ret || (!finished && qexit) || fail);
 }
 
 
@@ -229,53 +218,16 @@ void execute(uint64_t n){
     soc->clock=!soc->clock;
     soc->eval();
 
-
-    //couting performance
-    if(top->if_id_valid == 0){
-      program[stage].ifu_stall_cycle++;
-    }
-    if(top->if_id_valid && prev_ifu == 0){
-      program[stage].ifu_fetch_instr++;
-    }
-    prev_ifu = top->if_id_valid;
-    if(top->branch){
-      program[stage].possible_branch_count++;
-    }
-    if(top->branch_taken){
-      program[stage].branch_taken++;
-    }
-    if(top->ex_ls_valid && !top->ex_ls_ready){
-      program[stage].lsu_stall_cycle++;
-    }
-    if(top->ex_ls_valid && top->ex_ls_ready){
-      if(top->ex_ls_bus_lsu_re){
-        program[stage].lsu_read_data++;
-      }
-      if(top->ex_ls_bus_lsu_we){
-        program[stage].lsu_write_data++;
-      }
-    }
-    if(top->reg_valid_e){
-      program[stage].writeback++;
-    }
-
-    if(stage == 0 && (top->pc >= 0x0f000000 && top->pc < 0x10000000)){
-      stage = 1;
-      cycles[0] = contextp->time()>>1;
-    }
-    if(stage == 1 && (top->pc >= 0xa0000000 && top->pc < 0xc0000000)){
-      stage = 2;
-      cycles[1] = (contextp->time()>>1) - cycles[0];
-    }
-
-
+    valid_cycle = top->reg_valid_e;
 
     if(fail){ 
       printf("failed\n");
       return;
     }
 
-    if((!batch) && top->reg_valid && do_diff) difftest_exec(1);
+    bool current_cycle_is_skipped = skip_inst;
+
+    if((!batch) && (!current_cycle_is_skipped) && top->reg_valid_e && do_diff) difftest_exec(1);
 
     if(contextp->gotFinish()){
       #ifdef CONFIG_FST
@@ -321,6 +273,7 @@ void execute(uint64_t n){
     n--;
     
     if(!batch && do_diff) {
+      if (!current_cycle_is_skipped && !(top->lsu_device_call)) {
         difftest_regcpy(&ref_cpu, 0);
 
         if (ref_cpu.pc != top->pc) {
@@ -359,6 +312,15 @@ void execute(uint64_t n){
             return;
           }
         }
+      } 
+      else {
+        for(int i = 0; i < 32; i++){
+          cpu.gpr[i] = top->reg_mod->regs[i];
+        }
+        cpu.pc = top->pc;
+        difftest_regcpy(&cpu, 1);
+        skip_inst = 0; 
+      }
     }
   }
 }

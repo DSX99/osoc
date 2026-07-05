@@ -12,12 +12,9 @@ module decode (
     output logic [31:0] bus_out_pc,            // Used for AUIPC and Branch target calculations
     output logic [31:0] bus_out_next_pc,       // Carried through for JAL/JALR return addresses
     output logic [31:0] bus_out_imm,           // Fully decoded immediate value
-    output logic [31:0] bus_out_data_rs1,      // Register file source 1 data (or forwarded)
-    output logic [31:0] bus_out_data_rs2,      // Register file source 2 data (or forwarded)
     output logic [4:0]  bus_out_rs1,           // to WB to read rs1
     output logic [4:0]  bus_out_rs2,           // to WB to read rs2
     output logic [7:0]  bus_out_alu_op,        // ALU operation selection
-    output logic        bus_out_branch_en,     // Asserted for branch instructions
     output logic [2:0]  bus_out_csr_oper,      // CSR operation type (csrrw, csrrs, etc.)
     output logic [4:0]  bus_out_cause,         // Exception/Interrupt cause if detected in ID
     output logic        bus_out_lsu_we,        // Memory Write Enable (Store)
@@ -65,12 +62,9 @@ module decode (
         bus_out_pc            = bus_in_pc;
         bus_out_next_pc       = bus_in_next_pc;
         bus_out_imm           = '0;
-        bus_out_data_rs1      = '0; // Typically fetched from RF, left '0 at decoder output level
-        bus_out_data_rs2      = '0; // Typically fetched from RF, left '0 at decoder output level
         bus_out_rs1           = '0;
         bus_out_rs2           = '0;
         bus_out_alu_op        = '0;
-        bus_out_branch_en     = '0;
         bus_out_csr_oper      = '0;
         bus_out_cause         = '0;
         bus_out_lsu_we        = '0;
@@ -109,8 +103,7 @@ module decode (
                 bus_out_rs1       = rs1_val;
                 bus_out_rs2       = rs2_val;
                 bus_out_imm       = imm_b;
-                bus_out_alu_op    = {5'b11010, func3}; 
-                bus_out_branch_en = 1'b1; // Explicitly asserting structural intent
+                bus_out_alu_op    = {5'b11010, func3};
             end
             7'b0000011: begin // LOAD (LB, LH, LW, LBU, LHU)
                 bus_out_rd         = rd_val;

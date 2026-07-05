@@ -43,7 +43,8 @@ module ifu (
         arvalid=0;
         araddr=0;
         rready=0;
-
+        
+        if(!rst) begin
         case(ifu)
             WAIT_AR: begin
                 arvalid = 1;
@@ -57,6 +58,7 @@ module ifu (
             end
             default: ;
         endcase
+        end
     end
 
     always_ff @(posedge clk) begin
@@ -73,6 +75,7 @@ module ifu (
                 WAIT_R: begin
                     if (rvalid && rready) begin
                         bus_out_opcode <= rdata;
+                        ifu     <= AWAIT;
                     end
                 end
                 AWAIT: begin

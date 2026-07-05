@@ -1,76 +1,10 @@
-module osoc_26000003_core (
+module osoc_26000003_func (
     input  logic         clock,
-    input  logic         reset,
-    input  logic         io_interrupt,
-
-    // AXI4 Master Interface
-    input  logic         io_master_awready,
-    output logic         io_master_awvalid,
-    output logic [31:0]  io_master_awaddr,
-    output logic [3:0]   io_master_awid,
-    output logic [7:0]   io_master_awlen,
-    output logic [2:0]   io_master_awsize,
-    output logic [1:0]   io_master_awburst,
-    input  logic         io_master_wready,
-    output logic         io_master_wvalid,
-    output logic [31:0]  io_master_wdata,
-    output logic [3:0]   io_master_wstrb,
-    output logic         io_master_wlast,
-    output logic         io_master_bready,
-    input  logic         io_master_bvalid,
-    input  logic [1:0]   io_master_bresp,
-    input  logic [3:0]   io_master_bid,
-    input  logic         io_master_arready,
-    output logic         io_master_arvalid,
-    output logic [31:0]  io_master_araddr,
-    output logic [3:0]   io_master_arid,
-    output logic [7:0]   io_master_arlen,
-    output logic [2:0]   io_master_arsize,
-    output logic [1:0]   io_master_arburst,
-    output logic         io_master_rready,
-    input  logic         io_master_rvalid,
-    input  logic [1:0]   io_master_rresp,
-    input  logic [31:0]  io_master_rdata,
-    input  logic         io_master_rlast,
-    input  logic [3:0]   io_master_rid,
-
-    // AXI4 Slave Interface
-    output logic         io_slave_awready,
-    input  logic         io_slave_awvalid,
-    input  logic [31:0]  io_slave_awaddr,
-    input  logic [3:0]   io_slave_awid,
-    input  logic [7:0]   io_slave_awlen,
-    input  logic [2:0]   io_slave_awsize,
-    input  logic [1:0]   io_slave_awburst,
-    output logic         io_slave_wready,
-    input  logic         io_slave_wvalid,
-    input  logic [31:0]  io_slave_wdata,
-    input  logic [3:0]   io_slave_wstrb,
-    input  logic         io_slave_wlast,
-    input  logic         io_slave_bready,
-    output logic         io_slave_bvalid,
-    output logic [1:0]   io_slave_bresp,
-    output logic [3:0]   io_slave_bid,
-    output logic         io_slave_arready,
-    input  logic         io_slave_arvalid,
-    input  logic [31:0]  io_slave_araddr,
-    input  logic [3:0]   io_slave_arid,
-    input  logic [7:0]   io_slave_arlen,
-    input  logic [2:0]   io_slave_arsize,
-    input  logic [1:0]   io_slave_arburst,
-    input  logic         io_slave_rready,
-    output logic         io_slave_rvalid,
-    output logic [1:0]   io_slave_rresp,
-    output logic [31:0]  io_slave_rdata,
-    output logic         io_slave_rlast,
-    output logic [3:0]   io_slave_rid
+    input  logic         reset
 );
 
     logic [31:0] pc /* verilator public */, opcode /* verilator public */, prev_pc /* verilator public */;
-    logic reg_valid /* verilator public */, reg_valid_e /* verilator public */;
-
-    logic if_id_valid /* verilator public */, ex_ls_valid /* verilator public */, ex_ls_ready /* verilator public */;
-    logic branch /* verilator public */, branch_taken /* verilator public */, ex_ls_bus_lsu_we /* verilator public*/, ex_ls_bus_lsu_re /* verilator public*/;
+    logic reg_valid /* verilator public */, reg_valid_e /* verilator public */, lsu_device_call /* verilator public */;
 
     assign opcode = if_id_bus_opcode;
 
@@ -84,15 +18,18 @@ module osoc_26000003_core (
     logic [31:0] if_id_bus_pc;
     logic [31:0] if_id_bus_next_pc;
     logic [31:0] if_id_bus_opcode;
-    logic        if_id_ready; //valid declared as public
+    logic        if_id_valid, if_id_ready;
 
     // ID to EX Decoded Bus signals
     logic [31:0] id_ex_bus_decoded_pc;
     logic [31:0] id_ex_bus_decoded_next_pc;
     logic [31:0] id_ex_bus_decoded_imm;
+    logic [31:0] id_ex_bus_decoded_data_rs1;
+    logic [31:0] id_ex_bus_decoded_data_rs2;
     logic [4:0]  id_ex_bus_decoded_rs1;
     logic [4:0]  id_ex_bus_decoded_rs2;
     logic [7:0]  id_ex_bus_decoded_alu_op;
+    logic        id_ex_bus_decoded_branch_en;
     logic [2:0]  id_ex_bus_decoded_csr_oper;
     logic [4:0]  id_ex_bus_decoded_cause;
     logic        id_ex_bus_decoded_lsu_we;
@@ -108,7 +45,10 @@ module osoc_26000003_core (
     logic [31:0] id_ex_bus_imm;
     logic [31:0] id_ex_bus_data_rs1;
     logic [31:0] id_ex_bus_data_rs2;
+    logic [4:0]  id_ex_bus_rs1;
+    logic [4:0]  id_ex_bus_rs2;
     logic [7:0]  id_ex_bus_alu_op;
+    logic        id_ex_bus_branch_en;
     logic [2:0]  id_ex_bus_csr_oper;
     logic [4:0]  id_ex_bus_cause;
     logic        id_ex_bus_lsu_we;
@@ -123,6 +63,7 @@ module osoc_26000003_core (
     logic [31:0] ex_ls_bus_alu_next_pc;
     logic [31:0] ex_ls_bus_alu_alu_out;
     logic [31:0] ex_ls_bus_alu_data_rs2;
+    logic [31:0] ex_ls_bus_alu_csr_out;
     logic        ex_ls_bus_alu_lsu_we;
     logic        ex_ls_bus_alu_lsu_re;
     logic [2:0]  ex_ls_bus_alu_lsu_oper;
@@ -136,14 +77,14 @@ module osoc_26000003_core (
     logic [31:0] ex_ls_bus_alu_out;
     logic [31:0] ex_ls_bus_data_rs2;
     logic [31:0] ex_ls_bus_csr_out;
-    // logic        ex_ls_bus_lsu_we; //declared as public
-    // logic        ex_ls_bus_lsu_re;
+    logic        ex_ls_bus_lsu_we;
+    logic        ex_ls_bus_lsu_re;
     logic [2:0]  ex_ls_bus_lsu_oper;
     logic [4:0]  ex_ls_bus_rd;
     logic [1:0]  ex_ls_bus_mux_select;
     logic        ex_ls_bus_mux_select_pc;
     logic        ex_ls_bus_branch;
-    // logic        ex_ls_valid, ex_ls_ready; //declared as public
+    logic        ex_ls_valid, ex_ls_ready;
 
     // LS to WB Bus signals
     logic [31:0] ls_wb_bus_alu_out;
@@ -191,9 +132,12 @@ module osoc_26000003_core (
         .bus_out_pc(id_ex_bus_decoded_pc),
         .bus_out_next_pc(id_ex_bus_decoded_next_pc),
         .bus_out_imm(id_ex_bus_decoded_imm),
+        .bus_out_data_rs1(id_ex_bus_decoded_data_rs1),
+        .bus_out_data_rs2(id_ex_bus_decoded_data_rs2),
         .bus_out_rs1(id_ex_bus_decoded_rs1),
         .bus_out_rs2(id_ex_bus_decoded_rs2),
         .bus_out_alu_op(id_ex_bus_decoded_alu_op),
+        .bus_out_branch_en(id_ex_bus_decoded_branch_en),
         .bus_out_csr_oper(id_ex_bus_decoded_csr_oper),
         .bus_out_cause(id_ex_bus_decoded_cause),
         .bus_out_lsu_we(id_ex_bus_decoded_lsu_we),
@@ -216,7 +160,12 @@ module osoc_26000003_core (
         .bus_in_imm(id_ex_bus_imm),
         .bus_in_data_rs1(id_ex_bus_data_rs1),
         .bus_in_data_rs2(id_ex_bus_data_rs2),
+        .bus_in_rs1(id_ex_bus_rs1),
+        .bus_in_rs2(id_ex_bus_rs2),
         .bus_in_alu_op(id_ex_bus_alu_op),
+        .bus_in_branch_en(id_ex_bus_branch_en),
+        .bus_in_csr_oper(id_ex_bus_csr_oper),
+        .bus_in_cause(id_ex_bus_cause),
         .bus_in_lsu_we(id_ex_bus_lsu_we),
         .bus_in_lsu_re(id_ex_bus_lsu_re),
         .bus_in_lsu_oper(id_ex_bus_lsu_oper),
@@ -226,6 +175,7 @@ module osoc_26000003_core (
         .bus_out_next_pc(ex_ls_bus_alu_next_pc),
         .bus_out_alu_out(ex_ls_bus_alu_alu_out),
         .bus_out_data_rs2(ex_ls_bus_alu_data_rs2),
+        .bus_out_csr_out(ex_ls_bus_alu_csr_out),
         .bus_out_lsu_we(ex_ls_bus_alu_lsu_we),
         .bus_out_lsu_re(ex_ls_bus_alu_lsu_re),
         .bus_out_lsu_oper(ex_ls_bus_alu_lsu_oper),
@@ -234,9 +184,7 @@ module osoc_26000003_core (
         .bus_out_mux_select_pc(ex_ls_bus_alu_mux_select_pc),
         .bus_out_branch(ex_ls_bus_alu_branch),
         .valid_left(id_ex_valid), .ready_left(id_ex_ready_alu), 
-        .valid_right(ex_ls_valid_alu), .ready_right(ex_ls_ready),
-
-        .branch(branch), .branch_taken(branch_taken)
+        .valid_right(ex_ls_valid_alu), .ready_right(ex_ls_ready)
     );
 
     logic [31:0] csr_in;
@@ -293,7 +241,7 @@ module osoc_26000003_core (
         .rdata(rdata_lsu), .rresp(rresp_lsu), .rvalid(rvalid_lsu), .rready(rready_lsu),
         .awaddr(awaddr_lsu), .awvalid(awvalid_lsu), .awready(awready_lsu), 
         .wdata(wdata_lsu), .wstrb(wstrb_lsu), .wvalid(wvalid_lsu), .wready(wready_lsu), 
-        .bresp(bresp_lsu), .bvalid(bvalid_lsu), .bready(bready_lsu)
+        .bresp(bresp_lsu), .bvalid(bvalid_lsu), .bready(bready_lsu), .lsu_device_call(lsu_device_call)
     );
 
     // WB / Regfile Instance
@@ -322,7 +270,10 @@ module osoc_26000003_core (
         id_ex_bus_pc            = id_ex_bus_decoded_pc;
         id_ex_bus_next_pc       = id_ex_bus_decoded_next_pc;
         id_ex_bus_imm           = id_ex_bus_decoded_imm;
+        id_ex_bus_rs1           = id_ex_bus_decoded_rs1;
+        id_ex_bus_rs2           = id_ex_bus_decoded_rs2;
         id_ex_bus_alu_op        = id_ex_bus_decoded_alu_op;
+        id_ex_bus_branch_en     = id_ex_bus_decoded_branch_en;
         id_ex_bus_csr_oper      = id_ex_bus_decoded_csr_oper;
         id_ex_bus_cause         = id_ex_bus_decoded_cause;
         id_ex_bus_lsu_we        = id_ex_bus_decoded_lsu_we;
@@ -344,7 +295,7 @@ module osoc_26000003_core (
         endcase
     end
 
-    assign csr_in = id_ex_bus_csr_oper[2] ? {27'b0, id_ex_bus_decoded_rs1} : id_ex_bus_data_rs1;
+    assign csr_in = id_ex_bus_csr_oper[2] ? {27'b0, id_ex_bus_rs1} : id_ex_bus_data_rs1;
 
     // Internal Interconnect Wires
     logic [31:0] araddr_lsu, rdata_lsu;
@@ -360,6 +311,23 @@ module osoc_26000003_core (
     logic [1:0]  rresp_ifu;
     logic        arvalid_ifu, arready_ifu, rvalid_ifu, rready_ifu;
 
+    logic         awready_arbiter;
+    logic         awvalid_arbiter;
+    logic [31:0]  awaddr_arbiter;
+    logic         wready_arbiter;
+    logic         wvalid_arbiter;
+    logic [31:0]  wdata_arbiter;
+    logic [3:0]   wstrb_arbiter;
+    logic         bready_arbiter;
+    logic         bvalid_arbiter;
+    logic [1:0]   bresp_arbiter;
+    logic         arready_arbiter;
+    logic         arvalid_arbiter;
+    logic [31:0]  araddr_arbiter;
+    logic         rready_arbiter;
+    logic         rvalid_arbiter;
+    logic [1:0]   rresp_arbiter;
+    logic [31:0]  rdata_arbiter;
 
     // Arbiter Module
     arbiter arbiter_mod (
@@ -369,82 +337,27 @@ module osoc_26000003_core (
         .araddr_ifu(araddr_ifu), .arvalid_ifu(arvalid_ifu), .arready_ifu(arready_ifu), .rvalid_ifu(rvalid_ifu), .rdata_ifu(rdata_ifu), .rready_ifu(rready_ifu), .rresp_ifu(rresp_ifu),
         
         // External Master Port Interconnections
-        .araddr(io_master_araddr),
-        .arvalid(io_master_arvalid),
-        .arready(io_master_arready),
-        .rdata(io_master_rdata),
-        .rresp(io_master_rresp),
-        .rvalid(io_master_rvalid),
-        .rready(io_master_rready),
-        .awaddr(io_master_awaddr),
-        .awvalid(io_master_awvalid),
-        .awready(io_master_awready),
-        .wdata(io_master_wdata),
-        .wstrb(io_master_wstrb),
-        .wvalid(io_master_wvalid),
-        .wready(io_master_wready),
-        .bresp(io_master_bresp),
-        .bvalid(io_master_bvalid),
-        .bready(io_master_bready)
+        .araddr(araddr_arbiter),
+        .arvalid(arvalid_arbiter),
+        .arready(arready_arbiter),
+        .rdata(rdata_arbiter),
+        .rresp(rresp_arbiter),
+        .rvalid(rvalid_arbiter),
+        .rready(rready_arbiter),
+        .awaddr(awaddr_arbiter),
+        .awvalid(awvalid_arbiter),
+        .awready(awready_arbiter),
+        .wdata(wdata_arbiter),
+        .wstrb(wstrb_arbiter),
+        .wvalid(wvalid_arbiter),
+        .wready(wready_arbiter),
+        .bresp(bresp_arbiter),
+        .bvalid(bvalid_arbiter),
+        .bready(bready_arbiter)
     );
 
-    // -------------------------------------------------------------------------
-    // Unused Top-level Outputs (Assigned to Constant 0)
-    // -------------------------------------------------------------------------
-    // Unused Master Extensions
-    assign io_master_awid    = 4'b0;
-    assign io_master_awlen   = 8'b0;
-    assign io_master_awsize  = 3'b0;
-    assign io_master_awburst = 2'b0;
-    assign io_master_wlast   = 1'b0;
-    assign io_master_arid    = 4'b0;
-    assign io_master_arlen   = 8'b0;
-    assign io_master_arsize  = 3'b0;
-    assign io_master_arburst = 2'b0;
-
-    // Entirely Unused Slave Output Interface
-    assign io_slave_awready  = 1'b0;
-    assign io_slave_wready   = 1'b0;
-    assign io_slave_bvalid   = 1'b0;
-    assign io_slave_bresp    = 2'b0;
-    assign io_slave_bid      = 4'b0;
-    assign io_slave_arready  = 1'b0;
-    assign io_slave_rvalid   = 1'b0;
-    assign io_slave_rresp    = 2'b0;
-    assign io_slave_rdata    = 32'b0;
-    assign io_slave_rlast    = 1'b0;
-    assign io_slave_rid      = 4'b0;
-
-    // -------------------------------------------------------------------------
-    // Unused Top-level Inputs (Combined into a dummy vector to prevent Lint errors)
-    // -------------------------------------------------------------------------
-    /* verilator lint_off UNUSED */
-    logic [150:0] unused_signals;
-    /* verilator lint_on UNUSED */
-
-    assign unused_signals = {
-        io_interrupt,
-        io_master_bid,
-        io_master_rlast,
-        io_master_rid,
-        io_slave_awvalid,
-        io_slave_awaddr,
-        io_slave_awid,
-        io_slave_awlen,
-        io_slave_awsize,
-        io_slave_awburst,
-        io_slave_wvalid,
-        io_slave_wdata,
-        io_slave_wstrb,
-        io_slave_wlast,
-        io_slave_bready,
-        io_slave_arvalid,
-        io_slave_araddr,
-        io_slave_arid,
-        io_slave_arlen,
-        io_slave_arsize,
-        io_slave_arburst,
-        io_slave_rready, 1'b0
-    };
-
+    axi_slave_lsu axi_slave_lsu_mod (
+        .clk(clock), .rst(reset), .araddr(araddr_arbiter), .arvalid(arvalid_arbiter), .arready(arready_arbiter), .rdata(rdata_arbiter), .rresp(rresp_arbiter), .rvalid(rvalid_arbiter), .rready(rready_arbiter),
+        .awaddr(awaddr_arbiter), .awvalid(awvalid_arbiter), .awready(awready_arbiter), .wdata(wdata_arbiter), .wstrb(wstrb_arbiter), .wvalid(wvalid_arbiter), .wready(wready_arbiter), .bresp(bresp_arbiter), .bvalid(bvalid_arbiter), .bready(bready_arbiter)
+    );
 endmodule

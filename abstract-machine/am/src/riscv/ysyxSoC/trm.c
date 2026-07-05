@@ -6,11 +6,10 @@
 extern char _heap_start;
 int main(const char *args);
 
-extern char _pmem_start;
-#define PMEM_SIZE (4 * 1024)
-#define PMEM_END  ((uintptr_t)&_pmem_start + PMEM_SIZE)
+#define HEAP_SIZE (4 * 1024 * 1024)
+#define HEAP_END  ((uintptr_t)&_heap_start + HEAP_SIZE)
 
-Area heap = RANGE(&_heap_start, PMEM_END);
+Area heap = RANGE(&_heap_start, HEAP_END);
 static const char mainargs[MAINARGS_MAX_LEN] = TOSTRING(MAINARGS_PLACEHOLDER); // defined in CFLAGS
 
 #define UART_BASE 0x10000000L
@@ -38,8 +37,29 @@ extern char _text_end;
 extern char _data_flash_start; 
 extern char _data_start;
 extern char _data_end;
+extern char _boot_flash_start; 
+extern char _boot_start;
+extern char _boot_end;
 
 void _trm_init(void) __attribute__((section(".boot")));
+
+void _preboot(void) __attribute__((section(".preboot")));
+void *memcpy_preboot(void *out, const void *in, size_t n) __attribute__((section(".preboot")));
+
+void _preboot(){
+  memcpy_preboot(&_boot_start, &_boot_flash_start, (uint32_t)(&_boot_end - &_boot_start));
+  _trm_init();
+}
+
+void *memcpy_preboot(void *out, const void *in, size_t n) { 
+  unsigned char *p = (unsigned char *)out;
+  unsigned char *q = (unsigned char *)in;
+  for(size_t i=0;i<n;i++){
+    p[i]=q[i];
+  }
+  return out;
+}
+
 void *memcpy_boot(void *out, const void *in, size_t n) __attribute__((section(".boot")));
 
 void *memcpy_boot(void *out, const void *in, size_t n) {
@@ -70,6 +90,7 @@ void *memcpy_boot(void *out, const void *in, size_t n) {
     *(p32+1) = w1;
     *(p32+2) = w2;
     *(p32+3) = w3;
+
     q32 += 4;
     p32 += 4;
     n -= 16;

@@ -2,65 +2,48 @@ module lsu (
     input logic clk,
     input logic rst,
 
-    // =========================================================================
-    // Explicit Inputs (from pipeline_bus_pkg::ex_to_ls_bus_t)
-    // =========================================================================
-    input logic [31:0] bus_in_next_pc,       // Carried through for JAL/JALR return addresses
-    input logic [31:0] bus_in_alu_out,       // Computed ALU result / Memory Address for LSU
-    input logic [31:0] bus_in_data_rs2,      // Data to be written to memory for store instructions
-    input logic [31:0] bus_in_csr_out,       // Data read from CSR register file
-    input logic        bus_in_lsu_we,        // Memory Write Enable
-    input logic        bus_in_lsu_re,        // Memory Read Enable
-    input logic [2:0]  bus_in_lsu_oper,      // LSU width/sign extension code
-    input logic [4:0]  bus_in_rd,            // Destination register address
-    input logic [1:0]  bus_in_mux_select,    // Selector for Write-Back data multiplexer
-    input logic        bus_in_mux_select_pc, // selector for pc write
-    input logic        bus_in_branch,        // Branch indicator produced by ALU
+    input logic [31:0] bus_in_next_pc,       
+    input logic [31:0] bus_in_alu_out,       
+    input logic [31:0] bus_in_data_rs2,      
+    input logic [31:0] bus_in_csr_out,       
+    input logic        bus_in_lsu_we,        
+    input logic        bus_in_lsu_re,        
+    input logic [2:0]  bus_in_lsu_oper,      
+    input logic [4:0]  bus_in_rd,            
+    input logic [1:0]  bus_in_mux_select,    
+    input logic        bus_in_mux_select_pc, 
+    input logic        bus_in_branch,        
 
-    // =========================================================================
-    // Explicit Outputs (to pipeline_bus_pkg::ls_to_wb_bus_t)
-    // =========================================================================
-    output logic [31:0] bus_out_alu_out,       // ALU result
-    output logic [31:0] bus_out_lsu_out,       // Data loaded from memory
-    output logic [31:0] bus_out_next_pc,       // Return address (PC + 4) for JAL/JALR
-    output logic [31:0] bus_out_csr_out,       // Data read from system CSRs
-    output logic [4:0]  bus_out_rd,            // Destination register address
-    output logic [1:0]  bus_out_mux_select,    // 0: ALU, 1: LSU, 2: next_pc, 3: csr_out
-    output logic        bus_out_mux_select_pc, // selector for pc write
+    output logic [31:0] bus_out_alu_out,       
+    output logic [31:0] bus_out_lsu_out,       
+    output logic [31:0] bus_out_next_pc,       
+    output logic [31:0] bus_out_csr_out,       
+    output logic [4:0]  bus_out_rd,            
+    output logic [1:0]  bus_out_mux_select,    
+    output logic        bus_out_mux_select_pc, 
 
-    // Handshake control signals
     input  logic valid_left, ready_right,
     output logic ready_left, valid_right,
 
-    // Read Address Channel (AR)
     output logic [31:0] araddr,
     output logic        arvalid,
     input  logic        arready,
-
-    // Read Data Channel (R)
     input  logic [31:0] rdata,
     input  logic [1:0]  rresp,
     input  logic        rvalid,
     output logic        rready,
 
-    // Write Address Channel (AW)
     output logic [31:0] awaddr,
     output logic        awvalid,
     input  logic        awready,
-
-    // Write Data Channel (W)
     output logic [31:0] wdata,
     output logic [3:0]  wstrb,
     output logic        wvalid,
     input  logic        wready,
-
-    // Write Response Channel (B)
     input  logic [1:0]  bresp,
     input  logic        bvalid,
-    output logic        bready,
+    output logic        bready
 
-    // Control/Fixes
-    output logic        lsu_device_call
 );
 
     // LB 0, LH 1, LW 2, LBU 3, LHU 4, SB 5, SH 6, SW 7
@@ -69,13 +52,7 @@ module lsu (
     logic done_r, done_w;
 
     always_comb begin
-        lsu_device_call = 0;
-        if ((((bus_in_alu_out >= 32'h10000000) && (bus_in_alu_out < 32'h10001000)) || 1'b0) && (bus_in_lsu_we || bus_in_lsu_re)) begin
-            lsu_device_call = 1;
-        end
 
-        valid_right   = valid_left && (!bus_in_lsu_re || done_r) && (!bus_in_lsu_we || done_w); 
-        ready_left    = ready_right && (!bus_in_lsu_re || done_r) && (!bus_in_lsu_we || done_w);
         unused_branch = bus_in_branch | |rresp | |bresp;
 
         bus_out_alu_out       = 0;
@@ -101,6 +78,14 @@ module lsu (
         bus_out_lsu_out = 0;
         done_r = 0;
 
+        awaddr  = 0;
+        awvalid = 0;
+        wdata = 0;
+        wvalid = 0;
+        done_w = 0;
+        bready = 0;
+
+        if(!rst) begin
         //read
         if(bus_in_lsu_re) begin
         case(lsu_r)
@@ -158,12 +143,6 @@ module lsu (
         endcase
         end
 
-
-        awaddr  = 0;
-        awvalid = 0;
-        wdata = 0;
-        wvalid = 0;
-        done_w = 0;
         //write
         if(bus_in_lsu_we) begin
         case(lsu_w)
@@ -182,10 +161,17 @@ module lsu (
                 wvalid  = 1;
             end
             WAIT_WRESP: begin
-                done_w=1;
+                bready = 1;
+            end
+            WAIT_COMMIT: begin
+                done_w = 1;
             end
         endcase
         end
+        end
+
+        valid_right   = valid_left && (!bus_in_lsu_re || done_r) && (!bus_in_lsu_we || done_w); 
+        ready_left    = ready_right && (!bus_in_lsu_re || done_r) && (!bus_in_lsu_we || done_w);
     end
 
     //read
@@ -201,9 +187,11 @@ module lsu (
         end else begin
             case (lsu_r)
                 IDLE_R: begin
-                    done_r <= 0;
                     if (bus_in_lsu_re && valid_left) begin
                         lsu_r   <= WAIT_AR;
+                        if (arready && arvalid) begin
+                            lsu_r   <= WAIT_R;
+                        end
                     end
                 end
                 WAIT_AR: begin
@@ -219,13 +207,14 @@ module lsu (
                 default: ;
             endcase
         end
+
     end
 
-    //store
-    logic done_aw, done_wdata, done_b, done_commit;
+    //write
+    logic done_aw, done_wdata;
 
     typedef enum {
-        IDLE_W, WAIT_W, WAIT_WRESP
+        IDLE_W, WAIT_W, WAIT_WRESP, WAIT_COMMIT
     } LSU_state_w_t;
     LSU_state_w_t lsu_w;
 
@@ -242,14 +231,21 @@ module lsu (
         if (rst) begin
             done_aw     <= 0;
             done_wdata  <= 0;
-            done_b      <= 0;
-            done_commit <= 0;
             lsu_w       <= IDLE_W;
         end else begin
             case (lsu_w)
                 IDLE_W: begin
                     if (bus_in_lsu_we && valid_left) begin
                         lsu_w   <= WAIT_W;
+                        if (wready) begin 
+                            done_wdata <= 1;
+                        end
+                        if (awready) begin
+                            done_aw <= 1;
+                        end
+                        if ( (awready) && (wready)) begin
+                            lsu_w <= WAIT_WRESP;
+                        end
                     end
                 end
                 WAIT_W: begin
@@ -266,15 +262,14 @@ module lsu (
                     end
                 end
                 WAIT_WRESP: begin
-                    if (bvalid) done_b<=1;
-
-                    if(ready_right) done_commit<=1;
-                    
-                    if((done_b || bvalid) && (done_commit || ready_right)) begin
-                        lsu_w  <= IDLE_W;
-                        done_commit<=0;
-                        done_b<=0;
-                    end 
+                    if (bvalid && bready) begin
+                        lsu_w <= WAIT_COMMIT;
+                    end
+                end
+                WAIT_COMMIT: begin
+                    if (ready_right) begin
+                        lsu_w <= IDLE_W;
+                    end
                 end
                 default: ;
             endcase

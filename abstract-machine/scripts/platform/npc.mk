@@ -33,7 +33,7 @@ NPCFLAG = ""
 endif
 
 run: insert-arg
-	$(MAKE) -C $(NPC_HOME) run ARGS="$(NPCFLAG)" IMG=$(IMAGE).bin
+	$(MAKE) -C $(NPC_HOME) npc_run ARGS="$(NPCFLAG)" IMG=$(IMAGE).bin
 		
 
 .PHONY: insert-arg

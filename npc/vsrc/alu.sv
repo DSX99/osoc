@@ -7,12 +7,7 @@ module alu (
     input logic [31:0] bus_in_imm,           // Fully decoded immediate value
     input logic [31:0] bus_in_data_rs1,      // Register file source 1 data (or forwarded)
     input logic [31:0] bus_in_data_rs2,      // Register file source 2 data (or forwarded)
-    input logic [4:0]  bus_in_rs1,           // to WB to read rs1
-    input logic [4:0]  bus_in_rs2,           // to WB to read rs2
     input logic [7:0]  bus_in_alu_op,        // ALU operation selection
-    input logic        bus_in_branch_en,     // Asserted for branch instructions
-    input logic [2:0]  bus_in_csr_oper,      // CSR operation type
-    input logic [4:0]  bus_in_cause,         // Exception/Interrupt cause if detected in ID
     input logic        bus_in_lsu_we,        // Memory Write Enable (Store)
     input logic        bus_in_lsu_re,        // Memory Read Enable (Load)
     input logic [2:0]  bus_in_lsu_oper,      // LSU width/sign extension code
@@ -26,7 +21,6 @@ module alu (
     output logic [31:0] bus_out_next_pc,       // Carried through for JAL/JALR return addresses
     output logic [31:0] bus_out_alu_out,       // Computed ALU result / Memory Address for LSU
     output logic [31:0] bus_out_data_rs2,      // Data to be written to memory for store instructions
-    output logic [31:0] bus_out_csr_out,       // Data read from CSR register file
     output logic        bus_out_lsu_we,        // Memory Write Enable
     output logic        bus_out_lsu_re,        // Memory Read Enable
     output logic [2:0]  bus_out_lsu_oper,      // LSU width/sign extension code
@@ -37,18 +31,25 @@ module alu (
 
     // Handshake control signals
     input  logic valid_left, ready_right,
-    output logic ready_left, valid_right
+    output logic ready_left, valid_right,
+
+
+    output logic branch,
+    output logic branch_taken
 );
 
     // alu_op[7] = change rs2_val to imm
     // alu_op[6] = change rs1_val to pc
-    // alu_op[5:3] branch or arithmetics (5:4): 11-atomic, 10-mult, 01-branch, 00-arithmetic, 3-extra (sub/srai)
+    // alu_op[5:3] branch or arithmetics (5:4): 11-idk, 10-mult, 01-branch, 00-arithmetic, 3-extra (sub/srai)
     // alu_op[2:0] directly operation, alu_op[2:0] copied from instr
 
     logic [31:0] val1, val2;
 
     assign val1 = bus_in_alu_op[6] ? bus_in_pc : bus_in_data_rs1;
     assign val2 = bus_in_alu_op[7] ? bus_in_imm : bus_in_data_rs2;
+
+    assign branch = bus_in_alu_op[5:4] == 2'b01;
+    assign branch_taken = bus_out_branch;
 
     always_comb begin
         valid_right = valid_left;
@@ -57,7 +58,6 @@ module alu (
         // Default Assignments
         bus_out_alu_out       = '0;
         bus_out_branch        = '0;
-        bus_out_csr_out       = '0; // Not driven by ALU logic but required in structural output
 
         if (bus_in_alu_op[5:4] == 2'b00) begin
             case (bus_in_alu_op[2:0])
