@@ -12,7 +12,7 @@ uint8_t sdram[SDRAM_SIZE];
 uint64_t curr_time;
 extern bool skip_inst;
 extern bool fail;
-extern VysyxSoCFull_osoc_26000003 *top;
+extern VysyxSoCFull_osoc_26000003_core *top;
 extern bool do_diff;
 
 #define ROM_OFFSET  0x80000000

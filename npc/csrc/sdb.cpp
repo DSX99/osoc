@@ -22,7 +22,7 @@
 
 static int is_batch_mode = false;
 static char prev_cmd[128];
-extern VysyxSoCFull_osoc_26000003 *top;
+extern VysyxSoCFull_osoc_26000003_core *top;
 
 void init_regex();
 void init_wp_pool();
