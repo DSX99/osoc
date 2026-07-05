@@ -323,7 +323,7 @@ void execute(uint64_t n){
     n--;
     
     if(!batch && do_diff) {
-      if (!current_cycle_is_skipped && !(top->lsu_device_call) && top->reg_valid) {
+      if (!current_cycle_is_skipped && !(top->lsu_device_call) && top->reg_valid_e) {
         difftest_regcpy(&ref_cpu, 0);
 
         if (ref_cpu.pc != top->pc) {
