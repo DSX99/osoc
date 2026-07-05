@@ -70,7 +70,7 @@ module osoc_26000003_core (
     logic reg_valid /* verilator public */, reg_valid_e /* verilator public */, lsu_device_call /* verilator public */;
 
     logic if_id_valid /* verilator public */, ex_ls_valid /* verilator public */, ex_ls_ready /* verilator public */;
-    logic branch /* verilator public */, branch_taken /* verilator public */;
+    logic branch /* verilator public */, branch_taken /* verilator public */, ex_ls_bus_lsu_we /* verilator public*/, ex_ls_bus_lsu_re /* verilator public*/;
 
     assign opcode = if_id_bus_opcode;
 
@@ -180,9 +180,7 @@ module osoc_26000003_core (
         .bus_out_opcode(if_id_bus_opcode),
         .valid(if_id_valid), .ready(if_id_ready),
         .araddr(araddr_ifu), .arvalid(arvalid_ifu), .arready(arready_ifu), 
-        .rdata(rdata_ifu), .rresp(rresp_ifu), .rvalid(rvalid_ifu), .rready(rready_ifu),
-
-        .ifu_state(ifu_state)
+        .rdata(rdata_ifu), .rresp(rresp_ifu), .rvalid(rvalid_ifu), .rready(rready_ifu)
     );
 
     // ID Decoder Instance
@@ -295,9 +293,7 @@ module osoc_26000003_core (
         .rdata(rdata_lsu), .rresp(rresp_lsu), .rvalid(rvalid_lsu), .rready(rready_lsu),
         .awaddr(awaddr_lsu), .awvalid(awvalid_lsu), .awready(awready_lsu), 
         .wdata(wdata_lsu), .wstrb(wstrb_lsu), .wvalid(wvalid_lsu), .wready(wready_lsu), 
-        .bresp(bresp_lsu), .bvalid(bvalid_lsu), .bready(bready_lsu), .lsu_device_call(lsu_device_call),
-
-        .lsu_state_r(lsu_state_r), .lsu_state_w(lsu_state_w)
+        .bresp(bresp_lsu), .bvalid(bvalid_lsu), .bready(bready_lsu), .lsu_device_call(lsu_device_call)
     );
 
     // WB / Regfile Instance
