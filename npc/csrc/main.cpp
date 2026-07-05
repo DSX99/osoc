@@ -153,8 +153,8 @@ void execute(uint64_t n){
     printf("failed\n");
     difftest_regcpy(&ref_cpu, 0);
 
-    if (ref_cpu.pc != top->pc) {
-      printf("Difference with REF pc, should:0x%08x, actually:0x%08x\n", ref_cpu.pc, top->pc);
+    if (ref_cpu.pc != top->prev_pc) {
+      printf("Difference with REF pc, should:0x%08x, actually:0x%08x\n", ref_cpu.pc, top->prev_pc);
       ret = 1;
       return; 
     }
@@ -162,7 +162,7 @@ void execute(uint64_t n){
     for(int i = 0; i < 32; i++){
       if(ref_cpu.gpr[i] != top->reg_mod->regs[i]){
         printf("Difference with REF %s, should:0x%08x, actually:0x%08x, pc: 0x%08x\n", 
-                regs[i], ref_cpu.gpr[i], top->reg_mod->regs[i], top->pc);
+                regs[i], ref_cpu.gpr[i], top->reg_mod->regs[i], top->prev_pc);
         ret = 1;
         return;
       }
@@ -193,14 +193,14 @@ void execute(uint64_t n){
       printf("time:%lu\n", contextp->time());
     }
 
-    if(!batch && top->opcode!=0 && top->reg_valid){
+    if(!batch && top->opcode!=0 && top->reg_valid_e){
       inst[0] = (top->opcode) & 0xff;
       inst[1] = (top->opcode >> 8) & 0xff;
       inst[2] = (top->opcode >> 16) & 0xff;
       inst[3] = (top->opcode >> 24) & 0xff;
-      disassemble(str, 128, top->pc, inst, 4);
+      disassemble(str, 128, top->prev_pc, inst, 4);
       if(n<10){
-        printf("0x%08x: %02x %02x %02x %02x ", top->pc, inst[3], inst[2], inst[1], inst[0]);
+        printf("0x%08x: %02x %02x %02x %02x ", top->prev_pc, inst[3], inst[2], inst[1], inst[0]);
         printf("%s\n", str);
       }
       #ifdef ITRACE
@@ -219,7 +219,7 @@ void execute(uint64_t n){
     soc->clock=!soc->clock;
     soc->eval();
 
-    valid_cycle = top->reg_valid;
+    valid_cycle = top->reg_valid_e;
 
     if(fail){ 
       printf("failed\n");
@@ -228,7 +228,7 @@ void execute(uint64_t n){
 
     bool current_cycle_is_skipped = skip_inst;
 
-    if((!batch) && (!current_cycle_is_skipped) && top->reg_valid && do_diff) difftest_exec(1);
+    if((!batch) && (!current_cycle_is_skipped) && top->reg_valid_e && do_diff) difftest_exec(1);
 
     if(contextp->gotFinish()){
       #ifdef CONFIG_FST
@@ -240,7 +240,7 @@ void execute(uint64_t n){
         inst[2] = (top->opcode >> 16) & 0xff;
         inst[3] = (top->opcode >> 24) & 0xff;
         printf("0x%08x: %02x %02x %02x %02x ", top->prev_pc, inst[3], inst[2], inst[1], inst[0]);
-        disassemble(str, 128, top->pc, inst, 4);
+        disassemble(str, 128, top->prev_pc, inst, 4);
         printf("%s\n", str);
         #ifdef ITRACE
         strcpy(itrace[point],str);
@@ -263,7 +263,7 @@ void execute(uint64_t n){
       inst[2] = (top->opcode >> 16) & 0xff;
       inst[3] = (top->opcode >> 24) & 0xff;
       printf("0x%08x: %02x %02x %02x %02x ", top->prev_pc, inst[3], inst[2], inst[1], inst[0]);
-      disassemble(str, 128, top->pc, inst, 4);
+      disassemble(str, 128, top->prev_pc, inst, 4);
       printf("%s\n", str);
       #ifdef ITRACE
       strcpy(itrace[point],str);
@@ -277,7 +277,7 @@ void execute(uint64_t n){
       if (!current_cycle_is_skipped && !(top->lsu_device_call)) {
         difftest_regcpy(&ref_cpu, 0);
 
-        if (ref_cpu.pc != top->pc) {
+        if (ref_cpu.pc != top->prev_pc) {
           printf("Difference with REF pc, should:0x%08x, actually:0x%08x\n", ref_cpu.pc, top->prev_pc);
           ret = 1;
           inst[0] = (top->opcode) & 0xff;
@@ -285,7 +285,7 @@ void execute(uint64_t n){
           inst[2] = (top->opcode >> 16) & 0xff;
           inst[3] = (top->opcode >> 24) & 0xff;
           printf("0x%08x: %02x %02x %02x %02x ", top->prev_pc, inst[3], inst[2], inst[1], inst[0]);
-          disassemble(str, 128, top->pc, inst, 4);
+          disassemble(str, 128, top->prev_pc, inst, 4);
           printf("%s\n", str);
           #ifdef ITRACE
           strcpy(itrace[point],str);
@@ -304,7 +304,7 @@ void execute(uint64_t n){
             inst[2] = (top->opcode >> 16) & 0xff;
             inst[3] = (top->opcode >> 24) & 0xff;
             printf("0x%08x: %02x %02x %02x %02x ", top->prev_pc, inst[3], inst[2], inst[1], inst[0]);
-            disassemble(str, 128, top->pc, inst, 4);
+            disassemble(str, 128, top->prev_pc, inst, 4);
             printf("%s\n", str);
             #ifdef ITRACE
             strcpy(itrace[point],str);
@@ -318,7 +318,7 @@ void execute(uint64_t n){
         for(int i = 0; i < 32; i++){
           cpu.gpr[i] = top->reg_mod->regs[i];
         }
-        cpu.pc = top->pc;
+        cpu.pc = top->prev_pc;
         difftest_regcpy(&cpu, 1);
         skip_inst = 0; 
       }
@@ -334,12 +334,12 @@ void reg_display() {
     }
     printf("\n");
   }
-  printf("next pc:0x%08x\n",top->pc);
+  printf("next pc:0x%08x\n",top->prev_pc);
 }
 
 uint32_t reg_str2val(const char *s, bool *success) {
   if(strcmp(s,"pc")==0){
-    return top->pc;
+    return top->prev_pc;
   }
   for(int i=0;i<32;i++){
     if(strcmp(s,regs[i])==0){
