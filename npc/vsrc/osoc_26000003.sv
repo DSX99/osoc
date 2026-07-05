@@ -3,7 +3,6 @@ module osoc_26000003 (
     input  logic         reset,
     input  logic         io_interrupt,
 
-    // External AXI4 Master Interface (To System Memory/Peripherals)
     input  logic         io_master_awready,
     output logic         io_master_awvalid,
     output logic [31:0]  io_master_awaddr, 
@@ -34,7 +33,6 @@ module osoc_26000003 (
     input  logic         io_master_rlast,
     input  logic [3:0]   io_master_rid,
 
-    // External AXI4 Slave Interface (Pass-through straight to Core)
     output logic         io_slave_awready,
     input  logic         io_slave_awvalid,
     input  logic [31:0]  io_slave_awaddr,
@@ -66,9 +64,6 @@ module osoc_26000003 (
     output logic [3:0]   io_slave_rid
 );
 
-    // =========================================================================
-    // Core Internal AXI Master Wires
-    // =========================================================================
     logic         core_awvalid;
     logic [31:0]  core_awaddr;
     logic [3:0]   core_awid;
@@ -103,20 +98,14 @@ module osoc_26000003 (
     logic         core_rlast;
     logic [3:0]   core_rid;
 
-    // Custom CLINT Interconnect Signals
     logic [31:0]  cwdata, crdata, caddr;
     logic         cwvalid, crvalid, cready;
 
-    // Address Decoding Attributes
     logic match_aw, match_ar;
     assign match_aw = (core_awaddr[31:16] == 16'h0200);
     assign match_ar = (core_araddr[31:16] == 16'h0200);
 
-    // =========================================================================
-    // XBAR Routing Logic
-    // =========================================================================
     always_comb begin
-        // --- Write Address Channel (AW) Routing ---
         if (match_aw) begin
             io_master_awvalid = 1'b0;
             io_master_awaddr  = 32'b0;
@@ -124,7 +113,16 @@ module osoc_26000003 (
             io_master_awlen   = 8'b0;
             io_master_awsize  = 3'b0;
             io_master_awburst = 2'b0;
-            core_awready      = 1'b1; // Auto-handshake internal core target
+            core_awready      = cawready;
+            io_master_wvalid  = 1'b0;
+            io_master_wdata   = 32'b0;
+            io_master_wstrb   = 4'b0;
+            io_master_wlast   = 1'b0;
+            core_wready       = cwready;   
+            io_master_bready  = 1'b0;
+            core_bvalid       = 1'b1;
+            core_bresp        = 2'b0;
+            core_bid          = io_master_bid;
         end else begin
             io_master_awvalid = core_awvalid;
             io_master_awaddr  = core_awaddr;
@@ -133,38 +131,17 @@ module osoc_26000003 (
             io_master_awsize  = core_awsize;
             io_master_awburst = core_awburst;
             core_awready      = io_master_awready;
-        end
-
-        // --- Write Data Channel (W) Routing ---
-        // CLINT captures data directly when address matched during write sequence
-        if (match_aw) begin
-            io_master_wvalid  = 1'b0;
-            io_master_wdata   = 32'b0;
-            io_master_wstrb   = 4'b0;
-            io_master_wlast   = 1'b0;
-            core_wready       = 1'b1; 
-        end else begin
             io_master_wvalid  = core_wvalid;
             io_master_wdata   = core_wdata;
             io_master_wstrb   = core_wstrb;
             io_master_wlast   = core_wlast;
-            core_wready       = io_master_wready;
-        end
-
-        // --- Write Response Channel (B) Routing ---
-        if (match_aw) begin
-            io_master_bready  = 1'b0;
-            core_bvalid       = 1'b1; // Immediate pseudo-response to unblock single-cycle loop
-            core_bresp        = 2'b00; // OKAY status
-            core_bid          = core_awid;
-        end else begin
+            core_wready       = io_master_wready;    
             io_master_bready  = core_bready;
             core_bvalid       = io_master_bvalid;
             core_bresp        = io_master_bresp;
             core_bid          = io_master_bid;
         end
 
-        // --- Read Address Channel (AR) Routing ---
         if (match_ar) begin
             io_master_arvalid = 1'b0;
             io_master_araddr  = 32'b0;
@@ -173,6 +150,12 @@ module osoc_26000003 (
             io_master_arsize  = 3'b0;
             io_master_arburst = 2'b0;
             core_arready      = 1'b1; 
+            io_master_rready  = 1'b0;
+            core_rvalid       = cready;
+            core_rdata        = crdata;
+            core_rresp        = 2'b00; 
+            core_rlast        = 1'b1;
+            core_rid          = 4'b0;
         end else begin
             io_master_arvalid = core_arvalid;
             io_master_araddr  = core_araddr;
@@ -181,17 +164,6 @@ module osoc_26000003 (
             io_master_arsize  = core_arsize;
             io_master_arburst = core_arburst;
             core_arready      = io_master_arready;
-        end
-
-        // --- Read Data Channel (R) Routing ---
-        if (match_ar) begin
-            io_master_rready  = 1'b0;
-            core_rvalid       = cready; // Interlocked with custom peripheral transaction cycle
-            core_rdata        = crdata;
-            core_rresp        = 2'b00; 
-            core_rlast        = 1'b1;
-            core_rid          = core_arid;
-        end else begin
             io_master_rready  = core_rready;
             core_rvalid       = io_master_rvalid;
             core_rdata        = io_master_rdata;
@@ -199,27 +171,21 @@ module osoc_26000003 (
             core_rlast        = io_master_rlast;
             core_rid          = io_master_rid;
         end
-    end
-
-    // =========================================================================
-    // Core Interface Extraction To Custom Peripheral Bus Conversion Engine
-    // =========================================================================
-    always_comb begin
+    
         cwvalid = core_wvalid && match_aw;
+        cawvalid = core_awvalid && match_aw;
         cwdata  = core_wdata;
         crvalid = core_arvalid && match_ar;
-        caddr   = match_aw ? core_awaddr : (match_ar ? core_araddr : 32'b0);
+        cawaddr   = core_awaddr;
+        caraddr   = core_araddr;
+    
     end
 
-    // =========================================================================
-    // Core Module Instantiation
-    // =========================================================================
     osoc_26000003_core core (
         .clock(clock),
         .reset(reset),
         .io_interrupt(io_interrupt),
 
-        // Core to XBAR Master Routing Ports
         .io_master_awready(core_awready),
         .io_master_awvalid(core_awvalid),
         .io_master_awaddr(core_awaddr),
@@ -250,7 +216,6 @@ module osoc_26000003 (
         .io_master_rlast(core_rlast),
         .io_master_rid(core_rid),
 
-        // Straight Pass-through Slave Ports
         .io_slave_awready(io_slave_awready),
         .io_slave_awvalid(io_slave_awvalid),
         .io_slave_awaddr(io_slave_awaddr),
@@ -282,9 +247,6 @@ module osoc_26000003 (
         .io_slave_rid(io_slave_rid)
     );
 
-    // =========================================================================
-    // Isolated CLINT Instantiation
-    // =========================================================================
     CLINT CLINT_mod (
         .clk(clock),
         .rst(reset),
