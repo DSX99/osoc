@@ -63,74 +63,116 @@ module arbiter(
     output logic        bready
 );
 
-logic chose; //0-lsu; 1-ifu;
-logic lsu_transfer, ifu_transfer;
+logic read_select, read_select_comb; // 0-lsu 1-ifu
+logic read_busy, write_busy;
 
-always_comb begin //possible decouple reading and writing for non blocking writing to memory
-    chose=0;
-
-    if(arvalid_ifu && !lsu_transfer) chose=1;
-
-    araddr=0;
-    arvalid=0;
-    rready=0;
-
-    awaddr=awaddr_lsu;
-    awvalid=awvalid_lsu;
-    awready_lsu=awready;
-
-    wdata=wdata_lsu;
-    wstrb=wstrb_lsu;
-    wvalid=wvalid_lsu;
-    wready_lsu=wready;
-
-    bresp_lsu=bresp;
-    bvalid_lsu=bvalid;
-    bready=bready_lsu;
-
-    if(chose || ifu_transfer) begin
-        araddr=araddr_ifu;
-        arvalid=arvalid_ifu;
-        arready_ifu=arready;
-
-        rready=rready_ifu;
-        rdata_ifu=rdata;
-        rresp_ifu=rresp;
-        rvalid_ifu=rvalid;
+always_comb begin
+    if(arvalid_lsu) begin
+        read_select_comb = 0;
     end else begin
-        arready_ifu=0;
-        rdata_ifu=0;
-        rresp_ifu=0;
-        rvalid_ifu=0;
+        read_select_comb = 1;
+    end
+end
+
+always_comb begin 
+
+    araddr      = 32'b0;
+    arvalid     = 1'b0;
+    arready_lsu = 1'b0;
+    arready_ifu = 1'b0;
+
+    rready      = 1'b0;
+    rdata_lsu   = 32'b0; rresp_lsu = 2'b0; rvalid_lsu = 1'b0;
+    rdata_ifu   = 32'b0; rresp_ifu = 2'b0; rvalid_ifu = 1'b0;
+
+    awaddr      = 32'b0;
+    awvalid     = 1'b0;
+    awready_lsu = 1'b0;
+
+    wdata       = 32'b0;
+    wstrb       = 4'b0;
+    wvalid      = 1'b0;
+    wready_lsu  = 1'b0;
+
+    bready      = bready_lsu;
+    bresp_lsu   = bresp;
+    bvalid_lsu  = bvalid;
+
+    //read
+    if(!read_busy) begin
+        if(!read_select_comb) begin
+            araddr = araddr_lsu;
+            arvalid = arvalid_lsu;
+            arready_lsu = arready;
+            arready_ifu = 0;
+        end else begin
+            araddr = araddr_ifu;
+            arvalid = arvalid_ifu;
+            arready_lsu = 0;
+            arready_ifu = arready;
+        end 
+    end else begin
+        if(!read_select) begin
+            rready     = rready_lsu;
+            rdata_lsu  = rdata;
+            rresp_lsu  = rresp;
+            rvalid_lsu = rvalid;
+        end else begin
+            rready     = rready_ifu;
+            rdata_ifu  = rdata;
+            rresp_ifu  = rresp;
+            rvalid_ifu = rvalid;
+        end
     end
 
-    if((lsu_transfer || !chose) && !ifu_transfer) begin
-        araddr=araddr_lsu;
-        arvalid=arvalid_lsu;
-        arready_lsu=arready;
+    //write
+    awaddr      = awaddr_lsu;
+    awvalid     = awvalid_lsu;
+    awready_lsu = awready;
+    wdata       = wdata_lsu;
+    wstrb       = wstrb_lsu;
+    wvalid      = wvalid_lsu;
+    wready_lsu  = wready;
+    bready     = bready_lsu;
+    bresp_lsu  = bresp;
+    bvalid_lsu = bvalid;
 
-        rready=rready_lsu;
-        rdata_lsu=rdata;
-        rresp_lsu=rresp;
-        rvalid_lsu=rvalid;
-    end else begin
-        arready_lsu=0;
-        rdata_lsu=0;
-        rresp_lsu=0;
-        rvalid_lsu=0;
+    if (!write_busy) begin
+        awaddr      = awaddr_lsu;
+        awvalid     = awvalid_lsu;
+        awready_lsu = awready;
+
+        wdata       = wdata_lsu;
+        wstrb       = wstrb_lsu;
+        wvalid      = wvalid_lsu;
+        wready_lsu  = wready;
     end
 end
 
 always_ff @(posedge clk) begin
     if(rst) begin
-        ifu_transfer<=0;
-        lsu_transfer<=0;
+        read_select<=0;
     end else begin
-        if(chose && arvalid && arready) ifu_transfer<=1;
-        if(!chose && arvalid && arready && !ifu_transfer) lsu_transfer<=1;
-        
-        if(ifu_transfer && rvalid && rready) ifu_transfer<=0;
-        if(lsu_transfer && ((rvalid && rready))) lsu_transfer<=0;
+        if (!read_busy) begin
+            if (arvalid && arready) begin
+                read_busy  <= 1'b1;
+                read_select <= read_select_comb;
+            end
+        end else begin
+            if (rvalid && rready) begin
+                read_busy <= 1'b0;
+            end
+        end
+
+        if (!write_busy) begin
+            if (awvalid && awready) begin
+                write_busy <= 1'b1;
+            end
+        end else begin
+            if (bvalid && bready) begin
+                write_busy <= 1'b0;
+            end
+        end
     end
 end
 
