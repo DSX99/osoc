@@ -3,7 +3,10 @@
 #include <getopt.h>
 #include <verilated.h>
 #include "dpi.h"
-
+#include "Vosoc_26000003_func.h"
+#include "Vosoc_26000003_func___024root.h"
+#include "Vosoc_26000003_func_osoc_26000003_func.h"
+#include "Vosoc_26000003_func_regs.h"
 
 #ifdef CONFIG_FST
 #include <verilated_fst_c.h>
@@ -26,8 +29,8 @@ uint32_t ret = 0;
 static uint32_t qexit = 0;
 VerilatedContext *contextp;
 VerilatedFstC *tracep;
-VysyxSoCFull* soc; 
-VysyxSoCFull_osoc_26000003_core *top;
+Vosoc_26000003_func* soc; 
+Vosoc_26000003_func_osoc_26000003_func *top;
 bool skip_inst=0;
 CPU_state cpu;
 bool fail=0;
@@ -48,7 +51,7 @@ void init_disasm();
 void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 }
 
-void reset(VysyxSoCFull *soc,int n){
+void reset(Vosoc_26000003_func *soc,int n){
   soc->reset=1;
   for(int i=0; i<n; i++){
     soc->clock=1;
@@ -101,8 +104,8 @@ int main(int argc, char** argv) {
   contextp = new VerilatedContext;
   // contextp->threads(4); // can be used in future to increase speed
 
-  soc = new VysyxSoCFull{contextp};
-  top = soc->ysyxSoCFull->asic->cpu->cpu->core;
+  soc = new Vosoc_26000003_func{contextp};
+  top = soc->osoc_26000003_func;
   
 #ifdef CONFIG_FST
   Verilated::traceEverOn(true);
