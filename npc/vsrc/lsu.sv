@@ -207,6 +207,9 @@ module lsu (
                 IDLE_R: begin
                     if (bus_in_lsu_re && valid_left) begin
                         lsu_r   <= WAIT_AR;
+                        if (arready && arvalid) begin
+                            lsu_r   <= WAIT_R;
+                        end
                     end
                 end
                 WAIT_AR: begin
