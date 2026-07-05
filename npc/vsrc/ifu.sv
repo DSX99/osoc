@@ -28,7 +28,7 @@ module ifu (
 );
 
     typedef enum {
-        IDLE, WAIT_AR, WAIT_R, AWAIT
+        WAIT_AR, WAIT_R, AWAIT
     } IFU_state_t;
     IFU_state_t ifu;
 
@@ -38,45 +38,49 @@ module ifu (
         unused_bits     = |rresp;
         bus_out_pc      = pc;
         bus_out_next_pc = next_pc;
+
+        valid=0;
+        arvalid=0;
+        araddr=0;
+        rready=0;
+
+        case(ifu)
+            WAIT_AR: begin
+                arvalid = 1;
+                araddr  = pc;
+            end
+            WAIT_R: begin
+                rready  = 1;
+            end
+            AWAIT: begin
+                valid=1;
+            end
+            default: ;
+        endcase
     end
 
     always_ff @(posedge clk) begin
         if (rst) begin
-            ifu             <= IDLE;
+            ifu             <= WAIT_AR;
             bus_out_opcode  <= 0;
-            arvalid         <= 0;
-            araddr          <= 0;
-            rready          <= 0;
-            valid           <= 0;
         end else begin
             case (ifu)
-                IDLE: begin
-                    valid   <= 0;
-                    arvalid <= 1;
-                    araddr  <= pc;
-                    ifu     <= WAIT_AR;
-                end
                 WAIT_AR: begin
-                    if (arready && arvalid) begin 
-                        arvalid <= 0;
+                    if (arready && arvalid) begin
                         ifu     <= WAIT_R;
-                        rready  <= 1;
                     end
                 end
                 WAIT_R: begin
                     if (rvalid && rready) begin
-                        ifu            <= AWAIT;
                         bus_out_opcode <= rdata;
-                        rready         <= 0;
-                        valid          <= 1;
                     end
                 end
                 AWAIT: begin
                     if (ready) begin
-                        valid <= 0;
-                        ifu   <= IDLE;
+                        ifu   <= WAIT_AR;
                     end
                 end
+                default: ;
             endcase
         end
     end

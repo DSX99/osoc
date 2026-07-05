@@ -59,24 +59,11 @@ module lsu (
     input  logic        bvalid,
     output logic        bready,
 
-    // To CLINT
-    input  logic [31:0] crdata,
-    output logic        crvalid,
-    output logic [31:0] cwdata,
-    output logic        cwvalid,
-    input  logic        cready,
-    output logic [31:0] caddr,
-
     // Control/Fixes
     output logic        lsu_device_call
 );
 
     // LB 0, LH 1, LW 2, LBU 3, LHU 4, SB 5, SH 6, SW 7
-
-    typedef enum {
-        IDLE_R, WAIT_AR, WAIT_R, AWAIT_R
-    } LSU_state_R_t;
-    LSU_state_R_t lsu_r;
 
     logic unused_branch;
     logic done_r, done_w;
@@ -87,11 +74,8 @@ module lsu (
             lsu_device_call = 1;
         end
 
-        valid_right   = valid_left && (!bus_in_lsu_re || done_r) && (!bus_in_lsu_we || done_w); 
-        ready_left    = ready_right && (!bus_in_lsu_re || done_r) && (!bus_in_lsu_we || done_w);
         unused_branch = bus_in_branch | |rresp | |bresp;
 
-        // Default Reset States
         bus_out_alu_out       = 0;
         bus_out_next_pc       = 0;
         bus_out_csr_out       = 0;
@@ -107,154 +91,142 @@ module lsu (
             bus_out_mux_select    = bus_in_mux_select;
             bus_out_mux_select_pc = bus_in_mux_select_pc;
         end 
-    end
 
-    // =========================================================================
-    // READING (LOAD)
-    // =========================================================================
-    always_ff @(posedge clk) begin
-        if (rst) begin
-            bus_out_lsu_out <= 0;
-            arvalid         <= 0;
-            araddr          <= 0;
-            rready          <= 0;
-            done_r          <= 1;
-            crvalid         <= 0;
-            caddr           <= 0;
-            lsu_r           <= IDLE_R;
-        end else begin
-            if (bus_in_alu_out[31:16] == 16'h0200) begin
-                case (lsu_r)
-                    IDLE_R: begin
-                        done_r <= 0;
-                        if (bus_in_lsu_re && valid_left) begin
-                            crvalid <= 1;
-                            caddr   <= bus_in_alu_out;
-                            lsu_r   <= WAIT_R;
-                        end
-                    end
-                    WAIT_R: begin
-                        if (crvalid && cready) begin
-                            lsu_r <= AWAIT_R;
-                            case (bus_in_lsu_oper)
-                                0: begin // LB
-                                    case (bus_in_alu_out[1:0])
-                                        2'b00: bus_out_lsu_out <= {{24{crdata[7]}}, crdata[7:0]};
-                                        2'b01: bus_out_lsu_out <= {{24{crdata[15]}}, crdata[15:8]};
-                                        2'b10: bus_out_lsu_out <= {{24{crdata[23]}}, crdata[23:16]};
-                                        2'b11: bus_out_lsu_out <= {{24{crdata[31]}}, crdata[31:24]};
-                                    endcase
-                                end 
-                                1: begin // LH
-                                    case (bus_in_alu_out[1])
-                                        1'b0: bus_out_lsu_out <= {{16{crdata[15]}}, crdata[15:0]};
-                                        1'b1: bus_out_lsu_out <= {{16{crdata[31]}}, crdata[31:16]};
-                                    endcase
-                                end 
-                                2: begin // LW
-                                    bus_out_lsu_out <= crdata[31:0];
-                                end 
-                                4: begin // LBU
-                                    case (bus_in_alu_out[1:0])
-                                        2'b00: bus_out_lsu_out <= {{24'b0}, crdata[7:0]};
-                                        2'b01: bus_out_lsu_out <= {{24'b0}, crdata[15:8]};
-                                        2'b10: bus_out_lsu_out <= {{24'b0}, crdata[23:16]};
-                                        2'b11: bus_out_lsu_out <= {{24'b0}, crdata[31:24]};
-                                    endcase
-                                end 
-                                5: begin // LHU
-                                    case (bus_in_alu_out[1])
-                                        1'b0: bus_out_lsu_out <= {{16'b0}, crdata[15:0]};
-                                        1'b1: bus_out_lsu_out <= {{16'b0}, crdata[31:16]};
-                                    endcase
-                                end 
-                            endcase
-                            crvalid <= 0;
-                            done_r  <= 1;
-                        end
-                    end
-                    AWAIT_R: begin
-                        if (ready_right && valid_left) begin
-                            done_r <= 0;
-                            lsu_r  <= IDLE_R;
-                        end
-                    end
-                endcase            
-            end else begin
-                case (lsu_r)
-                    IDLE_R: begin
-                        done_r <= 0;
-                        if (bus_in_lsu_re && valid_left) begin
-                            arvalid <= 1;
-                            araddr  <= (bus_in_alu_out & 32'hFFFFFFFF);
-                            lsu_r   <= WAIT_AR;
-                        end
-                    end
-                    WAIT_AR: begin
-                        if (arready && arvalid) begin 
-                            arvalid <= 0;
-                            rready  <= 1;
-                            lsu_r   <= WAIT_R;
-                        end
-                    end
-                    WAIT_R: begin
-                        if (rvalid && rready) begin
-                            lsu_r <= AWAIT_R;
-                            case (bus_in_lsu_oper)
-                                0: begin // LB
-                                    case (bus_in_alu_out[1:0])
-                                        2'b00: bus_out_lsu_out <= {{24{rdata[7]}}, rdata[7:0]};
-                                        2'b01: bus_out_lsu_out <= {{24{rdata[15]}}, rdata[15:8]};
-                                        2'b10: bus_out_lsu_out <= {{24{rdata[23]}}, rdata[23:16]};
-                                        2'b11: bus_out_lsu_out <= {{24{rdata[31]}}, rdata[31:24]};
-                                    endcase
-                                end 
-                                1: begin // LH
-                                    case (bus_in_alu_out[1])
-                                        1'b0: bus_out_lsu_out <= {{16{rdata[15]}}, rdata[15:0]};
-                                        1'b1: bus_out_lsu_out <= {{16{rdata[31]}}, rdata[31:16]};
-                                    endcase
-                                end 
-                                2: begin // LW
-                                    bus_out_lsu_out <= rdata[31:0];
-                                end 
-                                4: begin // LBU
-                                    case (bus_in_alu_out[1:0])
-                                        2'b00: bus_out_lsu_out <= {{24'b0}, rdata[7:0]};
-                                        2'b01: bus_out_lsu_out <= {{24'b0}, rdata[15:8]};
-                                        2'b10: bus_out_lsu_out <= {{24'b0}, rdata[23:16]};
-                                        2'b11: bus_out_lsu_out <= {{24'b0}, rdata[31:24]};
-                                    endcase
-                                end 
-                                5: begin // LHU
-                                    case (bus_in_alu_out[1])
-                                        1'b0: bus_out_lsu_out <= {{16'b0}, rdata[15:0]};
-                                        1'b1: bus_out_lsu_out <= {{16'b0}, rdata[31:16]};
-                                    endcase
-                                end 
-                            endcase
-                            rready <= 0;
-                            done_r <= 1;
-                        end
-                    end
-                    AWAIT_R: begin
-                        if (ready_right && valid_left) begin
-                            done_r <= 0;
-                            lsu_r  <= IDLE_R;
-                        end
-                    end
-                endcase
+
+        arvalid = 0;
+        araddr  = 0;
+        rready  = 0;
+        bus_out_lsu_out = 0;
+        done_r = 0;
+
+        //read
+        if(bus_in_lsu_re) begin
+        case(lsu_r)
+            IDLE_R: begin
+                if (bus_in_lsu_re && valid_left) begin
+                    arvalid = 1;
+                    araddr  = bus_in_alu_out;
+                end
             end
+            WAIT_AR: begin
+                arvalid = 1;
+                araddr  = bus_in_alu_out;
+                
+            end
+            WAIT_R: begin
+                rready  = 1;
+
+                if (rvalid && rready) begin
+                    case (bus_in_lsu_oper)
+                        0: begin // LB
+                            case (bus_in_alu_out[1:0])
+                                2'b00: bus_out_lsu_out = {{24{rdata[7]}}, rdata[7:0]};
+                                2'b01: bus_out_lsu_out = {{24{rdata[15]}}, rdata[15:8]};
+                                2'b10: bus_out_lsu_out = {{24{rdata[23]}}, rdata[23:16]};
+                                2'b11: bus_out_lsu_out = {{24{rdata[31]}}, rdata[31:24]};
+                            endcase
+                        end 
+                        1: begin // LH
+                            case (bus_in_alu_out[1])
+                                1'b0: bus_out_lsu_out = {{16{rdata[15]}}, rdata[15:0]};
+                                1'b1: bus_out_lsu_out = {{16{rdata[31]}}, rdata[31:16]};
+                            endcase
+                        end 
+                        2: begin // LW
+                            bus_out_lsu_out = rdata[31:0];
+                        end 
+                        4: begin // LBU
+                            case (bus_in_alu_out[1:0])
+                                2'b00: bus_out_lsu_out = {{24'b0}, rdata[7:0]};
+                                2'b01: bus_out_lsu_out = {{24'b0}, rdata[15:8]};
+                                2'b10: bus_out_lsu_out = {{24'b0}, rdata[23:16]};
+                                2'b11: bus_out_lsu_out = {{24'b0}, rdata[31:24]};
+                            endcase
+                        end 
+                        5: begin // LHU
+                            case (bus_in_alu_out[1])
+                                1'b0: bus_out_lsu_out = {{16'b0}, rdata[15:0]};
+                                1'b1: bus_out_lsu_out = {{16'b0}, rdata[31:16]};
+                            endcase
+                        end 
+                    endcase
+                    done_r = 1;
+                end
+            end
+        endcase
+        end
+
+
+        awaddr  = 0;
+        awvalid = 0;
+        wdata = 0;
+        wvalid = 0;
+        done_w = 0;
+        //write
+        if(bus_in_lsu_we) begin
+        case(lsu_w)
+            IDLE_W: begin
+                if (bus_in_lsu_we && valid_left) begin
+                    awaddr  = bus_in_alu_out; 
+                    awvalid = 1;
+                    wdata   = (bus_in_data_rs2 << (bus_in_alu_out[1:0] * 8));
+                    wvalid  = 1;
+                end
+            end
+            WAIT_W: begin
+                awaddr  = bus_in_alu_out; 
+                awvalid = 1;
+                wdata   = (bus_in_data_rs2 << (bus_in_alu_out[1:0] * 8));
+                wvalid  = 1;
+            end
+            WAIT_WRESP: begin
+                done_w=1;
+            end
+        endcase
         end
     end
 
-    // =========================================================================
-    // WRITING (STORE)
-    // =========================================================================
-    logic done_aw, done_wdata;
+    //read
+    
+    typedef enum {
+        IDLE_R, WAIT_AR, WAIT_R
+    } LSU_state_R_t;
+    LSU_state_R_t lsu_r;
+
+    always_ff @(posedge clk) begin
+        if (rst) begin
+            lsu_r           <= IDLE_R;
+        end else begin
+            case (lsu_r)
+                IDLE_R: begin
+                    if (bus_in_lsu_re && valid_left) begin
+                        lsu_r   <= WAIT_AR;
+                    end
+                end
+                WAIT_AR: begin
+                    if (arready && arvalid) begin
+                        lsu_r   <= WAIT_R;
+                    end
+                end
+                WAIT_R: begin
+                    if (rvalid && rready) begin
+                        lsu_r <= IDLE_R;
+                    end
+                end
+                default: ;
+            endcase
+        end
+
+        valid_right   = valid_left && (!bus_in_lsu_re || done_r) && (!bus_in_lsu_we || done_w); 
+        ready_left    = ready_right && (!bus_in_lsu_re || done_r) && (!bus_in_lsu_we || done_w);
+
+    end
+
+    //store
+    logic done_aw, done_wdata, done_b, done_commit;
 
     typedef enum {
-        IDLE_W, WAIT_W, WAIT_WRESP, AWAIT_W
+        IDLE_W, WAIT_W, WAIT_WRESP
     } LSU_state_w_t;
     LSU_state_w_t lsu_w;
 
@@ -269,85 +241,44 @@ module lsu (
 
     always_ff @(posedge clk) begin
         if (rst) begin
-            bready     <= 1;
-            wdata      <= 0;
-            wvalid     <= 0;
-            awaddr     <= 0;
-            awvalid    <= 0;
-            cwdata     <= 0;
-            cwvalid    <= 0;
-            done_w     <= 0;
-            done_aw    <= 0;
-            done_wdata <= 0;
-            lsu_w      <= IDLE_W;
+            done_aw     <= 0;
+            done_wdata  <= 0;
+            done_b      <= 0;
+            done_commit <= 0;
+            lsu_w       <= IDLE_W;
         end else begin
-            if (bus_in_alu_out[31:16] == 16'h0200) begin
-                case (lsu_w)
-                    IDLE_W: begin
-                        done_w <= 0;
-                        if (bus_in_lsu_we && valid_left) begin
-                            caddr   <= bus_in_alu_out;
-                            cwdata  <= bus_in_data_rs2;
-                            cwvalid <= 1;
-                            lsu_w   <= WAIT_W;
-                        end
+            case (lsu_w)
+                IDLE_W: begin
+                    if (bus_in_lsu_we && valid_left) begin
+                        lsu_w   <= WAIT_W;
                     end
-                    WAIT_W: begin // Reusing WAIT_W state structure for device path execution
-                        if (cwvalid && cready) begin
-                            cwvalid <= 0;
-                            lsu_w   <= AWAIT_W;
-                            done_w  <= 1;
-                        end
+                end
+                WAIT_W: begin
+                    if (wready) begin 
+                        done_wdata <= 1;
                     end
-                    AWAIT_W: begin
-                        if (ready_right && valid_left) begin
-                            done_w <= 0;
-                            lsu_w  <= IDLE_W;
-                        end
+                    if (awready) begin
+                        done_aw <= 1;
                     end
-                    default: lsu_w <= IDLE_W;
-                endcase
-            end else begin
-                case (lsu_w)
-                    IDLE_W: begin
-                        done_w <= 0;
-                        if (bus_in_lsu_we && valid_left) begin
-                            awaddr  <= (bus_in_alu_out & 32'hFFFFFFFF);
-                            awvalid <= 1;
-                            wdata   <= (bus_in_data_rs2 << (bus_in_alu_out[1:0] * 8));
-                            wvalid  <= 1;
-                            lsu_w   <= WAIT_W;
-                        end
+                    if ((done_aw || awready) && (done_wdata || wready)) begin
+                        done_aw<=0;
+                        done_wdata<=0;
+                        lsu_w <= WAIT_WRESP;
                     end
-                    WAIT_W: begin
-                        if (wready) begin 
-                            wvalid     <= 0;
-                            done_wdata <= 1;
-                        end
-                        if (awready) begin
-                            awvalid <= 0;
-                            done_aw <= 1;
-                        end
-                        if ((done_aw || awready) && (done_wdata || wready)) begin
-                            lsu_w <= WAIT_WRESP;
-                        end
-                    end
-                    WAIT_WRESP: begin
-                        done_aw    <= 0;
-                        done_wdata <= 0;
-                        if (bvalid) begin
-                            lsu_w  <= AWAIT_W;
-                            done_w <= 1;
-                        end
-                    end
-                    AWAIT_W: begin
-                        if (ready_right && valid_left) begin
-                            done_w <= 0;
-                            lsu_w  <= IDLE_W;
-                        end
-                    end
-                endcase
-            end
+                end
+                WAIT_WRESP: begin
+                    if (bvalid) done_b<=1;
+
+                    if(ready_right) done_commit<=1;
+                    
+                    if((done_b || bvalid) && (done_commit || ready_right)) begin
+                        lsu_w  <= IDLE_W;
+                        done_commit<=0;
+                        done_b<=0;
+                    end 
+                end
+                default: ;
+            endcase
         end
     end
 
