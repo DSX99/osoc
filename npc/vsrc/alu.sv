@@ -31,18 +31,25 @@ module alu (
 
     // Handshake control signals
     input  logic valid_left, ready_right,
-    output logic ready_left, valid_right
+    output logic ready_left, valid_right,
+
+
+    output logic branch,
+    output logic branch_taken
 );
 
     // alu_op[7] = change rs2_val to imm
     // alu_op[6] = change rs1_val to pc
-    // alu_op[5:3] branch or arithmetics (5:4): 11-atomic, 10-mult, 01-branch, 00-arithmetic, 3-extra (sub/srai)
+    // alu_op[5:3] branch or arithmetics (5:4): 11-idk, 10-mult, 01-branch, 00-arithmetic, 3-extra (sub/srai)
     // alu_op[2:0] directly operation, alu_op[2:0] copied from instr
 
     logic [31:0] val1, val2;
 
     assign val1 = bus_in_alu_op[6] ? bus_in_pc : bus_in_data_rs1;
     assign val2 = bus_in_alu_op[7] ? bus_in_imm : bus_in_data_rs2;
+
+    assign branch = bus_in_alu_op == 2'b01;
+    assign branch_tkaen = bus_out_branch;
 
     always_comb begin
         valid_right = valid_left;

@@ -2,71 +2,59 @@ module lsu (
     input logic clk,
     input logic rst,
 
-    // =========================================================================
-    // Explicit Inputs (from pipeline_bus_pkg::ex_to_ls_bus_t)
-    // =========================================================================
-    input logic [31:0] bus_in_next_pc,       // Carried through for JAL/JALR return addresses
-    input logic [31:0] bus_in_alu_out,       // Computed ALU result / Memory Address for LSU
-    input logic [31:0] bus_in_data_rs2,      // Data to be written to memory for store instructions
-    input logic [31:0] bus_in_csr_out,       // Data read from CSR register file
-    input logic        bus_in_lsu_we,        // Memory Write Enable
-    input logic        bus_in_lsu_re,        // Memory Read Enable
-    input logic [2:0]  bus_in_lsu_oper,      // LSU width/sign extension code
-    input logic [4:0]  bus_in_rd,            // Destination register address
-    input logic [1:0]  bus_in_mux_select,    // Selector for Write-Back data multiplexer
-    input logic        bus_in_mux_select_pc, // selector for pc write
-    input logic        bus_in_branch,        // Branch indicator produced by ALU
+    input logic [31:0] bus_in_next_pc,       
+    input logic [31:0] bus_in_alu_out,       
+    input logic [31:0] bus_in_data_rs2,      
+    input logic [31:0] bus_in_csr_out,       
+    input logic        bus_in_lsu_we,        
+    input logic        bus_in_lsu_re,        
+    input logic [2:0]  bus_in_lsu_oper,      
+    input logic [4:0]  bus_in_rd,            
+    input logic [1:0]  bus_in_mux_select,    
+    input logic        bus_in_mux_select_pc, 
+    input logic        bus_in_branch,        
 
-    // =========================================================================
-    // Explicit Outputs (to pipeline_bus_pkg::ls_to_wb_bus_t)
-    // =========================================================================
-    output logic [31:0] bus_out_alu_out,       // ALU result
-    output logic [31:0] bus_out_lsu_out,       // Data loaded from memory
-    output logic [31:0] bus_out_next_pc,       // Return address (PC + 4) for JAL/JALR
-    output logic [31:0] bus_out_csr_out,       // Data read from system CSRs
-    output logic [4:0]  bus_out_rd,            // Destination register address
-    output logic [1:0]  bus_out_mux_select,    // 0: ALU, 1: LSU, 2: next_pc, 3: csr_out
-    output logic        bus_out_mux_select_pc, // selector for pc write
+    output logic [31:0] bus_out_alu_out,       
+    output logic [31:0] bus_out_lsu_out,       
+    output logic [31:0] bus_out_next_pc,       
+    output logic [31:0] bus_out_csr_out,       
+    output logic [4:0]  bus_out_rd,            
+    output logic [1:0]  bus_out_mux_select,    
+    output logic        bus_out_mux_select_pc, 
 
-    // Handshake control signals
     input  logic valid_left, ready_right,
     output logic ready_left, valid_right,
 
-    // Read Address Channel (AR)
     output logic [31:0] araddr,
     output logic        arvalid,
     input  logic        arready,
-
-    // Read Data Channel (R)
     input  logic [31:0] rdata,
     input  logic [1:0]  rresp,
     input  logic        rvalid,
     output logic        rready,
 
-    // Write Address Channel (AW)
     output logic [31:0] awaddr,
     output logic        awvalid,
     input  logic        awready,
-
-    // Write Data Channel (W)
     output logic [31:0] wdata,
     output logic [3:0]  wstrb,
     output logic        wvalid,
     input  logic        wready,
-
-    // Write Response Channel (B)
     input  logic [1:0]  bresp,
     input  logic        bvalid,
     output logic        bready,
 
-    // Control/Fixes
     output logic        lsu_device_call
+
 );
 
     // LB 0, LH 1, LW 2, LBU 3, LHU 4, SB 5, SH 6, SW 7
 
     logic unused_branch;
     logic done_r, done_w;
+
+    assign lsu_state_r =lsu_r;
+    assign lsu_state_w =lsu_w;  
 
     always_comb begin
         lsu_device_call = 0;
@@ -231,7 +219,7 @@ module lsu (
 
     end
 
-    //store
+    //write
     logic done_aw, done_wdata;
 
     typedef enum {

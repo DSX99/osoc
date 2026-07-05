@@ -34,6 +34,25 @@ CPU_state cpu;
 bool fail=0;
 bool valid_cycle=0;
 
+//perf counters
+typedef struct Performance_t{
+  uint64_t ifu_stall_cycle;
+  uint64_t ifu_fetch_instr;
+  uint64_t possible_branch_count;
+  uint64_t branch_taken;
+  uint64_t lsu_stall_cycle;
+  uint64_t lsu_read_data;
+  uint64_t lsu_write_data;
+  uint64_t writeback;
+} Performance_t;
+
+Performance_t program[3];
+uint64_t cycles[3];
+
+int stage=0;
+int prev_ifu=0,prev_lsu_r=0,prev_lsu_w=0;
+
+
 char itrace[16][128];
 int point=0;
 
@@ -127,6 +146,11 @@ int main(int argc, char** argv) {
     sdb_mainloop(&qexit);
   }
 
+  //printing perf data
+  cycles[2] = (contextp->time()>>1) - cycles[1] - cycles[0];
+
+  print_stage_performance_table(cycles, program);
+
   #ifdef CONFIG_FST
   tracep->close();
   #endif
@@ -218,6 +242,43 @@ void execute(uint64_t n){
     contextp->timeInc(1);
     soc->clock=!soc->clock;
     soc->eval();
+
+
+    //couting performance
+    if(top->if_id_valid == 0){
+      program[stage].ifu_stall_cycle++;
+    }
+    if(top->if_id_valid && prev_ifu == 0){
+      program[stage].ifu_fetch_instr++;
+    }
+    if(top->branch){
+      program[stage].possible_branch_count++;
+    }
+    if(top->branch_taken){
+      program[stage].branch_taken++;
+    }
+    if(top->ex_ls_valid && !top->ex_ls_ready){
+      program[stage].ifu_stall_cycle++;
+      if(top->ex_ls_bus_lsu_we){
+        program[stage].lsu_read_data++;
+      }
+      if(top->ex_ls_bus_lsu_we){
+        program[stage].lsu_write_data++;
+      }
+    }
+    if(top->reg_valid_e){
+      program[stage].writeback++;
+    }
+
+    if(stage == 0 && (top->pc >= 0x0f000000 && top->pc < 0x10000000)){
+      stage = 1;
+      cycles[0] = contextp->time()>>1;
+    }
+
+    if(stage == 1 && (top->pc >= 0xa0000000 && top->pc < 0xc0000000)){
+      stage = 2;
+      cycles[1] = (contextp->time()>>1) - cycles[0];
+    }
 
     valid_cycle = top->reg_valid_e;
 
