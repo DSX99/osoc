@@ -134,7 +134,7 @@ int main(int argc, char** argv) {
 
   //printing perf data
   cycles[2] = (contextp->time()>>1) - cycles[1] - cycles[0];
-
+  
   print_stage_performance_table(cycles, program);
 
   #ifdef CONFIG_FST
