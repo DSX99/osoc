@@ -105,8 +105,8 @@ module osoc_26000003 (
     logic        carready, crready; 
 
     logic match_aw, match_ar;
-    assign match_aw = (core_awaddr[31:16] == 16'h0200);
-    assign match_ar = (core_araddr[31:16] == 16'h0200);
+    assign match_aw = (core_awaddr[31:16] == 16'h0200) || trans[0];
+    assign match_ar = (core_araddr[31:16] == 16'h0200) || trans[1];
 
     assign caddr = match_ar ? core_araddr : core_awaddr;
 
@@ -184,6 +184,20 @@ module osoc_26000003 (
         cwdata   = core_wdata;
         carvalid = core_arvalid && match_ar;
         crready  = core_rready; 
+    end
+
+    logic[1:0] trans; // 0-write 1-read
+
+    always_ff @(posedge clk) begin
+        if(rst)begin
+            trans<=0;
+        end else begin
+            if((match_ar) && ((carvalid && carready))) trans<=2;
+            if((match_a2) && ((cawvalid && cawready))) trans<=1;
+            
+            if(trans[1] && crready && crvalid) trans<=0;
+            if(trans[0] && bready && bvalid) trans<=0;
+        end
     end
 
     osoc_26000003_core core (
