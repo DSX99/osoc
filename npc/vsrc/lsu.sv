@@ -182,8 +182,10 @@ module lsu (
                 wvalid  = 1;
             end
             WAIT_WRESP: begin
-                bready=1;
-                done_w=1;
+                bready = 1;
+            end
+            WAIT_COMMIT: begin
+                done_w = 1;
             end
         endcase
         end
@@ -230,7 +232,7 @@ module lsu (
     logic done_aw, done_wdata, done_b, done_commit;
 
     typedef enum {
-        IDLE_W, WAIT_W, WAIT_WRESP
+        IDLE_W, WAIT_W, WAIT_WRESP, WAIT_COMMIT
     } LSU_state_w_t;
     LSU_state_w_t lsu_w;
 
@@ -271,15 +273,14 @@ module lsu (
                     end
                 end
                 WAIT_WRESP: begin
-                    if (bvalid) done_b<=1;
-
-                    if(ready_right) done_commit<=1;
-                    
-                    if((done_b || bvalid) && (done_commit || ready_right)) begin
-                        lsu_w  <= IDLE_W;
-                        done_commit<=0;
-                        done_b<=0;
-                    end 
+                    if (bvalid && bready) begin
+                        lsu_w <= WAIT_COMMIT;
+                    end
+                end
+                WAIT_COMMIT: begin
+                    if (ready_right) begin
+                        lsu_w <= IDLE_W;
+                    end
                 end
                 default: ;
             endcase
