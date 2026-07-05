@@ -20,6 +20,7 @@ logic [63:0] mtime;
 logic [31:0] timecp; //TODO
 logic [31:0] buff;
 
+
 logic done_aw, done_w;
 
 logic unused_bits;
@@ -44,6 +45,7 @@ CLINT_W clint_w;
 
 always_ff @(posedge clk) begin
     if(rst) begin
+        crdata<=0;
         mtime<=0;
         clint_r<=IDLE_R;
     end else begin
@@ -54,24 +56,27 @@ always_ff @(posedge clk) begin
 
         case(clint_r) 
             IDLE_R:begin
-                if(carready && carvalid) clint_r<=WAIT_RR;
+                if(carready && carvalid)begin
+                    clint_r<=WAIT_RR;
+                    if(caddr[15:0] == 16'hbffc) begin
+                        crdata <= mtime[63:32];
+                        buff <= mtime[31:0];
+                    end else if(caddr[15:0] == 16'hbff8) begin
+                        crdata <= buff;
+                    end
+                    crvalid<=1;
+                end
             end
             WAIT_RR:begin
-                if(caddr[15:0] == 16'hbffc) begin
-                    crdata <= mtime[63:32];
-                    buff <= mtime[31:0];
-                end else if(caddr[15:0] == 16'hbff8) begin
-                    crdata <= buff;
+                if(crready && crvalid) begin
+                    clint_r<=WAIT_RRESP;
+                    crvalid<=0;
                 end
-                clint_r<=WAIT_RRESP;
-                crvalid<=1;
             end
             WAIT_RRESP:begin
-                if(crvalid && crready) begin
-                    crvalid<=0;
-                    clint_r<=IDLE_R;
-                end
+                ;
             end
+            default: ;
         endcase
 
 
