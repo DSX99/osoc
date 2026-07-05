@@ -89,4 +89,4 @@ sta:
 clean:
 	rm -rf obj_dir
 
-.PHONY: sim build run lint clean disasm sta syn
+.PHONY: sim build run lint clean disasm sta npc_run npc_build
