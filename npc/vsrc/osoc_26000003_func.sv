@@ -311,6 +311,24 @@ module osoc_26000003_func (
     logic [1:0]  rresp_ifu;
     logic        arvalid_ifu, arready_ifu, rvalid_ifu, rready_ifu;
 
+    logic         awready_arbiter,
+    logic         awvalid_arbiter,
+    logic [31:0]  awaddr_arbiter,
+    logic         wready_arbiter,
+    logic         wvalid_arbiter,
+    logic [31:0]  wdata_arbiter,
+    logic [3:0]   wstrb_arbiter,
+    logic         bready_arbiter,
+    logic         bvalid_arbiter,
+    logic [1:0]   bresp_arbiter,
+    logic         arready_arbiter,
+    logic         arvalid_arbiter,
+    logic [31:0]  araddr_arbiter,
+    logic         rready_arbiter,
+    logic         rvalid_arbiter,
+    logic [1:0]   rresp_arbiter,
+    logic [31:0]  rdata_arbiter,
+
     // Arbiter Module
     arbiter arbiter_mod (
         .clk(clock), .rst(reset),
