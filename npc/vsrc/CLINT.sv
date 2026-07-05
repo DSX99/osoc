@@ -69,7 +69,7 @@ always_ff @(posedge clk) begin
             end
             WAIT_RR:begin
                 if(crready && crvalid) begin
-                    clint_r<=WAIT_RRESP;
+                    clint_r<=IDLE_R;
                     crvalid<=0;
                 end
             end
