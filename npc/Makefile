@@ -15,7 +15,7 @@ VERILOG_SRC = $(filter-out vsrc/osoc% vsrc/CLINT.sv, $(wildcard vsrc/*.sv))
 OSOC_SRC = vsrc/osoc_26000003_core.sv vsrc/osoc_26000003.sv vsrc/CLINT.sv $(VERILOG_SRC) $(SoC_VSRC)
 NPC_SRC = vsrc/osoc_26000003_func.sv $(VERILOG_SRC)
 STA_SRC = OSOC_SRC
-CPP_SRC = $(shell find csrc/*.cpp -not -name main% )
+CPP_SRC = $(shell find csrc/*.cpp -not -name csrc/main.c csrc/main_npc.c )
 OSOS_CPP_SRC = csrc/main.c $(CPP_SRC)
 NPC_CPP_SRC = csrc/main_npc.c $(CPP_SRC)
 
