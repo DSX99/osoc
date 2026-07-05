@@ -49,7 +49,7 @@ module alu (
     assign val2 = bus_in_alu_op[7] ? bus_in_imm : bus_in_data_rs2;
 
     assign branch = bus_in_alu_op == 2'b01;
-    assign branch_tkaen = bus_out_branch;
+    assign branch_taken = bus_out_branch;
 
     always_comb begin
         valid_right = valid_left;

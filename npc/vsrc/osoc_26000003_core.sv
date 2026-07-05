@@ -84,7 +84,7 @@ module osoc_26000003_core (
     logic [31:0] if_id_bus_pc;
     logic [31:0] if_id_bus_next_pc;
     logic [31:0] if_id_bus_opcode;
-    logic        if_id_valid, if_id_ready;
+    logic        if_id_ready; //valid declared as public
 
     // ID to EX Decoded Bus signals
     logic [31:0] id_ex_bus_decoded_pc;
@@ -136,14 +136,14 @@ module osoc_26000003_core (
     logic [31:0] ex_ls_bus_alu_out;
     logic [31:0] ex_ls_bus_data_rs2;
     logic [31:0] ex_ls_bus_csr_out;
-    logic        ex_ls_bus_lsu_we;
-    logic        ex_ls_bus_lsu_re;
+    // logic        ex_ls_bus_lsu_we; //declared as public
+    // logic        ex_ls_bus_lsu_re;
     logic [2:0]  ex_ls_bus_lsu_oper;
     logic [4:0]  ex_ls_bus_rd;
     logic [1:0]  ex_ls_bus_mux_select;
     logic        ex_ls_bus_mux_select_pc;
     logic        ex_ls_bus_branch;
-    logic        ex_ls_valid, ex_ls_ready;
+    // logic        ex_ls_valid, ex_ls_ready; //declared as public
 
     // LS to WB Bus signals
     logic [31:0] ls_wb_bus_alu_out;

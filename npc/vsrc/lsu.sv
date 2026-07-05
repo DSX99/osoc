@@ -53,9 +53,6 @@ module lsu (
     logic unused_branch;
     logic done_r, done_w;
 
-    assign lsu_state_r =lsu_r;
-    assign lsu_state_w =lsu_w;  
-
     always_comb begin
         lsu_device_call = 0;
         if ((((bus_in_alu_out >= 32'h10000000) && (bus_in_alu_out < 32'h10001000)) || 1'b0) && (bus_in_lsu_we || bus_in_lsu_re)) begin
