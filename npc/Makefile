@@ -30,7 +30,7 @@ DISASM_OBJ = $(abspath obj_dir/disasm.o)
 
 LDFLAGS += -lreadline -L$(NEMU_HOME)/tools/capstone/repo -lcapstone $(DISASM_OBJ) $(NEMU_HOME)/tools/spike-diff/build/riscv32-spike-so
 
-VERILOG_FLAGS := -cc --exe -Wall -Wno-EOFNEWLINE --trace-fst -LDFLAGS "$(LDFLAGS)" -CFLAGS "$(VERILATOR_CFLAGS)" --trace-structs --timescale "1ns/1ns" --no-timing $(INCLUDES) --autoflush
+VERILOG_FLAGS := -cc --exe -Wno-EOFNEWLINE --trace-fst -LDFLAGS "$(LDFLAGS)" -CFLAGS "$(VERILATOR_CFLAGS)" --trace-structs --timescale "1ns/1ns" --no-timing $(INCLUDES) --autoflush
 ifndef NS
 VERILOG_FLAGS += --quiet
 endif
@@ -56,7 +56,7 @@ sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 
 lint:
-	@$(VERILATOR) --lint-only vsrc/osoc_26000003_core.sv vsrc/osoc_26000003.sv vsrc/CLINT.sv $(VERILOG_SRC) $(VERILOG_FLAGS) --top-module osoc_26000003
+	@$(VERILATOR) --lint-only vsrc/osoc_26000003_core.sv vsrc/osoc_26000003.sv vsrc/CLINT.sv $(VERILOG_SRC) $(VERILOG_FLAGS) -Wall --top-module osoc_26000003
 
 build: sim 
 	@mkdir -p obj_dir
