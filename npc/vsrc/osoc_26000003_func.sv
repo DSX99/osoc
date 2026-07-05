@@ -357,7 +357,7 @@ module osoc_26000003_func (
     );
 
     axi_slave_lsu axi_slave_lsu_mod (
-        .clk(clk), .rst(rst), .araddr(araddr_arbiter), .arvalid(arvalid_arbiter), .arready(arready_arbiter), .rdata(rdata_arbiter), .rresp(rresp_arbiter), .rvalid(rvalid_arbiter), .rready(rready_arbiter),
+        .clk(clock), .rst(reset), .araddr(araddr_arbiter), .arvalid(arvalid_arbiter), .arready(arready_arbiter), .rdata(rdata_arbiter), .rresp(rresp_arbiter), .rvalid(rvalid_arbiter), .rready(rready_arbiter),
         .awaddr(awaddr_arbiter), .awvalid(awvalid_arbiter), .awready(awready_arbiter), .wdata(wdata_arbiter), .wstrb(wstrb_arbiter), .wvalid(wvalid_arbiter), .wready(wready_arbiter), .bresp(bresp_arbiter), .bvalid(bvalid_arbiter), .bready(bready_arbiter)
     );
 endmodule
