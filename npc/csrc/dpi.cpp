@@ -7,7 +7,6 @@
 #include "dpi.h"
 
 uint64_t curr_time;
-extern bool skip_inst;
 extern bool fail;
 extern bool do_diff;
 
@@ -176,7 +175,6 @@ extern "C" void sdram_write(uint32_t addr, uint32_t data, uint32_t mask) {
             if (type & 0x4) mem[working_addr + 2] = (data >> 16) & 0xFF;
             if (type & 0x8) mem[working_addr + 3] = (data >> 24) & 0xFF;
         }else if(addr == SERIAL_PORT){
-            skip_inst = 1;
             putchar((uint8_t)data);
             fflush(stdout);
         }else{

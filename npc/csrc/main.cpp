@@ -29,7 +29,6 @@ VerilatedContext *contextp;
 VerilatedFstC *tracep;
 VysyxSoCFull* soc; 
 VysyxSoCFull_osoc_26000003_core *top;
-bool skip_inst=0;
 CPU_state cpu;
 bool fail=0;
 bool valid_cycle=0;
@@ -275,9 +274,7 @@ void execute(uint64_t n){
       return;
     }
 
-    bool current_cycle_is_skipped = skip_inst;
-
-    if((!batch) && (!current_cycle_is_skipped) && top->reg_valid_e && do_diff) difftest_exec(1);
+    if((!batch) && top->reg_valid_e && do_diff) difftest_exec(1);
 
     if(contextp->gotFinish()){
       #ifdef CONFIG_FST
@@ -323,7 +320,6 @@ void execute(uint64_t n){
     n--;
     
     if(!batch && do_diff) {
-      if (!current_cycle_is_skipped && !(top->lsu_device_call)) {
         difftest_regcpy(&ref_cpu, 0);
 
         if (ref_cpu.pc != top->pc) {
@@ -362,15 +358,6 @@ void execute(uint64_t n){
             return;
           }
         }
-      } 
-      else {
-        for(int i = 0; i < 32; i++){
-          cpu.gpr[i] = top->reg_mod->regs[i];
-        }
-        cpu.pc = top->pc;
-        difftest_regcpy(&cpu, 1);
-        skip_inst = 0; 
-      }
     }
   }
 }
