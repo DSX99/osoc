@@ -18,7 +18,7 @@
 
 
 
-// #define CONFIG_FST
+#define CONFIG_FST
 // #define MTRACE
 // #define ITRACE
 
