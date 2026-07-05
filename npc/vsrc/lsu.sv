@@ -99,6 +99,13 @@ module lsu (
         bus_out_lsu_out = 0;
         done_r = 0;
 
+        awaddr  = 0;
+        awvalid = 0;
+        wdata = 0;
+        wvalid = 0;
+        done_w = 0;
+        bready = 0;
+
         if(!rst) begin
         //read
         if(bus_in_lsu_re) begin
@@ -157,13 +164,6 @@ module lsu (
         endcase
         end
 
-
-        awaddr  = 0;
-        awvalid = 0;
-        wdata = 0;
-        wvalid = 0;
-        done_w = 0;
-        bready = 0;
         //write
         if(bus_in_lsu_we) begin
         case(lsu_w)
@@ -190,6 +190,9 @@ module lsu (
         endcase
         end
         end
+
+        valid_right   = valid_left && (!bus_in_lsu_re || done_r) && (!bus_in_lsu_we || done_w); 
+        ready_left    = ready_right && (!bus_in_lsu_re || done_r) && (!bus_in_lsu_we || done_w);
     end
 
     //read
@@ -226,13 +229,10 @@ module lsu (
             endcase
         end
 
-        valid_right   = valid_left && (!bus_in_lsu_re || done_r) && (!bus_in_lsu_we || done_w); 
-        ready_left    = ready_right && (!bus_in_lsu_re || done_r) && (!bus_in_lsu_we || done_w);
-
     end
 
     //store
-    logic done_aw, done_wdata, done_b, done_commit;
+    logic done_aw, done_wdata;
 
     typedef enum {
         IDLE_W, WAIT_W, WAIT_WRESP, WAIT_COMMIT
@@ -252,8 +252,6 @@ module lsu (
         if (rst) begin
             done_aw     <= 0;
             done_wdata  <= 0;
-            done_b      <= 0;
-            done_commit <= 0;
             lsu_w       <= IDLE_W;
         end else begin
             case (lsu_w)

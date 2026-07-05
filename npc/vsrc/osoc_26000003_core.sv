@@ -87,12 +87,9 @@ module osoc_26000003_core (
     logic [31:0] id_ex_bus_decoded_pc;
     logic [31:0] id_ex_bus_decoded_next_pc;
     logic [31:0] id_ex_bus_decoded_imm;
-    logic [31:0] id_ex_bus_decoded_data_rs1;
-    logic [31:0] id_ex_bus_decoded_data_rs2;
     logic [4:0]  id_ex_bus_decoded_rs1;
     logic [4:0]  id_ex_bus_decoded_rs2;
     logic [7:0]  id_ex_bus_decoded_alu_op;
-    logic        id_ex_bus_decoded_branch_en;
     logic [2:0]  id_ex_bus_decoded_csr_oper;
     logic [4:0]  id_ex_bus_decoded_cause;
     logic        id_ex_bus_decoded_lsu_we;
@@ -108,10 +105,7 @@ module osoc_26000003_core (
     logic [31:0] id_ex_bus_imm;
     logic [31:0] id_ex_bus_data_rs1;
     logic [31:0] id_ex_bus_data_rs2;
-    logic [4:0]  id_ex_bus_rs1;
-    logic [4:0]  id_ex_bus_rs2;
     logic [7:0]  id_ex_bus_alu_op;
-    logic        id_ex_bus_branch_en;
     logic [2:0]  id_ex_bus_csr_oper;
     logic [4:0]  id_ex_bus_cause;
     logic        id_ex_bus_lsu_we;
@@ -126,7 +120,6 @@ module osoc_26000003_core (
     logic [31:0] ex_ls_bus_alu_next_pc;
     logic [31:0] ex_ls_bus_alu_alu_out;
     logic [31:0] ex_ls_bus_alu_data_rs2;
-    logic [31:0] ex_ls_bus_alu_csr_out;
     logic        ex_ls_bus_alu_lsu_we;
     logic        ex_ls_bus_alu_lsu_re;
     logic [2:0]  ex_ls_bus_alu_lsu_oper;
@@ -195,12 +188,9 @@ module osoc_26000003_core (
         .bus_out_pc(id_ex_bus_decoded_pc),
         .bus_out_next_pc(id_ex_bus_decoded_next_pc),
         .bus_out_imm(id_ex_bus_decoded_imm),
-        .bus_out_data_rs1(id_ex_bus_decoded_data_rs1),
-        .bus_out_data_rs2(id_ex_bus_decoded_data_rs2),
         .bus_out_rs1(id_ex_bus_decoded_rs1),
         .bus_out_rs2(id_ex_bus_decoded_rs2),
         .bus_out_alu_op(id_ex_bus_decoded_alu_op),
-        .bus_out_branch_en(id_ex_bus_decoded_branch_en),
         .bus_out_csr_oper(id_ex_bus_decoded_csr_oper),
         .bus_out_cause(id_ex_bus_decoded_cause),
         .bus_out_lsu_we(id_ex_bus_decoded_lsu_we),
@@ -223,12 +213,7 @@ module osoc_26000003_core (
         .bus_in_imm(id_ex_bus_imm),
         .bus_in_data_rs1(id_ex_bus_data_rs1),
         .bus_in_data_rs2(id_ex_bus_data_rs2),
-        .bus_in_rs1(id_ex_bus_rs1),
-        .bus_in_rs2(id_ex_bus_rs2),
         .bus_in_alu_op(id_ex_bus_alu_op),
-        .bus_in_branch_en(id_ex_bus_branch_en),
-        .bus_in_csr_oper(id_ex_bus_csr_oper),
-        .bus_in_cause(id_ex_bus_cause),
         .bus_in_lsu_we(id_ex_bus_lsu_we),
         .bus_in_lsu_re(id_ex_bus_lsu_re),
         .bus_in_lsu_oper(id_ex_bus_lsu_oper),
@@ -238,7 +223,6 @@ module osoc_26000003_core (
         .bus_out_next_pc(ex_ls_bus_alu_next_pc),
         .bus_out_alu_out(ex_ls_bus_alu_alu_out),
         .bus_out_data_rs2(ex_ls_bus_alu_data_rs2),
-        .bus_out_csr_out(ex_ls_bus_alu_csr_out),
         .bus_out_lsu_we(ex_ls_bus_alu_lsu_we),
         .bus_out_lsu_re(ex_ls_bus_alu_lsu_re),
         .bus_out_lsu_oper(ex_ls_bus_alu_lsu_oper),
@@ -333,10 +317,7 @@ module osoc_26000003_core (
         id_ex_bus_pc            = id_ex_bus_decoded_pc;
         id_ex_bus_next_pc       = id_ex_bus_decoded_next_pc;
         id_ex_bus_imm           = id_ex_bus_decoded_imm;
-        id_ex_bus_rs1           = id_ex_bus_decoded_rs1;
-        id_ex_bus_rs2           = id_ex_bus_decoded_rs2;
         id_ex_bus_alu_op        = id_ex_bus_decoded_alu_op;
-        id_ex_bus_branch_en     = id_ex_bus_decoded_branch_en;
         id_ex_bus_csr_oper      = id_ex_bus_decoded_csr_oper;
         id_ex_bus_cause         = id_ex_bus_decoded_cause;
         id_ex_bus_lsu_we        = id_ex_bus_decoded_lsu_we;
@@ -358,7 +339,7 @@ module osoc_26000003_core (
         endcase
     end
 
-    assign csr_in = id_ex_bus_csr_oper[2] ? {27'b0, id_ex_bus_rs1} : id_ex_bus_data_rs1;
+    assign csr_in = id_ex_bus_csr_oper[2] ? {27'b0, id_ex_bus_decoded_rs1} : id_ex_bus_data_rs1;
 
     // Internal Interconnect Wires
     logic [31:0] araddr_lsu, rdata_lsu;
@@ -401,7 +382,7 @@ module osoc_26000003_core (
         .bvalid(io_master_bvalid),
         .bready(io_master_bready)
     );
-    
+
     // -------------------------------------------------------------------------
     // Unused Top-level Outputs (Assigned to Constant 0)
     // -------------------------------------------------------------------------
