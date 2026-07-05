@@ -237,6 +237,7 @@ void execute(uint64_t n){
     if(top->if_id_valid && prev_ifu == 0){
       program[stage].ifu_fetch_instr++;
     }
+    prev_ifu = top->if_id_valid;
     if(top->branch){
       program[stage].possible_branch_count++;
     }
@@ -262,11 +263,12 @@ void execute(uint64_t n){
       stage = 1;
       cycles[0] = contextp->time()>>1;
     }
-
     if(stage == 1 && (top->pc >= 0xa0000000 && top->pc < 0xc0000000)){
       stage = 2;
       cycles[1] = (contextp->time()>>1) - cycles[0];
     }
+
+
 
     if(fail){ 
       printf("failed\n");
