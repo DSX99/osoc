@@ -152,4 +152,20 @@ extern "C" void sdram_write(uint32_t addr, uint32_t data, uint32_t mask) {
             assert(0);
         }
     }
+
+    uint32_t memread(uint32_t addr){
+        #ifdef MTRACE
+        printf("\n\033[034mCall to read from memory at %08x\033[0m\n", addr);
+        #endif
+        if(addr>=ROM_OFFSET && addr<(ROM_OFFSET + MEM_SIZE)){
+            return ((mem[addr-MEM_SIZE+3]<<24)|
+            (mem[addr-MEM_SIZE+2]<<16)|
+            (mem[addr-MEM_SIZE+1]<<8)|
+            (mem[addr-MEM_SIZE]));
+        }{
+            printf("Illegal memory read access at addr:0x%08x at pc: 0x%08x\n",addr, top->pc);
+            fail=1;
+        }
+        return 0;
+    }
     #endif
