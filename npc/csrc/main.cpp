@@ -245,7 +245,7 @@ void execute(uint64_t n){
       program[stage].branch_taken++;
     }
     if(top->ex_ls_valid && !top->ex_ls_ready){
-      program[stage].ifu_stall_cycle++;
+      program[stage].lsu_stall_cycle++;
     }
     if(top->ex_ls_valid && top->ex_ls_ready){
       if(top->ex_ls_bus_lsu_re){
