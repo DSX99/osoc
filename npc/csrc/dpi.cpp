@@ -4,6 +4,7 @@
 #include <cstring>
 #include <chrono>
 #include "common.h"
+#include "dpi.h"
 
 uint64_t curr_time;
 extern bool skip_inst;
