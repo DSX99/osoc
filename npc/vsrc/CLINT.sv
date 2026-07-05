@@ -6,7 +6,7 @@ module CLINT(
     output logic [31:0] crdata,
 
     input logic carvalid, cwvalid, cawvalid,
-    output logic caready, cawready, cwready,
+    output logic carready, cawready, cwready,
 
     input logic crready,
     output logic crvalid
@@ -53,13 +53,13 @@ always_ff @(posedge clk) begin
 
         case(clint_r) 
             IDLE_R:begin
-                if(caddr && carvalid) clint_r<=WAIT_R ;
+                if(caddr && carvalid) clint_r<=WAIT_RR;
             end
             WAIT_R:begin
                 if(caddr[15:0] == 16'hbffc) begin
                     crdata <= mtime[63:32];
                     buff <= mtime[31:0];
-                end else if(caraddr[15:0] == 16'hbff8) begin
+                end else if(caddr[15:0] == 16'hbff8) begin
                     crdata <= buff;
                 end
                 clint_r<=WAIT_RRESP;
