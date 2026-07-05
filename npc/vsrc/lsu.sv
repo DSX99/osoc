@@ -185,6 +185,7 @@ module lsu (
             end
         endcase
         end
+        end
     end
 
     //read
@@ -217,7 +218,6 @@ module lsu (
                 default: ;
             endcase
         end
-    end
 
         valid_right   = valid_left && (!bus_in_lsu_re || done_r) && (!bus_in_lsu_we || done_w); 
         ready_left    = ready_right && (!bus_in_lsu_re || done_r) && (!bus_in_lsu_we || done_w);
