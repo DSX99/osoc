@@ -214,7 +214,7 @@ module osoc_26000003 (
     // =========================================================================
     // Core Module Instantiation
     // =========================================================================
-    osoc_26000003_core core_inst (
+    osoc_26000003_core core (
         .clock(clock),
         .reset(reset),
         .io_interrupt(io_interrupt),
