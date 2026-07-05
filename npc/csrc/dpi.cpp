@@ -161,9 +161,7 @@ extern "C" void sdram_write(uint32_t addr, uint32_t data, uint32_t mask) {
     }
 
     extern "C" void memwrite(uint32_t addr, uint32_t data, uint32_t type){
-        #ifdef MTRACE
         printf("\033[034mCall to write to memory at %08x\033[0m\n", addr);
-        #endif
         if(addr>=ROM_OFFSET && addr<(ROM_OFFSET + FLASH_SIZE)){
             if(type ==0){
                 mem[addr-ROM_OFFSET] = data & 0xFF;
@@ -189,9 +187,7 @@ extern "C" void sdram_write(uint32_t addr, uint32_t data, uint32_t mask) {
     }
 
     extern "C" uint32_t memread(uint32_t addr){
-        #ifdef MTRACE
         printf("\n\033[034mCall to read from memory at %08x\033[0m\n", addr);
-        #endif
         if(addr>=ROM_OFFSET && addr<(ROM_OFFSET + MEM_SIZE)){
             return ((mem[addr-MEM_SIZE+3]<<24)|
             (mem[addr-MEM_SIZE+2]<<16)|
