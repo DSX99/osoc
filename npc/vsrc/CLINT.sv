@@ -20,7 +20,7 @@ parameter DEN = 1;
 logic [5:0]  divisor; 
 logic [63:0] mtime; 
 logic [31:0] timecp; //TODO
-logic [31:0] buff
+logic [31:0] buff;
 
 logic done_aw, done_w;
 
