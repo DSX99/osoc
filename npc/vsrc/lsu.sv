@@ -163,6 +163,7 @@ module lsu (
         wdata = 0;
         wvalid = 0;
         done_w = 0;
+        bready = 0;
         //write
         if(bus_in_lsu_we) begin
         case(lsu_w)
