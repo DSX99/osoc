@@ -181,6 +181,7 @@ module lsu (
                 wvalid  = 1;
             end
             WAIT_WRESP: begin
+                bready=1;
                 done_w=1;
             end
         endcase
