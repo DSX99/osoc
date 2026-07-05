@@ -15,7 +15,10 @@ VERILOG_SRC = $(filter-out vsrc/osoc% vsrc/CLINT.sv, $(wildcard vsrc/*.sv))
 OSOC_SRC = vsrc/osoc_26000003_core.sv vsrc/osoc_26000003.sv vsrc/CLINT.sv $(VERILOG_SRC) $(SoC_VSRC)
 NPC_SRC = vsrc/osoc_26000003_func.sv $(VERILOG_SRC)
 STA_SRC = OSOC_SRC
-CPP_SRC = $(shell find csrc/*.cpp -not -name main* )
+CPP_SRC = $(shell find csrc/*.cpp -not -name main% )
+OSOS_CPP_SRC = csrc/main.c $(CPP_SRC)
+NPC_CPP_SRC = csrc/main_npc.c $(CPP_SRC)
+
 
 IMG ?= 
 ARGS ?= 
@@ -58,7 +61,7 @@ lint:
 build: sim 
 	@mkdir -p obj_dir
 	@gcc -c $(VERILATOR_CFLAGS) -O2 $(NEMU_HOME)/src/utils/disasm.c -o obj_dir/disasm.o
-	@$(VERILATOR) $(OSOC_SRC) $(VERILOG_FLAGS) --top-module ysyxSoCFull  $(CPP_SRC) $(addprefix -CFLAGS , $(INCFLAGS))
+	@$(VERILATOR) $(OSOC_SRC) $(VERILOG_FLAGS) --top-module ysyxSoCFull  $(OSOC_CPP_SRC) $(addprefix -CFLAGS , $(INCFLAGS))
 	@$(MAKE) -j -C obj_dir -f VysyxSoCFull.mk 
 
 run: build
@@ -67,7 +70,7 @@ run: build
 npc_build: sim 
 	@mkdir -p obj_dir
 	@gcc -c $(VERILATOR_CFLAGS) -O2 $(NEMU_HOME)/src/utils/disasm.c -o obj_dir/disasm.o
-	@$(VERILATOR) $(NPC_SRC) $(VERILOG_FLAGS) --top-module osoc_26000003_func  $(CPP_SRC) $(addprefix -CFLAGS , $(INCFLAGS))
+	@$(VERILATOR) $(NPC_SRC) $(VERILOG_FLAGS) --top-module osoc_26000003_func  $(NPC_CPP_SRC) $(addprefix -CFLAGS , $(INCFLAGS))
 	@$(MAKE) -j -C obj_dir -f Vosoc_26000003_func.mk 
 
 npc_run: npc_build
