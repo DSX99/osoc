@@ -319,82 +319,27 @@ module osoc_26000003_func (
         .araddr_ifu(araddr_ifu), .arvalid_ifu(arvalid_ifu), .arready_ifu(arready_ifu), .rvalid_ifu(rvalid_ifu), .rdata_ifu(rdata_ifu), .rready_ifu(rready_ifu), .rresp_ifu(rresp_ifu),
         
         // External Master Port Interconnections
-        .araddr(io_master_araddr),
-        .arvalid(io_master_arvalid),
-        .arready(io_master_arready),
-        .rdata(io_master_rdata),
-        .rresp(io_master_rresp),
-        .rvalid(io_master_rvalid),
-        .rready(io_master_rready),
-        .awaddr(io_master_awaddr),
-        .awvalid(io_master_awvalid),
-        .awready(io_master_awready),
-        .wdata(io_master_wdata),
-        .wstrb(io_master_wstrb),
-        .wvalid(io_master_wvalid),
-        .wready(io_master_wready),
-        .bresp(io_master_bresp),
-        .bvalid(io_master_bvalid),
-        .bready(io_master_bready)
+        .araddr(araddr_arbiter),
+        .arvalid(arvalid_arbiter),
+        .arready(arready_arbiter),
+        .rdata(rdata_arbiter),
+        .rresp(rresp_arbiter),
+        .rvalid(rvalid_arbiter),
+        .rready(rready_arbiter),
+        .awaddr(awaddr_arbiter),
+        .awvalid(awvalid_arbiter),
+        .awready(awready_arbiter),
+        .wdata(wdata_arbiter),
+        .wstrb(wstrb_arbiter),
+        .wvalid(wvalid_arbiter),
+        .wready(wready_arbiter),
+        .bresp(bresp_arbiter),
+        .bvalid(bvalid_arbiter),
+        .bready(bready_arbiter)
     );
 
-    // -------------------------------------------------------------------------
-    // Unused Top-level Outputs (Assigned to Constant 0)
-    // -------------------------------------------------------------------------
-    // Unused Master Extensions
-    assign io_master_awid    = 4'b0;
-    assign io_master_awlen   = 8'b0;
-    assign io_master_awsize  = 3'b0;
-    assign io_master_awburst = 2'b0;
-    assign io_master_wlast   = 1'b0;
-    assign io_master_arid    = 4'b0;
-    assign io_master_arlen   = 8'b0;
-    assign io_master_arsize  = 3'b0;
-    assign io_master_arburst = 2'b0;
-
-    // Entirely Unused Slave Output Interface
-    assign io_slave_awready  = 1'b0;
-    assign io_slave_wready   = 1'b0;
-    assign io_slave_bvalid   = 1'b0;
-    assign io_slave_bresp    = 2'b0;
-    assign io_slave_bid      = 4'b0;
-    assign io_slave_arready  = 1'b0;
-    assign io_slave_rvalid   = 1'b0;
-    assign io_slave_rresp    = 2'b0;
-    assign io_slave_rdata    = 32'b0;
-    assign io_slave_rlast    = 1'b0;
-    assign io_slave_rid      = 4'b0;
-
-    // -------------------------------------------------------------------------
-    // Unused Top-level Inputs (Combined into a dummy vector to prevent Lint errors)
-    // -------------------------------------------------------------------------
-    /* verilator lint_off UNUSED */
-    logic [150:0] unused_signals;
-    /* verilator lint_on UNUSED */
-
-    assign unused_signals = {
-        io_interrupt,
-        io_master_bid,
-        io_master_rlast,
-        io_master_rid,
-        io_slave_awvalid,
-        io_slave_awaddr,
-        io_slave_awid,
-        io_slave_awlen,
-        io_slave_awsize,
-        io_slave_awburst,
-        io_slave_wvalid,
-        io_slave_wdata,
-        io_slave_wstrb,
-        io_slave_wlast,
-        io_slave_bready,
-        io_slave_arvalid,
-        io_slave_araddr,
-        io_slave_arid,
-        io_slave_arlen,
-        io_slave_arsize,
-        io_slave_arburst,
-        io_slave_rready, 1'b0
-    };
-
+    axi_slave_lsu axi_slave_lsu_mod (
+        .clk(clk), .rst(rst), .araddr(araddr_arbiter), .arvalid(arvalid_arbiter), .arready(arready_arbiter), .rdata(rdata_arbiter), .rresp(rresp_arbiter), .rvalid(rvalid_arbiter), .rready(rready_arbiter),
+        .awaddr(awaddr_arbiter), .awvalid(awvalid_arbiter), .awready(awready_arbiter), .wdata(wdata_arbiter), .wstrb(wstrb_arbiter), .wvalid(wvalid_arbiter), .wready(wready_arbiter), .bresp(bresp_arbiter), .bvalid(bvalid_arbiter), .bready(bready_arbiter)
+    );
 endmodule

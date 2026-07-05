@@ -374,6 +374,7 @@ module osoc_26000003_core (
     logic [1:0]  rresp_ifu;
     logic        arvalid_ifu, arready_ifu, rvalid_ifu, rready_ifu;
 
+
     // Arbiter Module
     arbiter arbiter_mod (
         .clk(clock), .rst(reset),
@@ -382,30 +383,25 @@ module osoc_26000003_core (
         .araddr_ifu(araddr_ifu), .arvalid_ifu(arvalid_ifu), .arready_ifu(arready_ifu), .rvalid_ifu(rvalid_ifu), .rdata_ifu(rdata_ifu), .rready_ifu(rready_ifu), .rresp_ifu(rresp_ifu),
         
         // External Master Port Interconnections
-        .araddr(araddr_arbiter),
-        .arvalid(arvalid_arbiter),
-        .arready(arready_arbiter),
-        .rdata(rdata_arbiter),
-        .rresp(rresp_arbiter),
-        .rvalid(rvalid_arbiter),
-        .rready(rready_arbiter),
-        .awaddr(awaddr_arbiter),
-        .awvalid(awvalid_arbiter),
-        .awready(awready_arbiter),
-        .wdata(wdata_arbiter),
-        .wstrb(wstrb_arbiter),
-        .wvalid(wvalid_arbiter),
-        .wready(wready_arbiter),
-        .bresp(bresp_arbiter),
-        .bvalid(bvalid_arbiter),
-        .bready(bready_arbiter)
+        .araddr(io_master_araddr),
+        .arvalid(io_master_arvalid),
+        .arready(io_master_arready),
+        .rdata(io_master_rdata),
+        .rresp(io_master_rresp),
+        .rvalid(io_master_rvalid),
+        .rready(io_master_rready),
+        .awaddr(io_master_awaddr),
+        .awvalid(io_master_awvalid),
+        .awready(io_master_awready),
+        .wdata(io_master_wdata),
+        .wstrb(io_master_wstrb),
+        .wvalid(io_master_wvalid),
+        .wready(io_master_wready),
+        .bresp(io_master_bresp),
+        .bvalid(io_master_bvalid),
+        .bready(io_master_bready)
     );
-
-    axi_slave_lsu axi_slave_lsu_mod (
-        .clk(clk), .rst(rst), .araddr(araddr_arbiter), .arvalid(arvalid_arbiter), .arready(arready_arbiter), .rdata(rdata_arbiter), .rresp(rresp_arbiter), .rvalid(rvalid_arbiter), .rready(rready_arbiter),
-        .awaddr(awaddr_arbiter), .awvalid(awvalid_arbiter), .awready(awready_arbiter), .wdata(wdata_arbiter), .wstrb(wstrb_arbiter), .wvalid(wvalid_arbiter), .wready(wready_arbiter), .bresp(bresp_arbiter), .bvalid(bvalid_arbiter), .bready(bready_arbiter)
-    );
-
+    
     // -------------------------------------------------------------------------
     // Unused Top-level Outputs (Assigned to Constant 0)
     // -------------------------------------------------------------------------
