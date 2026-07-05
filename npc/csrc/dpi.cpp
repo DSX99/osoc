@@ -153,7 +153,7 @@ extern "C" void sdram_write(uint32_t addr, uint32_t data, uint32_t mask) {
         }
     }
 
-    uint32_t memread(uint32_t addr){
+    extern "C" uint32_t memread(uint32_t addr){
         #ifdef MTRACE
         printf("\n\033[034mCall to read from memory at %08x\033[0m\n", addr);
         #endif
