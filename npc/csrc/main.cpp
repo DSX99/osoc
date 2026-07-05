@@ -245,6 +245,8 @@ void execute(uint64_t n){
     }
     if(top->ex_ls_valid && !top->ex_ls_ready){
       program[stage].ifu_stall_cycle++;
+    }
+    if(top->ex_ls_valid && top->ex_ls_ready){
       if(top->ex_ls_bus_lsu_we){
         program[stage].lsu_read_data++;
       }
