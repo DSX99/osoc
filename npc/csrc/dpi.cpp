@@ -16,7 +16,7 @@ static const uint32_t img [] = {
 0xeef38313,         // addi t1, t2, -273
 0x0262a023,         // sw t1, 32(t0)
 0x0262a023,         // sw t1, 32(t0)
-0x00028123,         // sb zero, 32(t0)
+0x02028023,         // sb zero, 32(t0)
 0x0202c503,         // lbu a0, 32(t0)
 0x00100073          // ebreak
 };
