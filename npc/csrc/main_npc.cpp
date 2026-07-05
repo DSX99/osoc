@@ -3,10 +3,7 @@
 #include <getopt.h>
 #include <verilated.h>
 #include "dpi.h"
-#include "Vosoc_26000003_func.h"
-#include "Vosoc_26000003_func___024root.h"
-#include "Vosoc_26000003_func_osoc_26000003_func.h"
-#include "Vosoc_26000003_func_regs.h"
+#include "common.h"
 
 #ifdef CONFIG_FST
 #include <verilated_fst_c.h>
