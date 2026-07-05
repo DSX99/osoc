@@ -260,6 +260,9 @@ module lsu (
                 IDLE_W: begin
                     if (bus_in_lsu_we && valid_left) begin
                         lsu_w   <= WAIT_W;
+                        if ( (awready) && (wready)) begin
+                            lsu_w <= WAIT_WRESP;
+                        end
                     end
                 end
                 WAIT_W: begin
