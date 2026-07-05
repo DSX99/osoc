@@ -54,7 +54,7 @@ always_ff @(posedge clk) begin
 
         case(clint_r) 
             IDLE_R:begin
-                if(caddr && carvalid) clint_r<=WAIT_RR;
+                if(carready && carvalid) clint_r<=WAIT_RR;
             end
             WAIT_RR:begin
                 if(caddr[15:0] == 16'hbffc) begin
