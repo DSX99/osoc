@@ -34,18 +34,6 @@ CPU_state cpu;
 bool fail=0;
 bool valid_cycle=0;
 
-//perf counters
-typedef struct Performance_t{
-  uint64_t ifu_stall_cycle;
-  uint64_t ifu_fetch_instr;
-  uint64_t possible_branch_count;
-  uint64_t branch_taken;
-  uint64_t lsu_stall_cycle;
-  uint64_t lsu_read_data;
-  uint64_t lsu_write_data;
-  uint64_t writeback;
-} Performance_t;
-
 Performance_t program[3];
 uint64_t cycles[3];
 
