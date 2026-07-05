@@ -161,7 +161,7 @@ extern "C" void sdram_write(uint32_t addr, uint32_t data, uint32_t mask) {
     }
 
     extern "C" void memwrite(uint32_t addr, uint32_t data, uint32_t type){
-        // printf("\033[034mCall to write to memory at %08x\033[0m\n", addr);
+        printf("\033[034mCall to write to memory at %08x\033[0m\n", addr);
         if(addr>=ROM_OFFSET && addr<(ROM_OFFSET + FLASH_SIZE)){
             int working_addr = (addr - ROM_OFFSET) & (~3);
 
