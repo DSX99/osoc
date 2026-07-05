@@ -276,7 +276,7 @@ void execute(uint64_t n){
       if (!current_cycle_is_skipped && !(top->lsu_device_call)) {
         difftest_regcpy(&ref_cpu, 0);
 
-        if (ref_cpu.pc != top->pc) {
+        if (ref_cpu.pc != top->prev_pc) {
           printf("Difference with REF pc, should:0x%08x, actually:0x%08x\n", ref_cpu.pc, top->prev_pc);
           ret = 1;
           inst[0] = (top->opcode) & 0xff;
