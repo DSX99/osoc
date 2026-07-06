@@ -44,9 +44,9 @@ logic hit;
 assign hit = block_valid[index] && (tag == block_tag[index]);
 
 typedef enum {
-    WAIT_AR, WAIT_R, AWAIT
-} IFU_state_t;
-IFU_state_t ifu;
+    IDLE, WAIT_AR, WAIT_R
+} cache_state_t;
+cache_state_t state;
 
 always_comb begin
     arvalid = 0;
