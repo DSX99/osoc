@@ -190,7 +190,7 @@ module osoc_26000003_core (
         .ifu_addr(cache_addr), .valid(cache_valid), .opcode(cache_opcode), .ready(cache_ready),
         .araddr(araddr_ifu), .arvalid(arvalid_ifu), .arready(arready_ifu), 
         .rdata(rdata_ifu), .rresp(rresp_ifu), .rvalid(rvalid_ifu), .rready(rready_ifu)
-    )
+    );
 
     // ID Decoder Instance
     decode decode_mod (
