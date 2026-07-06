@@ -500,6 +500,6 @@ void print_stage_performance_table(const uint64_t cycles[3], const Performance_t
 
     std::printf("=========================================================================================================\n");
 
-    double AMAT = avg_miss_latency[2] * cache_miss_pct[2];
+    double AMAT = avg_miss_latency[2] * cache_miss_pct[2]/100;
     std::printf("AMAT = %lf\n\n", AMAT);
 }
