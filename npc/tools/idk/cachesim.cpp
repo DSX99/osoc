@@ -16,7 +16,7 @@ typedef struct cache_t
 
 cache_t cache[lines][rows];
 
-static char *path = "";
+static char *path = "/home/dsx99/osoc/ysyx-workbench/npc/tools/idk/opcodes";
 
 uint32_t access_count;
 
@@ -64,7 +64,7 @@ int main(){
     fseek(fp, 0, SEEK_END);
     long size = ftell(fp);
     long point = 0;
-    printf("The image is %s, size = %ld", path, size);
+    printf("The image is %s, size = %ld\n", path, size);
 
     fseek(fp, 0, SEEK_SET);
 
@@ -75,5 +75,38 @@ int main(){
         if(point>=size) break;
     }
 
+    printf("Hit %d, miss %d, total access %d\n", hit_count, miss_count, access_count);
+
     fclose(fp);
 }
+
+
+
+
+/*
+=========================================================================================================
+ Performance Metric                   | 0: PREBOOT           | 1: BOOT              | 2: PROGRAM           
+---------------------------------------------------------------------------------------------------------
+ Execution Cycles                     | 1195565              | 15707634             | 13542905             
+ Instructions Retired (WB)            | 2537                 | 18926                | 504401               
+ Cycles Per Instruction (CPI)         | 471.251              | 829.950              | 26.849               
+ Instructions Per Cycle (IPC)         | 0.002                | 0.001                | 0.037                
+---------------------------------------------------------------------------------------------------------
+ IFU Fetched Instructions             | 22                   | 138                  | 243279               
+ IFU Stall Cycles                     | 49908 (4.2%)         | 276 (0.0%)           | 9281607 (68.5%)      
+---------------------------------------------------------------------------------------------------------
+ Control Branches + Jumps Executed    | 507                  | 1731                 | 123159               
+ Branches + Jumps Taken               | 505 (99.6%)          | 1719 (99.3%)         | 82236 (66.8%)        
+---------------------------------------------------------------------------------------------------------
+ LSU Data Reads (Loads)               | 504                  | 6842                 | 54693                
+ LSU Data Writes (Stores)             | 505                  | 6852                 | 42926                
+ LSU Stall Cycles                     | 1143110 (95.6%)      | 15688432 (99.9%)     | 3756898 (27.7%)      
+---------------------------------------------------------------------------------------------------------
+ Cache Hits                           | 2515 (99.1%)         | 18788 (99.3%)        | 261122 (51.8%)       
+ Cache Misses                         | 22 (0.9%)            | 138 (0.7%)           | 243279 (48.2%)       
+ Cache Miss Penalty Cycles            | 49908                | 276                  | 9281607              
+ Avg Cache Miss Latency (cyc)         | 2268.55              | 2.00                 | 38.15                
+=========================================================================================================
+ AMAT (cycles)                        | 19.7                 | 0.0                  | 18.4                 
+=========================================================================================================
+*/
