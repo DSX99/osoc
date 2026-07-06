@@ -83,7 +83,7 @@ gdb: build
 sta:
 	make -C /home/dsx99/osoc/ysyx-workbench/yosys-sta sta\
 	 DESIGN=osoc_26000003_core SDC_FILE=/home/dsx99/osoc/ysyx-workbench/npc/sta_res/default.sdc\
-	  CLK_FREQ_MHZ=300 CLK_PORT_NAME=clock O=/home/dsx99/osoc/ysyx-workbench/npc/sta_res\
+	  CLK_FREQ_MHZ=565 CLK_PORT_NAME=clock O=/home/dsx99/osoc/ysyx-workbench/npc/sta_res\
 	  RTL_FILES='$(foreach file, $(STA_SRC), $(abspath $(file)))'
 
 clean:
