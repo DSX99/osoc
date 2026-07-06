@@ -458,13 +458,13 @@ void print_stage_performance_table(const uint64_t cycles[3], const Performance_t
     std::printf("---------------------------------------------------------------------------------------------------------\n");
 
     // Branch Metrics
-    std::printf(" %-32s | %-20llu | %-20llu | %-20llu \n", "Control Branches Executed", 
+    std::printf(" %-32s | %-20llu | %-20llu | %-20llu \n", "Control Branches + Jumps Executed", 
                 (unsigned long long)perf[0].possible_branch_count, (unsigned long long)perf[1].possible_branch_count, (unsigned long long)perf[2].possible_branch_count);
     
     std::snprintf(buf0, sizeof(buf0), "%llu (%3.1f%%)", (unsigned long long)perf[0].branch_taken, branch_taken_pct[0]);
     std::snprintf(buf1, sizeof(buf1), "%llu (%3.1f%%)", (unsigned long long)perf[1].branch_taken, branch_taken_pct[1]);
     std::snprintf(buf2, sizeof(buf2), "%llu (%3.1f%%)", (unsigned long long)perf[2].branch_taken, branch_taken_pct[2]);
-    std::printf(" %-32s | %-20s | %-20s | %-20s \n", "Branches Taken", buf0, buf1, buf2);
+    std::printf(" %-32s | %-20s | %-20s | %-20s \n", "Branches + Jumps Taken", buf0, buf1, buf2);
     std::printf("---------------------------------------------------------------------------------------------------------\n");
 
     // Backend (LSU) Metrics
