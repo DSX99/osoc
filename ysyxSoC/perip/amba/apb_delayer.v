@@ -56,14 +56,14 @@ module apb_delayer(
       buff_pready<=0;
       buff_prdata<=0;
       buff_pslverr<=0;
-      set<=0
+      set<=0;
     end else begin
       if(in_psel && in_penable && !out && !buff_pready) begin
         count<=count+ 1;
         delay<=ADD;
         set<=1;
       end
-      if(out_pready) begin
+      if(out_pready && set) begin
         buff_pready<=out_pready;
         buff_prdata<=out_prdata;
         buff_pslverr<=out_pslverr;
