@@ -71,6 +71,9 @@ module osoc_26000003_core (
 
     logic if_id_valid /* verilator public */, ex_ls_valid /* verilator public */, ex_ls_ready /* verilator public */;
     logic branch /* verilator public */, branch_taken /* verilator public */, ex_ls_bus_lsu_we /* verilator public*/, ex_ls_bus_lsu_re /* verilator public*/;
+    logic cache_hit/* verilator public */, cache_miss/* verilator public */,rst/* verilator public */;
+
+    assign rst =reset;
 
     assign opcode = if_id_bus_opcode;
 
@@ -85,6 +88,9 @@ module osoc_26000003_core (
     logic [31:0] if_id_bus_next_pc;
     logic [31:0] if_id_bus_opcode;
     logic        if_id_ready; //valid declared as public
+
+    logic [31:0] cache_addr, cache_opcode;
+    logic cache_ready, cache_valid;
 
     // ID to EX Decoded Bus signals
     logic [31:0] id_ex_bus_decoded_pc;
@@ -174,13 +180,21 @@ module osoc_26000003_core (
 
     // IFU Instance
     ifu ifu_mod (
-        .clk(clock), .rst(reset), .pc(pc), .next_pc(next_pc),
+        .pc(pc), .next_pc(next_pc),
         .bus_out_pc(if_id_bus_pc),
         .bus_out_next_pc(if_id_bus_next_pc),
         .bus_out_opcode(if_id_bus_opcode),
         .valid(if_id_valid), .ready(if_id_ready),
+        .cache_addr(cache_addr), .cache_valid(cache_valid), .cache_opcode(cache_opcode), .cache_ready(cache_ready)
+    );
+
+    icache icache_mod(
+        .clk(clock), .rst(reset),
+        .ifu_addr(cache_addr), .valid(cache_valid), .opcode(cache_opcode), .ready(cache_ready),
         .araddr(araddr_ifu), .arvalid(arvalid_ifu), .arready(arready_ifu), 
-        .rdata(rdata_ifu), .rresp(rresp_ifu), .rvalid(rvalid_ifu), .rready(rready_ifu)
+        .rdata(rdata_ifu), .rresp(rresp_ifu), .rvalid(rvalid_ifu), .rready(rready_ifu),
+        
+        .hit(cache_hit), .miss(cache_miss)
     );
 
     // ID Decoder Instance

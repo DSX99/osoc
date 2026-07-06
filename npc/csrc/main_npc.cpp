@@ -27,7 +27,7 @@ static uint32_t qexit = 0;
 VerilatedContext *contextp;
 VerilatedFstC *tracep;
 Vosoc_26000003_func* soc; 
-Vosoc_26000003_func_osoc_26000003_func *top;
+Vosoc_26000003_func_osoc_26000003_core *top;
 bool skip_inst=0;
 CPU_state cpu;
 bool fail=0;
@@ -102,7 +102,7 @@ int main(int argc, char** argv) {
   // contextp->threads(4); // can be used in future to increase speed
 
   soc = new Vosoc_26000003_func{contextp};
-  top = soc->osoc_26000003_func;
+  top = soc->osoc_26000003_core;
   
 #ifdef CONFIG_FST
   Verilated::traceEverOn(true);
