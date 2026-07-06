@@ -25,7 +25,7 @@ module apb_delayer(
 );
 
   assign out_paddr   = in_paddr;
-  assign out_psel    = in_psel;
+  assign out_psel    = buff_pready ? 1'b0 : in_psel;
   assign out_penable = in_penable;
   assign out_pprot   = in_pprot;
   assign out_pwrite  = in_pwrite;
