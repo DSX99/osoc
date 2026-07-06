@@ -191,26 +191,6 @@ module osoc_26000003_core (
         .araddr(araddr_ifu), .arvalid(arvalid_ifu), .arready(arready_ifu), 
         .rdata(rdata_ifu), .rresp(rresp_ifu), .rvalid(rvalid_ifu), .rready(rready_ifu)
     )
-    module icache(
-    input logic clk, rst,
-
-    input logic [31:0] ifu_addr,
-    input logic valid,
-
-    output logic [31:0] opcode,
-    output logic ready,
-
-    // Read Addr Channel (AR)
-    output logic [31:0] araddr,
-    output logic        arvalid,
-    input  logic        arready,
-
-    // Read Data Channel (R)
-    input  logic [31:0] rdata,
-    input  logic [1:0]  rresp,
-    input  logic        rvalid,
-    output logic        rready
-);
 
     // ID Decoder Instance
     decode decode_mod (
