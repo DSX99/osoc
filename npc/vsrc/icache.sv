@@ -22,8 +22,8 @@ module icache(
 parameter BLOCK_SIZE = 4;
 parameter NUMBER_OF_BLOCKS = 16;
 
-const int off = $clog2(BLOCK_SIZE);
-const int index_off = $clog2(NUMBER_OF_BLOCKS);
+Constant int off = $clog2(BLOCK_SIZE);
+Constant int index_off = $clog2(NUMBER_OF_BLOCKS);
 
 logic [31:0] block_cache [NUMBER_OF_BLOCKS];
 
