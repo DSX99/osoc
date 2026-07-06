@@ -15,8 +15,11 @@ module ifu (
     output logic valid,
     input  logic ready,
 
-    output logic [31:0] addr,
-    input logic [31:0] opcode
+    output logic [31:0] cache_addr,
+    output logic cache_valid,
+
+    input logic [31:0] cache_opcode,
+    input logic cache_ready
 );
 
     typedef enum {
@@ -31,53 +34,16 @@ module ifu (
         bus_out_pc      = pc;
         bus_out_next_pc = next_pc;
 
+        cache_valid=1;
+        cache_addr = pc;
+
+        valid = cache_ready;
+        bus_out_opcode = cache_opcode;
+
         valid=0;
         arvalid=0;
         araddr=0;
         rready=0;
-        
-        if(!rst) begin
-        case(ifu)
-            WAIT_AR: begin
-                arvalid = 1;
-                araddr  = pc;
-            end
-            WAIT_R: begin
-                rready  = 1;
-            end
-            AWAIT: begin
-                valid=1;
-            end
-            default: ;
-        endcase
-        end
-    end
-
-    always_ff @(posedge clk) begin
-        if (rst) begin
-            ifu             <= WAIT_AR;
-            bus_out_opcode  <= 0;
-        end else begin
-            case (ifu)
-                WAIT_AR: begin
-                    if (arready && arvalid) begin
-                        ifu     <= WAIT_R;
-                    end
-                end
-                WAIT_R: begin
-                    if (rvalid && rready) begin
-                        bus_out_opcode <= rdata;
-                        ifu     <= AWAIT;
-                    end
-                end
-                AWAIT: begin
-                    if (ready) begin
-                        ifu   <= WAIT_AR;
-                    end
-                end
-                default: ;
-            endcase
-        end
     end
 
 endmodule
