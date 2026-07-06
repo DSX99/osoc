@@ -95,7 +95,7 @@ int main(int argc, char** argv) {
   #endif
   #ifdef OP_TRACE
   printf("\n\t\t\033[31mRUNNING WITH OP_TRACE\033[0m\n");
-  fp = fopen("/home/dsx99/osoc/ysyx-workbench/npc/tools/idk/opcodes", "rb");
+  fp = fopen("/home/dsx99/osoc/ysyx-workbench/npc/tools/idk/opcodes", "wb");
   #endif
   Verilated::commandArgs(argc, argv);
   printf("\n\033[1m\033[36mNPC\033[0m\n\n");
