@@ -57,7 +57,7 @@ always_comb begin
 
     if (valid) begin
         if (hit) begin
-            opcode = block_cache[index][0];
+            opcode = block_cache[index];
             ready  = 1'b1;
         end else begin
             case (state)
@@ -97,7 +97,7 @@ always_ff @(posedge clk) begin
                     if (ifu_addr >= 32'h0f000000 && ifu_addr < 32'h0fffffff) begin
                         state <= IDLE; 
                     end else begin
-                        block_cache[index][0] <= rdata;
+                        block_cache[index] <= rdata;
                         block_tag[index]      <= tag;
                         block_valid[index]    <= 1'b1;
                         state                 <= IDLE;
