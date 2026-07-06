@@ -497,9 +497,9 @@ void print_stage_performance_table(const uint64_t cycles[3], const Performance_t
                 (unsigned long long)perf[0].cache_miss_cycles, (unsigned long long)perf[1].cache_miss_cycles, (unsigned long long)perf[2].cache_miss_cycles);
     std::printf(" %-36s | %-20.2f | %-20.2f | %-20.2f \n", "Avg Cache Miss Latency (cyc)", 
                 avg_miss_latency[0], avg_miss_latency[1], avg_miss_latency[2]);
-
-    std::printf("=========================================================================================================\n");
-
     double AMAT = avg_miss_latency[2] * cache_miss_pct[2]/100;
     std::printf("AMAT = %lf\n\n", AMAT);
+    std::printf("=========================================================================================================\n");
+
+                
 }
