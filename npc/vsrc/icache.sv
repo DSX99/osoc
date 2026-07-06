@@ -94,14 +94,10 @@ always_ff @(posedge clk) begin
 
             WAIT_R: begin
                 if (rvalid && rready) begin
-                    if (ifu_addr >= 32'h0f000000 && ifu_addr < 32'h0fffffff) begin
-                        state <= IDLE; 
-                    end else begin
-                        block_cache[index] <= rdata;
-                        block_tag[index]      <= tag;
-                        block_valid[index]    <= 1'b1;
-                        state                 <= IDLE;
-                    end
+                    block_cache[index] <= rdata;
+                    block_tag[index]      <= tag;
+                    block_valid[index]    <= 1'b1;
+                    state                 <= IDLE;
                 end
             end
             default: state <= IDLE;
