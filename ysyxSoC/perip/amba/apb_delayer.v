@@ -42,6 +42,7 @@ module apb_delayer(
 
   parameter ADD = 181;
 
+  reg set;
   reg [9:0] count;
   reg [19:0] delay;
   wire out;
@@ -55,10 +56,12 @@ module apb_delayer(
       buff_pready<=0;
       buff_prdata<=0;
       buff_pslverr<=0;
+      set<=0
     end else begin
       if(in_psel && in_penable && !out && !buff_pready) begin
         count<=count+ 1;
         delay<=ADD;
+        set<=1;
       end
       if(out_pready) begin
         buff_pready<=out_pready;
