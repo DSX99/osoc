@@ -30,7 +30,6 @@ module ifu (
     logic unused_bits;
 
     always_comb begin
-        unused_bits     = |rresp;
         bus_out_pc      = pc;
         bus_out_next_pc = next_pc;
 
