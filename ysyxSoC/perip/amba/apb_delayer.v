@@ -46,7 +46,7 @@ module apb_delayer(
   reg [19:0] delay;
   wire out;
 
-  assign out = delay[19:10] >= count;
+  assign out = delay[19:10] > count;
 
   always @(posedge clock) begin
     if(reset) begin
@@ -56,7 +56,7 @@ module apb_delayer(
       buff_prdata<=0;
       buff_pslverr<=0;
     end else begin
-      if(in_psel && in_penable) begin
+      if(in_psel && in_penable && !out && !buff_pready) begin
         count<=count+ 1;
         delay<=ADD;
       end
@@ -68,9 +68,10 @@ module apb_delayer(
       if(delay!=0) begin
         delay<=delay+ADD;
       end
-      if(delay[19:10] > count) begin
+      if(out) begin
         count<=0;
         delay<=0;
+        buff_pready<=0;
       end
     end
   end
