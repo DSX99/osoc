@@ -36,8 +36,6 @@ logic block_valid[NUMBER_OF_BLOCKS];
 
 logic [31:0] bypass;
 
-logic call;
-
 assign {tag, index, redundant} = ifu_addr;
  
 logic hit;
@@ -55,7 +53,7 @@ always_comb begin
     ready   = 0;
     opcode  = 0;
 
-    if (valid) begin
+    if (valid && !rst) begin
         if (hit) begin
             opcode = block_cache[index];
             ready  = 1'b1;
