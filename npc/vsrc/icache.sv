@@ -39,8 +39,7 @@ logic block_valid[NUMBER_OF_BLOCKS];
 logic [31:0] bypass;
 
 assign {tag, index, redundant} = ifu_addr;
- 
-logic hit;
+
 assign hit = block_valid[index] && (tag == block_tag[index]);
 
 typedef enum {
@@ -61,7 +60,6 @@ always_comb begin
         if (hit) begin
             opcode = block_cache[index];
             ready  = 1'b1;
-            hit=1;
         end else begin
             miss=1;
             case (state)
