@@ -502,7 +502,7 @@ void print_stage_performance_table(const uint64_t cycles[3], const Performance_t
     std::snprintf(buf0, sizeof(buf0), "%3.1f", avg_miss_latency[0] * cache_miss_pct[0]/100);
     std::snprintf(buf1, sizeof(buf1), "%3.1f", avg_miss_latency[1] * cache_miss_pct[1]/100);
     std::snprintf(buf2, sizeof(buf2), "%3.1f", avg_miss_latency[2] * cache_miss_pct[2]/100);
-    std::printf(" %-36s | %-20s | %-20s | %-20s \n", "AMAT", buf0, buf1, buf2);
+    std::printf(" %-36s | %-20s | %-20s | %-20s \n", "AMAT (cycles)", buf0, buf1, buf2);
     std::printf("=========================================================================================================\n\n");
               
 }
