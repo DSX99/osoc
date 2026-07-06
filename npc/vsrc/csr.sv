@@ -18,7 +18,7 @@ typedef enum bit [4:0]{
     UNUSED, MEPS, MSTATUS, MCAUSE, MTVEC, MVENDORID, MARCHID
 } csr_t;
 
-logic [4:0] working_reg;
+logic [2:0] working_reg;
 
 initial begin
     for(int i = 0; i < 32; i++) begin
