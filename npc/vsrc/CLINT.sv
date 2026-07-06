@@ -60,10 +60,10 @@ always_ff @(posedge clk) begin
             IDLE_R:begin
                 if(carready && carvalid)begin
                     clint_r<=WAIT_RR;
-                    if(caddr[15:0] == 16'hbffc) begin
+                    if(caddr[15:0] == 16'hbff8) begin
                         crdata <= mtime[31:0];
                         buff <= mtime[63:32];
-                    end else if(caddr[15:0] == 16'hbff8) begin
+                    end else if(caddr[15:0] == 16'hbffc) begin
                         crdata <= buff;
                     end
                     crvalid<=1;
