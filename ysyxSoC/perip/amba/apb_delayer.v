@@ -68,7 +68,7 @@ module apb_delayer(
       if(delay!=0) begin
         delay<=delay+ADD;
       end
-      if(delay[19:10] >= count) begin
+      if(delay[19:10] > count) begin
         count<=0;
         delay<=0;
       end
