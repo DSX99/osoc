@@ -434,65 +434,65 @@ void print_stage_performance_table(const uint64_t cycles[3], const Performance_t
     std::printf("\n=========================================================================================================\n");
     std::printf("                                    MULTI-STAGE PERFORMANCE REPORT                                       \n");
     std::printf("=========================================================================================================\n");
-    std::printf(" %-32s | %-20s | %-20s | %-20s \n", "Performance Metric", stage_names[0], stage_names[1], stage_names[2]);
+    std::printf(" %-36s | %-20s | %-20s | %-20s \n", "Performance Metric", stage_names[0], stage_names[1], stage_names[2]);
     std::printf("---------------------------------------------------------------------------------------------------------\n");
 
     // Global Core Metrics
-    std::printf(" %-32s | %-20llu | %-20llu | %-20llu \n", "Execution Cycles", 
+    std::printf(" %-36s | %-20llu | %-20llu | %-20llu \n", "Execution Cycles", 
                 (unsigned long long)cycles[0], (unsigned long long)cycles[1], (unsigned long long)cycles[2]);
-    std::printf(" %-32s | %-20llu | %-20llu | %-20llu \n", "Instructions Retired (WB)", 
+    std::printf(" %-36s | %-20llu | %-20llu | %-20llu \n", "Instructions Retired (WB)", 
                 (unsigned long long)perf[0].writeback, (unsigned long long)perf[1].writeback, (unsigned long long)perf[2].writeback);
-    std::printf(" %-32s | %-20.3f | %-20.3f | %-20.3f \n", "Cycles Per Instruction (CPI)", cpi[0], cpi[1], cpi[2]);
-    std::printf(" %-32s | %-20.3f | %-20.3f | %-20.3f \n", "Instructions Per Cycle (IPC)", ipc[0], ipc[1], ipc[2]);
+    std::printf(" %-36s | %-20.3f | %-20.3f | %-20.3f \n", "Cycles Per Instruction (CPI)", cpi[0], cpi[1], cpi[2]);
+    std::printf(" %-36s | %-20.3f | %-20.3f | %-20.3f \n", "Instructions Per Cycle (IPC)", ipc[0], ipc[1], ipc[2]);
     std::printf("---------------------------------------------------------------------------------------------------------\n");
 
     // Frontend (IFU) Metrics
-    std::printf(" %-32s | %-20llu | %-20llu | %-20llu \n", "IFU Fetched Instructions", 
+    std::printf(" %-36s | %-20llu | %-20llu | %-20llu \n", "IFU Fetched Instructions", 
                 (unsigned long long)perf[0].ifu_fetch_instr, (unsigned long long)perf[1].ifu_fetch_instr, (unsigned long long)perf[2].ifu_fetch_instr);
     
     char buf0[32], buf1[32], buf2[32];
     std::snprintf(buf0, sizeof(buf0), "%llu (%3.1f%%)", (unsigned long long)perf[0].ifu_stall_cycle, ifu_stall_pct[0]);
     std::snprintf(buf1, sizeof(buf1), "%llu (%3.1f%%)", (unsigned long long)perf[1].ifu_stall_cycle, ifu_stall_pct[1]);
     std::snprintf(buf2, sizeof(buf2), "%llu (%3.1f%%)", (unsigned long long)perf[2].ifu_stall_cycle, ifu_stall_pct[2]);
-    std::printf(" %-32s | %-20s | %-20s | %-20s \n", "IFU Stall Cycles", buf0, buf1, buf2);
+    std::printf(" %-36s | %-20s | %-20s | %-20s \n", "IFU Stall Cycles", buf0, buf1, buf2);
     std::printf("---------------------------------------------------------------------------------------------------------\n");
 
     // Branch Metrics
-    std::printf(" %-32s | %-20llu | %-20llu | %-20llu \n", "Control Branches + Jumps Executed", 
+    std::printf(" %-36s | %-20llu | %-20llu | %-20llu \n", "Control Branches + Jumps Executed", 
                 (unsigned long long)perf[0].possible_branch_count, (unsigned long long)perf[1].possible_branch_count, (unsigned long long)perf[2].possible_branch_count);
     
     std::snprintf(buf0, sizeof(buf0), "%llu (%3.1f%%)", (unsigned long long)perf[0].branch_taken, branch_taken_pct[0]);
     std::snprintf(buf1, sizeof(buf1), "%llu (%3.1f%%)", (unsigned long long)perf[1].branch_taken, branch_taken_pct[1]);
     std::snprintf(buf2, sizeof(buf2), "%llu (%3.1f%%)", (unsigned long long)perf[2].branch_taken, branch_taken_pct[2]);
-    std::printf(" %-32s | %-20s | %-20s | %-20s \n", "Branches + Jumps Taken", buf0, buf1, buf2);
+    std::printf(" %-36s | %-20s | %-20s | %-20s \n", "Branches + Jumps Taken", buf0, buf1, buf2);
     std::printf("---------------------------------------------------------------------------------------------------------\n");
 
     // Backend (LSU) Metrics
-    std::printf(" %-32s | %-20llu | %-20llu | %-20llu \n", "LSU Data Reads (Loads)", 
+    std::printf(" %-36s | %-20llu | %-20llu | %-20llu \n", "LSU Data Reads (Loads)", 
                 (unsigned long long)perf[0].lsu_read_data, (unsigned long long)perf[1].lsu_read_data, (unsigned long long)perf[2].lsu_read_data);
-    std::printf(" %-32s | %-20llu | %-20llu | %-20llu \n", "LSU Data Writes (Stores)", 
+    std::printf(" %-36s | %-20llu | %-20llu | %-20llu \n", "LSU Data Writes (Stores)", 
                 (unsigned long long)perf[0].lsu_write_data, (unsigned long long)perf[1].lsu_write_data, (unsigned long long)perf[2].lsu_write_data);
     
     std::snprintf(buf0, sizeof(buf0), "%llu (%3.1f%%)", (unsigned long long)perf[0].lsu_stall_cycle, lsu_stall_pct[0]);
     std::snprintf(buf1, sizeof(buf1), "%llu (%3.1f%%)", (unsigned long long)perf[1].lsu_stall_cycle, lsu_stall_pct[1]);
     std::snprintf(buf2, sizeof(buf2), "%llu (%3.1f%%)", (unsigned long long)perf[2].lsu_stall_cycle, lsu_stall_pct[2]);
-    std::printf(" %-32s | %-20s | %-20s | %-20s \n", "LSU Stall Cycles", buf0, buf1, buf2);
+    std::printf(" %-36s | %-20s | %-20s | %-20s \n", "LSU Stall Cycles", buf0, buf1, buf2);
     std::printf("---------------------------------------------------------------------------------------------------------\n");
 
     // Memory Subsystem (Cache) Metrics
     std::snprintf(buf0, sizeof(buf0), "%llu (%3.1f%%)", (unsigned long long)perf[0].cache_hit, cache_hit_pct[0]);
     std::snprintf(buf1, sizeof(buf1), "%llu (%3.1f%%)", (unsigned long long)perf[1].cache_hit, cache_hit_pct[1]);
     std::snprintf(buf2, sizeof(buf2), "%llu (%3.1f%%)", (unsigned long long)perf[2].cache_hit, cache_hit_pct[2]);
-    std::printf(" %-32s | %-20s | %-20s | %-20s \n", "Cache Hits", buf0, buf1, buf2);
+    std::printf(" %-36s | %-20s | %-20s | %-20s \n", "Cache Hits", buf0, buf1, buf2);
 
     std::snprintf(buf0, sizeof(buf0), "%llu (%3.1f%%)", (unsigned long long)perf[0].cache_miss, cache_miss_pct[0]);
     std::snprintf(buf1, sizeof(buf1), "%llu (%3.1f%%)", (unsigned long long)perf[1].cache_miss, cache_miss_pct[1]);
     std::snprintf(buf2, sizeof(buf2), "%llu (%3.1f%%)", (unsigned long long)perf[2].cache_miss, cache_miss_pct[2]);
-    std::printf(" %-32s | %-20s | %-20s | %-20s \n", "Cache Misses", buf0, buf1, buf2);
+    std::printf(" %-36s | %-20s | %-20s | %-20s \n", "Cache Misses", buf0, buf1, buf2);
 
-    std::printf(" %-32s | %-20llu | %-20llu | %-20llu \n", "Cache Miss Penalty Cycles", 
+    std::printf(" %-36s | %-20llu | %-20llu | %-20llu \n", "Cache Miss Penalty Cycles", 
                 (unsigned long long)perf[0].cache_miss_cycles, (unsigned long long)perf[1].cache_miss_cycles, (unsigned long long)perf[2].cache_miss_cycles);
-    std::printf(" %-32s | %-20.2f | %-20.2f | %-20.2f \n", "Avg Cache Miss Latency (cyc)", 
+    std::printf(" %-36s | %-20.2f | %-20.2f | %-20.2f \n", "Avg Cache Miss Latency (cyc)", 
                 avg_miss_latency[0], avg_miss_latency[1], avg_miss_latency[2]);
 
     std::printf("=========================================================================================================\n\n");
