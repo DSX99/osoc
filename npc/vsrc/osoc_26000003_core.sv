@@ -71,7 +71,9 @@ module osoc_26000003_core (
 
     logic if_id_valid /* verilator public */, ex_ls_valid /* verilator public */, ex_ls_ready /* verilator public */;
     logic branch /* verilator public */, branch_taken /* verilator public */, ex_ls_bus_lsu_we /* verilator public*/, ex_ls_bus_lsu_re /* verilator public*/;
-    logic cache_hit/* verilator public */, cache_miss/* verilator public */;
+    logic cache_hit/* verilator public */, cache_miss/* verilator public */,rst/* verilator public */;
+
+    assign rst =reset;
 
     assign opcode = if_id_bus_opcode;
 

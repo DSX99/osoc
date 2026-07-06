@@ -230,7 +230,7 @@ void execute(uint64_t n){
     soc->eval();
     
 
-
+    if(__glibc_likely(!top->rst))
     //changing stages
     if(stage == 0 && (top->pc >= 0x0f000000 && top->pc < 0x10000000)){
       stage = 1;
