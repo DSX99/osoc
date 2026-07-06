@@ -228,8 +228,19 @@ void execute(uint64_t n){
     contextp->timeInc(1);
     soc->clock=!soc->clock;
     soc->eval();
+    
 
 
+    //changing stages
+    if(stage == 0 && (top->pc >= 0x0f000000 && top->pc < 0x10000000)){
+      stage = 1;
+      cycles[0] = contextp->time()>>1;
+    }
+    if(stage == 1 && (top->pc >= 0xa0000000 && top->pc < 0xc0000000)){
+      stage = 2;
+      cycles[1] = (contextp->time()>>1) - cycles[0];
+    }
+    
     //couting performance
     if(top->if_id_valid == 0){
       program[stage].ifu_stall_cycle++;
@@ -263,15 +274,6 @@ void execute(uint64_t n){
       if(top->cache_miss) program[stage].cache_miss++;
     }
     if(top->cache_miss) program[stage].cache_miss_cycles++;
-
-    if(stage == 0 && (top->pc >= 0x0f000000 && top->pc < 0x10000000)){
-      stage = 1;
-      cycles[0] = contextp->time()>>1;
-    }
-    if(stage == 1 && (top->pc >= 0xa0000000 && top->pc < 0xc0000000)){
-      stage = 2;
-      cycles[1] = (contextp->time()>>1) - cycles[0];
-    }
 
 
 
