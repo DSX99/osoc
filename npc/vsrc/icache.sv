@@ -44,7 +44,7 @@ logic hit;
 assign hit = block_valid[index] && (tag == block_tag[index]);
 
 typedef enum {
-    IDLE, WAIT_AR, WAIT_R
+    WAIT_AR, WAIT_R
 } cache_state_t;
 cache_state_t state;
 
@@ -76,16 +76,12 @@ end
 
 always_ff @(posedge clk) begin
     if (rst) begin
-        state <= IDLE;
+        state <= WAIT_AR;
         for(int i = 0; i < NUMBER_OF_BLOCKS; i = i + 1) begin
             block_valid[i] <= 1'b0;
         end
     end else if (valid && !hit) begin
         case (state)
-            IDLE: begin
-                state <= WAIT_AR;
-            end
-
             WAIT_AR: begin
                 if (arready && arvalid) begin
                     state <= WAIT_R;
@@ -97,10 +93,10 @@ always_ff @(posedge clk) begin
                     block_cache[index] <= rdata;
                     block_tag[index]      <= tag;
                     block_valid[index]    <= 1'b1;
-                    state                 <= IDLE;
+                    state                 <= WAIT_AR;
                 end
             end
-            default: state <= IDLE;
+            default: state <= WAIT_AR;
         endcase
     end
 end
