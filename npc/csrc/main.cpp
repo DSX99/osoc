@@ -230,7 +230,7 @@ void execute(uint64_t n){
     soc->eval();
     
 
-    if(__glibc_likely(!top->rst)){
+    if(!top->rst){
     //changing stages
     if(stage == 0 && (top->pc >= 0x0f000000 && top->pc < 0x10000000)){
       stage = 1;
@@ -498,5 +498,8 @@ void print_stage_performance_table(const uint64_t cycles[3], const Performance_t
     std::printf(" %-36s | %-20.2f | %-20.2f | %-20.2f \n", "Avg Cache Miss Latency (cyc)", 
                 avg_miss_latency[0], avg_miss_latency[1], avg_miss_latency[2]);
 
-    std::printf("=========================================================================================================\n\n");
+    std::printf("=========================================================================================================\n");
+
+    double AMAT = avg_miss_latency[2] * cache_miss_pct[2];
+    std::printf("AMAT = %lf\n\n", AMAT);
 }
