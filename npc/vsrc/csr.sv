@@ -12,7 +12,7 @@ module csr(
     output logic ready_left, valid_right
 );
 
-logic [31:0] regs [7:0];
+logic [31:0] regs [4:0];
 
 typedef enum bit [4:0]{
     UNUSED, MEPS, MSTATUS, MCAUSE, MTVEC, MVENDORID, MARCHID
