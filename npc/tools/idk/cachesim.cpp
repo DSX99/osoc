@@ -2,9 +2,24 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <getopt.h>
+#include <iostream>
 
-#define rows 1
-#define lines 16
+#define ROWS       2  
+#define LINES      4  
+#define LINE_SIZE  32   
+
+#define LOG2_1(n)  (((n) >= 2) ? 1 : 0)
+#define LOG2_2(n)  (((n) >= 4) ? 2 : LOG2_1(n))
+#define LOG2_4(n)  (((n) >= 16) ? 4 + LOG2_2((n) >> 4) : LOG2_2(n))
+#define LOG2_8(n)  (((n) >= 256) ? 8 + LOG2_4((n) >> 8) : LOG2_4(n))
+#define LOG2(n)    (((n) >= 65536) ? 16 + LOG2_8((n) >> 16) : LOG2_8(n))
+
+#define OFFSET_BITS LOG2(LINE_SIZE)
+#define INDEX_BITS  LOG2(LINES)
+
+#define INDEX_SHIFT  OFFSET_BITS
+#define INDEX_MASK   ((1 << INDEX_BITS) - 1)
+#define TAG_SHIFT    (OFFSET_BITS + INDEX_BITS)
 
 typedef struct cache_t
 {
@@ -14,30 +29,32 @@ typedef struct cache_t
 }cache_t;
 
 
-cache_t cache[lines][rows];
+cache_t cache[LINES][ROWS];
 
 static char *path = "/home/dsx99/osoc/ysyx-workbench/npc/tools/idk/opcodes";
 
-uint32_t access_count;
-
-uint32_t miss_count;
-uint32_t hit_count;
+uint32_t access_count[3];
+uint32_t miss_count[3];
+uint32_t hit_count[3];
+uint32_t stage=0;
 
 
 void try_cache(uint32_t addr){
-    access_count++;
-    uint32_t set_index = (addr >> 2) & 0xF;
-    uint32_t tag = addr >> 6;
+    if(addr >= 0x0f000000 && addr<0x0fffffff) stage=1;
+    if(addr >= 0xa0000000 && addr<0xbfffffff) stage=2;
+    access_count[stage]++;
+    uint32_t set_index = (addr >> INDEX_SHIFT) & INDEX_MASK;
+    uint32_t tag = addr >> TAG_SHIFT;
 
     uint32_t hit = 0;
     uint32_t change_row = 0;
     uint32_t time_access = -1;
 
-    for (int i = 0; i < rows; i++) {
+    for (int i = 0; i < ROWS; i++) {
         if (cache[set_index][i].valid && cache[set_index][i].tag == tag) {
             hit = 1;
-            cache[set_index][i].last_used = access_count;
-            hit_count++;
+            cache[set_index][i].last_used = access_count[stage];
+            hit_count[stage]++;
             break;
         }
         if(cache[set_index][i].last_used<time_access){
@@ -46,12 +63,14 @@ void try_cache(uint32_t addr){
         }
     }
 
-
+    // printf("%d",change_row);
+    // std::cin.get();
 
     if (!hit) {
-        miss_count++;
+        miss_count[stage]++;
         cache[set_index][change_row].tag = tag;
-        cache[set_index][change_row].last_used = access_count;
+        cache[set_index][change_row].last_used = access_count[stage];
+        cache[set_index][change_row].valid = 1;
     }
 }
 
@@ -75,7 +94,9 @@ int main(){
         if(point>=size) break;
     }
 
-    printf("Hit %d, miss %d, total access %d\n", hit_count, miss_count, access_count);
+    for(int i=0;i<3;i++){
+        printf("Hit %d, miss %d, total access %d\n", hit_count[i], miss_count[i], access_count[i]);
+    }
 
     fclose(fp);
 }
