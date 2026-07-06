@@ -16,7 +16,9 @@ module icache(
     input  logic [31:0] rdata,
     input  logic [1:0]  rresp,
     input  logic        rvalid,
-    output logic        rready
+    output logic        rready,
+
+    output logic hit, miss
 );
 
 parameter BLOCK_SIZE = 4;
@@ -52,12 +54,16 @@ always_comb begin
     rready  = 0;
     ready   = 0;
     opcode  = 0;
+    hit=0;
+    miss=0;
 
     if (valid && !rst) begin
         if (hit) begin
             opcode = block_cache[index];
             ready  = 1'b1;
+            hit=1;
         end else begin
+            miss=1;
             case (state)
                 WAIT_AR: begin
                     arvalid = 1'b1;

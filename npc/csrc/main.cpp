@@ -258,6 +258,11 @@ void execute(uint64_t n){
     if(top->reg_valid_e){
       program[stage].writeback++;
     }
+    if(top->pc != top->prev_pc){
+      if(top->cache_hit) program[stage].cache_hit++;
+      if(top->cache_miss) program[stage].cache_miss++;
+    }
+    if(top->cache_miss) program[stage].cache_miss_cycles++;
 
     if(stage == 0 && (top->pc >= 0x0f000000 && top->pc < 0x10000000)){
       stage = 1;
