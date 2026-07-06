@@ -38,11 +38,6 @@ module ifu (
 
         valid = cache_ready;
         bus_out_opcode = cache_opcode;
-
-        valid=0;
-        arvalid=0;
-        araddr=0;
-        rready=0;
     end
 
 endmodule
