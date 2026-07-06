@@ -10,6 +10,10 @@
 #include <verilated_fst_c.h>
 #endif
 
+#ifdef OP_TRACE
+FILE *fp;
+#endif
+
 struct CPU_state {
   uint32_t gpr[32];
   uint32_t pc;
@@ -89,6 +93,10 @@ int main(int argc, char** argv) {
   #ifdef CONFIG_FST
   printf("\n\t\t\033[31mRUNNING WITH FST\033[0m\n");
   #endif
+  #ifdef OP_TRACE
+  printf("\n\t\t\033[31mRUNNING WITH OP_TRACE\033[0m\n");
+  fp = fopen("/home/dsx99/osoc/ysyx-workbench/npc/tools/idk/opcodes", "rb");
+  #endif
   Verilated::commandArgs(argc, argv);
   printf("\n\033[1m\033[36mNPC\033[0m\n\n");
   parse_args(argc, argv);
@@ -140,6 +148,10 @@ int main(int argc, char** argv) {
   #ifdef CONFIG_FST
   tracep->close();
   #endif
+  #ifdef OP_TRACE
+  fclose(fp);
+  #endif
+  
   delete soc;
   return (ret || (!finished && qexit));
 }
@@ -228,7 +240,10 @@ void execute(uint64_t n){
     contextp->timeInc(1);
     soc->clock=!soc->clock;
     soc->eval();
-    
+
+    #ifdef OP_TRACE
+    fwrite(&top->pc,4,1,fp);
+    #endif
 
     if(!top->rst){
     //changing stages

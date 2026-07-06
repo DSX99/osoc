@@ -38,6 +38,7 @@ void print_stage_performance_table(const uint64_t cycles[3], const Performance_t
 #define CONFIG_FST
 // #define MTRACE
 // #define ITRACE
+#define OP_TRACE
 
 #define MAX_SIM_TIME 1000LL*1024LL*1024LL*1024LL
 #define FLASH_SIZE 16*1024*1024

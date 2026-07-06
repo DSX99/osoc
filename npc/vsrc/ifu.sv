@@ -1,6 +1,4 @@
 module ifu (
-    input logic clk,
-    input logic rst,
     input logic [31:0] pc,
     input logic [31:0] next_pc,
 
@@ -25,9 +23,11 @@ module ifu (
     typedef enum {
         WAIT_AR, WAIT_R, AWAIT
     } IFU_state_t;
-    IFU_state_t ifu;
+    // IFU_state_t ifu;
 
     logic unused_bits;
+
+    assign unused_bits = ready;
 
     always_comb begin
         bus_out_pc      = pc;

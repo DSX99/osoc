@@ -21,6 +21,9 @@ module icache(
     output logic hit, miss
 );
 
+logic unused_bits;
+assign unused_bits = |rresp | |redundant;
+
 parameter BLOCK_SIZE = 4;
 parameter NUMBER_OF_BLOCKS = 16;
 
@@ -35,8 +38,6 @@ logic [off-1:0] redundant;
 
 logic [32-index_off-off-1:0] block_tag [NUMBER_OF_BLOCKS];
 logic block_valid[NUMBER_OF_BLOCKS];
-
-logic [31:0] bypass;
 
 assign {tag, index, redundant} = ifu_addr;
 

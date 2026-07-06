@@ -180,7 +180,7 @@ module osoc_26000003_core (
 
     // IFU Instance
     ifu ifu_mod (
-        .clk(clock), .rst(reset), .pc(pc), .next_pc(next_pc),
+        .pc(pc), .next_pc(next_pc),
         .bus_out_pc(if_id_bus_pc),
         .bus_out_next_pc(if_id_bus_next_pc),
         .bus_out_opcode(if_id_bus_opcode),

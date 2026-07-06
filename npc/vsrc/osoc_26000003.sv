@@ -99,7 +99,7 @@ module osoc_26000003 (
     logic [3:0]  core_rid;
 
     logic [31:0] cwdata, crdata, caddr;
-    logic        cwvalid, crvalid, cready;
+    logic        cwvalid, crvalid;
     logic        cawvalid, carvalid;
     logic        cawready, cwready; 
     logic        carready, crready; 
