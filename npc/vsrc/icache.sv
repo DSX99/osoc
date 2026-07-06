@@ -53,7 +53,6 @@ always_comb begin
     rready  = 0;
     ready   = 0;
     opcode  = 0;
-    hit=0;
     miss=0;
 
     if (valid && !rst) begin
