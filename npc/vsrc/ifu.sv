@@ -15,16 +15,8 @@ module ifu (
     output logic valid,
     input  logic ready,
 
-    // Read Addr Channel (AR)
-    output logic [31:0] araddr,
-    output logic        arvalid,
-    input  logic        arready,
-
-    // Read Data Channel (R)
-    input  logic [31:0] rdata,
-    input  logic [1:0]  rresp,
-    input  logic        rvalid,
-    output logic        rready
+    output logic [31:0] addr,
+    input logic [31:0] opcode
 );
 
     typedef enum {

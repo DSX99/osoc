@@ -2,7 +2,7 @@ PROJ_PATH = $(shell pwd)
 SHELL := /bin/bash
 
 O ?= $(PROJ_PATH)/result
-DESIGN ?= gcd
+DESIGN ?= test
 SDC_FILE ?= $(PROJ_PATH)/scripts/default.sdc
 RTL_FILES ?= $(shell find $(PROJ_PATH)/example -name "*.v")
 export CLK_FREQ_MHZ ?= 500
