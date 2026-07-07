@@ -2,9 +2,9 @@ PROJ_PATH = $(shell pwd)
 SHELL := /bin/bash
 
 O ?= $(PROJ_PATH)/result
-DESIGN ?= test
+DESIGN ?= gcd
 SDC_FILE ?= $(PROJ_PATH)/scripts/default.sdc
-RTL_FILES ?= $(shell find $(PROJ_PATH)/example -name "*.v") $(shell find $(PROJ_PATH)/example -name "*.sv")
+RTL_FILES ?= $(shell find $(PROJ_PATH)/example -name "*.v")
 export CLK_FREQ_MHZ ?= 500
 export CLK_PORT_NAME ?= clk
 PDK = icsprout55

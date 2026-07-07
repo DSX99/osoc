@@ -31,12 +31,6 @@ module arbiter(
     input  logic [31:0] araddr_ifu,
     input  logic        arvalid_ifu,
     output logic        arready_ifu,
-
-    //burst
-    input logic [7:0] arlen_ifu,
-    input logic [2:0] arsize_ifu,
-    input logic [1:0] arburst_ifu,
-    
     // Read Data Channel (R)
     output logic [31:0] rdata_ifu,
     output logic [1:0]  rresp_ifu,
@@ -49,11 +43,6 @@ module arbiter(
     output logic [31:0] araddr,
     output logic        arvalid,
     input  logic        arready,
-
-    
-    output logic [7:0] arlen,
-    output logic [2:0] arsize,
-    output logic [1:0] arburst,
     // Read Data Channel (R)
     input  logic [31:0] rdata,
     input  logic [1:0]  rresp,
@@ -89,10 +78,6 @@ always_comb begin
 
     araddr      = 32'b0;
     arvalid     = 1'b0;
-    arlen       = 0;
-    arsize      = 0;
-    arburst     = 0;
-
     arready_lsu = 1'b0;
     arready_ifu = 1'b0;
 
@@ -113,26 +98,18 @@ always_comb begin
     bresp_lsu   = bresp;
     bvalid_lsu  = bvalid;
 
-    // Modified Read Logic: Blocks starting a new transaction if a write transaction is occurring or pending
+    //read
     if(!read_busy) begin
-        if (write_busy || awvalid_lsu) begin
-            // Block read requests: arvalid remains 0, backpressure read masters
-            arvalid     = 1'b0;
-            arready_lsu = 1'b0;
-            arready_ifu = 1'b0;
-        end else if(!read_select_comb) begin
-            araddr      = araddr_lsu;
-            arvalid     = arvalid_lsu;
+        if(!read_select_comb) begin
+            araddr = araddr_lsu;
+            arvalid = arvalid_lsu;
             arready_lsu = arready;
             arready_ifu = 0;
         end else begin
-            araddr      = araddr_ifu;
-            arvalid     = arvalid_ifu;
+            araddr = araddr_ifu;
+            arvalid = arvalid_ifu;
             arready_lsu = 0;
             arready_ifu = arready;
-            arburst     = arburst_ifu;
-            arlen       = arlen_ifu;
-            arsize      = arsize_ifu;
         end 
     end else begin
         if(!read_select) begin
@@ -156,9 +133,9 @@ always_comb begin
     wstrb       = wstrb_lsu;
     wvalid      = wvalid_lsu;
     wready_lsu  = wready;
-    bready      = bready_lsu;
-    bresp_lsu   = bresp;
-    bvalid_lsu  = bvalid;
+    bready     = bready_lsu;
+    bresp_lsu  = bresp;
+    bvalid_lsu = bvalid;
 
     if (!write_busy) begin
         awaddr      = awaddr_lsu;
@@ -174,13 +151,11 @@ end
 
 always_ff @(posedge clk) begin
     if(rst) begin
-        read_select <= 0;
-        read_busy   <= 1'b0;  // Added explicit resets for internal trackers
-        write_busy  <= 1'b0;
+        read_select<=0;
     end else begin
         if (!read_busy) begin
             if (arvalid && arready) begin
-                read_busy   <= 1'b1;
+                read_busy  <= 1'b1;
                 read_select <= read_select_comb;
             end
         end else begin
@@ -200,5 +175,6 @@ always_ff @(posedge clk) begin
         end
     end
 end
+
 
 endmodule

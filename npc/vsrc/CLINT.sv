@@ -17,15 +17,15 @@ parameter DEN = 1698;
 
 logic [11:0]  divisor; 
 logic [63:0] mtime; 
-// logic [31:0] timecp; //TODO
+logic [31:0] timecp; //TODO
 logic [31:0] buff;
 
 
-// logic done_aw, done_w;
+logic done_aw, done_w;
 
 logic unused_bits;
 
-assign unused_bits = |caddr[31:16]| |cwdata;
+assign unused_bits = |caddr[31:16];
 
 assign cwready = cwvalid;
 assign cawready = cawvalid;
@@ -41,7 +41,7 @@ typedef enum{
 IDLE_W, WAIT_WW, WAIT_WRESP
 } CLINT_W;
 
-// CLINT_W clint_w;
+CLINT_W clint_w;
 
 always_ff @(posedge clk) begin
     if(rst) begin

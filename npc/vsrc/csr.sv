@@ -12,13 +12,13 @@ module csr(
     output logic ready_left, valid_right
 );
 
-logic [31:0] regs [7:0];
+logic [31:0] regs [31:0];
 
-typedef enum bit [2:0]{
+typedef enum bit [4:0]{
     UNUSED, MEPS, MSTATUS, MCAUSE, MTVEC, MVENDORID, MARCHID
 } csr_t;
 
-logic [2:0] working_reg;
+logic [4:0] working_reg;
 
 initial begin
     for(int i = 0; i < 32; i++) begin
