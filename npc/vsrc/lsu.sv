@@ -166,9 +166,11 @@ module lsu (
             end
             WAIT_WRESP: begin
                 bready = 1;
+                wlast = 1;
             end
             WAIT_COMMIT: begin
                 done_w = 1;
+                wlast = 1;
             end
         endcase
         end
