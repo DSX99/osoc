@@ -116,7 +116,7 @@ module osoc_26000003 (
             io_master_awaddr  = 32'b0;
             io_master_awid    = 4'b0;
             io_master_awlen   = 8'b0;
-            io_master_awsize  = 3'b0;
+            io_master_awsize  = 3'b010;
             io_master_awburst = 2'b0;
             core_awready      = cawready;
             io_master_wvalid  = 1'b0;
