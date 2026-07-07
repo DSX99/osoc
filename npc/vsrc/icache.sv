@@ -22,31 +22,34 @@ module icache(
 );
 
 logic unused_bits;
-assign unused_bits = |rresp | |redundant;
+assign unused_bits = |rresp | |word_align;
 
-parameter BLOCK_SIZE = 4;
-parameter NUMBER_OF_BLOCKS = 16;
+parameter BLOCK_SIZE = 32;
+parameter NUMBER_OF_BLOCKS = 2;
 
 localparam int off = $clog2(BLOCK_SIZE);
 localparam int index_off = $clog2(NUMBER_OF_BLOCKS);
+localparam int WORDS_IN_BLOCK = BLOCK_SIZE/4;
 
-logic [31:0] block_cache [NUMBER_OF_BLOCKS];
+logic [31:0] block_cache [NUMBER_OF_BLOCKS][WORDS_IN_BLOCK];
 
 logic [32-index_off-off-1:0] tag;
 logic [index_off-1:0] index;
-logic [off-1:0] redundant;
+logic [off-3:0] word_select;
+logic [1:0] word_align;
 
 logic [32-index_off-off-1:0] block_tag [NUMBER_OF_BLOCKS];
 logic block_valid[NUMBER_OF_BLOCKS];
 
-assign {tag, index, redundant} = ifu_addr;
-
-assign hit = block_valid[index] && (tag == block_tag[index]);
+assign {tag, index, word_select, word_align} = ifu_addr;
 
 typedef enum {
     WAIT_AR, WAIT_R
 } cache_state_t;
 cache_state_t state;
+logic [2:0] fill_count; 
+
+assign hit = block_valid[index] && (tag == block_tag[index]);
 
 always_comb begin
     arvalid = 0;
@@ -54,18 +57,18 @@ always_comb begin
     rready  = 0;
     ready   = 0;
     opcode  = 0;
-    miss=0;
+    miss    = 0;
 
     if (valid && !rst) begin
         if (hit) begin
-            opcode = block_cache[index];
+            opcode = block_cache[index][word_select];
             ready  = 1'b1;
         end else begin
             miss=1;
             case (state)
                 WAIT_AR: begin
                     arvalid = 1'b1;
-                    araddr  = ifu_addr;
+                    araddr  = {tag, index, fill_count, 2'b00};
                 end
                 WAIT_R: begin
                     rready  = 1'b1;
@@ -89,13 +92,19 @@ always_ff @(posedge clk) begin
                     state <= WAIT_R;
                 end
             end
-
             WAIT_R: begin
                 if (rvalid && rready) begin
-                    block_cache[index] <= rdata;
-                    block_tag[index]      <= tag;
-                    block_valid[index]    <= 1'b1;
-                    state                 <= WAIT_AR;
+                    if(fill_count==3'b111) begin
+                        block_cache[index][fill_count] <= rdata;
+                        block_tag[index] <= tag;
+                        block_valid[index] <= 1'b1;
+                        fill_count <= 0;
+                        state <= WAIT_AR;
+                    end else begin
+                        block_cache[index][fill_count] <= rdata;
+                        fill_count <= fill_count + 1;
+                        state <= WAIT_AR;
+                    end
                 end
             end
             default: state <= WAIT_AR;
