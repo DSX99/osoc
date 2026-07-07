@@ -72,7 +72,7 @@ always_comb begin
             ready  = 1'b1;
         end else begin
             miss=1;
-            if(ifu_addr>32'ha0000000 && ifu_addr<32'hbfffffff)begin
+            if(1'b0)begin
                 case (state)
                     WAIT_AR: begin
                         arvalid = 1'b1;
@@ -110,7 +110,7 @@ always_ff @(posedge clk) begin
             block_valid[i] <= 1'b0;
         end
     end else if (valid && !hit) begin
-        if(ifu_addr>32'ha0000000 && ifu_addr<32'hbfffffff)begin
+        if(1'b0)begin
             case (state)
                 WAIT_AR: begin
                     if (arready && arvalid) begin
