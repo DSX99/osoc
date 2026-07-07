@@ -259,13 +259,13 @@ module lsu (
                         done_aw <= 1;
                     end
                     if ((done_aw || awready) && (done_wdata || wready)) begin
-                        done_aw<=0;
-                        done_wdata<=0;
                         lsu_w <= WAIT_WRESP;
                     end
                 end
                 WAIT_WRESP: begin
                     if (bvalid && bready) begin
+                        done_aw<=0;
+                        done_wdata<=0;
                         lsu_w <= WAIT_COMMIT;
                     end
                 end
