@@ -402,11 +402,11 @@ Finished in 5095266998
 =========================================================================================================
  Performance Metric                   | 0: PREBOOT           | 1: BOOT              | 2: PROGRAM           
 ---------------------------------------------------------------------------------------------------------
- Execution Cycles                     | 1195565              | 15707634             | 2530730300           
+ Execution Cycles                     | 1195565              | 15707634             | 2530730300                  + i forgot to change delay on apb delayer so cycle count should be smaller (it was ADD=181)
  Instructions Retired (WB)            | 2537                 | 18926                | 186490014            
  Cycles Per Instruction (CPI)         | 471.251              | 829.950              | 13.570               
  Instructions Per Cycle (IPC)         | 0.002                | 0.001                | 0.074                
----------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------     
  IFU Fetched Instructions             | 22                   | 138                  | 43273313             
  IFU Stall Cycles                     | 49908 (4.2%)         | 276 (0.0%)           | 1683625036 (66.5%)   
 ---------------------------------------------------------------------------------------------------------
@@ -428,7 +428,7 @@ related osoc_26000003_core-565MHz_basic_cache
 MAX FREQ BY STA 422.937MHZ
 Chip area for module '\osoc_26000003_core': 28955.920000
   of which used for sequential elements: 13582.800000 (46.91%)
-TIME FOR TRAIN 6.0236713718591 s (calculated here as sum of exec cycles * 1/(freq in MHZ) /1e6)
+TIME FOR TRAIN 6.0236713718591 s (calculated here as sum of exec cycles * 1/(freq in MHZ) /1e6)     + i forgot to change delay on apb delayer so cycle count should be smaller  (it was ADD=181)
 
 
 
@@ -647,3 +647,49 @@ Size:128, AMAT:1.1, rows:2, lines:2, line_size:32       <= Too much area on cach
 Size:256, AMAT:0.4, rows:2, lines:4, line_size:32
 Size:512, AMAT:0.3, rows:2, lines:16, line_size:16
 Size:1024, AMAT:0.0, rows:2, lines:16, line_size:32
+
+
+
+
+// no burst
+NPC
+
+The image is /home/dsx99/osoc/ysyx-workbench/am-kernels/tests/cpu-tests/build/wanshu-riscv32-ysyx.bin, size = 1100
+time:0
+- vsrc/decode.sv:153: Verilog $finish
+- vsrc/decode.sv:153: Verilog $finish
+GOOD
+Finished in 4856242
+
+=========================================================================================================
+                                    MULTI-STAGE PERFORMANCE REPORT                                       
+=========================================================================================================
+ Performance Metric                   | 0: PREBOOT           | 1: BOOT              | 2: PROGRAM           
+---------------------------------------------------------------------------------------------------------
+ Execution Cycles                     | 1218235              | 271720               | 938166               
+ Instructions Retired (WB)            | 2537                 | 440                  | 17051                
+ Cycles Per Instruction (CPI)         | 480.187              | 617.545              | 55.021               
+ Instructions Per Cycle (IPC)         | 0.002                | 0.002                | 0.018                
+---------------------------------------------------------------------------------------------------------
+ IFU Fetched Instructions             | 4                    | 27                   | 3265                 
+ IFU Stall Cycles                     | 72578 (6.0%)         | 432 (0.2%)           | 920596 (98.1%)       
+---------------------------------------------------------------------------------------------------------
+ Control Branches + Jumps Executed    | 507                  | 53                   | 7920                 
+ Branches + Jumps Taken               | 505 (99.6%)          | 42 (79.2%)           | 4065 (51.3%)         
+---------------------------------------------------------------------------------------------------------
+ LSU Data Reads (Loads)               | 504                  | 118                  | 9                    
+ LSU Data Writes (Stores)             | 505                  | 128                  | 7                    
+ LSU Stall Cycles                     | 1143110 (93.8%)      | 270848 (99.7%)       | 520 (0.1%)           
+---------------------------------------------------------------------------------------------------------
+ Cache Hits                           | 2533 (99.8%)         | 413 (93.9%)          | 13786 (80.9%)        
+ Cache Misses                         | 4 (0.2%)             | 27 (6.1%)            | 3265 (19.1%)         
+ Cache Miss Penalty Cycles            | 72578                | 432                  | 920596               
+ Avg Cache Miss Latency (cyc)         | 18144.50             | 16.00                | 281.96               
+=========================================================================================================
+ AMAT (cycles)                        | 28.6                 | 1.0                  | 54.0                 
+=========================================================================================================
+
+test list [1 item(s)]: wanshu
+[        wanshu] PASS
+
+
