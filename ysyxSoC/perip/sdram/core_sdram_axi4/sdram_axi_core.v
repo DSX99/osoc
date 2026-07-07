@@ -69,7 +69,7 @@ module sdram_axi_core
 //-----------------------------------------------------------------
 parameter SDRAM_MHZ              = 50;
 parameter SDRAM_ADDR_W           = 25;
-parameter SDRAM_COL_W            = 10;
+parameter SDRAM_COL_W            = 9;
 parameter SDRAM_READ_LATENCY     = 2;
 
 //-----------------------------------------------------------------
@@ -152,7 +152,7 @@ assign inport_accept_o    = ram_accept_w;
 //synthesis attribute IOB of data_q is "TRUE"
 
 reg [CMD_W-1:0]        command_q;
-reg [SDRAM_ROW_W-1:0]  addr_q;
+reg [SDRAM_ROW_W:0]  addr_q;
 reg [SDRAM_DATA_W-1:0] data_q;
 reg                    data_rd_en_q;
 reg [SDRAM_DQM_W-1:0]  dqm_q;
