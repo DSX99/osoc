@@ -19,6 +19,7 @@ module arbiter(
     input logic [31:0]  wdata_lsu,
     input logic [3:0]   wstrb_lsu,
     input logic         wvalid_lsu,
+    input logic         wlast_lsu,
     output logic        wready_lsu,
     // Write Response Channel (B)
     output logic [1:0]  bresp_lsu,
@@ -67,6 +68,7 @@ module arbiter(
     output logic [31:0] wdata,
     output logic [3:0]  wstrb,
     output logic        wvalid,
+    output logic        wlast,
     input  logic        wready,
     // Write Response Channel (B)
     input  logic [1:0]  bresp,
@@ -107,6 +109,7 @@ always_comb begin
     wdata       = 32'b0;
     wstrb       = 4'b0;
     wvalid      = 1'b0;
+    wlast       = wlast_lsu;
     wready_lsu  = 1'b0;
 
     bready      = bready_lsu;
