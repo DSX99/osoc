@@ -95,10 +95,10 @@ module axi4_delayer(
   
 
 
-  assign out_rready = in_rready;
+  assign out_rready = ready_r ? in_rready : 1'b0;
   assign in_rvalid = ready_r ? out_rvalid : 1'b0;
   
-  assign out_bready = in_bready;
+  assign out_bready = ready_w ? in_bready : 1'b0;
   assign in_bvalid = ready_w ? out_bvalid : 1'b0;
 
   parameter ADD = 181;
@@ -129,7 +129,7 @@ module axi4_delayer(
       if(delay_w!=0) begin
         delay_w<=delay_w+ADD;
       end
-      if(ready_w && in_bready) begin
+      if(ready_w && in_bready && out_bvalid) begin
         count_w<=0;
         delay_w<=0;
       end
@@ -144,7 +144,7 @@ module axi4_delayer(
       if(delay_r!=0) begin
         delay_r<=delay_r+ADD;
       end
-      if(ready_r && in_rready) begin
+      if(ready_r && in_rready && out_rvalid) begin
         count_r<=0;
         delay_r<=0;
       end
