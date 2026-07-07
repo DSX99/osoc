@@ -71,6 +71,9 @@ module osoc_26000003_core (
 
     logic if_id_valid /* verilator public */, ex_ls_valid /* verilator public */, ex_ls_ready /* verilator public */;
     logic branch /* verilator public */, branch_taken /* verilator public */, ex_ls_bus_lsu_we /* verilator public*/, ex_ls_bus_lsu_re /* verilator public*/;
+    logic cache_hit/* verilator public */, cache_miss/* verilator public */,rst/* verilator public */;
+
+    assign rst =reset;
 
     assign opcode = if_id_bus_opcode;
 
@@ -85,6 +88,9 @@ module osoc_26000003_core (
     logic [31:0] if_id_bus_next_pc;
     logic [31:0] if_id_bus_opcode;
     logic        if_id_ready; //valid declared as public
+
+    logic [31:0] cache_addr, cache_opcode;
+    logic cache_ready, cache_valid;
 
     // ID to EX Decoded Bus signals
     logic [31:0] id_ex_bus_decoded_pc;
@@ -174,13 +180,23 @@ module osoc_26000003_core (
 
     // IFU Instance
     ifu ifu_mod (
-        .clk(clock), .rst(reset), .pc(pc), .next_pc(next_pc),
+        .pc(pc), .next_pc(next_pc),
         .bus_out_pc(if_id_bus_pc),
         .bus_out_next_pc(if_id_bus_next_pc),
         .bus_out_opcode(if_id_bus_opcode),
         .valid(if_id_valid), .ready(if_id_ready),
+        .cache_addr(cache_addr), .cache_valid(cache_valid), .cache_opcode(cache_opcode), .cache_ready(cache_ready)
+    );
+
+    icache icache_mod(
+        .clk(clock), .rst(reset),
+        .ifu_addr(cache_addr), .valid(cache_valid), .opcode(cache_opcode), .ready(cache_ready),
         .araddr(araddr_ifu), .arvalid(arvalid_ifu), .arready(arready_ifu), 
-        .rdata(rdata_ifu), .rresp(rresp_ifu), .rvalid(rvalid_ifu), .rready(rready_ifu)
+        .arlen(arlen_ifu), .arsize(arsize_ifu), .arburst(arburst_ifu),
+
+        .rdata(rdata_ifu), .rresp(rresp_ifu), .rvalid(rvalid_ifu), .rready(rready_ifu),
+        
+        .hit(cache_hit), .miss(cache_miss)
     );
 
     // ID Decoder Instance
@@ -359,6 +375,9 @@ module osoc_26000003_core (
     logic [31:0] araddr_ifu, rdata_ifu;
     logic [1:0]  rresp_ifu;
     logic        arvalid_ifu, arready_ifu, rvalid_ifu, rready_ifu;
+    logic [7:0]  arlen_ifu;
+    logic [2:0]  arsize_ifu;
+    logic [1:0]  arburst_ifu;
 
 
     // Arbiter Module
@@ -366,12 +385,15 @@ module osoc_26000003_core (
         .clk(clock), .rst(reset),
         .araddr_lsu(araddr_lsu), .arvalid_lsu(arvalid_lsu), .arready_lsu(arready_lsu), .rdata_lsu(rdata_lsu), .rresp_lsu(rresp_lsu), .rvalid_lsu(rvalid_lsu), .rready_lsu(rready_lsu),
         .awaddr_lsu(awaddr_lsu), .awvalid_lsu(awvalid_lsu), .awready_lsu(awready_lsu), .wdata_lsu(wdata_lsu), .wstrb_lsu(wstrb_lsu), .wvalid_lsu(wvalid_lsu), .wready_lsu(wready_lsu), .bresp_lsu(bresp_lsu), .bvalid_lsu(bvalid_lsu), .bready_lsu(bready_lsu),
-        .araddr_ifu(araddr_ifu), .arvalid_ifu(arvalid_ifu), .arready_ifu(arready_ifu), .rvalid_ifu(rvalid_ifu), .rdata_ifu(rdata_ifu), .rready_ifu(rready_ifu), .rresp_ifu(rresp_ifu),
+        .araddr_ifu(araddr_ifu), .arvalid_ifu(arvalid_ifu), .arready_ifu(arready_ifu), .arburst_ifu(arburst_ifu), .arsize_ifu(arsize_ifu), .arlen_ifu(arlen_ifu), .rvalid_ifu(rvalid_ifu), .rdata_ifu(rdata_ifu), .rready_ifu(rready_ifu), .rresp_ifu(rresp_ifu),
         
         // External Master Port Interconnections
         .araddr(io_master_araddr),
         .arvalid(io_master_arvalid),
         .arready(io_master_arready),
+        .arlen(io_master_arlen),
+        .arburst(io_master_arburst),
+        .arsize(io_master_arsize),
         .rdata(io_master_rdata),
         .rresp(io_master_rresp),
         .rvalid(io_master_rvalid),
@@ -398,9 +420,6 @@ module osoc_26000003_core (
     assign io_master_awburst = 2'b0;
     assign io_master_wlast   = 1'b0;
     assign io_master_arid    = 4'b0;
-    assign io_master_arlen   = 8'b0;
-    assign io_master_arsize  = 3'b0;
-    assign io_master_arburst = 2'b0;
 
     // Entirely Unused Slave Output Interface
     assign io_slave_awready  = 1'b0;

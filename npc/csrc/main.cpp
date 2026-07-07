@@ -10,6 +10,10 @@
 #include <verilated_fst_c.h>
 #endif
 
+#ifdef OP_TRACE
+FILE *fp;
+#endif
+
 struct CPU_state {
   uint32_t gpr[32];
   uint32_t pc;
@@ -89,6 +93,10 @@ int main(int argc, char** argv) {
   #ifdef CONFIG_FST
   printf("\n\t\t\033[31mRUNNING WITH FST\033[0m\n");
   #endif
+  #ifdef OP_TRACE
+  printf("\n\t\t\033[31mRUNNING WITH OP_TRACE\033[0m\n");
+  fp = fopen("/home/dsx99/osoc/ysyx-workbench/npc/tools/idk/opcodes", "wb");
+  #endif
   Verilated::commandArgs(argc, argv);
   printf("\n\033[1m\033[36mNPC\033[0m\n\n");
   parse_args(argc, argv);
@@ -140,6 +148,10 @@ int main(int argc, char** argv) {
   #ifdef CONFIG_FST
   tracep->close();
   #endif
+  #ifdef OP_TRACE
+  fclose(fp);
+  #endif
+  
   delete soc;
   return (ret || (!finished && qexit));
 }
@@ -229,7 +241,21 @@ void execute(uint64_t n){
     soc->clock=!soc->clock;
     soc->eval();
 
+    #ifdef OP_TRACE
+    if((top->pc != top->prev_pc) && !top->rst) fwrite(&top->pc,4,1,fp);
+    #endif
 
+    if(!top->rst){
+    //changing stages
+    if(stage == 0 && (top->pc >= 0x0f000000 && top->pc < 0x10000000)){
+      stage = 1;
+      cycles[0] = contextp->time()>>1;
+    }
+    if(stage == 1 && (top->pc >= 0xa0000000 && top->pc < 0xc0000000)){
+      stage = 2;
+      cycles[1] = (contextp->time()>>1) - cycles[0];
+    }
+    
     //couting performance
     if(top->if_id_valid == 0){
       program[stage].ifu_stall_cycle++;
@@ -258,14 +284,11 @@ void execute(uint64_t n){
     if(top->reg_valid_e){
       program[stage].writeback++;
     }
-
-    if(stage == 0 && (top->pc >= 0x0f000000 && top->pc < 0x10000000)){
-      stage = 1;
-      cycles[0] = contextp->time()>>1;
+    if(top->pc != top->prev_pc){
+      if(top->cache_hit) program[stage].cache_hit++;
+      if(top->cache_miss) program[stage].cache_miss++;
     }
-    if(stage == 1 && (top->pc >= 0xa0000000 && top->pc < 0xc0000000)){
-      stage = 2;
-      cycles[1] = (contextp->time()>>1) - cycles[0];
+    if(top->cache_miss) program[stage].cache_miss_cycles++;
     }
 
 
@@ -401,4 +424,100 @@ void print_itrace(){
 
 void print_ftrace(){
   printf("too bad, not implemented\n");
+}
+
+void print_stage_performance_table(const uint64_t cycles[3], const Performance_t perf[3]) {
+    const char* stage_names[3] = {"0: PREBOOT", "1: BOOT", "2: PROGRAM"};
+    
+    // Arrays to hold derived metrics for each stage
+    double cpi[3], ipc[3], ifu_stall_pct[3], lsu_stall_pct[3], branch_taken_pct[3];
+    double cache_hit_pct[3], cache_miss_pct[3], avg_miss_latency[3];
+
+    for (int i = 0; i < 3; i++) {
+        cpi[i]              = (perf[i].writeback > 0) ? (double)cycles[i] / perf[i].writeback : 0.0;
+        ipc[i]              = (cycles[i] > 0) ? (double)perf[i].writeback / cycles[i] : 0.0;
+        ifu_stall_pct[i]    = (cycles[i] > 0) ? ((double)perf[i].ifu_stall_cycle / cycles[i]) * 100.0 : 0.0;
+        lsu_stall_pct[i]    = (cycles[i] > 0) ? ((double)perf[i].lsu_stall_cycle / cycles[i]) * 100.0 : 0.0;
+        branch_taken_pct[i] = (perf[i].possible_branch_count > 0) 
+                              ? ((double)perf[i].branch_taken / perf[i].possible_branch_count) * 100.0 : 0.0;
+        
+        // New Cache Calculations
+        uint64_t total_cache_accesses = perf[i].cache_hit + perf[i].cache_miss;
+        cache_hit_pct[i]    = (total_cache_accesses > 0) ? ((double)perf[i].cache_hit / total_cache_accesses) * 100.0 : 0.0;
+        cache_miss_pct[i]   = (total_cache_accesses > 0) ? ((double)perf[i].cache_miss / total_cache_accesses) * 100.0 : 0.0;
+        avg_miss_latency[i] = (perf[i].cache_miss > 0) ? (double)perf[i].cache_miss_cycles / perf[i].cache_miss : 0.0;
+    }
+
+    // Table Header
+    std::printf("\n=========================================================================================================\n");
+    std::printf("                                    MULTI-STAGE PERFORMANCE REPORT                                       \n");
+    std::printf("=========================================================================================================\n");
+    std::printf(" %-36s | %-20s | %-20s | %-20s \n", "Performance Metric", stage_names[0], stage_names[1], stage_names[2]);
+    std::printf("---------------------------------------------------------------------------------------------------------\n");
+
+    // Global Core Metrics
+    std::printf(" %-36s | %-20llu | %-20llu | %-20llu \n", "Execution Cycles", 
+                (unsigned long long)cycles[0], (unsigned long long)cycles[1], (unsigned long long)cycles[2]);
+    std::printf(" %-36s | %-20llu | %-20llu | %-20llu \n", "Instructions Retired (WB)", 
+                (unsigned long long)perf[0].writeback, (unsigned long long)perf[1].writeback, (unsigned long long)perf[2].writeback);
+    std::printf(" %-36s | %-20.3f | %-20.3f | %-20.3f \n", "Cycles Per Instruction (CPI)", cpi[0], cpi[1], cpi[2]);
+    std::printf(" %-36s | %-20.3f | %-20.3f | %-20.3f \n", "Instructions Per Cycle (IPC)", ipc[0], ipc[1], ipc[2]);
+    std::printf("---------------------------------------------------------------------------------------------------------\n");
+
+    // Frontend (IFU) Metrics
+    std::printf(" %-36s | %-20llu | %-20llu | %-20llu \n", "IFU Fetched Instructions", 
+                (unsigned long long)perf[0].ifu_fetch_instr, (unsigned long long)perf[1].ifu_fetch_instr, (unsigned long long)perf[2].ifu_fetch_instr);
+    
+    char buf0[32], buf1[32], buf2[32];
+    std::snprintf(buf0, sizeof(buf0), "%llu (%3.1f%%)", (unsigned long long)perf[0].ifu_stall_cycle, ifu_stall_pct[0]);
+    std::snprintf(buf1, sizeof(buf1), "%llu (%3.1f%%)", (unsigned long long)perf[1].ifu_stall_cycle, ifu_stall_pct[1]);
+    std::snprintf(buf2, sizeof(buf2), "%llu (%3.1f%%)", (unsigned long long)perf[2].ifu_stall_cycle, ifu_stall_pct[2]);
+    std::printf(" %-36s | %-20s | %-20s | %-20s \n", "IFU Stall Cycles", buf0, buf1, buf2);
+    std::printf("---------------------------------------------------------------------------------------------------------\n");
+
+    // Branch Metrics
+    std::printf(" %-36s | %-20llu | %-20llu | %-20llu \n", "Control Branches + Jumps Executed", 
+                (unsigned long long)perf[0].possible_branch_count, (unsigned long long)perf[1].possible_branch_count, (unsigned long long)perf[2].possible_branch_count);
+    
+    std::snprintf(buf0, sizeof(buf0), "%llu (%3.1f%%)", (unsigned long long)perf[0].branch_taken, branch_taken_pct[0]);
+    std::snprintf(buf1, sizeof(buf1), "%llu (%3.1f%%)", (unsigned long long)perf[1].branch_taken, branch_taken_pct[1]);
+    std::snprintf(buf2, sizeof(buf2), "%llu (%3.1f%%)", (unsigned long long)perf[2].branch_taken, branch_taken_pct[2]);
+    std::printf(" %-36s | %-20s | %-20s | %-20s \n", "Branches + Jumps Taken", buf0, buf1, buf2);
+    std::printf("---------------------------------------------------------------------------------------------------------\n");
+
+    // Backend (LSU) Metrics
+    std::printf(" %-36s | %-20llu | %-20llu | %-20llu \n", "LSU Data Reads (Loads)", 
+                (unsigned long long)perf[0].lsu_read_data, (unsigned long long)perf[1].lsu_read_data, (unsigned long long)perf[2].lsu_read_data);
+    std::printf(" %-36s | %-20llu | %-20llu | %-20llu \n", "LSU Data Writes (Stores)", 
+                (unsigned long long)perf[0].lsu_write_data, (unsigned long long)perf[1].lsu_write_data, (unsigned long long)perf[2].lsu_write_data);
+    
+    std::snprintf(buf0, sizeof(buf0), "%llu (%3.1f%%)", (unsigned long long)perf[0].lsu_stall_cycle, lsu_stall_pct[0]);
+    std::snprintf(buf1, sizeof(buf1), "%llu (%3.1f%%)", (unsigned long long)perf[1].lsu_stall_cycle, lsu_stall_pct[1]);
+    std::snprintf(buf2, sizeof(buf2), "%llu (%3.1f%%)", (unsigned long long)perf[2].lsu_stall_cycle, lsu_stall_pct[2]);
+    std::printf(" %-36s | %-20s | %-20s | %-20s \n", "LSU Stall Cycles", buf0, buf1, buf2);
+    std::printf("---------------------------------------------------------------------------------------------------------\n");
+
+    // Memory Subsystem (Cache) Metrics
+    std::snprintf(buf0, sizeof(buf0), "%llu (%3.1f%%)", (unsigned long long)perf[0].cache_hit, cache_hit_pct[0]);
+    std::snprintf(buf1, sizeof(buf1), "%llu (%3.1f%%)", (unsigned long long)perf[1].cache_hit, cache_hit_pct[1]);
+    std::snprintf(buf2, sizeof(buf2), "%llu (%3.1f%%)", (unsigned long long)perf[2].cache_hit, cache_hit_pct[2]);
+    std::printf(" %-36s | %-20s | %-20s | %-20s \n", "Cache Hits", buf0, buf1, buf2);
+
+    std::snprintf(buf0, sizeof(buf0), "%llu (%3.1f%%)", (unsigned long long)perf[0].cache_miss, cache_miss_pct[0]);
+    std::snprintf(buf1, sizeof(buf1), "%llu (%3.1f%%)", (unsigned long long)perf[1].cache_miss, cache_miss_pct[1]);
+    std::snprintf(buf2, sizeof(buf2), "%llu (%3.1f%%)", (unsigned long long)perf[2].cache_miss, cache_miss_pct[2]);
+    std::printf(" %-36s | %-20s | %-20s | %-20s \n", "Cache Misses", buf0, buf1, buf2);
+
+    std::printf(" %-36s | %-20llu | %-20llu | %-20llu \n", "Cache Miss Penalty Cycles", 
+                (unsigned long long)perf[0].cache_miss_cycles, (unsigned long long)perf[1].cache_miss_cycles, (unsigned long long)perf[2].cache_miss_cycles);
+    std::printf(" %-36s | %-20.2f | %-20.2f | %-20.2f \n", "Avg Cache Miss Latency (cyc)", 
+                avg_miss_latency[0], avg_miss_latency[1], avg_miss_latency[2]);
+    double AMAT = avg_miss_latency[2] * cache_miss_pct[2]/100;
+    std::printf("=========================================================================================================\n");
+    std::snprintf(buf0, sizeof(buf0), "%3.1f", avg_miss_latency[0] * cache_miss_pct[0]/100);
+    std::snprintf(buf1, sizeof(buf1), "%3.1f", avg_miss_latency[1] * cache_miss_pct[1]/100);
+    std::snprintf(buf2, sizeof(buf2), "%3.1f", avg_miss_latency[2] * cache_miss_pct[2]/100);
+    std::printf(" %-36s | %-20s | %-20s | %-20s \n", "AMAT (cycles)", buf0, buf1, buf2);
+    std::printf("=========================================================================================================\n\n");
+              
 }
