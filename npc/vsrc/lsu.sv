@@ -154,7 +154,7 @@ module lsu (
                     awvalid = 1;
                     wdata   = (bus_in_data_rs2 << (bus_in_alu_out[1:0] * 8));
                     wvalid  = 1;
-                    wlast = 0;
+                    wlast = 1;
                 end
             end
             WAIT_W: begin
@@ -162,7 +162,7 @@ module lsu (
                 awvalid = 1;
                 wdata   = (bus_in_data_rs2 << (bus_in_alu_out[1:0] * 8));
                 wvalid  = 1;
-                wlast = 0;
+                wlast = 1;
             end
             WAIT_WRESP: begin
                 bready = 1;
