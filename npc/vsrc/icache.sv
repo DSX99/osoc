@@ -64,7 +64,7 @@ always_comb begin
 
     arburst=0;
     arlen=0;
-    arsize=0;
+    arsize=3'b010;
 
     if (valid && !rst) begin
         if (hit) begin
