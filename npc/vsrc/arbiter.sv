@@ -90,7 +90,7 @@ always_comb begin
     araddr      = 32'b0;
     arvalid     = 1'b0;
     arlen=0;
-    arsize=3'b010;
+    arsize=0;
     arburst=0;
 
     arready_lsu = 1'b0;
