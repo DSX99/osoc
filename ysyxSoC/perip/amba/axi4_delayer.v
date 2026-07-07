@@ -63,34 +63,94 @@ module axi4_delayer(
   input  [1:0]  out_bresp
 );
 
-  assign in_arready = out_arready;
-  assign out_arvalid = in_arvalid;
   assign out_arid = in_arid;
   assign out_araddr = in_araddr;
   assign out_arlen = in_arlen;
   assign out_arsize = in_arsize;
   assign out_arburst = in_arburst;
-  assign out_rready = in_rready;
-  assign in_rvalid = out_rvalid;
   assign in_rid = out_rid;
   assign in_rdata = out_rdata;
   assign in_rresp = out_rresp;
   assign in_rlast = out_rlast;
-  assign in_awready = out_awready;
-  assign out_awvalid = in_awvalid;
   assign out_awid = in_awid;
   assign out_awaddr = in_awaddr;
   assign out_awlen = in_awlen;
   assign out_awsize = in_awsize;
   assign out_awburst = in_awburst;
-  assign in_wready = out_wready;
-  assign out_wvalid = in_wvalid;
   assign out_wdata = in_wdata;
   assign out_wstrb = in_wstrb;
   assign out_wlast = in_wlast;
-  assign out_bready = in_bready;
-  assign in_bvalid = out_bvalid;
   assign in_bid = out_bid;
   assign in_bresp = out_bresp;
+
+
+  assign in_arready = out_arready;
+  assign out_arvalid = in_arvalid;
+  
+  assign in_awready = out_awready;
+  assign out_awvalid = in_awvalid;
+  
+  assign in_wready = out_wready;
+  assign out_wvalid = in_wvalid;
+  
+
+
+  assign out_rready = in_rready;
+  assign in_rvalid = ready_r ? out_rvalid : 1'b0;
+  
+  assign out_bready = in_bready;
+  assign in_bvalid = ready_w ? out_bvalid : 1'b0;
+
+  parameter ADD = 181;
+
+  reg set;
+  reg [9:0] count_r, count_w;
+  reg [19:0] delay_r, delay_w ;
+  wire ready_r, ready_w;
+
+  assign ready_r = delay_r[19:10] > count_r;
+  assign ready_w = delay_w[19:10] > count_w;
+
+
+  always @(posedge clock) begin
+    if(reset) begin
+      count_r<=0;
+      count_w<=0;
+      delay_r<=0;
+      delay_w<=0;
+    end else begin
+      if(in_awvalid) begin
+        count_w<=count_w+ 1;
+        delay_w<=ADD;
+      end
+      if(count_w!=0 && out_bvalid!=1)begin
+        count_w<=count_w+1;
+      end
+      if(delay_w!=0) begin
+        delay_w<=delay_w+ADD;
+      end
+      if(ready_w && in_bready) begin
+        count_w<=0;
+        delay_w<=0;
+      end
+
+      if(in_arvalid) begin
+        count_r<=count_r+ 1;
+        delay_r<=ADD;
+      end
+      if(count_r!=0 && out_rvalid!=1)begin
+        count_r<=count_r+1;
+      end
+      if(delay_r!=0) begin
+        delay_r<=delay_r+ADD;
+      end
+      if(ready_r && in_rready) begin
+        count_r<=0;
+        delay_r<=0;
+      end
+    end
+  end
+
+
 
 endmodule
