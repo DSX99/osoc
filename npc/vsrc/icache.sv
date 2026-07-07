@@ -63,6 +63,10 @@ always_comb begin
     opcode  = 0;
     miss    = 0;
 
+    arburst=0;
+    arlen=0;
+    arsize=0;
+
     if (valid && !rst) begin
         if (hit) begin
             opcode = block_cache[index][word_select];
@@ -73,7 +77,7 @@ always_comb begin
                 case (state)
                     WAIT_AR: begin
                         arvalid = 1'b1;
-                        arburst = 2'b01
+                        arburst = 2'b01;
                         arsize = 3'b010;
                         arlen = 8'd7;
                         araddr  = {tag, index, fill_count, 2'b00};
