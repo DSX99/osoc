@@ -44,7 +44,7 @@ module sdram_top_axi(
 );
 
   wire sdram_dout_en;
-  wire [15:0] sdram_dout;
+  wire [31:0] sdram_dout;
   assign sdram_dq = sdram_dout_en ? sdram_dout : 32'bz;
   sdram_axi #(
     .SDRAM_MHZ(100),
