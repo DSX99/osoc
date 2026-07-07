@@ -64,9 +64,9 @@ always_comb begin
     miss    = 1'b0;
 
     // Fixed AXI4 Burst Configurations
-    arburst = 2'b01;   // INCR burst type
+    arburst = 2'b00;   // INCR burst type
     arsize  = 3'b010;  // 4 bytes (32-bit) per transfer width
-    arlen   = 8'd7;    // 8 beats total (AxLEN = N - 1, so 7 means 8 transfers)
+    arlen   = 8'd0;    // 8 beats total (AxLEN = N - 1, so 7 means 8 transfers)
 
     if (valid && !rst) begin
         if (hit) begin
