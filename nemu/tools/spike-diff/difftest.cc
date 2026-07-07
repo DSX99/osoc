@@ -102,8 +102,6 @@ __EXPORT void difftest_init(int port) {
   difftest_htif_args.push_back("");
   const char *isa = "RV" MUXDEF(CONFIG_RV64, "64", "32") MUXDEF(CONFIG_RVE, "E", "I") "MAFDC";
 
-  reg_t mrom_base = 0x20000000;
-  reg_t mrom_size = 0x00001000; // 4KB
   reg_t sram_base = 0x0f000000;
   reg_t sram_size = 0x00002000; // 8KB
   reg_t flash_base = 0x30000000;
@@ -112,19 +110,23 @@ __EXPORT void difftest_init(int port) {
   reg_t uart_size = 0x00001000; // 8KB
   reg_t psram_base = 0x80000000;
   reg_t psram_size = 0x10000000; // IDKB
+  reg_t psram_base = 0x80000000;
+  reg_t psram_size = 0x10000000; // IDKB
+  reg_t sdram_base = 0xa0000000;
+  reg_t sdram_size = 0x20000000; // 128MB (actually more but idk)
   
   std::vector<mem_cfg_t> SoC_layout;
-  SoC_layout.push_back(mem_cfg_t(mrom_base, mrom_size));
   SoC_layout.push_back(mem_cfg_t(sram_base, sram_size));
   SoC_layout.push_back(mem_cfg_t(flash_base, flash_size));
   SoC_layout.push_back(mem_cfg_t(uart_base, uart_size));
   SoC_layout.push_back(mem_cfg_t(psram_base, psram_size));
+  SoC_layout.push_back(mem_cfg_t(sdram_base, sdram_size));
 
-  difftest_mem.push_back(std::make_pair(mrom_base, new mem_t(mrom_size)));
   difftest_mem.push_back(std::make_pair(sram_base, new mem_t(sram_size)));
   difftest_mem.push_back(std::make_pair(flash_base, new mem_t(flash_size)));
   difftest_mem.push_back(std::make_pair(uart_base, new mem_t(uart_size)));
   difftest_mem.push_back(std::make_pair(psram_base, new mem_t(psram_size)));
+  difftest_mem.push_back(std::make_pair(sdram_base, new mem_t(sdram_size)));
 
   cfg_t *cfg = new cfg_t(/*default_initrd_bounds=*/std::make_pair((reg_t)0, (reg_t)0),
             /*default_bootargs=*/nullptr,
