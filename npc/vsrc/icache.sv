@@ -14,7 +14,6 @@ module icache(
     output logic [2:0]  arsize,
     output logic [1:0]  arburst,
     input  logic        arready,
-    input  logic        arlast,
 
     // Read Data Channel (R)
     input  logic [31:0] rdata,

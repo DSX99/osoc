@@ -31,6 +31,12 @@ module arbiter(
     input  logic [31:0] araddr_ifu,
     input  logic        arvalid_ifu,
     output logic        arready_ifu,
+
+    //burst
+    input logic [7:0] arlen_ifu,
+    input logic [2:0] arsize_ifu,
+    input logic [1:0] arburst_ifu,
+    
     // Read Data Channel (R)
     output logic [31:0] rdata_ifu,
     output logic [1:0]  rresp_ifu,
@@ -43,6 +49,11 @@ module arbiter(
     output logic [31:0] araddr,
     output logic        arvalid,
     input  logic        arready,
+
+    
+    output logic [7:0] arlen,
+    output logic [2:0] arsize,
+    output logic [1:0] arburst,
     // Read Data Channel (R)
     input  logic [31:0] rdata,
     input  logic [1:0]  rresp,
@@ -78,6 +89,10 @@ always_comb begin
 
     araddr      = 32'b0;
     arvalid     = 1'b0;
+    arlen=0;
+    arsize=0;
+    arburst=0;
+
     arready_lsu = 1'b0;
     arready_ifu = 1'b0;
 
@@ -110,6 +125,9 @@ always_comb begin
             arvalid = arvalid_ifu;
             arready_lsu = 0;
             arready_ifu = arready;
+            arburst = arburst_ifu;
+            arlen = arlen_ifu;
+            arsize =arsize_ifu;
         end 
     end else begin
         if(!read_select) begin
