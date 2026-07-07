@@ -106,7 +106,7 @@ module axi4_delayer(
   reg set;
   reg [9:0] count_r, count_w;
   reg [19:0] delay_r, delay_w ;
-  wire out;
+  wire ready_r, ready_w;
 
   assign ready_r = delay_r[19:10] > count_r;
   assign ready_w = delay_w[19:10] > count_w;
