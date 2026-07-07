@@ -114,3 +114,5 @@ always_ff @(posedge clk) begin
         endcase
     end
 end
+
+endmodule
