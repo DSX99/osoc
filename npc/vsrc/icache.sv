@@ -104,6 +104,7 @@ end
 
 always_ff @(posedge clk) begin
     if (rst) begin
+        fill_count<=0;
         state <= WAIT_AR;
         for(int i = 0; i < NUMBER_OF_BLOCKS; i = i + 1) begin
             block_valid[i] <= 1'b0;
