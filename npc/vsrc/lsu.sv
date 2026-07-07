@@ -39,6 +39,7 @@ module lsu (
     output logic [31:0] wdata,
     output logic [3:0]  wstrb,
     output logic        wvalid,
+    output logic        wlast,
     input  logic        wready,
     input  logic [1:0]  bresp,
     input  logic        bvalid,
@@ -82,6 +83,7 @@ module lsu (
         awvalid = 0;
         wdata = 0;
         wvalid = 0;
+        wlast  = 0;
         done_w = 0;
         bready = 0;
 
@@ -152,6 +154,7 @@ module lsu (
                     awvalid = 1;
                     wdata   = (bus_in_data_rs2 << (bus_in_alu_out[1:0] * 8));
                     wvalid  = 1;
+                    wlast = 0;
                 end
             end
             WAIT_W: begin
@@ -159,6 +162,7 @@ module lsu (
                 awvalid = 1;
                 wdata   = (bus_in_data_rs2 << (bus_in_alu_out[1:0] * 8));
                 wvalid  = 1;
+                wlast = 0;
             end
             WAIT_WRESP: begin
                 bready = 1;
