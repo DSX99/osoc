@@ -1,15 +1,59 @@
-// ... (Keep your port declarations and assignments)
+module icache(
+    input logic clk, rst,
 
-typedef enum logic [0:0] {
-    WAIT_AR = 1'b0,
-    WAIT_R  = 1'b1
+    input logic [31:0] ifu_addr,
+    input logic valid,
+
+    output logic [31:0] opcode,
+    output logic ready,
+
+    // Read Addr Channel (AR)
+    output logic [31:0] araddr,
+    output logic        arvalid,
+    output logic [7:0]  arlen,
+    output logic [2:0]  arsize,
+    output logic [1:0]  arburst,
+    input  logic        arready,
+
+    // Read Data Channel (R)
+    input  logic [31:0] rdata,
+    input  logic [1:0]  rresp,
+    input  logic        rvalid,
+    output logic        rready,
+
+    output logic hit, miss
+);
+
+logic unused_bits;
+assign unused_bits = |rresp | |word_align;
+
+parameter BLOCK_SIZE = 32;
+parameter NUMBER_OF_BLOCKS = 2;
+
+localparam int off = $clog2(BLOCK_SIZE);
+localparam int index_off = $clog2(NUMBER_OF_BLOCKS);
+localparam int WORDS_IN_BLOCK = BLOCK_SIZE/4;
+
+logic [31:0] block_cache [NUMBER_OF_BLOCKS][WORDS_IN_BLOCK];
+
+logic [32-index_off-off-1:0] tag;
+logic [index_off-1:0] index;
+logic [off-3:0] word_select;
+logic [1:0] word_align;
+
+logic [32-index_off-off-1:0] block_tag [NUMBER_OF_BLOCKS];
+logic block_valid[NUMBER_OF_BLOCKS];
+
+assign {tag, index, word_select, word_align} = ifu_addr;
+
+typedef enum {
+    WAIT_AR, WAIT_R
 } cache_state_t;
 cache_state_t state;
 logic [2:0] fill_count; 
 
 assign hit = block_valid[index] && (tag == block_tag[index]);
 
-// Combinatorial Output Logic
 always_comb begin
     arvalid = 1'b0;
     araddr  = {tag, index, 3'b000, 2'b00}; // Start address of the block (aligned)
