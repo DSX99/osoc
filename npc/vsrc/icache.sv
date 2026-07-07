@@ -108,7 +108,7 @@ always_ff @(posedge clk) begin
                 if (rvalid && rready) begin
                     block_cache[index][fill_count] <= rdata;
                     
-                    if (fill_count == 3'b111) begin
+                    if (fill_count == 3'b001) begin
                         // Whole cache block populated! Update tags and metadata
                         block_tag[index]   <= tag;
                         block_valid[index] <= 1'b1;
