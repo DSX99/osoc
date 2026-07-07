@@ -114,12 +114,17 @@ module axi4_delayer(
 
   always @(posedge clock) begin
     if(reset) begin
-      set<=0;
+      count_r<=0;
+      count_w<=0;
+      delay_r<=0;
+      delay_w<=0;
     end else begin
       if(in_awvalid) begin
         count_w<=count_w+ 1;
         delay_w<=ADD;
-        set<=1;
+      end
+      if(count_w!=0 && out_bvalid!=1)begin
+        count_w<=count_w+1;
       end
       if(delay_w!=0) begin
         delay_w<=delay_w+ADD;
@@ -132,12 +137,14 @@ module axi4_delayer(
       if(in_arvalid) begin
         count_r<=count_r+ 1;
         delay_r<=ADD;
-        set<=1;
+      end
+      if(count_r!=0 && out_rvalid!=1)begin
+        count_r<=count_r+1;
       end
       if(delay_r!=0) begin
         delay_r<=delay_r+ADD;
       end
-      if(ready_r && in_rready) begin
+      if(ready_r && in_rready && set) begin
         count_r<=0;
         delay_r<=0;
       end
