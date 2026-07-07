@@ -402,11 +402,11 @@ Finished in 5095266998
 =========================================================================================================
  Performance Metric                   | 0: PREBOOT           | 1: BOOT              | 2: PROGRAM           
 ---------------------------------------------------------------------------------------------------------
- Execution Cycles                     | 1195565              | 15707634             | 2530730300           
+ Execution Cycles                     | 1195565              | 15707634             | 2530730300                  + i forgot to change delay on apb delayer so cycle count should be smaller (it was ADD=181)
  Instructions Retired (WB)            | 2537                 | 18926                | 186490014            
  Cycles Per Instruction (CPI)         | 471.251              | 829.950              | 13.570               
  Instructions Per Cycle (IPC)         | 0.002                | 0.001                | 0.074                
----------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------     
  IFU Fetched Instructions             | 22                   | 138                  | 43273313             
  IFU Stall Cycles                     | 49908 (4.2%)         | 276 (0.0%)           | 1683625036 (66.5%)   
 ---------------------------------------------------------------------------------------------------------
@@ -428,227 +428,268 @@ related osoc_26000003_core-565MHz_basic_cache
 MAX FREQ BY STA 422.937MHZ
 Chip area for module '\osoc_26000003_core': 28955.920000
   of which used for sequential elements: 13582.800000 (46.91%)
-TIME FOR TRAIN 6.0236713718591 s (calculated here as sum of exec cycles * 1/(freq in MHZ) /1e6)
+TIME FOR TRAIN 6.0236713718591 s (calculated here as sum of exec cycles * 1/(freq in MHZ) /1e6)     + i forgot to change delay on apb delayer so cycle count should be smaller  (it was ADD=181)
 
 
 
 
 
 cachesim results
-!! here should be noted that 1 miss from stage 2 is counted towards stage 1, idk why, most probably error in calculating stages on main, but both in cachesim and main counting looks solid.
-
-dsx99@dsx-99:~/osoc/ysyx-workbench/npc/tools/idk$ ./run 
-cachesim.cpp:54:21: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
-   54 | static char *path = "/home/dsx99/osoc/ysyx-workbench/npc/tools/idk/opcodes";
-      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!! Fixed bug with 1 overcount in misses in stage 1, (last instruction in trm_init)
 The image is /home/dsx99/osoc/ysyx-workbench/npc/tools/idk/opcodes, size = 746045908
 rows: 1, lines: 1, line length: 4 byte requires:4 byte 
 Hit 0, miss 2537, total access 2537 (hit chance: 0.0%), AMAT:2268.6
-Hit 0, miss 18927, total access 18927 (hit chance: 0.0%), AMAT:2.0
-Hit 0, miss 186490013, total access 186490013 (hit chance: 0.0%), AMAT:38.9
+Hit 0, miss 18926, total access 18926 (hit chance: 0.0%), AMAT:2.0
+Hit 0, miss 186490014, total access 186490014 (hit chance: 0.0%), AMAT:38.9
 
 rows: 1, lines: 1, line length: 8 byte requires:8 byte 
 Hit 0, miss 2537, total access 2537 (hit chance: 0.0%), AMAT:2268.6
-Hit 0, miss 18927, total access 18927 (hit chance: 0.0%), AMAT:2.0
-Hit 0, miss 186490013, total access 186490013 (hit chance: 0.0%), AMAT:38.9
+Hit 0, miss 18926, total access 18926 (hit chance: 0.0%), AMAT:2.0
+Hit 0, miss 186490014, total access 186490014 (hit chance: 0.0%), AMAT:38.9
 
 rows: 1, lines: 1, line length: 16 byte requires:16 byte 
 Hit 1525, miss 1012, total access 2537 (hit chance: 60.1%), AMAT:904.9
-Hit 13758, miss 5169, total access 18927 (hit chance: 72.7%), AMAT:0.5
-Hit 101820997, miss 84669016, total access 186490013 (hit chance: 54.6%), AMAT:17.7
+Hit 13758, miss 5168, total access 18926 (hit chance: 72.7%), AMAT:0.5
+Hit 101820997, miss 84669017, total access 186490014 (hit chance: 54.6%), AMAT:17.7
 
 rows: 1, lines: 1, line length: 32 byte requires:32 byte 
 Hit 2533, miss 4, total access 2537 (hit chance: 99.8%), AMAT:3.6
-Hit 15480, miss 3447, total access 18927 (hit chance: 81.8%), AMAT:0.4
-Hit 130119925, miss 56370088, total access 186490013 (hit chance: 69.8%), AMAT:11.8
+Hit 15480, miss 3446, total access 18926 (hit chance: 81.8%), AMAT:0.4
+Hit 130119925, miss 56370089, total access 186490014 (hit chance: 69.8%), AMAT:11.8
 
 rows: 1, lines: 2, line length: 4 byte requires:8 byte 
 Hit 0, miss 2537, total access 2537 (hit chance: 0.0%), AMAT:2268.6
-Hit 0, miss 18927, total access 18927 (hit chance: 0.0%), AMAT:2.0
-Hit 25822, miss 186464191, total access 186490013 (hit chance: 0.0%), AMAT:38.9
+Hit 0, miss 18926, total access 18926 (hit chance: 0.0%), AMAT:2.0
+Hit 25822, miss 186464192, total access 186490014 (hit chance: 0.0%), AMAT:38.9
 
 rows: 1, lines: 2, line length: 8 byte requires:16 byte 
 Hit 0, miss 2537, total access 2537 (hit chance: 0.0%), AMAT:2268.6
-Hit 0, miss 18927, total access 18927 (hit chance: 0.0%), AMAT:2.0
-Hit 25822, miss 186464191, total access 186490013 (hit chance: 0.0%), AMAT:38.9
+Hit 0, miss 18926, total access 18926 (hit chance: 0.0%), AMAT:2.0
+Hit 25822, miss 186464192, total access 186490014 (hit chance: 0.0%), AMAT:38.9
 
 rows: 1, lines: 2, line length: 16 byte requires:32 byte 
 Hit 2531, miss 6, total access 2537 (hit chance: 99.8%), AMAT:5.4
-Hit 15466, miss 3461, total access 18927 (hit chance: 81.7%), AMAT:0.4
-Hit 125347668, miss 61142345, total access 186490013 (hit chance: 67.2%), AMAT:12.8
+Hit 15466, miss 3460, total access 18926 (hit chance: 81.7%), AMAT:0.4
+Hit 125347668, miss 61142346, total access 186490014 (hit chance: 67.2%), AMAT:12.8
 
 rows: 1, lines: 2, line length: 32 byte requires:64 byte 
 Hit 2533, miss 4, total access 2537 (hit chance: 99.8%), AMAT:3.6
-Hit 18896, miss 31, total access 18927 (hit chance: 99.8%), AMAT:0.0
-Hit 175086607, miss 11403406, total access 186490013 (hit chance: 93.9%), AMAT:2.4
+Hit 18896, miss 30, total access 18926 (hit chance: 99.8%), AMAT:0.0
+Hit 175086607, miss 11403407, total access 186490014 (hit chance: 93.9%), AMAT:2.4
 
 rows: 1, lines: 4, line length: 4 byte requires:16 byte 
 Hit 1509, miss 1028, total access 2537 (hit chance: 59.5%), AMAT:919.2
-Hit 0, miss 18927, total access 18927 (hit chance: 0.0%), AMAT:2.0
-Hit 33177499, miss 153312514, total access 186490013 (hit chance: 17.8%), AMAT:32.0
+Hit 0, miss 18926, total access 18926 (hit chance: 0.0%), AMAT:2.0
+Hit 33177499, miss 153312515, total access 186490014 (hit chance: 17.8%), AMAT:32.0
 
 rows: 1, lines: 4, line length: 8 byte requires:32 byte 
 Hit 1509, miss 1028, total access 2537 (hit chance: 59.5%), AMAT:919.2
-Hit 0, miss 18927, total access 18927 (hit chance: 0.0%), AMAT:2.0
-Hit 33177499, miss 153312514, total access 186490013 (hit chance: 17.8%), AMAT:32.0
+Hit 0, miss 18926, total access 18926 (hit chance: 0.0%), AMAT:2.0
+Hit 33177499, miss 153312515, total access 186490014 (hit chance: 17.8%), AMAT:32.0
 
 rows: 1, lines: 4, line length: 16 byte requires:64 byte 
 Hit 2531, miss 6, total access 2537 (hit chance: 99.8%), AMAT:5.4
-Hit 18882, miss 45, total access 18927 (hit chance: 99.8%), AMAT:0.0
-Hit 171104828, miss 15385185, total access 186490013 (hit chance: 91.8%), AMAT:3.2
+Hit 18882, miss 44, total access 18926 (hit chance: 99.8%), AMAT:0.0
+Hit 171104828, miss 15385186, total access 186490014 (hit chance: 91.8%), AMAT:3.2
 
 rows: 1, lines: 4, line length: 32 byte requires:128 byte 
 Hit 2533, miss 4, total access 2537 (hit chance: 99.8%), AMAT:3.6
-Hit 18897, miss 30, total access 18927 (hit chance: 99.8%), AMAT:0.0
-Hit 178694482, miss 7795531, total access 186490013 (hit chance: 95.8%), AMAT:1.6
+Hit 18897, miss 29, total access 18926 (hit chance: 99.8%), AMAT:0.0
+Hit 178694482, miss 7795532, total access 186490014 (hit chance: 95.8%), AMAT:1.6
 
 rows: 1, lines: 8, line length: 4 byte requires:32 byte 
 Hit 1509, miss 1028, total access 2537 (hit chance: 59.5%), AMAT:919.2
-Hit 0, miss 18927, total access 18927 (hit chance: 0.0%), AMAT:2.0
-Hit 33177499, miss 153312514, total access 186490013 (hit chance: 17.8%), AMAT:32.0
+Hit 0, miss 18926, total access 18926 (hit chance: 0.0%), AMAT:2.0
+Hit 33177499, miss 153312515, total access 186490014 (hit chance: 17.8%), AMAT:32.0
 
 rows: 1, lines: 8, line length: 8 byte requires:64 byte 
 Hit 1509, miss 1028, total access 2537 (hit chance: 59.5%), AMAT:919.2
-Hit 0, miss 18927, total access 18927 (hit chance: 0.0%), AMAT:2.0
-Hit 33177499, miss 153312514, total access 186490013 (hit chance: 17.8%), AMAT:32.0
+Hit 0, miss 18926, total access 18926 (hit chance: 0.0%), AMAT:2.0
+Hit 33177499, miss 153312515, total access 186490014 (hit chance: 17.8%), AMAT:32.0
 
 rows: 1, lines: 8, line length: 16 byte requires:128 byte 
 Hit 2531, miss 6, total access 2537 (hit chance: 99.8%), AMAT:5.4
-Hit 18882, miss 45, total access 18927 (hit chance: 99.8%), AMAT:0.0
-Hit 171104828, miss 15385185, total access 186490013 (hit chance: 91.8%), AMAT:3.2
+Hit 18882, miss 44, total access 18926 (hit chance: 99.8%), AMAT:0.0
+Hit 171104828, miss 15385186, total access 186490014 (hit chance: 91.8%), AMAT:3.2
 
 rows: 1, lines: 8, line length: 32 byte requires:256 byte 
 Hit 2533, miss 4, total access 2537 (hit chance: 99.8%), AMAT:3.6
-Hit 18897, miss 30, total access 18927 (hit chance: 99.8%), AMAT:0.0
-Hit 178694482, miss 7795531, total access 186490013 (hit chance: 95.8%), AMAT:1.6
+Hit 18897, miss 29, total access 18926 (hit chance: 99.8%), AMAT:0.0
+Hit 178694482, miss 7795532, total access 186490014 (hit chance: 95.8%), AMAT:1.6
 
 rows: 1, lines: 16, line length: 4 byte requires:64 byte 
 Hit 2515, miss 22, total access 2537 (hit chance: 99.1%), AMAT:19.7
-Hit 18788, miss 139, total access 18927 (hit chance: 99.3%), AMAT:0.0
-Hit 143216701, miss 43273312, total access 186490013 (hit chance: 76.8%), AMAT:9.0
+Hit 18788, miss 138, total access 18926 (hit chance: 99.3%), AMAT:0.0
+Hit 143216701, miss 43273313, total access 186490014 (hit chance: 76.8%), AMAT:9.0
 
 rows: 1, lines: 16, line length: 8 byte requires:128 byte 
 Hit 2515, miss 22, total access 2537 (hit chance: 99.1%), AMAT:19.7
-Hit 18788, miss 139, total access 18927 (hit chance: 99.3%), AMAT:0.0
-Hit 143216701, miss 43273312, total access 186490013 (hit chance: 76.8%), AMAT:9.0
+Hit 18788, miss 138, total access 18926 (hit chance: 99.3%), AMAT:0.0
+Hit 143216701, miss 43273313, total access 186490014 (hit chance: 76.8%), AMAT:9.0
 
 rows: 1, lines: 16, line length: 16 byte requires:256 byte 
 Hit 2531, miss 6, total access 2537 (hit chance: 99.8%), AMAT:5.4
-Hit 18893, miss 34, total access 18927 (hit chance: 99.8%), AMAT:0.0
-Hit 178251694, miss 8238319, total access 186490013 (hit chance: 95.6%), AMAT:1.7
+Hit 18893, miss 33, total access 18926 (hit chance: 99.8%), AMAT:0.0
+Hit 178251694, miss 8238320, total access 186490014 (hit chance: 95.6%), AMAT:1.7
 
 rows: 1, lines: 16, line length: 32 byte requires:512 byte 
 Hit 2533, miss 4, total access 2537 (hit chance: 99.8%), AMAT:3.6
-Hit 18911, miss 16, total access 18927 (hit chance: 99.9%), AMAT:0.0
-Hit 183397137, miss 3092876, total access 186490013 (hit chance: 98.3%), AMAT:0.6
+Hit 18911, miss 15, total access 18926 (hit chance: 99.9%), AMAT:0.0
+Hit 183397137, miss 3092877, total access 186490014 (hit chance: 98.3%), AMAT:0.6
 
 rows: 2, lines: 1, line length: 4 byte requires:8 byte 
 Hit 0, miss 2537, total access 2537 (hit chance: 0.0%), AMAT:2268.6
-Hit 0, miss 18927, total access 18927 (hit chance: 0.0%), AMAT:2.0
-Hit 0, miss 186490013, total access 186490013 (hit chance: 0.0%), AMAT:38.9
+Hit 0, miss 18926, total access 18926 (hit chance: 0.0%), AMAT:2.0
+Hit 0, miss 186490014, total access 186490014 (hit chance: 0.0%), AMAT:38.9
 
 rows: 2, lines: 1, line length: 8 byte requires:16 byte 
 Hit 0, miss 2537, total access 2537 (hit chance: 0.0%), AMAT:2268.6
-Hit 0, miss 18927, total access 18927 (hit chance: 0.0%), AMAT:2.0
-Hit 0, miss 186490013, total access 186490013 (hit chance: 0.0%), AMAT:38.9
+Hit 0, miss 18926, total access 18926 (hit chance: 0.0%), AMAT:2.0
+Hit 0, miss 186490014, total access 186490014 (hit chance: 0.0%), AMAT:38.9
 
 rows: 2, lines: 1, line length: 16 byte requires:32 byte 
 Hit 2531, miss 6, total access 2537 (hit chance: 99.8%), AMAT:5.4
-Hit 13758, miss 5169, total access 18927 (hit chance: 72.7%), AMAT:0.5
-Hit 105827494, miss 80662519, total access 186490013 (hit chance: 56.7%), AMAT:16.8
+Hit 13758, miss 5168, total access 18926 (hit chance: 72.7%), AMAT:0.5
+Hit 105827494, miss 80662520, total access 186490014 (hit chance: 56.7%), AMAT:16.8
 
 rows: 2, lines: 1, line length: 32 byte requires:64 byte 
 Hit 2533, miss 4, total access 2537 (hit chance: 99.8%), AMAT:3.6
-Hit 18440, miss 487, total access 18927 (hit chance: 97.4%), AMAT:0.1
-Hit 174256606, miss 12233407, total access 186490013 (hit chance: 93.4%), AMAT:2.6
+Hit 18440, miss 486, total access 18926 (hit chance: 97.4%), AMAT:0.1
+Hit 174256606, miss 12233408, total access 186490014 (hit chance: 93.4%), AMAT:2.6
 
 rows: 2, lines: 2, line length: 4 byte requires:16 byte 
 Hit 1006, miss 1531, total access 2537 (hit chance: 39.7%), AMAT:1369.0
-Hit 0, miss 18927, total access 18927 (hit chance: 0.0%), AMAT:2.0
-Hit 31001027, miss 155488986, total access 186490013 (hit chance: 16.6%), AMAT:32.4
+Hit 0, miss 18926, total access 18926 (hit chance: 0.0%), AMAT:2.0
+Hit 31001027, miss 155488987, total access 186490014 (hit chance: 16.6%), AMAT:32.4
 
 rows: 2, lines: 2, line length: 8 byte requires:32 byte 
 Hit 1006, miss 1531, total access 2537 (hit chance: 39.7%), AMAT:1369.0
-Hit 0, miss 18927, total access 18927 (hit chance: 0.0%), AMAT:2.0
-Hit 31001027, miss 155488986, total access 186490013 (hit chance: 16.6%), AMAT:32.4
+Hit 0, miss 18926, total access 18926 (hit chance: 0.0%), AMAT:2.0
+Hit 31001027, miss 155488987, total access 186490014 (hit chance: 16.6%), AMAT:32.4
 
 rows: 2, lines: 2, line length: 16 byte requires:64 byte 
 Hit 2531, miss 6, total access 2537 (hit chance: 99.8%), AMAT:5.4
-Hit 18427, miss 500, total access 18927 (hit chance: 97.4%), AMAT:0.1
-Hit 170459723, miss 16030290, total access 186490013 (hit chance: 91.4%), AMAT:3.3
+Hit 18427, miss 499, total access 18926 (hit chance: 97.4%), AMAT:0.1
+Hit 170459723, miss 16030291, total access 186490014 (hit chance: 91.4%), AMAT:3.3
 
 rows: 2, lines: 2, line length: 32 byte requires:128 byte 
 Hit 2533, miss 4, total access 2537 (hit chance: 99.8%), AMAT:3.6
-Hit 18896, miss 31, total access 18927 (hit chance: 99.8%), AMAT:0.0
-Hit 181291267, miss 5198746, total access 186490013 (hit chance: 97.2%), AMAT:1.1
+Hit 18896, miss 30, total access 18926 (hit chance: 99.8%), AMAT:0.0
+Hit 181291267, miss 5198747, total access 186490014 (hit chance: 97.2%), AMAT:1.1
 
 rows: 2, lines: 4, line length: 4 byte requires:32 byte 
 Hit 2515, miss 22, total access 2537 (hit chance: 99.1%), AMAT:19.7
-Hit 2960, miss 15967, total access 18927 (hit chance: 15.6%), AMAT:1.7
-Hit 119316869, miss 67173144, total access 186490013 (hit chance: 64.0%), AMAT:14.0
+Hit 2960, miss 15966, total access 18926 (hit chance: 15.6%), AMAT:1.7
+Hit 119316869, miss 67173145, total access 186490014 (hit chance: 64.0%), AMAT:14.0
 
 rows: 2, lines: 4, line length: 8 byte requires:64 byte 
 Hit 2515, miss 22, total access 2537 (hit chance: 99.1%), AMAT:19.7
-Hit 2960, miss 15967, total access 18927 (hit chance: 15.6%), AMAT:1.7
-Hit 119316869, miss 67173144, total access 186490013 (hit chance: 64.0%), AMAT:14.0
+Hit 2960, miss 15966, total access 18926 (hit chance: 15.6%), AMAT:1.7
+Hit 119316869, miss 67173145, total access 186490014 (hit chance: 64.0%), AMAT:14.0
 
 rows: 2, lines: 4, line length: 16 byte requires:128 byte 
 Hit 2531, miss 6, total access 2537 (hit chance: 99.8%), AMAT:5.4
-Hit 18882, miss 45, total access 18927 (hit chance: 99.8%), AMAT:0.0
-Hit 179183605, miss 7306408, total access 186490013 (hit chance: 96.1%), AMAT:1.5
+Hit 18882, miss 44, total access 18926 (hit chance: 99.8%), AMAT:0.0
+Hit 179183605, miss 7306409, total access 186490014 (hit chance: 96.1%), AMAT:1.5
 
 rows: 2, lines: 4, line length: 32 byte requires:256 byte 
 Hit 2533, miss 4, total access 2537 (hit chance: 99.8%), AMAT:3.6
-Hit 18900, miss 27, total access 18927 (hit chance: 99.9%), AMAT:0.0
-Hit 184414898, miss 2075115, total access 186490013 (hit chance: 98.9%), AMAT:0.4
+Hit 18900, miss 26, total access 18926 (hit chance: 99.9%), AMAT:0.0
+Hit 184414898, miss 2075116, total access 186490014 (hit chance: 98.9%), AMAT:0.4
 
 rows: 2, lines: 8, line length: 4 byte requires:64 byte 
 Hit 2515, miss 22, total access 2537 (hit chance: 99.1%), AMAT:19.7
-Hit 2960, miss 15967, total access 18927 (hit chance: 15.6%), AMAT:1.7
-Hit 119316869, miss 67173144, total access 186490013 (hit chance: 64.0%), AMAT:14.0
+Hit 2960, miss 15966, total access 18926 (hit chance: 15.6%), AMAT:1.7
+Hit 119316869, miss 67173145, total access 186490014 (hit chance: 64.0%), AMAT:14.0
 
 rows: 2, lines: 8, line length: 8 byte requires:128 byte 
 Hit 2515, miss 22, total access 2537 (hit chance: 99.1%), AMAT:19.7
-Hit 2960, miss 15967, total access 18927 (hit chance: 15.6%), AMAT:1.7
-Hit 119316869, miss 67173144, total access 186490013 (hit chance: 64.0%), AMAT:14.0
+Hit 2960, miss 15966, total access 18926 (hit chance: 15.6%), AMAT:1.7
+Hit 119316869, miss 67173145, total access 186490014 (hit chance: 64.0%), AMAT:14.0
 
 rows: 2, lines: 8, line length: 16 byte requires:256 byte 
 Hit 2531, miss 6, total access 2537 (hit chance: 99.8%), AMAT:5.4
-Hit 18882, miss 45, total access 18927 (hit chance: 99.8%), AMAT:0.0
-Hit 179183605, miss 7306408, total access 186490013 (hit chance: 96.1%), AMAT:1.5
+Hit 18882, miss 44, total access 18926 (hit chance: 99.8%), AMAT:0.0
+Hit 179183605, miss 7306409, total access 186490014 (hit chance: 96.1%), AMAT:1.5
 
 rows: 2, lines: 8, line length: 32 byte requires:512 byte 
 Hit 2533, miss 4, total access 2537 (hit chance: 99.8%), AMAT:3.6
-Hit 18900, miss 27, total access 18927 (hit chance: 99.9%), AMAT:0.0
-Hit 184414898, miss 2075115, total access 186490013 (hit chance: 98.9%), AMAT:0.4
+Hit 18900, miss 26, total access 18926 (hit chance: 99.9%), AMAT:0.0
+Hit 184414898, miss 2075116, total access 186490014 (hit chance: 98.9%), AMAT:0.4
 
 rows: 2, lines: 16, line length: 4 byte requires:128 byte 
 Hit 2515, miss 22, total access 2537 (hit chance: 99.1%), AMAT:19.7
-Hit 18796, miss 131, total access 18927 (hit chance: 99.3%), AMAT:0.0
-Hit 168373336, miss 18116677, total access 186490013 (hit chance: 90.3%), AMAT:3.8
+Hit 18796, miss 130, total access 18926 (hit chance: 99.3%), AMAT:0.0
+Hit 168373336, miss 18116678, total access 186490014 (hit chance: 90.3%), AMAT:3.8
 
 rows: 2, lines: 16, line length: 8 byte requires:256 byte 
 Hit 2515, miss 22, total access 2537 (hit chance: 99.1%), AMAT:19.7
-Hit 18796, miss 131, total access 18927 (hit chance: 99.3%), AMAT:0.0
-Hit 168373336, miss 18116677, total access 186490013 (hit chance: 90.3%), AMAT:3.8
+Hit 18796, miss 130, total access 18926 (hit chance: 99.3%), AMAT:0.0
+Hit 168373336, miss 18116678, total access 186490014 (hit chance: 90.3%), AMAT:3.8
 
 rows: 2, lines: 16, line length: 16 byte requires:512 byte 
 Hit 2531, miss 6, total access 2537 (hit chance: 99.8%), AMAT:5.4
-Hit 18899, miss 28, total access 18927 (hit chance: 99.9%), AMAT:0.0
-Hit 185189113, miss 1300900, total access 186490013 (hit chance: 99.3%), AMAT:0.3
+Hit 18899, miss 27, total access 18926 (hit chance: 99.9%), AMAT:0.0
+Hit 185189113, miss 1300901, total access 186490014 (hit chance: 99.3%), AMAT:0.3
 
 rows: 2, lines: 16, line length: 32 byte requires:1024 byte 
 Hit 2533, miss 4, total access 2537 (hit chance: 99.8%), AMAT:3.6
-Hit 18911, miss 16, total access 18927 (hit chance: 99.9%), AMAT:0.0
-Hit 186276559, miss 213454, total access 186490013 (hit chance: 99.9%), AMAT:0.0
+Hit 18911, miss 15, total access 18926 (hit chance: 99.9%), AMAT:0.0
+Hit 186276559, miss 213455, total access 186490014 (hit chance: 99.9%), AMAT:0.0
 
 Best results by size:
 Size:4, AMAT:38.9, rows:1, lines:1, line_size:4
 Size:8, AMAT:38.9, rows:1, lines:2, line_size:4
 Size:16, AMAT:17.7, rows:1, lines:1, line_size:16
 Size:32, AMAT:11.8, rows:1, lines:1, line_size:32
-Size:64, AMAT:2.4, rows:1, lines:2, line_size:32      <== current cache has size of 64, but AMAT of 9.0, possibly this thing will be a lot better + burst
-Size:128, AMAT:1.1, rows:2, lines:2, line_size:32     <= Too much area on cache, (64 bytes -> 16 regs ~6000 (tested 4 regs module)) + 2nd row -> longer crit path + extra area for comparator (each adder ~300 area + idk clock)
+Size:64, AMAT:2.4, rows:1, lines:2, line_size:32        <== current cache has size of 64, but AMAT of 9.0, possibly this thing will be a lot better + burst
+Size:128, AMAT:1.1, rows:2, lines:2, line_size:32       <= Too much area on cache, (64 bytes -> 16 regs ~6000 (tested 4 regs module)) + 2nd row -> longer crit path + extra area for comparator (each adder ~300 area + idk clock)
 Size:256, AMAT:0.4, rows:2, lines:4, line_size:32
 Size:512, AMAT:0.3, rows:2, lines:16, line_size:16
 Size:1024, AMAT:0.0, rows:2, lines:16, line_size:32
+
+
+
+
+// no burst
+NPC
+
+The image is /home/dsx99/osoc/ysyx-workbench/am-kernels/tests/cpu-tests/build/wanshu-riscv32-ysyx.bin, size = 1100
+time:0
+- vsrc/decode.sv:153: Verilog $finish
+- vsrc/decode.sv:153: Verilog $finish
+GOOD
+Finished in 4856242
+
+=========================================================================================================
+                                    MULTI-STAGE PERFORMANCE REPORT                                       
+=========================================================================================================
+ Performance Metric                   | 0: PREBOOT           | 1: BOOT              | 2: PROGRAM           
+---------------------------------------------------------------------------------------------------------
+ Execution Cycles                     | 1218235              | 271720               | 938166               
+ Instructions Retired (WB)            | 2537                 | 440                  | 17051                
+ Cycles Per Instruction (CPI)         | 480.187              | 617.545              | 55.021               
+ Instructions Per Cycle (IPC)         | 0.002                | 0.002                | 0.018                
+---------------------------------------------------------------------------------------------------------
+ IFU Fetched Instructions             | 4                    | 27                   | 3265                 
+ IFU Stall Cycles                     | 72578 (6.0%)         | 432 (0.2%)           | 920596 (98.1%)       
+---------------------------------------------------------------------------------------------------------
+ Control Branches + Jumps Executed    | 507                  | 53                   | 7920                 
+ Branches + Jumps Taken               | 505 (99.6%)          | 42 (79.2%)           | 4065 (51.3%)         
+---------------------------------------------------------------------------------------------------------
+ LSU Data Reads (Loads)               | 504                  | 118                  | 9                    
+ LSU Data Writes (Stores)             | 505                  | 128                  | 7                    
+ LSU Stall Cycles                     | 1143110 (93.8%)      | 270848 (99.7%)       | 520 (0.1%)           
+---------------------------------------------------------------------------------------------------------
+ Cache Hits                           | 2533 (99.8%)         | 413 (93.9%)          | 13786 (80.9%)        
+ Cache Misses                         | 4 (0.2%)             | 27 (6.1%)            | 3265 (19.1%)         
+ Cache Miss Penalty Cycles            | 72578                | 432                  | 920596               
+ Avg Cache Miss Latency (cyc)         | 18144.50             | 16.00                | 281.96               
+=========================================================================================================
+ AMAT (cycles)                        | 28.6                 | 1.0                  | 54.0                 
+=========================================================================================================
+
+test list [1 item(s)]: wanshu
+[        wanshu] PASS
+
+

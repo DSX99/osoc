@@ -60,8 +60,8 @@ uint32_t stage=0;
 
 
 void try_cache(uint32_t addr){
-    if(addr >= 0x0f000000 && addr<0x0fffffff) stage=1;
-    if(addr >= 0xa0000000 && addr<0xbfffffff) stage=2;
+    if(stage == 0 && addr >= 0x0f000000 && addr<0x10000000) stage=1;
+    if(stage == 1 && addr >= 0xa0000000 && addr<0xc0000000) stage=2;
     access_count[stage]++;
     uint32_t set_index = (addr >> index_shift) & index_mask;
     uint32_t tag = addr >> tag_shift;
