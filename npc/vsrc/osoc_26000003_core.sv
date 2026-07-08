@@ -300,7 +300,7 @@ module osoc_26000003_core (
     logic [31:0] reg_data_rs1, reg_data_rs2, reg_in;
     regs reg_mod (
         .clk(clock), .rst(reset), .data_in(reg_in), 
-        .rs1(id_ex_bus_decoded_rs1), .rs2(id_ex_bus_decoded_rs2), .rd(ls_wb_bus_rd), 
+        .rs1(id_ex_bus_rs1), .rs2(id_ex_bus_rs2), .rd(ls_wb_bus_rd), 
         .data_rs1(reg_data_rs1), .data_rs2(reg_data_rs2), 
         .valid(ls_wb_valid), .ready(ls_wb_ready)
     );
@@ -331,7 +331,7 @@ module osoc_26000003_core (
         endcase
     end
 
-    assign csr_in = id_ex_bus_csr_oper[2] ? {27'b0, id_ex_bus_decoded_rs1} : id_ex_bus_data_rs1;
+    assign csr_in = id_ex_bus_csr_oper[2] ? {27'b0, id_ex_bus_rs1} : id_ex_bus_data_rs1;
 
     // Internal Interconnect Wires
     logic [31:0] araddr_lsu, rdata_lsu;
