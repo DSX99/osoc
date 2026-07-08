@@ -17,8 +17,8 @@ module regs (
     always_comb begin
         ready=1;
 
-        data_rs1 = regs[rs1];
-        data_rs2 = regs[rs2];
+        data_rs1 = regs[rs1[3:0]];
+        data_rs2 = regs[rs2[3:0]];
     end
 
     always_ff @(posedge clk) begin
@@ -28,7 +28,7 @@ module regs (
             end
         end else begin
             if(valid) begin
-                regs[rd]<=data_in;
+                regs[rd[3:0]]<=data_in;
                 regs[0]<=0;
             end
         end
