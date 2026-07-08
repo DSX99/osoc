@@ -43,6 +43,7 @@ module arbiter(
     output logic [1:0]  rresp_ifu,
     output logic        rvalid_ifu,
     input  logic        rready_ifu,
+    input  logic        rlast,
 
 
     //OUT
@@ -180,7 +181,7 @@ always_ff @(posedge clk) begin
                 read_select <= read_select_comb;
             end
         end else begin
-            if (rvalid && rready) begin
+            if (rvalid && rready && rlast) begin
                 read_busy <= 1'b0;
             end
         end
@@ -190,7 +191,7 @@ always_ff @(posedge clk) begin
                 write_busy <= 1'b1;
             end
         end else begin
-            if (bvalid && bready) begin
+            if (bvalid && bready && wlast) begin
                 write_busy <= 1'b0;
             end
         end

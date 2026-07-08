@@ -399,6 +399,7 @@ module osoc_26000003_core (
         .rresp(io_master_rresp),
         .rvalid(io_master_rvalid),
         .rready(io_master_rready),
+        .rlast(io_master_rlast),
         .awaddr(io_master_awaddr),
         .awvalid(io_master_awvalid),
         .awready(io_master_awready),
@@ -445,7 +446,6 @@ module osoc_26000003_core (
     assign unused_signals = {
         io_interrupt,
         io_master_bid,
-        io_master_rlast,
         io_master_rid,
         io_slave_awvalid,
         io_slave_awaddr,
