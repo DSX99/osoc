@@ -95,7 +95,7 @@ module axi4_delayer(
   
 
 
-  assign out_rready = ready_r ? in_rready : 1'b0;
+  assign out_rready = ready_r ? in_rready : out_rlast ? 1'b0 : 1'b1;
   assign in_rvalid = ready_r ? out_rvalid : 1'b0;
   
   assign out_bready = ready_w ? in_bready : 1'b0;
@@ -105,8 +105,12 @@ module axi4_delayer(
 
   reg set;
   reg [9:0] count_r, count_w;
-  reg [19:0] delay_r, delay_w ;
+  reg [3:0] burst_count_r, burst_count_w;
+  reg [19:0] delay_r, delay_w;
   wire ready_r, ready_w;
+
+  reg [31:0] FIFO_r [7:0];
+  reg [2:0] FIFO_r_count;
 
   assign ready_r = delay_r[19:10] > count_r;
   assign ready_w = delay_w[19:10] > count_w;
@@ -134,11 +138,19 @@ module axi4_delayer(
         delay_w<=0;
       end
 
+
+
+
+
       if(in_arvalid) begin
         count_r<=count_r+ 1;
         delay_r<=ADD;
       end
-      if(count_r!=0 && out_rvalid!=1)begin
+      if(out_rvalid && out_rready && !out_rlast)begin
+        FIFO_r[FIFO_r_count] <= rdata;
+        FIFO_r_count <= FIFO_r_count + 1;
+      end
+      if(count_r!=0 && !(out_rvalid && out_rlast))begin
         count_r<=count_r+1;
       end
       if(delay_r!=0) begin
