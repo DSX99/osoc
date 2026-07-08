@@ -54,8 +54,6 @@ logic [2:0] fill_count;
 
 assign hit = block_valid[index] && (tag == block_tag[index]);
 
-wire sdram_call = ifu_addr[31:28] == 4'ha; //covering only a, as anyway xbar will cut off anything else
-
 always_comb begin
     arvalid = 0;
     araddr  = 0;
@@ -74,21 +72,32 @@ always_comb begin
             ready  = 1'b1;
         end else begin
             miss=1;
-            case (state)
-                WAIT_AR: begin
-                    arvalid = 1'b1;
-                    if(sdram_call)begin
+            if(ifu_addr >= 32'ha0000000 && ifu_addr < 32'hc0000000)begin
+                case (state)
+                    WAIT_AR: begin
+                        arvalid = 1'b1;
                         arburst = 2'b01;
                         arsize = 3'b010;
                         arlen = 8'd7;
+                        araddr  = {tag, index, fill_count, 2'b00};
                     end
-                    araddr  = {tag, index, fill_count, 2'b00};
-                end
-                WAIT_R: begin
-                    rready  = 1'b1;
-                end
-                default: ;
-            endcase
+                    WAIT_R: begin
+                        rready  = 1'b1;
+                    end
+                    default: ;
+                endcase
+            end else begin
+                case (state)
+                    WAIT_AR: begin
+                        arvalid = 1'b1;
+                        araddr  = {tag, index, fill_count, 2'b00};
+                    end
+                    WAIT_R: begin
+                        rready  = 1'b1;
+                    end
+                    default: ;
+                endcase
+            end
         end
     end
 end
@@ -101,29 +110,55 @@ always_ff @(posedge clk) begin
             block_valid[i] <= 1'b0;
         end
     end else if (valid && !hit) begin
-        case (state)
-            WAIT_AR: begin
-                if (arready && arvalid) begin
-                    state <= WAIT_R;
-                end
-            end
-            WAIT_R: begin
-                if (rvalid && rready) begin
-                    if(fill_count==3'b111) begin
-                        block_cache[index][fill_count] <= rdata;
-                        block_tag[index] <= tag;
-                        block_valid[index] <= 1'b1;
-                        fill_count <= 0;
-                        state <= WAIT_AR;
-                    end else begin
-                        block_cache[index][fill_count] <= rdata;
-                        fill_count <= fill_count + 1;
-                        state <= WAIT_AR;
+        if(ifu_addr >= 32'ha0000000 && ifu_addr < 32'hc0000000)begin
+            case (state)
+                WAIT_AR: begin
+                    if (arready && arvalid) begin
+                        state <= WAIT_R;
                     end
                 end
-            end
-            default: state <= WAIT_AR;
-        endcase
+                WAIT_R: begin
+                    if (rvalid && rready) begin
+                        if(fill_count==3'b111) begin
+                            block_cache[index][fill_count] <= rdata;
+                            block_tag[index] <= tag;
+                            block_valid[index] <= 1'b1;
+                            fill_count <= 0;
+                            state <= WAIT_AR;
+                        end else begin
+                            block_cache[index][fill_count] <= rdata;
+                            fill_count <= fill_count + 1;
+                            state <= WAIT_R;
+                        end
+                    end
+                end
+                default: state <= WAIT_AR;
+            endcase
+        end else begin
+            case (state)
+                WAIT_AR: begin
+                    if (arready && arvalid) begin
+                        state <= WAIT_R;
+                    end
+                end
+                WAIT_R: begin
+                    if (rvalid && rready) begin
+                        if(fill_count==3'b111) begin
+                            block_cache[index][fill_count] <= rdata;
+                            block_tag[index] <= tag;
+                            block_valid[index] <= 1'b1;
+                            fill_count <= 0;
+                            state <= WAIT_AR;
+                        end else begin
+                            block_cache[index][fill_count] <= rdata;
+                            fill_count <= fill_count + 1;
+                            state <= WAIT_AR;
+                        end
+                    end
+                end
+                default: state <= WAIT_AR;
+            endcase
+        end
     end
 end
 
