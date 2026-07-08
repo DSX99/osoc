@@ -41,6 +41,7 @@ uint64_t cycles[3];
 
 int stage=0;
 int prev_ifu=0,prev_lsu_r=0,prev_lsu_w=0;
+uint32_t prev_pc;
 int stall_count=0;
 
 char itrace[16][128];
@@ -237,7 +238,6 @@ void execute(uint64_t n){
     #ifdef CONFIG_FST
     tracep->dump(contextp->time());
     #endif
-    if(top->pc!=top->prev_pc) stall_count=0;
     contextp->timeInc(1);
     soc->clock=!soc->clock;
     soc->eval();
@@ -292,7 +292,7 @@ void execute(uint64_t n){
     if(top->cache_miss) program[stage].cache_miss_cycles++;
     }
 
-    if(top->pc == top->prev_pc){
+    if(top->pc == prev_pc){
       stall_count++;
       if(stall_count>100000 && ((contextp->time()) % 10000000)){
         printf("Possibly infinite stall\n");
@@ -300,6 +300,7 @@ void execute(uint64_t n){
     }else{
       stall_count=0;
     }
+    prev_pc = top->pc;
 
     if(fail){ 
       printf("failed\n");
