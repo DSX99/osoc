@@ -111,17 +111,6 @@ module osoc_26000003_core (
     logic        id_ex_bus_mux_select_pc;
     logic        id_ex_valid, id_ex_ready;
 
-    // EX to LS Bus signals (ALU Output Path)
-    logic [31:0] ex_ls_bus_alu_next_pc;
-    logic [31:0] ex_ls_bus_alu_alu_out;
-    logic [31:0] ex_ls_bus_alu_data_rs2;
-    logic        ex_ls_bus_alu_lsu_we;
-    logic        ex_ls_bus_alu_lsu_re;
-    logic [2:0]  ex_ls_bus_alu_lsu_oper;
-    logic [4:0]  ex_ls_bus_alu_rd;
-    logic [1:0]  ex_ls_bus_alu_mux_select;
-    logic        ex_ls_bus_alu_mux_select_pc;
-    logic        ex_ls_bus_alu_branch;
 
     // EX to LS Muxed Bus signals (Combined ALU + CSR)
     logic [31:0] ex_ls_bus_next_pc;
@@ -225,16 +214,16 @@ module osoc_26000003_core (
         .bus_in_rd(id_ex_bus_rd),
         .bus_in_mux_select(id_ex_bus_mux_select),
         .bus_in_mux_select_pc(id_ex_bus_mux_select_pc),
-        .bus_out_next_pc(ex_ls_bus_alu_next_pc),
-        .bus_out_alu_out(ex_ls_bus_alu_alu_out),
-        .bus_out_data_rs2(ex_ls_bus_alu_data_rs2),
-        .bus_out_lsu_we(ex_ls_bus_alu_lsu_we),
-        .bus_out_lsu_re(ex_ls_bus_alu_lsu_re),
-        .bus_out_lsu_oper(ex_ls_bus_alu_lsu_oper),
-        .bus_out_rd(ex_ls_bus_alu_rd),
-        .bus_out_mux_select(ex_ls_bus_alu_mux_select),
-        .bus_out_mux_select_pc(ex_ls_bus_alu_mux_select_pc),
-        .bus_out_branch(ex_ls_bus_alu_branch),
+        .bus_out_next_pc(ex_ls_bus_next_pc),
+        .bus_out_alu_out(ex_ls_bus_alu_out),
+        .bus_out_data_rs2(ex_ls_bus_data_rs2),
+        .bus_out_lsu_we(ex_ls_bus_lsu_we),
+        .bus_out_lsu_re(ex_ls_bus_lsu_re),
+        .bus_out_lsu_oper(ex_ls_bus_lsu_oper),
+        .bus_out_rd(ex_ls_bus_rd),
+        .bus_out_mux_select(ex_ls_bus_mux_select),
+        .bus_out_mux_select_pc(ex_ls_bus_mux_select_pc),
+        .bus_out_branch(ex_ls_bus_branch),
         .valid_left(id_ex_valid), .ready_left(id_ex_ready_alu), 
         .valid_right(ex_ls_valid_alu), .ready_right(ex_ls_ready),
 
@@ -250,18 +239,6 @@ module osoc_26000003_core (
     );
 
     always_comb begin
-        // Splice structural ALU variables with synchronous execution states from CSRs
-        ex_ls_bus_next_pc       = ex_ls_bus_alu_next_pc;
-        ex_ls_bus_alu_out       = ex_ls_bus_alu_alu_out;
-        ex_ls_bus_data_rs2      = ex_ls_bus_alu_data_rs2;
-        ex_ls_bus_lsu_we        = ex_ls_bus_alu_lsu_we;
-        ex_ls_bus_lsu_re        = ex_ls_bus_alu_lsu_re;
-        ex_ls_bus_lsu_oper      = ex_ls_bus_alu_lsu_oper;
-        ex_ls_bus_rd            = ex_ls_bus_alu_rd;
-        ex_ls_bus_mux_select    = ex_ls_bus_alu_mux_select;
-        ex_ls_bus_mux_select_pc = ex_ls_bus_alu_mux_select_pc;
-        ex_ls_bus_branch        = ex_ls_bus_alu_branch;
-        
         ex_ls_bus_csr_out       = csr_data;
     end
 
