@@ -39,6 +39,7 @@ module lsu (
     output logic [31:0] wdata,
     output logic [3:0]  wstrb,
     output logic        wvalid,
+    output logic        wlast,
     input  logic        wready,
     input  logic [1:0]  bresp,
     input  logic        bvalid,
@@ -50,6 +51,8 @@ module lsu (
 
     logic unused_branch;
     logic done_r, done_w;
+
+    assign wlast = wvalid;
 
     always_comb begin
 
@@ -256,13 +259,13 @@ module lsu (
                         done_aw <= 1;
                     end
                     if ((done_aw || awready) && (done_wdata || wready)) begin
-                        done_aw<=0;
-                        done_wdata<=0;
                         lsu_w <= WAIT_WRESP;
                     end
                 end
                 WAIT_WRESP: begin
                     if (bvalid && bready) begin
+                        done_aw<=0;
+                        done_wdata<=0;
                         lsu_w <= WAIT_COMMIT;
                     end
                 end

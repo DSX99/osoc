@@ -308,7 +308,7 @@ module osoc_26000003_core (
         .araddr(araddr_lsu), .arvalid(arvalid_lsu), .arready(arready_lsu), 
         .rdata(rdata_lsu), .rresp(rresp_lsu), .rvalid(rvalid_lsu), .rready(rready_lsu),
         .awaddr(awaddr_lsu), .awvalid(awvalid_lsu), .awready(awready_lsu), 
-        .wdata(wdata_lsu), .wstrb(wstrb_lsu), .wvalid(wvalid_lsu), .wready(wready_lsu), 
+        .wdata(wdata_lsu), .wstrb(wstrb_lsu), .wvalid(wvalid_lsu), .wready(wready_lsu), .wlast(wlast_lsu),
         .bresp(bresp_lsu), .bvalid(bvalid_lsu), .bready(bready_lsu)
     );
 
@@ -370,7 +370,7 @@ module osoc_26000003_core (
     logic [31:0] awaddr_lsu, wdata_lsu;
     logic [3:0]  wstrb_lsu;
     logic [1:0]  bresp_lsu;
-    logic        awvalid_lsu, awready_lsu, wvalid_lsu, wready_lsu, bvalid_lsu, bready_lsu;
+    logic        awvalid_lsu, awready_lsu, wvalid_lsu, wlast_lsu, wready_lsu, bvalid_lsu, bready_lsu;
 
     logic [31:0] araddr_ifu, rdata_ifu;
     logic [1:0]  rresp_ifu;
@@ -384,7 +384,8 @@ module osoc_26000003_core (
     arbiter arbiter_mod (
         .clk(clock), .rst(reset),
         .araddr_lsu(araddr_lsu), .arvalid_lsu(arvalid_lsu), .arready_lsu(arready_lsu), .rdata_lsu(rdata_lsu), .rresp_lsu(rresp_lsu), .rvalid_lsu(rvalid_lsu), .rready_lsu(rready_lsu),
-        .awaddr_lsu(awaddr_lsu), .awvalid_lsu(awvalid_lsu), .awready_lsu(awready_lsu), .wdata_lsu(wdata_lsu), .wstrb_lsu(wstrb_lsu), .wvalid_lsu(wvalid_lsu), .wready_lsu(wready_lsu), .bresp_lsu(bresp_lsu), .bvalid_lsu(bvalid_lsu), .bready_lsu(bready_lsu),
+        .awaddr_lsu(awaddr_lsu), .awvalid_lsu(awvalid_lsu), .awready_lsu(awready_lsu), .wdata_lsu(wdata_lsu), .wstrb_lsu(wstrb_lsu), .wvalid_lsu(wvalid_lsu), .wready_lsu(wready_lsu),
+        .wlast_lsu(wlast_lsu), .bresp_lsu(bresp_lsu), .bvalid_lsu(bvalid_lsu), .bready_lsu(bready_lsu),
         .araddr_ifu(araddr_ifu), .arvalid_ifu(arvalid_ifu), .arready_ifu(arready_ifu), .arburst_ifu(arburst_ifu), .arsize_ifu(arsize_ifu), .arlen_ifu(arlen_ifu), .rvalid_ifu(rvalid_ifu), .rdata_ifu(rdata_ifu), .rready_ifu(rready_ifu), .rresp_ifu(rresp_ifu),
         
         // External Master Port Interconnections
@@ -405,6 +406,7 @@ module osoc_26000003_core (
         .wstrb(io_master_wstrb),
         .wvalid(io_master_wvalid),
         .wready(io_master_wready),
+        .wlast(io_master_wlast),
         .bresp(io_master_bresp),
         .bvalid(io_master_bvalid),
         .bready(io_master_bready)
@@ -418,7 +420,6 @@ module osoc_26000003_core (
     assign io_master_awlen   = 8'b0;
     assign io_master_awsize  = 3'b0;
     assign io_master_awburst = 2'b0;
-    assign io_master_wlast   = 1'b0;
     assign io_master_arid    = 4'b0;
 
     // Entirely Unused Slave Output Interface
