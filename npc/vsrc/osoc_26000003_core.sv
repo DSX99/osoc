@@ -440,7 +440,7 @@ module osoc_26000003_core (
     // Unused Top-level Inputs (Combined into a dummy vector to prevent Lint errors)
     // -------------------------------------------------------------------------
     /* verilator lint_off UNUSED */
-    logic [150:0] unused_signals;
+    logic [149:0] unused_signals;
     /* verilator lint_on UNUSED */
 
     assign unused_signals = {
