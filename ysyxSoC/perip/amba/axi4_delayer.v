@@ -155,7 +155,7 @@ module axi4_delayer(
         FIFO_r_count <= FIFO_r_count + 1;
       end
       if(out_rlast) set<=0;
-      if(!(out_rvalid && out_rlast) && set)begin
+      if(!out_rlast && set)begin
         count_r<=count_r+1;
       end
       if(delay_r!=0) begin
