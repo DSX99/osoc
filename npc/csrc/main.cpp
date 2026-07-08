@@ -294,7 +294,7 @@ void execute(uint64_t n){
 
     if(top->pc == prev_pc){
       stall_count++;
-      if(stall_count>1000000 && !(contextp->time() % 10000000)){
+      if(stall_count>2000000 && !(stall_count % 500000)){
         printf("Possibly infinite stall\n");
       }
     }else{
