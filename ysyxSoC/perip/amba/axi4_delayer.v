@@ -124,10 +124,10 @@ module axi4_delayer(
       count_w<=0;
       delay_r<=0;
       delay_w<=0;
-      FIFO_r_count<=0
-      for(int i=0; i<8; i=i+1) begin
-        FIFO_r[i]<=0;
-      end
+      FIFO_r_count<=0;
+        for(int i=0; i<8; i=i+1) begin
+          FIFO_r[i]<=0;
+        end
     end else begin
       if(in_awvalid) begin
         count_w<=count_w+ 1;
