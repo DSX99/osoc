@@ -13,8 +13,8 @@ module CLINT(
     output logic crlast
 );
 
-parameter NUM = 3; //possibly can be changed on start of simulation, may be good
-parameter DEN = 1698;
+parameter NUM = 2; //possibly can be changed on start of simulation, may be good
+parameter DEN = 253;
 
 logic [11:0]  divisor; 
 logic [63:0] mtime; 

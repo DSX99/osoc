@@ -12,7 +12,7 @@ module regs (
     output logic ready
 );
     
-    logic [31:0] regs [31:0] /* verilator public */; 
+    logic [31:0] regs [15:0] /* verilator public */; 
 
     always_comb begin
         ready=1;
@@ -23,7 +23,7 @@ module regs (
 
     always_ff @(posedge clk) begin
         if(rst) begin
-            for (int i=0;i<32;i++) begin
+            for (int i=0;i<15;i++) begin
                 regs[i]<=0;
             end
         end else begin
