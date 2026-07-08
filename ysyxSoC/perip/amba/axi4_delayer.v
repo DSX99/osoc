@@ -92,7 +92,7 @@ module axi4_delayer(
   assign out_wvalid = in_wvalid;
   
 
-  assign out_rreadt = 1;
+  assign out_rready = 1;
   assign in_rvalid = ready_r ? 1'b1 : 1'b0;
   assign {in_rdata, in_rlast} = ready_r ? FIFO_r[0] : 33'b0;
   
