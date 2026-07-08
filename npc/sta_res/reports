@@ -693,3 +693,50 @@ test list [1 item(s)]: wanshu
 [        wanshu] PASS
 
 
+
+//with burst
+dsx99@dsx-99:~/osoc/ysyx-workbench/am-kernels/tests/cpu-tests$ make run ALL=wanshu
+
+                RUNNING WITH FST
+
+                RUNNING WITH OP_TRACE
+
+NPC
+
+The image is /home/dsx99/osoc/ysyx-workbench/am-kernels/tests/cpu-tests/build/wanshu-riscv32-ysyx.bin, size = 1100
+time:0
+- vsrc/decode.sv:153: Verilog $finish
+- vsrc/decode.sv:153: Verilog $finish
+GOOD
+Finished in 3870822
+
+=========================================================================================================
+                                    MULTI-STAGE PERFORMANCE REPORT                                       
+=========================================================================================================
+ Performance Metric                   | 0: PREBOOT           | 1: BOOT              | 2: PROGRAM           
+---------------------------------------------------------------------------------------------------------
+ Execution Cycles                     | 1218238              | 272087               | 445086               
+ Instructions Retired (WB)            | 2537                 | 440                  | 17051                
+ Cycles Per Instruction (CPI)         | 480.188              | 618.380              | 26.103               
+ Instructions Per Cycle (IPC)         | 0.002                | 0.002                | 0.038                
+---------------------------------------------------------------------------------------------------------
+ IFU Fetched Instructions             | 4                    | 27                   | 3265                 
+ IFU Stall Cycles                     | 72578 (6.0%)         | 432 (0.2%)           | 427494 (96.0%)       
+---------------------------------------------------------------------------------------------------------
+ Control Branches + Jumps Executed    | 507                  | 53                   | 7920                 
+ Branches + Jumps Taken               | 505 (99.6%)          | 42 (79.2%)           | 4065 (51.3%)         
+---------------------------------------------------------------------------------------------------------
+ LSU Data Reads (Loads)               | 504                  | 118                  | 9                    
+ LSU Data Writes (Stores)             | 505                  | 128                  | 7                    
+ LSU Stall Cycles                     | 1143113 (93.8%)      | 271215 (99.7%)       | 542 (0.1%)           
+---------------------------------------------------------------------------------------------------------
+ Cache Hits                           | 2533 (99.8%)         | 413 (93.9%)          | 13786 (80.9%)        
+ Cache Misses                         | 4 (0.2%)             | 27 (6.1%)            | 3265 (19.1%)         
+ Cache Miss Penalty Cycles            | 72578                | 432                  | 427494               
+ Avg Cache Miss Latency (cyc)         | 18144.50             | 16.00                | 130.93               
+=========================================================================================================
+ AMAT (cycles)                        | 28.6                 | 1.0                  | 25.1                 
+=========================================================================================================
+
+test list [1 item(s)]: wanshu
+[        wanshu] PASS

@@ -41,7 +41,7 @@ uint64_t cycles[3];
 
 int stage=0;
 int prev_ifu=0,prev_lsu_r=0,prev_lsu_w=0;
-
+int stall_count=0;
 
 char itrace[16][128];
 int point=0;
@@ -291,7 +291,14 @@ void execute(uint64_t n){
     if(top->cache_miss) program[stage].cache_miss_cycles++;
     }
 
-
+    if(top->pc == top->prev_pc){
+      stall_count++;
+      if(stall_count>100000){
+        printf("Possibly infinite stall\n");
+      }
+    }else{
+      stall_count=0;
+    }
 
     if(fail){ 
       printf("failed\n");
