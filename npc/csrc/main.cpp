@@ -237,6 +237,7 @@ void execute(uint64_t n){
     #ifdef CONFIG_FST
     tracep->dump(contextp->time());
     #endif
+    if(top->pc!=top->prev_pc) stall_count=0;
     contextp->timeInc(1);
     soc->clock=!soc->clock;
     soc->eval();
@@ -293,7 +294,7 @@ void execute(uint64_t n){
 
     if(top->pc == top->prev_pc){
       stall_count++;
-      if(stall_count>100000 && ((contextp->time()) % 100000)){
+      if(stall_count>100000 && ((contextp->time()) % 10000000)){
         printf("Possibly infinite stall\n");
       }
     }else{
