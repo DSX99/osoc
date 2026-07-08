@@ -93,8 +93,8 @@ module axi4_delayer(
   
 
 
-  assign out_rready = ready_r ? in_rready : out_rlast ? 1'b0 : 1'b1;
-  assign in_rvalid = ready_r ? out_rvalid : 1'b0;
+  assign out_rready = ready_r ? 1'b1 : out_rlast ? 1'b0 : 1'b1;
+  assign in_rvalid = ready_r ? 1'b1 : 1'b0;
   // assign in_rdata = out_rdata;
   // assign in_rlast = out_rlast;
   assign {in_rdata, in_rlast} = ready_r ? FIFO_r[0] : 33'b0;
@@ -124,10 +124,10 @@ module axi4_delayer(
       count_w<=0;
       delay_r<=0;
       delay_w<=0;
-      FIFO_r_count<=0;
-        for(int i=0; i<8; i=i+1) begin
-          FIFO_r[i]<=0;
-        end
+      FIFO_r_count<=0
+      for(int i=0; i<8; i=i+1) begin
+        FIFO_r[i]<=0;
+      end
     end else begin
       if(in_awvalid) begin
         count_w<=count_w+ 1;
@@ -168,7 +168,8 @@ module axi4_delayer(
         if(in_rlast) begin
           count_r<=0;
           delay_r<=0;
-          FIFO_r[0]<=0;
+          FIFO_r[7]<=0;
+          FIFO_r_count<=0;
         end else begin
           for(int i=0;i<7;i=i+1)begin
             FIFO_r[i]<=FIFO_r[i+1];
