@@ -10,7 +10,7 @@ module CLINT(
 
     input logic crready,
     output logic crvalid,
-    output logic crlast,
+    output logic crlast
 );
 
 parameter NUM = 3; //possibly can be changed on start of simulation, may be good
