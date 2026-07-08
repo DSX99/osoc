@@ -105,6 +105,8 @@ module osoc_26000003_core (
     logic        id_ex_bus_lsu_re;
     logic [2:0]  id_ex_bus_lsu_oper;
     logic [4:0]  id_ex_bus_rd;
+    logic [4:0]  id_ex_bus_rs1;
+    logic [4:0]  id_ex_bus_rs2;
     logic [1:0]  id_ex_bus_mux_select;
     logic        id_ex_bus_mux_select_pc;
     logic        id_ex_valid, id_ex_ready;
