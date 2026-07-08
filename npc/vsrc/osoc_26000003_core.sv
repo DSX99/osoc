@@ -92,22 +92,6 @@ module osoc_26000003_core (
     logic [31:0] cache_addr, cache_opcode;
     logic cache_ready, cache_valid;
 
-    // ID to EX Decoded Bus signals
-    logic [31:0] id_ex_bus_decoded_pc;
-    logic [31:0] id_ex_bus_decoded_next_pc;
-    logic [31:0] id_ex_bus_decoded_imm;
-    logic [4:0]  id_ex_bus_decoded_rs1;
-    logic [4:0]  id_ex_bus_decoded_rs2;
-    logic [7:0]  id_ex_bus_decoded_alu_op;
-    logic [2:0]  id_ex_bus_decoded_csr_oper;
-    logic [4:0]  id_ex_bus_decoded_cause;
-    logic        id_ex_bus_decoded_lsu_we;
-    logic        id_ex_bus_decoded_lsu_re;
-    logic [2:0]  id_ex_bus_decoded_lsu_oper;
-    logic [4:0]  id_ex_bus_decoded_rd;
-    logic [1:0]  id_ex_bus_decoded_mux_select;
-    logic        id_ex_bus_decoded_mux_select_pc;
-
     // ID to EX Muxed/Forwarded Bus signals (fed to ALUs)
     logic [31:0] id_ex_bus_pc;
     logic [31:0] id_ex_bus_next_pc;
@@ -204,20 +188,20 @@ module osoc_26000003_core (
         .bus_in_pc(if_id_bus_pc),
         .bus_in_next_pc(if_id_bus_next_pc),
         .bus_in_opcode(if_id_bus_opcode),
-        .bus_out_pc(id_ex_bus_decoded_pc),
-        .bus_out_next_pc(id_ex_bus_decoded_next_pc),
-        .bus_out_imm(id_ex_bus_decoded_imm),
-        .bus_out_rs1(id_ex_bus_decoded_rs1),
-        .bus_out_rs2(id_ex_bus_decoded_rs2),
-        .bus_out_alu_op(id_ex_bus_decoded_alu_op),
-        .bus_out_csr_oper(id_ex_bus_decoded_csr_oper),
-        .bus_out_cause(id_ex_bus_decoded_cause),
-        .bus_out_lsu_we(id_ex_bus_decoded_lsu_we),
-        .bus_out_lsu_re(id_ex_bus_decoded_lsu_re),
-        .bus_out_lsu_oper(id_ex_bus_decoded_lsu_oper),
-        .bus_out_rd(id_ex_bus_decoded_rd),
-        .bus_out_mux_select(id_ex_bus_decoded_mux_select),
-        .bus_out_mux_select_pc(id_ex_bus_decoded_mux_select_pc),
+        .bus_out_pc(id_ex_bus_pc),
+        .bus_out_next_pc(id_ex_bus_next_pc),
+        .bus_out_imm(id_ex_bus_imm),
+        .bus_out_rs1(id_ex_bus_rs1),
+        .bus_out_rs2(id_ex_bus_rs2),
+        .bus_out_alu_op(id_ex_bus_alu_op),
+        .bus_out_csr_oper(id_ex_bus_csr_oper),
+        .bus_out_cause(id_ex_bus_cause),
+        .bus_out_lsu_we(id_ex_bus_lsu_we),
+        .bus_out_lsu_re(id_ex_bus_lsu_re),
+        .bus_out_lsu_oper(id_ex_bus_lsu_oper),
+        .bus_out_rd(id_ex_bus_rd),
+        .bus_out_mux_select(id_ex_bus_mux_select),
+        .bus_out_mux_select_pc(id_ex_bus_mux_select_pc),
         .valid_left(if_id_valid), .ready_left(if_id_ready), 
         .valid_right(id_ex_valid), .ready_right(id_ex_ready)
     );
@@ -334,19 +318,6 @@ module osoc_26000003_core (
     end
 
     always_comb begin
-        // Route decoded variables cleanly down to individual module ports
-        id_ex_bus_pc            = id_ex_bus_decoded_pc;
-        id_ex_bus_next_pc       = id_ex_bus_decoded_next_pc;
-        id_ex_bus_imm           = id_ex_bus_decoded_imm;
-        id_ex_bus_alu_op        = id_ex_bus_decoded_alu_op;
-        id_ex_bus_csr_oper      = id_ex_bus_decoded_csr_oper;
-        id_ex_bus_cause         = id_ex_bus_decoded_cause;
-        id_ex_bus_lsu_we        = id_ex_bus_decoded_lsu_we;
-        id_ex_bus_lsu_re        = id_ex_bus_decoded_lsu_re;
-        id_ex_bus_lsu_oper      = id_ex_bus_decoded_lsu_oper;
-        id_ex_bus_rd            = id_ex_bus_decoded_rd;
-        id_ex_bus_mux_select    = id_ex_bus_decoded_mux_select;
-        id_ex_bus_mux_select_pc = id_ex_bus_decoded_mux_select_pc;
 
         // Apply dynamically updated Register File states
         id_ex_bus_data_rs1      = reg_data_rs1;
