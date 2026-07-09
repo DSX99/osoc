@@ -642,7 +642,7 @@ always_ff @(posedge clk) begin
             if_de_bus_next_pc<=if_de_bus_next_pc_if;
             if_de_bus_opcode<=if_de_bus_opcode_if;
         end
-        if_de_valid<=if_de_valid_if;
+        if(if_de_ready_de) if_de_valid<=if_de_valid_if;
     end
 end
 
@@ -782,7 +782,13 @@ always_ff @(posedge clk) begin
         de_ex_bus_mux_select    <= de_ex_bus_mux_select_de;
         de_ex_bus_mux_select_pc <= de_ex_bus_mux_select_pc_de;
     end
-    de_ex_valid             <= de_ex_valid_de;
+    if(de_ex_ready_ex) begin
+        de_ex_valid             <= de_ex_valid_de;
+        if(!de_ex_valid_de) begin
+            de_ex_bus_rs1           <= 0;
+            de_ex_bus_rs2           <= 0;
+        end
+    end
 end
 
 endmodule
@@ -889,7 +895,13 @@ always_ff @(posedge clk) begin
         ex_ls_bus_mux_select_pc <= ex_ls_bus_mux_select_pc_ex;
         ex_ls_bus_branch        <= ex_ls_bus_branch_ex;
     end
-    ex_ls_valid             <= ex_ls_valid_ex;
+    if(ex_ls_ready_ls) begin
+        ex_ls_valid             <= ex_ls_valid_ex;
+        if(!de_ex_valid_de) begin
+            ex_ls_bus_lsu_we    <= 0;
+            ex_ls_bus_lsu_re    <= 0;
+        end
+    end
 end
 
 endmodule
@@ -977,7 +989,10 @@ always_ff @(posedge clk) begin
         ls_wb_bus_mux_select_pc <= ls_wb_bus_mux_select_pc_ls;
         ls_wb_bus_branch        <= ls_wb_bus_branch_ls;
     end
-    ls_wb_valid             <= ls_wb_valid_ls;
+    if(ls_wb_ready_wb) begin
+        ls_wb_valid             <= ls_wb_valid_ls;
+        if(1ls_wb_valid_ls) ls_wb_bus_rd<=0;
+    end
 end
 
 endmodule
