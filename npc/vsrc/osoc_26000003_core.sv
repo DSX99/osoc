@@ -93,6 +93,8 @@ module osoc_26000003_core (
 
     logic [31:0] next_pc;
 
+    logic [31:0] pc_ifu;
+
     // IF to DE 
     logic [31:0] if_de_bus_pc_if, if_de_bus_pc_de;
     logic [31:0] if_de_bus_next_pc_if, if_de_bus_next_pc_de;
@@ -200,7 +202,7 @@ module osoc_26000003_core (
         .rst(reset), 
         .branch(ls_wb_bus_branch_wb), 
         .data_in(pc_in), 
-        .pc(pc), 
+        .pc(pc_ifu), 
         .next_pc(next_pc), 
         .valid(if_de_valid_if && if_de_ready_if)
     );
@@ -209,7 +211,7 @@ module osoc_26000003_core (
 
     // IFU Instance
     ifu ifu_mod (
-        .pc(pc), .next_pc(next_pc),
+        .pc(pc_ifu), .next_pc(next_pc),
         .bus_out_pc(if_de_bus_pc_if),
         .bus_out_next_pc(if_de_bus_next_pc_if),
         .bus_out_opcode(if_de_bus_opcode_if),
@@ -470,6 +472,8 @@ module osoc_26000003_core (
         .data_rs1(de_ex_bus_data_rs1_de), .data_rs2(de_ex_bus_data_rs2_de), 
         .valid(ls_wb_valid_wb), .ready(ls_wb_ready_wb)
     );
+
+    assign pc = ls_wb_bus_next_pc_wb-4;
 
     always_comb begin
         case(ls_wb_bus_mux_select_wb)
