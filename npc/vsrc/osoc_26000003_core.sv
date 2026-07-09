@@ -1034,7 +1034,17 @@ always_ff @(posedge clk) begin
         end
 
         if(ls_wb_bus_branch_wb) begin
-            $display("1");
+            ls_wb_bus_alu_out       <= '0;
+            ls_wb_bus_lsu_out       <= '0;
+            ls_wb_bus_next_pc       <= '0;
+            ls_wb_bus_csr_out       <= '0;
+            ls_wb_bus_rd            <= '0;
+            ls_wb_bus_mux_select    <= '0;
+            ls_wb_bus_mux_select_pc <= '0;
+            ls_wb_bus_branch        <= '0;
+            ls_wb_valid             <= '0;
+            opcode<=0;
+            finish<=0;
         end
     end
 end
