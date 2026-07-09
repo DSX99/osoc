@@ -889,8 +889,6 @@ always_ff @(posedge clk) begin
         ex_ls_valid             <= ex_ls_valid_ex;
         if(!ex_ls_valid_ex) begin
             ex_ls_bus_rd        <=0;
-            ex_ls_bus_lsu_we    <= 0;
-            ex_ls_bus_lsu_re    <= 0;
         end
     end
 end
