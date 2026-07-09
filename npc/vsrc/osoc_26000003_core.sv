@@ -66,7 +66,7 @@ module osoc_26000003_core (
     output logic [3:0]   io_slave_rid
 );
 
-    logic [31:0] pc /* verilator public */, opcode /* verilator public */, prev_pc /* verilator public */;
+    logic [31:0] pc /* verilator public */, opcode /* verilator public */, pc_e /* verilator public */;
     logic reg_valid /* verilator public */, reg_valid_e /* verilator public */;
 
     logic if_de_valid_if /* verilator public */, if_de_ready_if /*verilator public*/, ex_ls_valid_ls /* verilator public */, ex_ls_ready_ls /* verilator public */;
@@ -84,16 +84,14 @@ module osoc_26000003_core (
     always_ff @(posedge clock) begin
         if (reset) begin
             reg_valid <= 1'b0;
-            prev_pc   <= 32'b0;
+            pc   <= 32'b0;
         end else begin
             reg_valid <= reg_valid_e;
-            prev_pc   <= pc;
+            pc   <= pc_e;
         end
     end
 
-    logic [31:0] next_pc;
-
-    logic [31:0] pc_ifu;
+    assign pc_e = ls_wb_bus_next_pc_wb;
 
     // IF to DE 
     logic [31:0] if_de_bus_pc_if, if_de_bus_pc_de;
@@ -208,6 +206,8 @@ module osoc_26000003_core (
     );
     assign pc_in = ls_wb_bus_mux_select_pc_wb ? ls_wb_bus_csr_out_wb : ls_wb_bus_alu_out_wb;
     logic flush = ls_wb_bus_branch_wb;
+    
+    logic [31:0] pc_ifu, next_pc;
 
     // IFU Instance
     ifu ifu_mod (
@@ -472,8 +472,6 @@ module osoc_26000003_core (
         .data_rs1(de_ex_bus_data_rs1_de), .data_rs2(de_ex_bus_data_rs2_de), 
         .valid(ls_wb_valid_wb), .ready(ls_wb_ready_wb)
     );
-
-    assign pc = ls_wb_bus_next_pc_wb;
 
     always_comb begin
         case(ls_wb_bus_mux_select_wb)

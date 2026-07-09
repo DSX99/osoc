@@ -221,7 +221,7 @@ void execute(uint64_t n){
         printf("time:%lu\n", contextp->time());
       }
       
-      if(!batch && top->opcode!=0 && top->reg_valid_e){
+      if(!batch && top->opcode!=0 && top->reg_valid){
         inst[0] = (top->opcode) & 0xff;
         inst[1] = (top->opcode >> 8) & 0xff;
         inst[2] = (top->opcode >> 16) & 0xff;
@@ -290,7 +290,7 @@ void execute(uint64_t n){
         program[stage].lsu_write_data++;
       }
     }
-    if(top->reg_valid_e){
+    if(top->reg_valid){
       program[stage].writeback++;
     }
     if(top->pc != top->prev_pc){
@@ -315,8 +315,8 @@ void execute(uint64_t n){
       return;
     }
 
-    if((!batch) && top->reg_valid_e && do_diff) difftest_exec(1);
-    
+    if((!batch) && top->reg_valid && do_diff) difftest_exec(1);
+
     if(contextp->gotFinish()){
       #ifdef CONFIG_FST
       tracep->close();
@@ -360,7 +360,7 @@ void execute(uint64_t n){
     }
     n--;
     
-    if(!batch && do_diff && top->reg_valid_e) {
+    if(!batch && do_diff && top->reg_valid) {
         difftest_regcpy(&ref_cpu, 0);
 
         if (ref_cpu.pc != top->pc) {
