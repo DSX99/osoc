@@ -33,13 +33,6 @@ module alu (
     input  logic valid_left, ready_right,
     output logic ready_left, valid_right,
 
-    
-    input logic [4:0] bus_in_rs1,
-    input logic [4:0] bus_in_rs2,
-
-    input  logic [4:0] ls_rd,
-    input  logic [4:0] wb_rd,
-
     output logic branch,
     output logic branch_taken
 );
@@ -57,19 +50,9 @@ module alu (
     assign branch = bus_in_alu_op[5:4] == 2'b01;
     assign branch_taken = bus_out_branch;
 
-    logic ls_match;
-    logic wb_match;
-
-    assign ls_match = ((ls_rd == bus_in_rs1) || (ls_rd == bus_in_rs2)) && (ls_rd!=0);
-    assign wb_match = ((wb_rd == bus_in_rs1) || (wb_rd == bus_in_rs2)) && (wb_rd!=0);
-
-    logic reg_match;
-
-    assign reg_match = ls_match | wb_match;
-
     always_comb begin
-        valid_right = valid_left & !reg_match;
-        ready_left  = ready_right & !reg_match;
+        valid_right = valid_left;
+        ready_left  = ready_right;
 
         // Default Assignments
         bus_out_alu_out       = '0;
