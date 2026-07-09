@@ -28,6 +28,7 @@ module decode (
     input  logic valid_left, ready_right,
     output logic ready_left, valid_right,
 
+    input  logic [4:0] ex_rd,
     input  logic [4:0] ls_rd,
     input  logic [4:0] wb_rd
 );
@@ -57,15 +58,17 @@ module decode (
     // alu_op[5:3] branch or arithmetics (5:4): 11-atomic, 10-mult, 01-branch, 00-arithmetic, 3-extra (sub/srai)
     // alu_op[2:0] directly operation, alu_op[2:0] copied from instr
 
+    logic ex_match;
     logic ls_match;
     logic wb_match;
 
+    assign ex_match = ((ex_rd == bus_out_rs1) || (ex_rd == bus_out_rs2)) && (ex_rd!=0);
     assign ls_match = ((ls_rd == bus_out_rs1) || (ls_rd == bus_out_rs2)) && (ls_rd!=0);
     assign wb_match = ((wb_rd == bus_out_rs1) || (wb_rd == bus_out_rs2)) && (wb_rd!=0);
 
     logic reg_match;
 
-    assign reg_match = ls_match | wb_match;
+    assign reg_match = ex_match | ls_match | wb_match;
 
     always_comb begin
         valid_right = valid_left & !reg_match;

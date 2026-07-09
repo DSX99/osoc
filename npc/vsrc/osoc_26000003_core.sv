@@ -271,6 +271,7 @@ module osoc_26000003_core (
         .valid_left(if_de_valid_de), .ready_left(if_de_ready_de), 
         .valid_right(de_ex_valid_de), .ready_right(de_ex_ready_de),
 
+        .ex_rd(de_ex_bus_rd_ex),
         .ls_rd(ex_ls_bus_rd_ls),
         .wb_rd(ls_wb_bus_rd_wb) 
     );
