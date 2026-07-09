@@ -60,7 +60,7 @@ module alu (
     logic ls_match = ((ls_rd == bus_in_rs1) || (ls_rd == bus_in_rs2)) && (ls_rd!=0);
     logic wb_match = ((wb_rd == bus_in_rs1) || (wb_rd == bus_in_rs2)) && (wb_rd!=0);
 
-    logic reg_match = ls_match || wb_match;
+    logic reg_match = ls_match | wb_match;
 
     always_comb begin
         valid_right = valid_left & !reg_match;
