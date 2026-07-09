@@ -190,7 +190,7 @@ void execute(uint64_t n){
       return; 
     }
 
-    for(int i = 0; i < 32; i++){
+    for(int i = 0; i < 16; i++){
       if(ref_cpu.gpr[i] != top->reg_mod->regs[i]){
         printf("Difference with REF %s, should:0x%08x, actually:0x%08x, pc: 0x%08x\n", 
                 regs[i], ref_cpu.gpr[i], top->reg_mod->regs[i], top->pc);
@@ -380,7 +380,7 @@ void execute(uint64_t n){
           return; 
         }
 
-        for(int i = 0; i < 32; i++){
+        for(int i = 0; i < 16; i++){
           if(ref_cpu.gpr[i] != top->reg_mod->regs[i]){
             printf("Difference with REF %s, should:0x%08x, actually:0x%08x, pc: 0x%08x\n", 
                    regs[i], ref_cpu.gpr[i], top->reg_mod->regs[i], top->pc);
