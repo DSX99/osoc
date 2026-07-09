@@ -316,6 +316,7 @@ void execute(uint64_t n){
     }
 
     if((!batch) && top->reg_valid_e && do_diff) difftest_exec(1);
+    
     if(contextp->gotFinish()){
       #ifdef CONFIG_FST
       tracep->close();

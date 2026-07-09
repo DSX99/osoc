@@ -473,7 +473,7 @@ module osoc_26000003_core (
         .valid(ls_wb_valid_wb), .ready(ls_wb_ready_wb)
     );
 
-    assign pc = ls_wb_bus_next_pc_wb-4;
+    assign pc = ls_wb_bus_next_pc_wb;
 
     always_comb begin
         case(ls_wb_bus_mux_select_wb)
