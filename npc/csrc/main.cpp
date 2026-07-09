@@ -315,8 +315,10 @@ void execute(uint64_t n){
       return;
     }
 
-    if((!batch) && top->reg_valid_e && do_diff) difftest_exec(1);
-
+    if((!batch) && top->reg_valid_e && do_diff){
+      printf("%d, %08x, %08x\n", contextp->time(),top->opcode,top->pc);
+      difftest_exec(1);
+    }
     if(contextp->gotFinish()){
       #ifdef CONFIG_FST
       tracep->close();
