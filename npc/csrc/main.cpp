@@ -62,6 +62,10 @@ void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 void reset(VysyxSoCFull *soc,int n){
   soc->reset=1;
   for(int i=0; i<n; i++){
+    #ifdef CONFIG_FST
+    contextp->timeInc(1);
+    tracep->dump(contextp->time());
+    #endif
     soc->clock=1;
     soc->eval();
     #ifdef CONFIG_FST
@@ -70,10 +74,6 @@ void reset(VysyxSoCFull *soc,int n){
     #endif
     soc->clock=0;
     soc->eval();
-    #ifdef CONFIG_FST
-    contextp->timeInc(1);
-    tracep->dump(contextp->time());
-    #endif
   }
   soc->reset=0;
 }
@@ -210,27 +210,24 @@ void execute(uint64_t n){
 
   while(n>0){
 
-    #ifdef CONFIG_FST
-    tracep->dump(contextp->time());
-    #endif
     
     // if(contextp->time() > MAX_SIM_TIME){
-    //   printf("MAX SIMTIME\n");
-    //   ret = top->reg_mod->regs[10];
-    //   break;
-    // }
-
-    if(!((contextp->time()) % 100000000)&&batch){
-      printf("time:%lu\n", contextp->time());
-    }
-
-    if(!batch && top->opcode!=0 && top->reg_valid_e){
-      inst[0] = (top->opcode) & 0xff;
-      inst[1] = (top->opcode >> 8) & 0xff;
-      inst[2] = (top->opcode >> 16) & 0xff;
-      inst[3] = (top->opcode >> 24) & 0xff;
-      disassemble(str, 128, top->pc, inst, 4);
-      if(n<10){
+      //   printf("MAX SIMTIME\n");
+      //   ret = top->reg_mod->regs[10];
+      //   break;
+      // }
+      
+      if(!((contextp->time()) % 100000000)&&batch){
+        printf("time:%lu\n", contextp->time());
+      }
+      
+      if(!batch && top->opcode!=0 && top->reg_valid_e){
+        inst[0] = (top->opcode) & 0xff;
+        inst[1] = (top->opcode >> 8) & 0xff;
+        inst[2] = (top->opcode >> 16) & 0xff;
+        inst[3] = (top->opcode >> 24) & 0xff;
+        disassemble(str, 128, top->pc, inst, 4);
+        if(n<10){
         printf("0x%08x: %02x %02x %02x %02x ", top->pc, inst[3], inst[2], inst[1], inst[0]);
         printf("%s\n", str);
       }
@@ -239,7 +236,10 @@ void execute(uint64_t n){
       point = (point+1)%ITRACE_VAL;
       #endif
     }
-
+    
+    #ifdef CONFIG_FST
+    tracep->dump(contextp->time());
+    #endif
     contextp->timeInc(1);
     soc->clock=!soc->clock;
     soc->eval();
