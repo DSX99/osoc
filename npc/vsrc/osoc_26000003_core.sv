@@ -777,32 +777,33 @@ always_ff @(posedge clk) begin
         de_ex_valid             <= 0;
 
         finish<=0;
-    end
-    else if (de_ex_ready_de && de_ex_valid_de) begin
-        opcode<=opcode_in;
+    end else begin
+        if (de_ex_ready_de && de_ex_valid_de) begin
+            opcode<=opcode_in;
 
-        de_ex_bus_pc            <= de_ex_bus_pc_de;
-        de_ex_bus_next_pc       <= de_ex_bus_next_pc_de;
-        de_ex_bus_imm           <= de_ex_bus_imm_de;
-        de_ex_bus_data_rs1      <= de_ex_bus_data_rs1_de;
-        de_ex_bus_data_rs2      <= de_ex_bus_data_rs2_de;
-        de_ex_bus_alu_op        <= de_ex_bus_alu_op_de;
-        de_ex_bus_csr_oper      <= de_ex_bus_csr_oper_de;
-        de_ex_bus_cause         <= de_ex_bus_cause_de;
-        de_ex_bus_lsu_we        <= de_ex_bus_lsu_we_de;
-        de_ex_bus_lsu_re        <= de_ex_bus_lsu_re_de;
-        de_ex_bus_lsu_oper      <= de_ex_bus_lsu_oper_de;
-        de_ex_bus_rd            <= de_ex_bus_rd_de;
-        de_ex_bus_rs1           <= de_ex_bus_rs1_de;
-        de_ex_bus_mux_select    <= de_ex_bus_mux_select_de;
-        de_ex_bus_mux_select_pc <= de_ex_bus_mux_select_pc_de;
+            de_ex_bus_pc            <= de_ex_bus_pc_de;
+            de_ex_bus_next_pc       <= de_ex_bus_next_pc_de;
+            de_ex_bus_imm           <= de_ex_bus_imm_de;
+            de_ex_bus_data_rs1      <= de_ex_bus_data_rs1_de;
+            de_ex_bus_data_rs2      <= de_ex_bus_data_rs2_de;
+            de_ex_bus_alu_op        <= de_ex_bus_alu_op_de;
+            de_ex_bus_csr_oper      <= de_ex_bus_csr_oper_de;
+            de_ex_bus_cause         <= de_ex_bus_cause_de;
+            de_ex_bus_lsu_we        <= de_ex_bus_lsu_we_de;
+            de_ex_bus_lsu_re        <= de_ex_bus_lsu_re_de;
+            de_ex_bus_lsu_oper      <= de_ex_bus_lsu_oper_de;
+            de_ex_bus_rd            <= de_ex_bus_rd_de;
+            de_ex_bus_rs1           <= de_ex_bus_rs1_de;
+            de_ex_bus_mux_select    <= de_ex_bus_mux_select_de;
+            de_ex_bus_mux_select_pc <= de_ex_bus_mux_select_pc_de;
 
-        finish<=finish_de;
-    end
-    if(de_ex_ready_ex) begin
-        de_ex_valid             <= de_ex_valid_de;
-        if(!de_ex_valid_de) begin
-            de_ex_bus_rd           <= 0;
+            finish<=finish_de;
+        end
+        if(de_ex_ready_ex) begin
+            de_ex_valid             <= de_ex_valid_de;
+            if(!de_ex_valid_de) begin
+                de_ex_bus_rd           <= 0;
+            end
         end
     end
 end
@@ -905,29 +906,30 @@ always_ff @(posedge clk) begin
         ex_ls_valid             <= '0;
 
         finish<=0;
-    end
-    else if (ex_ls_ready_ex && ex_ls_valid_ex) begin
-        opcode<=opcode_in;
+    end else begin
+        if (ex_ls_ready_ex && ex_ls_valid_ex) begin
+            opcode<=opcode_in;
 
-        ex_ls_bus_next_pc       <= ex_ls_bus_next_pc_ex;
-        ex_ls_bus_alu_out       <= ex_ls_bus_alu_out_ex;
-        ex_ls_bus_data_rs2      <= ex_ls_bus_data_rs2_ex;
-        ex_ls_bus_csr_out       <= ex_ls_bus_csr_out_ex;
-        ex_ls_bus_lsu_we        <= ex_ls_bus_lsu_we_ex;
-        ex_ls_bus_lsu_re        <= ex_ls_bus_lsu_re_ex;
-        ex_ls_bus_lsu_oper      <= ex_ls_bus_lsu_oper_ex;
-        ex_ls_bus_rd            <= ex_ls_bus_rd_ex;
-        ex_ls_bus_mux_select    <= ex_ls_bus_mux_select_ex;
-        ex_ls_bus_mux_select_pc <= ex_ls_bus_mux_select_pc_ex;
-        ex_ls_bus_branch        <= ex_ls_bus_branch_ex;
-        finish<=finish_ex;
-    end
-    if(ex_ls_ready_ls) begin
-        ex_ls_valid             <= ex_ls_valid_ex;
-        if(!ex_ls_valid_ex) begin
-            ex_ls_bus_rd        <=0;
-            ex_ls_bus_lsu_we    <= 0;
-            ex_ls_bus_lsu_re    <= 0;
+            ex_ls_bus_next_pc       <= ex_ls_bus_next_pc_ex;
+            ex_ls_bus_alu_out       <= ex_ls_bus_alu_out_ex;
+            ex_ls_bus_data_rs2      <= ex_ls_bus_data_rs2_ex;
+            ex_ls_bus_csr_out       <= ex_ls_bus_csr_out_ex;
+            ex_ls_bus_lsu_we        <= ex_ls_bus_lsu_we_ex;
+            ex_ls_bus_lsu_re        <= ex_ls_bus_lsu_re_ex;
+            ex_ls_bus_lsu_oper      <= ex_ls_bus_lsu_oper_ex;
+            ex_ls_bus_rd            <= ex_ls_bus_rd_ex;
+            ex_ls_bus_mux_select    <= ex_ls_bus_mux_select_ex;
+            ex_ls_bus_mux_select_pc <= ex_ls_bus_mux_select_pc_ex;
+            ex_ls_bus_branch        <= ex_ls_bus_branch_ex;
+            finish<=finish_ex;
+        end
+        if(ex_ls_ready_ls) begin
+            ex_ls_valid             <= ex_ls_valid_ex;
+            if(!ex_ls_valid_ex) begin
+                ex_ls_bus_rd        <=0;
+                ex_ls_bus_lsu_we    <= 0;
+                ex_ls_bus_lsu_re    <= 0;
+            end
         end
     end
 end
@@ -1014,22 +1016,23 @@ always_ff @(posedge clk) begin
         ls_wb_valid             <= '0;
         opcode<=0;
         finish<=0;
-    end
-    else if (ls_wb_ready_ls && ls_wb_valid_ls) begin
-        opcode<=opcode_in;
-        ls_wb_bus_alu_out       <= ls_wb_bus_alu_out_ls;
-        ls_wb_bus_lsu_out       <= ls_wb_bus_lsu_out_ls;
-        ls_wb_bus_next_pc       <= ls_wb_bus_next_pc_ls;
-        ls_wb_bus_csr_out       <= ls_wb_bus_csr_out_ls;
-        ls_wb_bus_rd            <= ls_wb_bus_rd_ls;
-        ls_wb_bus_mux_select    <= ls_wb_bus_mux_select_ls;
-        ls_wb_bus_mux_select_pc <= ls_wb_bus_mux_select_pc_ls;
-        ls_wb_bus_branch        <= ls_wb_bus_branch_ls;
-        finish<=finish_ls;
-    end
-    if(ls_wb_ready_wb) begin
-        ls_wb_valid             <= ls_wb_valid_ls;
-        if(!ls_wb_valid_ls) ls_wb_bus_rd<=0;
+    end else begin
+        if (ls_wb_ready_ls && ls_wb_valid_ls) begin
+            opcode<=opcode_in;
+            ls_wb_bus_alu_out       <= ls_wb_bus_alu_out_ls;
+            ls_wb_bus_lsu_out       <= ls_wb_bus_lsu_out_ls;
+            ls_wb_bus_next_pc       <= ls_wb_bus_next_pc_ls;
+            ls_wb_bus_csr_out       <= ls_wb_bus_csr_out_ls;
+            ls_wb_bus_rd            <= ls_wb_bus_rd_ls;
+            ls_wb_bus_mux_select    <= ls_wb_bus_mux_select_ls;
+            ls_wb_bus_mux_select_pc <= ls_wb_bus_mux_select_pc_ls;
+            ls_wb_bus_branch        <= ls_wb_bus_branch_ls;
+            finish<=finish_ls;
+        end
+        if(ls_wb_ready_wb) begin
+            ls_wb_valid             <= ls_wb_valid_ls;
+            if(!ls_wb_valid_ls) ls_wb_bus_rd<=0;
+        end
     end
 end
 
