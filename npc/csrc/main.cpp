@@ -64,8 +64,16 @@ void reset(VysyxSoCFull *soc,int n){
   for(int i=0; i<n; i++){
     soc->clock=1;
     soc->eval();
+    #ifdef CONFIG_FST
+    contextp->timeInc(1);
+    tracep->dump(contextp->time());
+    #endif
     soc->clock=0;
     soc->eval();
+    #ifdef CONFIG_FST
+    contextp->timeInc(1);
+    tracep->dump(contextp->time());
+    #endif
   }
   soc->reset=0;
 }
