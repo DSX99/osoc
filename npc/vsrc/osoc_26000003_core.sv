@@ -1003,7 +1003,7 @@ assign finish_wb = finish;
 assign opcode_out = opcode;
 
 always_ff @(posedge clk) begin
-    if (rst | flush) begin
+    if(flush) begin
         ls_wb_bus_alu_out       <= '0;
         ls_wb_bus_lsu_out       <= '0;
         ls_wb_bus_next_pc       <= '0;
