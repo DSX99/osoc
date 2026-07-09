@@ -365,6 +365,7 @@ void execute(uint64_t n){
 
         if (ref_cpu.pc != top->pc) {
           printf("Difference with REF pc, should:0x%08x, actually:0x%08x\n", ref_cpu.pc, top->pc);
+          printf("%d\n",contextp->time());
           ret = 1;
           inst[0] = (top->opcode) & 0xff;
           inst[1] = (top->opcode >> 8) & 0xff;
