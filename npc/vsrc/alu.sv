@@ -57,10 +57,15 @@ module alu (
     assign branch = bus_in_alu_op[5:4] == 2'b01;
     assign branch_taken = bus_out_branch;
 
-    logic ls_match = ((ls_rd == bus_in_rs1) || (ls_rd == bus_in_rs2)) && (ls_rd!=0);
-    logic wb_match = ((wb_rd == bus_in_rs1) || (wb_rd == bus_in_rs2)) && (wb_rd!=0);
+    logic ls_match;
+    logic wb_match;
 
-    logic reg_match = ls_match | wb_match;
+    assign ls_match = ((ls_rd == bus_in_rs1) || (ls_rd == bus_in_rs2)) && (ls_rd!=0);
+    assign wb_match = ((wb_rd == bus_in_rs1) || (wb_rd == bus_in_rs2)) && (wb_rd!=0);
+
+    logic reg_match;
+
+    assign reg_match = ls_match | wb_match;
 
     always_comb begin
         valid_right = valid_left & !reg_match;
