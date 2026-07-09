@@ -75,7 +75,7 @@ module osoc_26000003_core (
 
     assign rst = reset;
 
-    always_ff @(posedge clock) opcode <= opcode_over_wb; 
+    assign opcode = opcode_over_wb; 
 
     logic [31:0] opcode_over_ex, opcode_over_ls, opcode_over_wb;
 
