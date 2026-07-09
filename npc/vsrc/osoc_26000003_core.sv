@@ -273,8 +273,13 @@ module osoc_26000003_core (
 
         .ex_rd(de_ex_bus_rd_ex),
         .ls_rd(ex_ls_bus_rd_ls),
-        .wb_rd(ls_wb_bus_rd_wb) 
+        .wb_rd(ls_wb_bus_rd_wb),
+
+        .finish(finish_de)
     );
+
+    //finish routing
+    logic finish_de,finish_ex,finish_ls,finish_wb;
 
     // EXU Components
     logic de_ex_ready_alu, de_ex_ready_csr, ex_ls_valid_alu, ex_ls_valid_csr;
@@ -305,7 +310,7 @@ module osoc_26000003_core (
         .de_ex_valid_de             (de_ex_valid_de),
         .de_ex_ready_de             (de_ex_ready_de),
         
-        
+        .finish_de(finish_de),
 
         .de_ex_bus_pc_ex            (de_ex_bus_pc_ex),
         .de_ex_bus_next_pc_ex       (de_ex_bus_next_pc_ex),
@@ -323,7 +328,9 @@ module osoc_26000003_core (
         .de_ex_bus_mux_select_ex    (de_ex_bus_mux_select_ex),
         .de_ex_bus_mux_select_pc_ex (de_ex_bus_mux_select_pc_ex),
         .de_ex_valid_ex             (de_ex_valid_ex),
-        .de_ex_ready_ex             (de_ex_ready_ex)
+        .de_ex_ready_ex             (de_ex_ready_ex),
+
+        .finish_ex(finish_ex)
     );
 
     // Structural wrapper connection for the ALU module block
@@ -390,6 +397,7 @@ module osoc_26000003_core (
         .ex_ls_valid_ex             (ex_ls_valid_ex),
         .ex_ls_ready_ex             (ex_ls_ready_ex),
 
+        .finish_ex(finish_ex),
 
         .ex_ls_bus_next_pc_ls       (ex_ls_bus_next_pc_ls),
         .ex_ls_bus_alu_out_ls       (ex_ls_bus_alu_out_ls),
@@ -403,7 +411,9 @@ module osoc_26000003_core (
         .ex_ls_bus_mux_select_pc_ls (ex_ls_bus_mux_select_pc_ls),
         .ex_ls_bus_branch_ls        (ex_ls_bus_branch_ls),
         .ex_ls_valid_ls             (ex_ls_valid_ls),
-        .ex_ls_ready_ls             (ex_ls_ready_ls)
+        .ex_ls_ready_ls             (ex_ls_ready_ls),
+
+        .finish_ls(finish_ls)
     );
 
     // LSU Instance
@@ -456,6 +466,8 @@ module osoc_26000003_core (
         .ls_wb_valid_ls             (ls_wb_valid_ls),
         .ls_wb_ready_ls             (ls_wb_ready_ls),
 
+        .finish_ls(finish_ls),
+
         .ls_wb_bus_alu_out_wb       (ls_wb_bus_alu_out_wb),
         .ls_wb_bus_lsu_out_wb       (ls_wb_bus_lsu_out_wb),
         .ls_wb_bus_next_pc_wb       (ls_wb_bus_next_pc_wb),
@@ -465,7 +477,9 @@ module osoc_26000003_core (
         .ls_wb_bus_mux_select_pc_wb (ls_wb_bus_mux_select_pc_wb),
         .ls_wb_bus_branch_wb        (ls_wb_bus_branch_wb),
         .ls_wb_valid_wb             (ls_wb_valid_wb),
-        .ls_wb_ready_wb             (ls_wb_ready_wb)
+        .ls_wb_ready_wb             (ls_wb_ready_wb),
+
+        .finish_wb(finish_wb)
     );
 
     // WB / Regfile Instance
@@ -474,7 +488,8 @@ module osoc_26000003_core (
         .clk(clock), .rst(reset), .data_in(reg_in), 
         .rs1(de_ex_bus_rs1_de), .rs2(de_ex_bus_rs2_de), .rd(ls_wb_bus_rd_wb), 
         .data_rs1(de_ex_bus_data_rs1_de), .data_rs2(de_ex_bus_data_rs2_de), 
-        .valid(ls_wb_valid_wb), .ready(ls_wb_ready_wb)
+        .valid(ls_wb_valid_wb), .ready(ls_wb_ready_wb),
+        .finish(finish_wb)
     );
 
     always_comb begin
@@ -672,6 +687,8 @@ module de_ex_pipeline(
     input  logic        de_ex_valid_de,
     output logic        de_ex_ready_de,
 
+    input logic finish_de,
+
     // Execute stage outputs
     output logic [31:0] de_ex_bus_pc_ex,
     output logic [31:0] de_ex_bus_next_pc_ex,
@@ -689,7 +706,9 @@ module de_ex_pipeline(
     output logic [1:0]  de_ex_bus_mux_select_ex,
     output logic        de_ex_bus_mux_select_pc_ex,
     output logic        de_ex_valid_ex,
-    input  logic        de_ex_ready_ex
+    input  logic        de_ex_ready_ex,
+
+    output logic finish_ex,
 );
 
 logic [31:0] de_ex_bus_pc;
@@ -708,6 +727,7 @@ logic [4:0]  de_ex_bus_rs1;
 logic [1:0]  de_ex_bus_mux_select;
 logic        de_ex_bus_mux_select_pc;
 logic        de_ex_valid;
+logic        finish;
 
 logic [31:0] opcode;
 
@@ -731,6 +751,8 @@ always_comb begin
     de_ex_bus_mux_select_ex    = de_ex_bus_mux_select;
     de_ex_bus_mux_select_pc_ex = de_ex_bus_mux_select_pc;
     de_ex_valid_ex             = de_ex_valid;
+
+    finish_ex = finish;
 end
 
 always_ff @(posedge clk) begin
@@ -753,6 +775,8 @@ always_ff @(posedge clk) begin
         de_ex_bus_mux_select    <= 0;
         de_ex_bus_mux_select_pc <= 0;
         de_ex_valid             <= 0;
+
+        finish<=0;
     end
     else if (de_ex_ready_de && de_ex_valid_de) begin
         opcode<=opcode_in;
@@ -772,6 +796,8 @@ always_ff @(posedge clk) begin
         de_ex_bus_rs1           <= de_ex_bus_rs1_de;
         de_ex_bus_mux_select    <= de_ex_bus_mux_select_de;
         de_ex_bus_mux_select_pc <= de_ex_bus_mux_select_pc_de;
+
+        finish<=finish_de;
     end
     if(de_ex_ready_ex) begin
         de_ex_valid             <= de_ex_valid_de;
@@ -806,6 +832,8 @@ module ex_ls_pipeline(
     input  logic        ex_ls_valid_ex,
     output logic        ex_ls_ready_ex,
 
+    input logic finish_ex,
+
     // Load/Store stage outputs
     output logic [31:0] ex_ls_bus_next_pc_ls,
     output logic [31:0] ex_ls_bus_alu_out_ls,
@@ -819,7 +847,9 @@ module ex_ls_pipeline(
     output logic        ex_ls_bus_mux_select_pc_ls,
     output logic        ex_ls_bus_branch_ls,
     output logic        ex_ls_valid_ls,
-    input  logic        ex_ls_ready_ls
+    input  logic        ex_ls_ready_ls,
+
+    output logic finish_ls
 );
 
 logic [31:0] ex_ls_bus_next_pc;
@@ -834,6 +864,8 @@ logic [1:0]  ex_ls_bus_mux_select;
 logic        ex_ls_bus_mux_select_pc;
 logic        ex_ls_bus_branch;
 logic        ex_ls_valid;
+
+logic finish;
 
 logic [31:0] opcode;
 
@@ -853,6 +885,8 @@ assign ex_ls_bus_branch_ls        = ex_ls_bus_branch;
 assign ex_ls_valid_ls             = ex_ls_valid;
 assign opcode_out = opcode;
 
+assign finish_ls = finish;
+
 always_ff @(posedge clk) begin
     if (rst || flush) begin
         opcode<=0;
@@ -869,6 +903,8 @@ always_ff @(posedge clk) begin
         ex_ls_bus_mux_select_pc <= '0;
         ex_ls_bus_branch        <= '0;
         ex_ls_valid             <= '0;
+
+        finish<=0;
     end
     else if (ex_ls_ready_ex && ex_ls_valid_ex) begin
         opcode<=opcode_in;
@@ -884,11 +920,14 @@ always_ff @(posedge clk) begin
         ex_ls_bus_mux_select    <= ex_ls_bus_mux_select_ex;
         ex_ls_bus_mux_select_pc <= ex_ls_bus_mux_select_pc_ex;
         ex_ls_bus_branch        <= ex_ls_bus_branch_ex;
+        finish<=finish_ex;
     end
     if(ex_ls_ready_ls) begin
         ex_ls_valid             <= ex_ls_valid_ex;
         if(!ex_ls_valid_ex) begin
             ex_ls_bus_rd        <=0;
+            ex_ls_bus_lsu_we    <= 0;
+            ex_ls_bus_lsu_re    <= 0;
         end
     end
 end
@@ -915,6 +954,8 @@ module ls_wb_pipeline(
     input  logic        ls_wb_valid_ls,
     output logic        ls_wb_ready_ls,
 
+    input logic finish_ls,
+
     // Writeback stage outputs
     output logic [31:0] ls_wb_bus_alu_out_wb,
     output logic [31:0] ls_wb_bus_lsu_out_wb,
@@ -925,7 +966,9 @@ module ls_wb_pipeline(
     output logic        ls_wb_bus_mux_select_pc_wb,
     output logic        ls_wb_bus_branch_wb,
     output logic        ls_wb_valid_wb,
-    input  logic        ls_wb_ready_wb
+    input  logic        ls_wb_ready_wb,
+
+    output logic finish_wb
 );
 
 logic [31:0] ls_wb_bus_alu_out;
@@ -937,6 +980,8 @@ logic [1:0]  ls_wb_bus_mux_select;
 logic        ls_wb_bus_mux_select_pc;
 logic        ls_wb_bus_branch;
 logic        ls_wb_valid;
+
+logic finish;
 
 logic [31:0] opcode;
 
@@ -952,6 +997,8 @@ assign ls_wb_bus_mux_select_pc_wb = ls_wb_bus_mux_select_pc;
 assign ls_wb_bus_branch_wb        = ls_wb_bus_branch;
 assign ls_wb_valid_wb             = ls_wb_valid;
 
+assign finish_wb = finish;
+
 assign opcode_out = opcode;
 
 always_ff @(posedge clk) begin
@@ -966,6 +1013,7 @@ always_ff @(posedge clk) begin
         ls_wb_bus_branch        <= '0;
         ls_wb_valid             <= '0;
         opcode<=0;
+        finish<=0;
     end
     else if (ls_wb_ready_ls && ls_wb_valid_ls) begin
         opcode<=opcode_in;
@@ -977,6 +1025,7 @@ always_ff @(posedge clk) begin
         ls_wb_bus_mux_select    <= ls_wb_bus_mux_select_ls;
         ls_wb_bus_mux_select_pc <= ls_wb_bus_mux_select_pc_ls;
         ls_wb_bus_branch        <= ls_wb_bus_branch_ls;
+        finish<=finish_ls;
     end
     if(ls_wb_ready_wb) begin
         ls_wb_valid             <= ls_wb_valid_ls;

@@ -9,7 +9,9 @@ module regs (
     output logic [31:0] data_rs2,
     
     input logic valid,
-    output logic ready
+    output logic ready,
+
+    input logic finish
 );
     
     logic [31:0] regs [15:0] /* verilator public */; 
@@ -21,6 +23,12 @@ module regs (
 
         data_rs1 = regs[rs1[3:0]];
         data_rs2 = regs[rs2[3:0]];
+    end
+
+    always_comb begin
+        `ifndef SYNTHESIS
+        if(finish) $finish;
+        `endif 
     end
 
     always_ff @(posedge clk) begin

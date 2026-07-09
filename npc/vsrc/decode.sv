@@ -30,7 +30,9 @@ module decode (
 
     input  logic [4:0] ex_rd,
     input  logic [4:0] ls_rd,
-    input  logic [4:0] wb_rd
+    input  logic [4:0] wb_rd,
+
+    output logic finish
 );
 
     logic [31:0] imm_i, imm_s, imm_b, imm_u, imm_j;
@@ -89,6 +91,8 @@ module decode (
         bus_out_rd            = '0;
         bus_out_mux_select    = '0;
         bus_out_mux_select_pc = '0;
+
+        finish = 0;
 
         case(inst[6:0])
             7'b0110111: begin // LUI
@@ -165,9 +169,7 @@ module decode (
                 case(func3)
                     3'b000: begin
                         if(!(|func7) && rs2_val==1) begin
-                            `ifndef SYNTHESIS
-                            $finish;
-                            `endif
+                            finish=1;
                         end else if(!(|func7 | |rs2_val)) begin
                             bus_out_cause         = 5'd11;
                             bus_out_alu_op        = 8'b10010000;
