@@ -34,8 +34,8 @@ module alu (
     output logic ready_left, valid_right,
 
     
-    input logic [31:0] bus_in_rs1,
-    input logic [31:0] bus_in_rs2,
+    input logic [4:0] bus_in_rs1,
+    input logic [4:0] bus_in_rs2,
 
     input  logic [4:0] ls_rd,
     input  logic [4:0] wb_rd,
