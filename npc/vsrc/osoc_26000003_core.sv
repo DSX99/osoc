@@ -991,7 +991,7 @@ always_ff @(posedge clk) begin
     end
     if(ls_wb_ready_wb) begin
         ls_wb_valid             <= ls_wb_valid_ls;
-        if(1ls_wb_valid_ls) ls_wb_bus_rd<=0;
+        if(!ls_wb_valid_ls) ls_wb_bus_rd<=0;
     end
 end
 
