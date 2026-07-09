@@ -359,7 +359,7 @@ void execute(uint64_t n){
     }
     n--;
     
-    if(!batch && do_diff) {
+    if(!batch && do_diff && top->reg_valid_e) {
         difftest_regcpy(&ref_cpu, 0);
 
         if (ref_cpu.pc != top->pc) {
