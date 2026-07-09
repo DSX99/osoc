@@ -61,7 +61,7 @@ lint:
 build: sim 
 	@mkdir -p obj_dir
 	@gcc -c $(VERILATOR_CFLAGS) -O2 $(NEMU_HOME)/src/utils/disasm.c -o obj_dir/disasm.o
-	@$(VERILATOR) $(OSOC_SRC) $(VERILOG_FLAGS) --top-module ysyxSoCFull  $(OSOC_CPP_SRC) $(addprefix -CFLAGS , $(INCFLAGS))
+	$(VERILATOR) $(OSOC_SRC) $(VERILOG_FLAGS) --top-module ysyxSoCFull  $(OSOC_CPP_SRC) $(addprefix -CFLAGS , $(INCFLAGS))
 	@$(MAKE) -j -C obj_dir -f VysyxSoCFull.mk 
 
 run: build
