@@ -12,23 +12,23 @@ module regs (
     output logic ready
 );
     
-    logic [31:0] regs [31:0] /* verilator public */; 
+    logic [31:0] regs [15:0] /* verilator public */; 
 
     always_comb begin
         ready=1;
 
-        data_rs1 = regs[rs1];
-        data_rs2 = regs[rs2];
+        data_rs1 = regs[rs1[3:0]];
+        data_rs2 = regs[rs2[3:0]];
     end
 
     always_ff @(posedge clk) begin
         if(rst) begin
-            for (int i=0;i<32;i++) begin
+            for (int i=0;i<15;i++) begin
                 regs[i]<=0;
             end
         end else begin
             if(valid) begin
-                regs[rd]<=data_in;
+                regs[rd[3:0]]<=data_in;
                 regs[0]<=0;
             end
         end

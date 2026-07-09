@@ -69,9 +69,7 @@ module axi4_delayer(
   assign out_arsize = in_arsize;
   assign out_arburst = in_arburst;
   assign in_rid = out_rid;
-  assign in_rdata = out_rdata;
   assign in_rresp = out_rresp;
-  assign in_rlast = out_rlast;
   assign out_awid = in_awid;
   assign out_awaddr = in_awaddr;
   assign out_awlen = in_awlen;
@@ -94,19 +92,24 @@ module axi4_delayer(
   assign out_wvalid = in_wvalid;
   
 
-
-  assign out_rready = ready_r ? in_rready : 1'b0;
-  assign in_rvalid = ready_r ? out_rvalid : 1'b0;
+  assign out_rready = 1;
+  assign in_rvalid = ready_r ? 1'b1 : 1'b0;
+  assign {in_rdata, in_rlast} = ready_r ? FIFO_r[0] : 33'b0;
   
   assign out_bready = ready_w ? in_bready : 1'b0;
   assign in_bvalid = ready_w ? out_bvalid : 1'b0;
 
-  parameter ADD = 181;
+  parameter ADD = 347;
 
   reg set;
   reg [9:0] count_r, count_w;
-  reg [19:0] delay_r, delay_w ;
+  reg [3:0] burst_count_r, burst_count_w;
+  reg [19:0] delay_r, delay_w;
   wire ready_r, ready_w;
+
+  reg [32:0] FIFO_r [7:0];
+  reg [2:0] FIFO_r_count;
+  reg [2:0] out_count;
 
   assign ready_r = delay_r[19:10] > count_r;
   assign ready_w = delay_w[19:10] > count_w;
@@ -118,6 +121,10 @@ module axi4_delayer(
       count_w<=0;
       delay_r<=0;
       delay_w<=0;
+      FIFO_r_count<=0;
+      for(int i=0; i<8; i=i+1) begin
+        FIFO_r[i]<=0;
+      end
     end else begin
       if(in_awvalid) begin
         count_w<=count_w+ 1;
@@ -134,19 +141,38 @@ module axi4_delayer(
         delay_w<=0;
       end
 
+
+
+
+
       if(in_arvalid) begin
         count_r<=count_r+ 1;
         delay_r<=ADD;
+        set<=1;
       end
-      if(count_r!=0 && out_rvalid!=1)begin
+      if(out_rvalid && out_rready)begin
+        FIFO_r[FIFO_r_count] <= {out_rdata, out_rlast};
+        FIFO_r_count <= FIFO_r_count + 1;
+      end
+      if(out_rvalid && out_rlast) set<=0;
+      if(!(out_rvalid && out_rlast) && set)begin
         count_r<=count_r+1;
       end
       if(delay_r!=0) begin
         delay_r<=delay_r+ADD;
       end
-      if(ready_r && in_rready && out_rvalid) begin
-        count_r<=0;
-        delay_r<=0;
+      if(ready_r && in_rready) begin
+        if(in_rlast) begin
+          count_r<=0;
+          delay_r<=0;
+          FIFO_r[7]<=0;
+          FIFO_r_count<=0;
+        end else begin
+          for(int i=0;i<7;i=i+1)begin
+            FIFO_r[i]<=FIFO_r[i+1];
+          end
+          FIFO_r[7]<=0;
+        end
       end
     end
   end

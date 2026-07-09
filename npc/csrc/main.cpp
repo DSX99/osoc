@@ -41,7 +41,8 @@ uint64_t cycles[3];
 
 int stage=0;
 int prev_ifu=0,prev_lsu_r=0,prev_lsu_w=0;
-
+uint32_t prev_pc;
+int stall_count=0;
 
 char itrace[16][128];
 int point=0;
@@ -257,13 +258,13 @@ void execute(uint64_t n){
     }
     
     //couting performance
-    if(top->if_id_valid == 0){
+    if(top->if_de_valid_if == 0){
       program[stage].ifu_stall_cycle++;
     }
-    if(top->if_id_valid && prev_ifu == 0){
+    if((top->if_de_valid_if && top->if_de_ready_if) && prev_ifu == 0){
       program[stage].ifu_fetch_instr++;
     }
-    prev_ifu = top->if_id_valid;
+    prev_ifu = (top->if_de_valid_if && top->if_de_ready_if);
     if(top->branch){
       program[stage].possible_branch_count++;
     }
@@ -291,7 +292,15 @@ void execute(uint64_t n){
     if(top->cache_miss) program[stage].cache_miss_cycles++;
     }
 
-
+    if(top->pc == prev_pc){
+      stall_count++;
+      if(stall_count>2000000 && !(stall_count % 500000)){
+        printf("Possibly infinite stall\n");
+      }
+    }else{
+      stall_count=0;
+    }
+    prev_pc = top->pc;
 
     if(fail){ 
       printf("failed\n");

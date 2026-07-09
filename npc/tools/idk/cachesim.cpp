@@ -41,7 +41,7 @@ cache_t cache[MAX_LINES][MAX_ROWS];
 result_t results[40];
 uint32_t count=0;
 
-double latency[3] = {2268.55, 2.00, 38.91};
+double latency[3] = {1695.935976169139, 2.00, 29.088567072685716};
 
 uint32_t rows[2] = {1,2};
 uint32_t curr_row=0;

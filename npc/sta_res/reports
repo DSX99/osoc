@@ -693,3 +693,184 @@ test list [1 item(s)]: wanshu
 [        wanshu] PASS
 
 
+
+//with burst
+dsx99@dsx-99:~/osoc/ysyx-workbench/am-kernels/tests/cpu-tests$ make run ALL=wanshu
+
+                RUNNING WITH FST
+
+                RUNNING WITH OP_TRACE
+
+NPC
+
+The image is /home/dsx99/osoc/ysyx-workbench/am-kernels/tests/cpu-tests/build/wanshu-riscv32-ysyx.bin, size = 1100
+time:0
+- vsrc/decode.sv:153: Verilog $finish
+- vsrc/decode.sv:153: Verilog $finish
+GOOD
+Finished in 3870822
+
+=========================================================================================================
+                                    MULTI-STAGE PERFORMANCE REPORT                                       
+=========================================================================================================
+ Performance Metric                   | 0: PREBOOT           | 1: BOOT              | 2: PROGRAM           
+---------------------------------------------------------------------------------------------------------
+ Execution Cycles                     | 1218238              | 272087               | 445086               
+ Instructions Retired (WB)            | 2537                 | 440                  | 17051                
+ Cycles Per Instruction (CPI)         | 480.188              | 618.380              | 26.103               
+ Instructions Per Cycle (IPC)         | 0.002                | 0.002                | 0.038                
+---------------------------------------------------------------------------------------------------------
+ IFU Fetched Instructions             | 4                    | 27                   | 3265                 
+ IFU Stall Cycles                     | 72578 (6.0%)         | 432 (0.2%)           | 427494 (96.0%)       
+---------------------------------------------------------------------------------------------------------
+ Control Branches + Jumps Executed    | 507                  | 53                   | 7920                 
+ Branches + Jumps Taken               | 505 (99.6%)          | 42 (79.2%)           | 4065 (51.3%)         
+---------------------------------------------------------------------------------------------------------
+ LSU Data Reads (Loads)               | 504                  | 118                  | 9                    
+ LSU Data Writes (Stores)             | 505                  | 128                  | 7                    
+ LSU Stall Cycles                     | 1143113 (93.8%)      | 271215 (99.7%)       | 542 (0.1%)           
+---------------------------------------------------------------------------------------------------------
+ Cache Hits                           | 2533 (99.8%)         | 413 (93.9%)          | 13786 (80.9%)        
+ Cache Misses                         | 4 (0.2%)             | 27 (6.1%)            | 3265 (19.1%)         
+ Cache Miss Penalty Cycles            | 72578                | 432                  | 427494               
+ Avg Cache Miss Latency (cyc)         | 18144.50             | 16.00                | 130.93               
+=========================================================================================================
+ AMAT (cycles)                        | 28.6                 | 1.0                  | 25.1                 
+=========================================================================================================
+
+test list [1 item(s)]: wanshu
+[        wanshu] PASS
+
+
+
+dsx99@dsx-99:~/osoc/ysyx-workbench/am-kernels/benchmarks/microbench$ make run mainargs=train
+
+make -C /home/dsx99/osoc/ysyx-workbench/npc run ARGS=""-b" " IMG=/home/dsx99/osoc/ysyx-workbench/am-kernels/benchmarks/microbench/build/microbench-riscv32-ysyx.bin
+make[1]: Entering directory '/home/dsx99/osoc/ysyx-workbench/npc'
+make[2]: Entering directory '/home/dsx99/osoc/ysyx-workbench'
+make[2]: Leaving directory '/home/dsx99/osoc/ysyx-workbench'
+make[2]: Entering directory '/home/dsx99/osoc/ysyx-workbench/npc/obj_dir'
+make[2]: Nothing to be done for 'default'.
+make[2]: Leaving directory '/home/dsx99/osoc/ysyx-workbench/npc/obj_dir'
+
+                RUNNING WITH FST
+
+NPC
+
+The image is /home/dsx99/osoc/ysyx-workbench/am-kernels/benchmarks/microbench/build/microbench-riscv32-ysyx.bin, size = 29568
+time:0
+======= Running MicroBench [input *train*] =======
+[qsort] Quick sort: ^Cmake[1]: *** [Makefile:68: run] Interrupt
+make: *** [/home/dsx99/osoc/ysyx-workbench/abstract-machine/scripts/platform/ysyx.mk:35: run] Interrupt
+
+dsx99@dsx-99:~/osoc/ysyx-workbench/am-kernels/benchmarks/microbench$ make run mainargs=train
+make -C /home/dsx99/osoc/ysyx-workbench/npc run ARGS=""-b" " IMG=/home/dsx99/osoc/ysyx-workbench/am-kernels/benchmarks/microbench/build/microbench-riscv32-ysyx.bin
+make[1]: Entering directory '/home/dsx99/osoc/ysyx-workbench/npc'
+make[2]: Entering directory '/home/dsx99/osoc/ysyx-workbench'
+make[2]: Leaving directory '/home/dsx99/osoc/ysyx-workbench'
+make[2]: Entering directory '/home/dsx99/osoc/ysyx-workbench/npc/obj_dir'
+ccache g++  -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=1 -DVM_TRACE_FST=1 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/capstone/repo/include -I/home/dsx99/osoc/ysyx-workbench/nemu/include -g -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/repo -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/repo/build -DCONFIG_ISA_riscv32   -Os  -c -o dpi.o ../csrc/dpi.cpp
+ccache g++  -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=1 -DVM_TRACE_FST=1 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/capstone/repo/include -I/home/dsx99/osoc/ysyx-workbench/nemu/include -g -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/repo -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/repo/build -DCONFIG_ISA_riscv32   -Os  -c -o main.o ../csrc/main.cpp
+ccache g++  -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=1 -DVM_TRACE_FST=1 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/capstone/repo/include -I/home/dsx99/osoc/ysyx-workbench/nemu/include -g -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/repo -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/repo/build -DCONFIG_ISA_riscv32   -Os  -c -o sdb.o ../csrc/sdb.cpp
+g++    dpi.o expr.o main.o sdb.o watchpoint.o verilated.o verilated_dpi.o verilated_fst_c.o verilated_threads.o VysyxSoCFull__ALL.a   -lz -lreadline -L/home/dsx99/osoc/ysyx-workbench/nemu/tools/capstone/repo -lcapstone /home/dsx99/osoc/ysyx-workbench/npc/obj_dir/disasm.o /home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/build/riscv32-spike-so  -pthread -lpthread -latomic   -o VysyxSoCFull
+make[2]: Leaving directory '/home/dsx99/osoc/ysyx-workbench/npc/obj_dir'
+
+NPC
+
+The image is /home/dsx99/osoc/ysyx-workbench/am-kernels/benchmarks/microbench/build/microbench-riscv32-ysyx.bin, size = 29568
+time:0
+======= Running MicroBench [input *train*] =======
+[qsort] Quick sort: time:100000000
+* Passed.
+  min time: 365.516 ms [0]
+[queen] Queen placement: time:200000000
+time:300000000
+* Passed.
+  min time: 805.324 ms [0]
+[bf] Brainf**k interpreter: time:400000000
+time:500000000
+time:600000000
+time:700000000
+time:800000000
+* Passed.
+  min time: 1935.242 ms [0]
+[fib] Fibonacci number: time:900000000
+time:1000000000
+time:1100000000
+time:1200000000
+time:1300000000
+time:1400000000
+time:1500000000
+time:1600000000
+time:1700000000
+time:1800000000
+time:1900000000
+time:2000000000
+* Passed.
+  min time: 4456.216 ms [0]
+[sieve] Eratosthenes sieve: * Passed.
+  min time: 232.510 ms [0]
+[15pz] A* 15-puzzle search: time:2100000000
+time:2200000000
+* Passed.
+  min time: 677.336 ms [0]
+[dinic] Dinic's maxflow algorithm: time:2300000000
+time:2400000000
+* Passed.
+  min time: 592.742 ms [0]
+[lzip] Lzip compression: time:2500000000
+time:2600000000
+time:2700000000
+* Passed.
+  min time: 656.362 ms [0]
+[ssort] Suffix sort: time:2800000000
+* Passed.
+  min time: 628.004 ms [0]
+[md5] MD5 digest: time:2900000000
+time:3000000000
+time:3100000000
+time:3200000000
+time:3300000000
+time:3400000000
+time:3500000000
+* Passed.
+  min time: 1558.842 ms [0]
+==================================================
+MicroBench PASS
+Scored time: 11908.094 ms
+Total  time: 13765.718 ms
+- vsrc/decode.sv:153: Verilog $finish
+- vsrc/decode.sv:153: Verilog $finish
+GOOD
+Finished in 3501801080
+
+=========================================================================================================
+                                    MULTI-STAGE PERFORMANCE REPORT                                       
+=========================================================================================================
+ Performance Metric                   | 0: PREBOOT           | 1: BOOT              | 2: PROGRAM           
+---------------------------------------------------------------------------------------------------------
+ Execution Cycles                     | 662071               | 8694991              | 1741543478           
+ Instructions Retired (WB)            | 2637                 | 20005                | 196019886            
+ Cycles Per Instruction (CPI)         | 251.070              | 434.641              | 8.885                
+ Instructions Per Cycle (IPC)         | 0.004                | 0.002                | 0.113                
+---------------------------------------------------------------------------------------------------------
+ IFU Fetched Instructions             | 4                    | 28                   | 13166805             
+ IFU Stall Cycles                     | 37938 (5.7%)         | 448 (0.0%)           | 1011222781 (58.1%)   
+---------------------------------------------------------------------------------------------------------
+ Control Branches + Jumps Executed    | 527                  | 1828                 | 56776488             
+ Branches + Jumps Taken               | 525 (99.6%)          | 1816 (99.3%)         | 42591505 (75.0%)     
+---------------------------------------------------------------------------------------------------------
+ LSU Data Reads (Loads)               | 524                  | 7234                 | 15832424             
+ LSU Data Writes (Stores)             | 525                  | 7244                 | 7257382              
+ LSU Stall Cycles                     | 621486 (93.9%)       | 8674538 (99.8%)      | 534300812 (30.7%)    
+---------------------------------------------------------------------------------------------------------
+ Cache Hits                           | 2633 (99.8%)         | 19977 (99.9%)        | 182853081 (93.3%)    
+ Cache Misses                         | 4 (0.2%)             | 28 (0.1%)            | 13166805 (6.7%)      
+ Cache Miss Penalty Cycles            | 37938                | 448                  | 1011222781           
+ Avg Cache Miss Latency (cyc)         | 9484.50              | 16.00                | 76.80                
+=========================================================================================================
+ AMAT (cycles)                        | 14.4                 | 0.0                  | 5.2                  
+=========================================================================================================
+
+make[1]: Leaving directory '/home/dsx99/osoc/ysyx-workbench/npc'
+dsx99@dsx-99:~/osoc/ysyx-workbench/am-kernels/benchmarks/microbench$ 

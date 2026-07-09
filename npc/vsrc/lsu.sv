@@ -21,6 +21,7 @@ module lsu (
     output logic [4:0]  bus_out_rd,            
     output logic [1:0]  bus_out_mux_select,    
     output logic        bus_out_mux_select_pc, 
+    output logic        bus_out_branch,
 
     input  logic valid_left, ready_right,
     output logic ready_left, valid_right,
@@ -56,7 +57,7 @@ module lsu (
 
     always_comb begin
 
-        unused_branch = bus_in_branch | |rresp | |bresp;
+        unused_branch = |rresp | |bresp;
 
         bus_out_alu_out       = 0;
         bus_out_next_pc       = 0;

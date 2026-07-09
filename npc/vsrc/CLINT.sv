@@ -9,11 +9,12 @@ module CLINT(
     output logic carready, cawready, cwready,
 
     input logic crready,
-    output logic crvalid
+    output logic crvalid,
+    output logic crlast
 );
 
-parameter NUM = 3; //possibly can be changed on start of simulation, may be good
-parameter DEN = 1698;
+parameter NUM = 2; //possibly can be changed on start of simulation, may be good
+parameter DEN = 253;
 
 logic [11:0]  divisor; 
 logic [63:0] mtime; 
@@ -30,6 +31,7 @@ assign unused_bits = |caddr[31:16]| |cwdata;
 assign cwready = cwvalid;
 assign cawready = cawvalid;
 assign carready = carvalid;
+assign crlast = 1;
 
 typedef enum{
 IDLE_R, WAIT_RR, WAIT_RRESP
