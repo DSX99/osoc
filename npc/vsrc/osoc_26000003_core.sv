@@ -1003,8 +1003,7 @@ assign finish_wb = finish;
 assign opcode_out = opcode;
 
 always_ff @(posedge clk) begin
-    if(flush) begin
-        $display("1");
+    if (rst) begin
         ls_wb_bus_alu_out       <= '0;
         ls_wb_bus_lsu_out       <= '0;
         ls_wb_bus_next_pc       <= '0;
@@ -1032,6 +1031,10 @@ always_ff @(posedge clk) begin
         if(ls_wb_ready_wb) begin
             ls_wb_valid             <= ls_wb_valid_ls;
             if(!ls_wb_valid_ls) ls_wb_bus_rd<=0;
+        end
+
+        if(ls_wb_bus_branch_wb) begin
+            $display("1");
         end
     end
 end
