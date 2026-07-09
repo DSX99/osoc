@@ -176,7 +176,7 @@ module lsu (
         end
         end
 
-        valid_right   = valid_left && (!bus_in_lsu_re || done_r) && (!bus_in_lsu_we || done_w); 
+        valid_right   = (valid_left && (!bus_in_lsu_re || done_r) && (!bus_in_lsu_we || done_w)) || (rvalid && rready) || (bvalid && bready); 
         ready_left    = ready_right && (!bus_in_lsu_re || done_r) && (!bus_in_lsu_we || done_w);
     end
 
