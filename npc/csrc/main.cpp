@@ -271,14 +271,14 @@ void execute(uint64_t n){
     if(top->branch_taken){
       program[stage].branch_taken++;
     }
-    if(top->ex_ls_valid && !top->ex_ls_ready){
+    if(top->ex_ls_valid_ls && !top->ex_ls_ready_ls){
       program[stage].lsu_stall_cycle++;
     }
-    if(top->ex_ls_valid && top->ex_ls_ready){
-      if(top->ex_ls_bus_lsu_re){
+    if(top->ex_ls_valid_ls && top->ex_ls_ready_ls){
+      if(top->ex_ls_bus_lsu_re_ls){
         program[stage].lsu_read_data++;
       }
-      if(top->ex_ls_bus_lsu_we){
+      if(top->ex_ls_bus_lsu_we_ls){
         program[stage].lsu_write_data++;
       }
     }
