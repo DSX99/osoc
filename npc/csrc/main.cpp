@@ -258,13 +258,13 @@ void execute(uint64_t n){
     }
     
     //couting performance
-    if(top->if_id_valid == 0){
+    if(top->if_de_valid_if == 0){
       program[stage].ifu_stall_cycle++;
     }
-    if(top->if_id_valid && prev_ifu == 0){
+    if((top->if_de_valid_if && top->if_de_ready_if) && prev_ifu == 0){
       program[stage].ifu_fetch_instr++;
     }
-    prev_ifu = top->if_id_valid;
+    prev_ifu = (top->if_de_valid_if && top->if_de_ready_if);
     if(top->branch){
       program[stage].possible_branch_count++;
     }
