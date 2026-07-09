@@ -137,7 +137,6 @@ module osoc_26000003_core (
     logic [4:0]  de_ex_bus_rs1_de;
     logic [4:0]  de_ex_bus_rs2_de;
     logic [4:0]  de_ex_bus_rs1_ex;
-    logic [4:0]  de_ex_bus_rs2_ex;
 
     logic [31:0] de_ex_bus_data_rs1_de;
     logic [31:0] de_ex_bus_data_rs2_de;
@@ -1004,7 +1003,7 @@ assign finish_wb = finish;
 assign opcode_out = opcode;
 
 always_ff @(posedge clk) begin
-    if (rst || flush) begin
+    if (rst | flush) begin
         ls_wb_bus_alu_out       <= '0;
         ls_wb_bus_lsu_out       <= '0;
         ls_wb_bus_next_pc       <= '0;
