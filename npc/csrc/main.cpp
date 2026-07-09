@@ -293,7 +293,7 @@ void execute(uint64_t n){
     if(top->reg_valid){
       program[stage].writeback++;
     }
-    if(top->pc != top->prev_pc){
+    if(top->pc != prev_pc){
       if(top->cache_hit) program[stage].cache_hit++;
       if(top->cache_miss) program[stage].cache_miss++;
     }
