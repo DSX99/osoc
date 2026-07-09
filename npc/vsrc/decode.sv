@@ -60,8 +60,8 @@ module decode (
     logic ls_match;
     logic wb_match;
 
-    assign ls_match = ((ls_rd == bus_in_rs1) || (ls_rd == bus_in_rs2)) && (ls_rd!=0);
-    assign wb_match = ((wb_rd == bus_in_rs1) || (wb_rd == bus_in_rs2)) && (wb_rd!=0);
+    assign ls_match = ((ls_rd == bus_out_rs1) || (ls_rd == bus_out_rs2)) && (ls_rd!=0);
+    assign wb_match = ((wb_rd == bus_out_rs1) || (wb_rd == bus_out_rs2)) && (wb_rd!=0);
 
     logic reg_match;
 

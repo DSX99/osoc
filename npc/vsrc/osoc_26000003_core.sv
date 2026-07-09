@@ -776,7 +776,6 @@ always_ff @(posedge clk) begin
         de_ex_valid             <= de_ex_valid_de;
         if(!de_ex_valid_de) begin
             de_ex_bus_rs1           <= 0;
-            de_ex_bus_rs2           <= 0;
         end
     end
 end
