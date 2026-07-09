@@ -137,6 +137,7 @@ module osoc_26000003_core (
     logic [4:0]  de_ex_bus_rs1_de;
     logic [4:0]  de_ex_bus_rs2_de;
     logic [4:0]  de_ex_bus_rs1_ex;
+    logic [4:0]  de_ex_bus_rs2_ex;
 
     logic [31:0] de_ex_bus_data_rs1_de;
     logic [31:0] de_ex_bus_data_rs2_de;
@@ -295,6 +296,7 @@ module osoc_26000003_core (
         .de_ex_bus_lsu_oper_de      (de_ex_bus_lsu_oper_de),
         .de_ex_bus_rd_de            (de_ex_bus_rd_de),
         .de_ex_bus_rs1_de           (de_ex_bus_rs1_de),
+        .de_ex_bus_rs2_de           (de_ex_bus_rs2_de),
         .de_ex_bus_mux_select_de    (de_ex_bus_mux_select_de),
         .de_ex_bus_mux_select_pc_de (de_ex_bus_mux_select_pc_de),
         .de_ex_valid_de             (de_ex_valid_de),
@@ -315,6 +317,7 @@ module osoc_26000003_core (
         .de_ex_bus_lsu_oper_ex      (de_ex_bus_lsu_oper_ex),
         .de_ex_bus_rd_ex            (de_ex_bus_rd_ex),
         .de_ex_bus_rs1_ex           (de_ex_bus_rs1_ex),
+        .de_ex_bus_rs2_ex           (de_ex_bus_rs2_ex),
         .de_ex_bus_mux_select_ex    (de_ex_bus_mux_select_ex),
         .de_ex_bus_mux_select_pc_ex (de_ex_bus_mux_select_pc_ex),
         .de_ex_valid_ex             (de_ex_valid_ex),
@@ -348,6 +351,10 @@ module osoc_26000003_core (
         .valid_left(de_ex_valid_ex), .ready_left(de_ex_ready_alu),
         .valid_right(ex_ls_valid_alu), .ready_right(ex_ls_ready_ex),
 
+        .bus_in_rs1(de_ex_bus_rs1_ex),
+        .bus_in_rs2(de_ex_bus_rs2_ex),       
+        .ls_rd(ex_ls_bus_rd_ls),
+        .wb_rd(ls_wb_bus_rd_wb), 
         .branch(branch), .branch_taken(branch_taken)
     );
 
@@ -663,6 +670,7 @@ module de_ex_pipeline(
     input  logic [2:0]  de_ex_bus_lsu_oper_de,
     input  logic [4:0]  de_ex_bus_rd_de,
     input  logic [4:0]  de_ex_bus_rs1_de,
+    input  logic [4:0]  de_ex_bus_rs2_de,
     input  logic [1:0]  de_ex_bus_mux_select_de,
     input  logic        de_ex_bus_mux_select_pc_de,
     input  logic        de_ex_valid_de,
@@ -682,6 +690,7 @@ module de_ex_pipeline(
     output logic [2:0]  de_ex_bus_lsu_oper_ex,
     output logic [4:0]  de_ex_bus_rd_ex,
     output logic [4:0]  de_ex_bus_rs1_ex,
+    output logic [4:0]  de_ex_bus_rs2_ex,
     output logic [1:0]  de_ex_bus_mux_select_ex,
     output logic        de_ex_bus_mux_select_pc_ex,
     output logic        de_ex_valid_ex,
@@ -701,6 +710,7 @@ logic        de_ex_bus_lsu_re;
 logic [2:0]  de_ex_bus_lsu_oper;
 logic [4:0]  de_ex_bus_rd;
 logic [4:0]  de_ex_bus_rs1;
+logic [4:0]  de_ex_bus_rs2;
 logic [1:0]  de_ex_bus_mux_select;
 logic        de_ex_bus_mux_select_pc;
 logic        de_ex_valid;
@@ -724,6 +734,7 @@ always_comb begin
     de_ex_bus_lsu_oper_ex      = de_ex_bus_lsu_oper;
     de_ex_bus_rd_ex            = de_ex_bus_rd;
     de_ex_bus_rs1_ex           = de_ex_bus_rs1;
+    de_ex_bus_rs2_ex           = de_ex_bus_rs2;
     de_ex_bus_mux_select_ex    = de_ex_bus_mux_select;
     de_ex_bus_mux_select_pc_ex = de_ex_bus_mux_select_pc;
     de_ex_valid_ex             = de_ex_valid;
@@ -746,6 +757,7 @@ always_ff @(posedge clk) begin
         de_ex_bus_lsu_oper      <= 0;
         de_ex_bus_rd            <= 0;
         de_ex_bus_rs1           <= 0;
+        de_ex_bus_rs2           <= 0;
         de_ex_bus_mux_select    <= 0;
         de_ex_bus_mux_select_pc <= 0;
         de_ex_valid             <= 0;
@@ -766,6 +778,7 @@ always_ff @(posedge clk) begin
         de_ex_bus_lsu_oper      <= de_ex_bus_lsu_oper_de;
         de_ex_bus_rd            <= de_ex_bus_rd_de;
         de_ex_bus_rs1           <= de_ex_bus_rs1_de;
+        de_ex_bus_rs2           <= de_ex_bus_rs2_de;
         de_ex_bus_mux_select    <= de_ex_bus_mux_select_de;
         de_ex_bus_mux_select_pc <= de_ex_bus_mux_select_pc_de;
     end
