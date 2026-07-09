@@ -708,7 +708,7 @@ module de_ex_pipeline(
     output logic        de_ex_valid_ex,
     input  logic        de_ex_ready_ex,
 
-    output logic finish_ex,
+    output logic finish_ex
 );
 
 logic [31:0] de_ex_bus_pc;
