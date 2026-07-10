@@ -9,6 +9,10 @@
 #include <verilated_fst_c.h>
 #endif
 
+#ifdef OP_TRACE
+FILE *fp;
+#endif
+
 struct CPU_state {
   uint32_t gpr[32];
   uint32_t pc;
