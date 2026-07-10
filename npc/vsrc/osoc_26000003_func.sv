@@ -319,7 +319,7 @@ module osoc_26000003_func (
         .arvalid(io_master_arvalid), 
         .arlen(io_master_arlen),
         .arsize(io_master_arsize),
-        .arburst(io_master_burst),
+        .arburst(io_master_arburst),
         .arready(io_master_arready), 
         .rdata(io_master_rdata), 
         .rresp(io_master_rresp), 
