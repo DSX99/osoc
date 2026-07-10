@@ -75,8 +75,6 @@ module osoc_26000003_core (
 
     assign rst = reset;
 
-    assign opcode = opcode_over_wb; 
-
     logic [31:0] opcode_over_ex, opcode_over_ls, opcode_over_wb;
 
     assign reg_valid_e = ls_wb_valid_wb;
@@ -85,9 +83,11 @@ module osoc_26000003_core (
         if (reset) begin
             reg_valid <= 1'b0;
             pc   <= 32'b0;
+            opcode <= 0 ;
         end else begin
             reg_valid <= reg_valid_e;
             pc   <= ls_wb_bus_branch_wb ? pc_in : pc_e;
+            opcode <= opcode_over_wb;
         end
     end
 
