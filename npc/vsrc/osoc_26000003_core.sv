@@ -88,7 +88,12 @@ module osoc_26000003_core (
         end else begin
             reg_valid <= reg_valid_e;
             pc   <= ls_wb_bus_branch_wb ? pc_in : pc_e;
+            `ifndef SYNTHESIS
             prev_pc <= pc_e - 4;
+            `endif
+            `ifdef SYNTHESIS
+            prev_pc <= 0;
+            `endif
             opcode <= opcode_over_wb;
         end
     end
@@ -224,7 +229,7 @@ module osoc_26000003_core (
 
     icache icache_mod(
         .clk(clock), .rst(reset),
-        .ifu_addr(cache_addr), .valid(cache_valid), .opcode(cache_opcode), .ready(cache_ready),
+        .ifu_addr(cache_addr), .valid(cache_valid & !ls_wb_bus_branch_w), .opcode(cache_opcode), .ready(cache_ready),
         .araddr(araddr_ifu), .arvalid(arvalid_ifu), .arready(arready_ifu), 
         .arlen(arlen_ifu), .arsize(arsize_ifu), .arburst(arburst_ifu),
 
