@@ -1,4 +1,4 @@
-module osoc_26000003 (
+module osoc_26000003_func (
     input  logic        clock,
     input  logic        reset
     
