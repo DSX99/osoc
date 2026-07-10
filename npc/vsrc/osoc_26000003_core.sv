@@ -66,7 +66,7 @@ module osoc_26000003_core (
     output logic [3:0]   io_slave_rid
 );
 
-    logic [31:0] pc /* verilator public */, opcode /* verilator public */, pc_e /* verilator public */;
+    logic [31:0] pc /* verilator public */, prev_pc /* verilator public */, opcode /* verilator public */, pc_e /* verilator public */;
     logic reg_valid /* verilator public */, reg_valid_e /* verilator public */;
 
     logic if_de_valid_if /* verilator public */, if_de_ready_if /*verilator public*/, ex_ls_valid_ls /* verilator public */, ex_ls_ready_ls /* verilator public */;
@@ -83,10 +83,12 @@ module osoc_26000003_core (
         if (reset) begin
             reg_valid <= 1'b0;
             pc   <= 32'b0;
+            prev_pc<=0;
             opcode <= 0 ;
         end else begin
             reg_valid <= reg_valid_e;
             pc   <= ls_wb_bus_branch_wb ? pc_in : pc_e;
+            prev_pc <= pc;
             opcode <= opcode_over_wb;
         end
     end

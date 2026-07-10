@@ -228,7 +228,7 @@ void execute(uint64_t n){
       inst[3] = (top->opcode >> 24) & 0xff;
       if(top->opcode!=0){
         printf("%x\n",top->opcode);
-      disassemble(str, 128, top->pc, inst, 4);
+      disassemble(str, 128, top->prev_pc, inst, 4);
       } else {
         printf("zero opcode\n");
         return;
@@ -332,7 +332,7 @@ void execute(uint64_t n){
         inst[1] = (top->opcode >> 8) & 0xff;
         inst[2] = (top->opcode >> 16) & 0xff;
         inst[3] = (top->opcode >> 24) & 0xff;
-        printf("0x%08x: %02x %02x %02x %02x ", top->pc, inst[3], inst[2], inst[1], inst[0]);
+        printf("0x%08x: %02x %02x %02x %02x ", top->prev_pc, inst[3], inst[2], inst[1], inst[0]);
         if(top->opcode!=0){
           printf("%x\n",top->opcode);
         disassemble(str, 128, top->pc, inst, 4);
@@ -360,7 +360,7 @@ void execute(uint64_t n){
       inst[1] = (top->opcode >> 8) & 0xff;
       inst[2] = (top->opcode >> 16) & 0xff;
       inst[3] = (top->opcode >> 24) & 0xff;
-      printf("0x%08x: %02x %02x %02x %02x ", top->pc, inst[3], inst[2], inst[1], inst[0]);
+      printf("0x%08x: %02x %02x %02x %02x ", top->prev_pc, inst[3], inst[2], inst[1], inst[0]);
       if(top->opcode!=0){
         printf("%x\n",top->opcode);
       disassemble(str, 128, top->pc, inst, 4);
@@ -387,7 +387,7 @@ void execute(uint64_t n){
           inst[1] = (top->opcode >> 8) & 0xff;
           inst[2] = (top->opcode >> 16) & 0xff;
           inst[3] = (top->opcode >> 24) & 0xff;
-          printf("0x%08x: %02x %02x %02x %02x ", top->pc, inst[3], inst[2], inst[1], inst[0]);
+          printf("0x%08x: %02x %02x %02x %02x ", top->prev_pc, inst[3], inst[2], inst[1], inst[0]);
           if(top->opcode!=0){
             printf("%x\n",top->opcode);
             disassemble(str, 128, top->pc, inst, 4);
@@ -411,7 +411,7 @@ void execute(uint64_t n){
             inst[1] = (top->opcode >> 8) & 0xff;
             inst[2] = (top->opcode >> 16) & 0xff;
             inst[3] = (top->opcode >> 24) & 0xff;
-            printf("0x%08x: %02x %02x %02x %02x ", top->pc, inst[3], inst[2], inst[1], inst[0]);
+            printf("0x%08x: %02x %02x %02x %02x ", top->prev_pc, inst[3], inst[2], inst[1], inst[0]);
             if(top->opcode!=0){
               printf("%x\n",top->opcode);
               disassemble(str, 128, top->pc, inst, 4);
