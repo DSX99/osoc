@@ -28,7 +28,7 @@ extern VysyxSoCFull_osoc_26000003_core *top;
 #endif
 
 #ifdef NPC
-extern Vosoc_26000003_func_osoc_26000003_func *top;
+extern Vosoc_26000003_func_osoc_26000003_core *top;
 #endif
 
 void init_regex();

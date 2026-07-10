@@ -128,7 +128,7 @@ extern "C" void sdram_write(uint32_t addr, uint32_t data, uint32_t mask) {
     #define ROM_OFFSET  0x80000000
     #define MEM_SIZE    0x00100000
     
-    extern Vosoc_26000003_func_osoc_26000003_func *top;
+    extern Vosoc_26000003_func_osoc_26000003_core *top;
     uint8_t mem[MEM_SIZE]; 
 
     extern "C" {
