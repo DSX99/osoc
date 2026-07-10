@@ -229,7 +229,7 @@ module osoc_26000003_core (
 
     icache icache_mod(
         .clk(clock), .rst(reset),
-        .ifu_addr(cache_addr), .valid(cache_valid & !ls_wb_bus_branch_w), .opcode(cache_opcode), .ready(cache_ready),
+        .ifu_addr(cache_addr), .valid(cache_valid & !ls_wb_bus_branch_wb), .opcode(cache_opcode), .ready(cache_ready),
         .araddr(araddr_ifu), .arvalid(arvalid_ifu), .arready(arready_ifu), 
         .arlen(arlen_ifu), .arsize(arsize_ifu), .arburst(arburst_ifu),
 
