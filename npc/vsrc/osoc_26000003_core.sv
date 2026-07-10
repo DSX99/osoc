@@ -88,7 +88,7 @@ module osoc_26000003_core (
         end else begin
             reg_valid <= reg_valid_e;
             pc   <= ls_wb_bus_branch_wb ? pc_in : pc_e;
-            prev_pc <= pc;
+            prev_pc <= (ls_wb_bus_branch_wb ? pc_in : pc_e) - 4;
             opcode <= opcode_over_wb;
         end
     end
