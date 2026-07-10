@@ -9,16 +9,26 @@ module regs (
     output logic [31:0] data_rs2,
     
     input logic valid,
-    output logic ready
+    output logic ready,
+
+    input logic finish
 );
     
     logic [31:0] regs [15:0] /* verilator public */; 
+
+    logic unused_signals = rs1[4] | rs2[4] | rd[4];
 
     always_comb begin
         ready=1;
 
         data_rs1 = regs[rs1[3:0]];
         data_rs2 = regs[rs2[3:0]];
+    end
+
+    always_comb begin
+        `ifndef SYNTHESIS
+        if(finish) $finish;
+        `endif 
     end
 
     always_ff @(posedge clk) begin

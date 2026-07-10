@@ -26,7 +26,13 @@ module decode (
 
     // Handshake control signals
     input  logic valid_left, ready_right,
-    output logic ready_left, valid_right
+    output logic ready_left, valid_right,
+
+    input  logic [4:0] ex_rd,
+    input  logic [4:0] ls_rd,
+    input  logic [4:0] wb_rd,
+
+    output logic finish
 );
 
     logic [31:0] imm_i, imm_s, imm_b, imm_u, imm_j;
@@ -54,9 +60,21 @@ module decode (
     // alu_op[5:3] branch or arithmetics (5:4): 11-atomic, 10-mult, 01-branch, 00-arithmetic, 3-extra (sub/srai)
     // alu_op[2:0] directly operation, alu_op[2:0] copied from instr
 
+    logic ex_match;
+    logic ls_match;
+    logic wb_match;
+
+    assign ex_match = ((ex_rd == bus_out_rs1) || (ex_rd == bus_out_rs2)) && (ex_rd!=0);
+    assign ls_match = ((ls_rd == bus_out_rs1) || (ls_rd == bus_out_rs2)) && (ls_rd!=0);
+    assign wb_match = ((wb_rd == bus_out_rs1) || (wb_rd == bus_out_rs2)) && (wb_rd!=0);
+
+    logic reg_match;
+
+    assign reg_match = ex_match | ls_match | wb_match;
+
     always_comb begin
-        valid_right = valid_left;
-        ready_left  = ready_right;
+        valid_right = valid_left & !reg_match;
+        ready_left  = ready_right & !reg_match;
 
         // Initialize all explicit output bus signals to default state ('0)
         bus_out_pc            = bus_in_pc;
@@ -73,6 +91,8 @@ module decode (
         bus_out_rd            = '0;
         bus_out_mux_select    = '0;
         bus_out_mux_select_pc = '0;
+
+        finish = 0;
 
         case(inst[6:0])
             7'b0110111: begin // LUI
@@ -149,9 +169,7 @@ module decode (
                 case(func3)
                     3'b000: begin
                         if(!(|func7) && rs2_val==1) begin
-                            `ifndef SYNTHESIS
-                            $finish;
-                            `endif
+                            finish=1;
                         end else if(!(|func7 | |rs2_val)) begin
                             bus_out_cause         = 5'd11;
                             bus_out_alu_op        = 8'b10010000;

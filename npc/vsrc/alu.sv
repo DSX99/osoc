@@ -33,7 +33,6 @@ module alu (
     input  logic valid_left, ready_right,
     output logic ready_left, valid_right,
 
-
     output logic branch,
     output logic branch_taken
 );

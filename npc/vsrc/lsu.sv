@@ -65,6 +65,7 @@ module lsu (
         bus_out_rd            = 0;
         bus_out_mux_select    = 0;
         bus_out_mux_select_pc = 0;
+        bus_out_branch        = 0;
 
         if (valid_left && ready_right) begin 
             bus_out_alu_out       = bus_in_alu_out;
@@ -73,6 +74,7 @@ module lsu (
             bus_out_rd            = bus_in_rd;
             bus_out_mux_select    = bus_in_mux_select;
             bus_out_mux_select_pc = bus_in_mux_select_pc;
+            bus_out_branch        = bus_in_branch;
         end 
 
 

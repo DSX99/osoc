@@ -62,8 +62,16 @@ void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 void reset(VysyxSoCFull *soc,int n){
   soc->reset=1;
   for(int i=0; i<n; i++){
+    #ifdef CONFIG_FST
+    contextp->timeInc(1);
+    tracep->dump(contextp->time());
+    #endif
     soc->clock=1;
     soc->eval();
+    #ifdef CONFIG_FST
+    contextp->timeInc(1);
+    tracep->dump(contextp->time());
+    #endif
     soc->clock=0;
     soc->eval();
   }
@@ -182,7 +190,7 @@ void execute(uint64_t n){
       return; 
     }
 
-    for(int i = 0; i < 32; i++){
+    for(int i = 0; i < 16; i++){
       if(ref_cpu.gpr[i] != top->reg_mod->regs[i]){
         printf("Difference with REF %s, should:0x%08x, actually:0x%08x, pc: 0x%08x\n", 
                 regs[i], ref_cpu.gpr[i], top->reg_mod->regs[i], top->pc);
@@ -202,27 +210,24 @@ void execute(uint64_t n){
 
   while(n>0){
 
-    #ifdef CONFIG_FST
-    tracep->dump(contextp->time());
-    #endif
     
     // if(contextp->time() > MAX_SIM_TIME){
-    //   printf("MAX SIMTIME\n");
-    //   ret = top->reg_mod->regs[10];
-    //   break;
-    // }
-
-    if(!((contextp->time()) % 100000000)&&batch){
-      printf("time:%lu\n", contextp->time());
-    }
-
-    if(!batch && top->opcode!=0 && top->reg_valid_e){
-      inst[0] = (top->opcode) & 0xff;
-      inst[1] = (top->opcode >> 8) & 0xff;
-      inst[2] = (top->opcode >> 16) & 0xff;
-      inst[3] = (top->opcode >> 24) & 0xff;
-      disassemble(str, 128, top->pc, inst, 4);
-      if(n<10){
+      //   printf("MAX SIMTIME\n");
+      //   ret = top->reg_mod->regs[10];
+      //   break;
+      // }
+      
+      if(!((contextp->time()) % 100000000)&&batch){
+        printf("time:%lu\n", contextp->time());
+      }
+      
+      if(!batch && top->opcode!=0 && top->reg_valid){
+        inst[0] = (top->opcode) & 0xff;
+        inst[1] = (top->opcode >> 8) & 0xff;
+        inst[2] = (top->opcode >> 16) & 0xff;
+        inst[3] = (top->opcode >> 24) & 0xff;
+        disassemble(str, 128, top->pc, inst, 4);
+        if(n<10){
         printf("0x%08x: %02x %02x %02x %02x ", top->pc, inst[3], inst[2], inst[1], inst[0]);
         printf("%s\n", str);
       }
@@ -231,7 +236,10 @@ void execute(uint64_t n){
       point = (point+1)%ITRACE_VAL;
       #endif
     }
-
+    
+    #ifdef CONFIG_FST
+    tracep->dump(contextp->time());
+    #endif
     contextp->timeInc(1);
     soc->clock=!soc->clock;
     soc->eval();
@@ -271,21 +279,21 @@ void execute(uint64_t n){
     if(top->branch_taken){
       program[stage].branch_taken++;
     }
-    if(top->ex_ls_valid && !top->ex_ls_ready){
+    if(top->ex_ls_valid_ls && !top->ex_ls_ready_ls){
       program[stage].lsu_stall_cycle++;
     }
-    if(top->ex_ls_valid && top->ex_ls_ready){
-      if(top->ex_ls_bus_lsu_re){
+    if(top->ex_ls_valid_ls && top->ex_ls_ready_ls){
+      if(top->ex_ls_bus_lsu_re_ls){
         program[stage].lsu_read_data++;
       }
-      if(top->ex_ls_bus_lsu_we){
+      if(top->ex_ls_bus_lsu_we_ls){
         program[stage].lsu_write_data++;
       }
     }
-    if(top->reg_valid_e){
+    if(top->reg_valid){
       program[stage].writeback++;
     }
-    if(top->pc != top->prev_pc){
+    if(top->pc != prev_pc){
       if(top->cache_hit) program[stage].cache_hit++;
       if(top->cache_miss) program[stage].cache_miss++;
     }
@@ -352,18 +360,19 @@ void execute(uint64_t n){
     }
     n--;
     
-    if(!batch && do_diff) {
+    if(!batch && do_diff && top->reg_valid) {
         difftest_regcpy(&ref_cpu, 0);
 
         if (ref_cpu.pc != top->pc) {
           printf("Difference with REF pc, should:0x%08x, actually:0x%08x\n", ref_cpu.pc, top->pc);
+          printf("%d\n",contextp->time());
           ret = 1;
           inst[0] = (top->opcode) & 0xff;
           inst[1] = (top->opcode >> 8) & 0xff;
           inst[2] = (top->opcode >> 16) & 0xff;
           inst[3] = (top->opcode >> 24) & 0xff;
           printf("0x%08x: %02x %02x %02x %02x ", top->pc, inst[3], inst[2], inst[1], inst[0]);
-          disassemble(str, 128, top->pc, inst, 4);
+          // disassemble(str, 128, top->pc, inst, 4);
           printf("%s\n", str);
           #ifdef ITRACE
           strcpy(itrace[point],str);
@@ -372,7 +381,7 @@ void execute(uint64_t n){
           return; 
         }
 
-        for(int i = 0; i < 32; i++){
+        for(int i = 0; i < 16; i++){
           if(ref_cpu.gpr[i] != top->reg_mod->regs[i]){
             printf("Difference with REF %s, should:0x%08x, actually:0x%08x, pc: 0x%08x\n", 
                    regs[i], ref_cpu.gpr[i], top->reg_mod->regs[i], top->pc);
