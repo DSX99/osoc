@@ -374,6 +374,8 @@ void execute(uint64_t n){
     n--;
     
     if(!batch && do_diff && top->reg_valid) {
+        printf("CHECK\n");
+
         difftest_regcpy(&ref_cpu, 0);
 
         if (ref_cpu.pc != top->pc) {
