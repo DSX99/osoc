@@ -3,12 +3,16 @@ module axi_slave_lsu(
     
         // Read Addr Channel (AR)
     input  logic [31:0] araddr,
+    input  logic [7:0]  arlen,
+    input  logic [2:0]  arsize, 
+    input  logic [1:0]  arburst,
     input  logic        arvalid,
     output logic        arready,
 
     // Read Data Channel (R)
     output logic [31:0] rdata,
     output logic [1:0]  rresp,
+    output logic        rlast,
     output logic        rvalid,
     input  logic        rready,
 
@@ -33,41 +37,77 @@ import "DPI-C" function int memread(int addr);
 import "DPI-C" function void memwrite(int addr, int data, int idk);
 
 typedef enum{
-    IDLE, WAIT_AR, WAIT_R
+    IDLE, WAIT_R
 } IFU_state_t;
 IFU_state_t slave;
+
+logic [31:0] r_addr_reg;
+logic [7:0]  r_len_reg;
+logic [2:0]  r_size_reg;
+
+logic [31:0] addr_increment;
+always_comb begin
+    addr_increment = (1 << r_size_reg); 
+end
 
 //reading
 always_ff @(posedge clk) begin
     if(rst) begin
         slave<=IDLE;
-        arready<=0;
+        arready<=1;
         rdata<=0;
         rresp<=0;
         rvalid<=0;
+        rlast<=0;
+        r_addr_reg  <= 32'0;
+        r_len_reg   <= 8'0;
+        r_size_reg  <= 3'0;
     end else begin
         case(slave)
             IDLE: begin
-                if(arvalid) begin
-                    arready<=1;
-                    slave<=WAIT_AR;
+                rlast  <= 1'b0;
+                rvalid <= 1'b0;
+
+                if(arvalid && arready) begin
+                    r_addr_reg <= araddr;
+                    r_len_reg  <= arlen;
+                    r_size_reg <= arsize;
+                    
+                    rdata      <= memread(araddr);
+                    rvalid     <= 1'b1;
+                    arready    <= 1'b0; 
+                    
+                    if (arlen == 8'h00) begin
+                        rlast <= 1'b1;
+                    end
+                    
+                    slave <= WAIT_R;
+                end else begin
+                    arready <= 1'b1;
                 end
             end
-            WAIT_AR: begin
-                if(arready & arvalid) begin
-                    arready<=0;
-                    slave<=WAIT_R;
-                    rvalid<=1;
-                    rdata<=memread(araddr);
-                end
-            end
+            
             WAIT_R: begin
                 if(rvalid && rready) begin
-                    rdata<=0;
-                    rvalid<=0;
-                    slave<=IDLE;
+                    if(r_len_reg == 8'h00) begin
+                        rvalid  <= 1'b0;
+                        rlast   <= 1'b0;
+                        arready <= 1'b1;
+                        slave   <= IDLE;
+                    end else begin
+                        r_len_reg  <= r_len_reg - 1'b1;
+                        r_addr_reg <= r_addr_reg + addr_increment;
+                        
+                        rdata  <= memread(r_addr_reg + addr_increment);
+                        rvalid <= 1'b1;
+                        
+                        if (r_len_reg == 8'h01) begin
+                            rlast <= 1'b1;
+                        end
+                    end
                 end
             end
+            default: slave <= IDLE;
         endcase
     end
 end

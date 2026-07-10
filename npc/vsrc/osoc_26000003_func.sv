@@ -131,6 +131,7 @@ module osoc_26000003_func (
     logic        cawvalid, carvalid;
     logic        cawready, cwready; 
     logic        carready, crready; 
+    logic        crlast;
 
     logic match_aw, match_ar;
     assign match_aw = (core_awaddr[31:16] == 16'h0200) || trans[0];
@@ -188,7 +189,7 @@ module osoc_26000003_func (
             core_rvalid       = crvalid;
             core_rdata        = crdata;
             core_rresp        = 2'b00;
-            core_rlast        = 1'b0;
+            core_rlast        = crlast;
             core_rid          = core_arid;
         end else begin
             io_master_arvalid = core_arvalid;
@@ -307,7 +308,8 @@ module osoc_26000003_func (
         .cawready(cawready),
         .cwready(cwready),
         .crready(crready),
-        .crvalid(crvalid)
+        .crvalid(crvalid),
+        .crlast(crlast)
     );
 
     axi_slave_lsu axi_slave_lsu_mod (
