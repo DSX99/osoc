@@ -59,9 +59,9 @@ always_ff @(posedge clk) begin
         rresp<=0;
         rvalid<=0;
         rlast<=0;
-        r_addr_reg  <= 32'0;
-        r_len_reg   <= 8'0;
-        r_size_reg  <= 3'0;
+        r_addr_reg  <= 0;
+        r_len_reg   <= 0;
+        r_size_reg  <= 0;
     end else begin
         case(slave)
             IDLE: begin
