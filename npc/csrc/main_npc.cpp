@@ -234,7 +234,7 @@ void execute(uint64_t n){
         return;
       }
       if(n<10){
-        printf("0x%08x: %02x %02x %02x %02x ", top->pc, inst[3], inst[2], inst[1], inst[0]);
+        printf("0x%08x: %02x %02x %02x %02x ", top->prev_pc, inst[3], inst[2], inst[1], inst[0]);
         printf("%s\n", str);
       }
       #ifdef ITRACE
@@ -335,7 +335,7 @@ void execute(uint64_t n){
         printf("0x%08x: %02x %02x %02x %02x ", top->prev_pc, inst[3], inst[2], inst[1], inst[0]);
         if(top->opcode!=0){
           printf("%x\n",top->opcode);
-        disassemble(str, 128, top->pc, inst, 4);
+        disassemble(str, 128, top->prev_pc, inst, 4);
         printf("%s\n", str);
         }else{
           printf("zero opcode\n");
@@ -363,7 +363,7 @@ void execute(uint64_t n){
       printf("0x%08x: %02x %02x %02x %02x ", top->prev_pc, inst[3], inst[2], inst[1], inst[0]);
       if(top->opcode!=0){
         printf("%x\n",top->opcode);
-      disassemble(str, 128, top->pc, inst, 4);
+      disassemble(str, 128, top->prev_pc, inst, 4);
       printf("%s\n", str);
       }else{
         printf("zero opcode\n");
@@ -390,7 +390,7 @@ void execute(uint64_t n){
           printf("0x%08x: %02x %02x %02x %02x ", top->prev_pc, inst[3], inst[2], inst[1], inst[0]);
           if(top->opcode!=0){
             printf("%x\n",top->opcode);
-            disassemble(str, 128, top->pc, inst, 4);
+            disassemble(str, 128, top->prev_pc, inst, 4);
             printf("%s\n", str);
           }else{
             printf("zero opcode\n");
@@ -414,7 +414,7 @@ void execute(uint64_t n){
             printf("0x%08x: %02x %02x %02x %02x ", top->prev_pc, inst[3], inst[2], inst[1], inst[0]);
             if(top->opcode!=0){
               printf("%x\n",top->opcode);
-              disassemble(str, 128, top->pc, inst, 4);
+              disassemble(str, 128, top->prev_pc, inst, 4);
               printf("%s\n", str);
             }else{
               printf("zero opcode\n");
