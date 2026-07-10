@@ -102,7 +102,7 @@ int main(int argc, char** argv) {
   // contextp->threads(4); // can be used in future to increase speed
 
   soc = new Vosoc_26000003_func{contextp};
-  top = soc->osoc_26000003_core;
+  top = soc->osoc_26000003_func->core;
   
 #ifdef CONFIG_FST
   Verilated::traceEverOn(true);
