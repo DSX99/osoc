@@ -202,7 +202,8 @@ module osoc_26000003_core (
         .data_in(pc_in), 
         .pc(pc_ifu), 
         .next_pc(next_pc), 
-        .valid(if_de_valid_if && if_de_ready_if)
+        .valid(if_de_valid_if && if_de_ready_if),
+        .wb_valid(ls_wb_valid_wb)
     );
     assign pc_in = ls_wb_bus_mux_select_pc_wb ? ls_wb_bus_csr_out_wb : ls_wb_bus_alu_out_wb;
     logic flush = ls_wb_bus_branch_wb;

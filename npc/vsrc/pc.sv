@@ -4,6 +4,7 @@ module pc(
     input logic branch,
     input logic [31:0] data_in,
     input logic valid,
+    input logic wb_valid,
 
     output logic [31:0] pc,
     output logic [31:0] next_pc
@@ -22,6 +23,8 @@ module pc(
         end else begin
             if(valid) begin
                 pc<=next_pc;
+            end
+            if(wb_valid)begin
                 if(branch)begin
                     pc<=data_in;
                 end
