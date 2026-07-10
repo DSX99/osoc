@@ -13,6 +13,7 @@
 #include "Vosoc_26000003_func.h"
 #include "Vosoc_26000003_func___024root.h"
 #include "Vosoc_26000003_func_osoc_26000003_func.h"
+#include "Vosoc_26000003_func_osoc_26000003_core.h"
 #include "Vosoc_26000003_func_regs.h"
 #define NPC
 
