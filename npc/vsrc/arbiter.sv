@@ -135,11 +135,22 @@ always_comb begin
         end 
     end else begin
         if(!read_select) begin
+            araddr = araddr_lsu;
+            arvalid = arvalid_lsu;
+            arready_lsu = arready;
+            arready_ifu = 0;
             rready     = rready_lsu;
             rdata_lsu  = rdata;
             rresp_lsu  = rresp;
             rvalid_lsu = rvalid;
         end else begin
+            araddr = araddr_ifu;
+            arvalid = arvalid_ifu;
+            arready_lsu = 0;
+            arready_ifu = arready;
+            arburst = arburst_ifu;
+            arlen = arlen_ifu;
+            arsize =arsize_ifu;
             rready     = rready_ifu;
             rdata_ifu  = rdata;
             rresp_ifu  = rresp;
@@ -173,6 +184,8 @@ end
 
 always_ff @(posedge clk) begin
     if(rst) begin
+        read_busy<=0;
+        write_busy<=0;
         read_select<=0;
     end else begin
         if (!read_busy) begin
