@@ -324,7 +324,6 @@ void execute(uint64_t n){
     if((!batch) && top->reg_valid && do_diff) difftest_exec(1);
 
     if(contextp->gotFinish()){
-      printf("Got finish at time %ld", contextp->time());
       #ifdef CONFIG_FST
       tracep->close();
       #endif
