@@ -98,7 +98,7 @@ module lsu (
         if(bus_in_lsu_re || trans_r) begin
         case(lsu_r)
             IDLE_R: begin
-                if (bus_in_lsu_re && valid_left) begin
+                if (bus_in_lsu_re && valid_left && !flush) begin
                     arvalid = 1;
                     araddr  = bus_in_alu_out;
                 end
@@ -111,7 +111,7 @@ module lsu (
             WAIT_R: begin
                 rready  = 1;
 
-                if (rvalid && rready && !flush) begin
+                if (rvalid && rready) begin
                     case (bus_in_lsu_oper)
                         0: begin // LB
                             case (bus_in_alu_out[1:0])
