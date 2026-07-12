@@ -387,7 +387,6 @@ void execute(uint64_t n){
           cpu.pc = top->pc;
           difftest_regcpy(&cpu, 1);
           device_access = 0;
-          continue;
         }
 
         difftest_regcpy(&ref_cpu, 0);
