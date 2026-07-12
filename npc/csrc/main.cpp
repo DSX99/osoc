@@ -179,6 +179,7 @@ void execute(uint64_t n){
   char str[128];
   uint8_t inst[4];
   CPU_state ref_cpu;
+  bool device_access = 0;
 
   if(fail && do_diff){ 
     printf("failed\n");
@@ -305,6 +306,10 @@ void execute(uint64_t n){
     if(top->cache_miss) program[stage].cache_miss_cycles++;
     }
 
+    if(top->__PVT__io_master_araddr == 0x200bff8 || top->__PVT__io_master_araddr == 0x200bffc){
+      device_access = 1;
+    }
+
     if(top->pc == prev_pc){
       stall_count++;
       if(stall_count>2000000 && !(stall_count % 500000)){
@@ -374,6 +379,16 @@ void execute(uint64_t n){
     n--;
     
     if(!batch && do_diff && top->reg_valid) {
+        if(device_access){
+          for(int i = 0; i < 32; i++){
+            cpu.gpr[i] = top->reg_mod->regs[i];
+          }
+          cpu.pc = top->pc;
+          difftest_regcpy(&cpu, 1);
+          device_access = 0;
+          continue;
+        }
+
         difftest_regcpy(&ref_cpu, 0);
 
         if (ref_cpu.pc != top->pc) {
