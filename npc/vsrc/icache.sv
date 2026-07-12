@@ -50,7 +50,7 @@ logic block_valid[NUMBER_OF_BLOCKS];
 assign {tag, index, word_select, word_align} = trans ? miss_addr : ifu_addr;
 
 typedef enum {
-   IDLE, WAIT_AR, WAIT_R
+   WAIT_AR, WAIT_R
 } cache_state_t;
 cache_state_t state;
 logic [2:0] fill_count; 
@@ -108,7 +108,7 @@ end
 always_ff @(posedge clk) begin
     if (rst) begin
         fill_count<=0;
-        state <= IDLE;
+        state <= WAIT_AR;
         for(int i = 0; i < NUMBER_OF_BLOCKS; i = i + 1) begin
             block_valid[i] <= 1'b0;
         end
