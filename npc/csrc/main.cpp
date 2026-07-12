@@ -387,7 +387,7 @@ void execute(uint64_t n){
           printf("pc:%x\n", cpu.pc);
           difftest_regcpy(&cpu, 1);
           device_access--;
-          difftest_exec(1);
+          printf("device call opcode:%x, value:%d\n", top->opcode, device_access);
         }
 
         difftest_regcpy(&ref_cpu, 0);
@@ -439,8 +439,8 @@ void execute(uint64_t n){
         }
     }
     if((top->__PVT__io_master_araddr == 0x200bff8) || (top->__PVT__io_master_araddr == 0x200bffc)){
-      printf("device call opcode:%x, value:%d\n", top->opcode, device_access);
       device_access++;
+      printf("device call opcode:%x, value:%d\n", top->opcode, device_access);
     }
   }
 }
