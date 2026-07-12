@@ -381,12 +381,15 @@ void execute(uint64_t n){
     
     if(!batch && do_diff && top->reg_valid) {
         if(device_access){
-          for(int i = 0; i < 32; i++){
+          for(int i = 0; i < 16; i++){
             cpu.gpr[i] = top->reg_mod->regs[i];
             printf("regs %d:%x\n",i, cpu.gpr[i]);
+          }for(int i = 0; i < 16; i++){
+            cpu.gpr[i+16] = 0;
+            printf("regs %d:%x\n",i, cpu.gpr[i+16]);
           }
           cpu.pc = top->pc;
-          printf("pc:%d\n", cpu.pc);
+          printf("pc:%x\n", cpu.pc);
           difftest_regcpy(&cpu, 1);
           device_access = 0;
         }
