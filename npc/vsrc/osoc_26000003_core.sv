@@ -72,6 +72,7 @@ module osoc_26000003_core (
     logic if_de_valid_if /* verilator public */, if_de_ready_if /*verilator public*/, ex_ls_valid_ls /* verilator public */, ex_ls_ready_ls /* verilator public */;
     logic branch /* verilator public */, branch_taken /* verilator public */, ex_ls_bus_lsu_we_ls /* verilator public*/, ex_ls_bus_lsu_re_ls /* verilator public*/;
     logic cache_hit/* verilator public */, cache_miss/* verilator public */, rst/* verilator public */;
+    logic ex_ls_valid_ex /* verilator public */;
 
     assign rst = reset;
 
@@ -79,6 +80,10 @@ module osoc_26000003_core (
 
     assign reg_valid_e = ls_wb_valid_wb;
     
+    always_comb begin
+        branch_taken = ls_wb_bus_branch_wb;
+    end
+
     always_ff @(posedge clock) begin
         if (reset) begin
             reg_valid <= 1'b0;
@@ -162,7 +167,8 @@ module osoc_26000003_core (
     logic [1:0]  ex_ls_bus_mux_select_ex;
     logic        ex_ls_bus_mux_select_pc_ex;
     logic        ex_ls_bus_branch_ex;
-    logic        ex_ls_valid_ex, ex_ls_ready_ex;
+    // logic        ex_ls_valid_ex; //declared as public
+    logic        ex_ls_ready_ex;
 
     logic [31:0] ex_ls_bus_next_pc_ls;
     logic [31:0] ex_ls_bus_alu_out_ls;
@@ -213,7 +219,9 @@ module osoc_26000003_core (
         .wb_valid(ls_wb_valid_wb)
     );
     assign pc_in = ls_wb_bus_mux_select_pc_wb ? ls_wb_bus_csr_out_wb : ls_wb_bus_alu_out_wb;
-    logic flush = ls_wb_bus_branch_wb;
+    logic flush /*verilator public*/;
+
+    assign flush = ls_wb_bus_branch_wb; 
     
     logic [31:0] pc_ifu, next_pc;
 
@@ -366,7 +374,7 @@ module osoc_26000003_core (
         .bus_out_branch(ex_ls_bus_branch_ex),
         .valid_left(de_ex_valid_ex), .ready_left(de_ex_ready_alu),
         .valid_right(ex_ls_valid_alu), .ready_right(ex_ls_ready_ex),   
-        .branch(branch), .branch_taken(branch_taken)
+        .branch(branch)
     );
 
     logic [31:0] csr_in;

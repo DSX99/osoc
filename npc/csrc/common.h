@@ -31,6 +31,7 @@ typedef struct Performance_t {
     uint64_t cache_hit;
     uint64_t cache_miss;
     uint64_t cache_miss_cycles; 
+    uint64_t flush;
 } Performance_t;
 void print_stage_performance_table(const uint64_t cycles[3], const Performance_t perf[3]); 
 

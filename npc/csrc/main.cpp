@@ -272,38 +272,41 @@ void execute(uint64_t n){
     }
     
     //couting performance
-    if(top->if_de_valid_if == 0){
+
+
+    if((top->if_de_valid_if == 0) && !(top->ex_ls_valid_ls && !top->ex_ls_ready_ls)){ //!!valid(i.e. cache fetches) && !lsu_stall
       program[stage].ifu_stall_cycle++;
     }
-    if((top->if_de_valid_if && top->if_de_ready_if) && prev_ifu == 0){
+    if(top->__PVT__rready_ifu && top->__PVT__rvalid_ifu){ //if cache handshakes, means we got one more word
       program[stage].ifu_fetch_instr++;
     }
     prev_ifu = (top->if_de_valid_if && top->if_de_ready_if);
-    if(top->branch){
+    if(top->branch && top->ex_ls_valid_ex){            //if we do branch (problem here is that it is calculated on alu and may even not be written back, better if to check on wb stage but it requires extra routing and not sure will it change smth or not)
       program[stage].possible_branch_count++;
     }
-    if(top->branch_taken){
+    if(top->branch_taken){                            // connected to same wire that triggers branch for pc              
       program[stage].branch_taken++;
     }
-    if(top->ex_ls_valid_ls && !top->ex_ls_ready_ls){
+    if(top->ex_ls_valid_ls && !top->ex_ls_ready_ls){  // lsu_stall, ls is not ready while ex gives valid data
       program[stage].lsu_stall_cycle++;
     }
-    if(top->ex_ls_valid_ls && top->ex_ls_ready_ls){
-      if(top->ex_ls_bus_lsu_re_ls){
+    if(top->ex_ls_valid_ls && top->ex_ls_ready_ls){   // we do handshake
+      if(top->ex_ls_bus_lsu_re_ls){             // if we read
         program[stage].lsu_read_data++;
       }
-      if(top->ex_ls_bus_lsu_we_ls){
+      if(top->ex_ls_bus_lsu_we_ls){             // if we wrote
         program[stage].lsu_write_data++;
       }
     }
-    if(top->reg_valid){
+    if(top->reg_valid){                         //if we write
       program[stage].writeback++;
     }
     if(top->pc != prev_pc){
-      if(top->cache_hit) program[stage].cache_hit++;
-      if(top->cache_miss) program[stage].cache_miss++;
+      if(top->cache_hit) program[stage].cache_hit++;      //we change hit/miss only on new pc (it also counters when we go ahead of what should have been branch)
+      if(top->cache_miss) program[stage].cache_miss++;    //same as hit
     }
-    if(top->cache_miss) program[stage].cache_miss_cycles++;
+    if(top->cache_miss) program[stage].cache_miss_cycles++; // if we are missing we calculate for how long we miss
+    if(top->flush) program[state].flush++; //flush stays only for a cycle so ok.
     }
 
     if(top->pc == prev_pc){
@@ -577,6 +580,11 @@ void print_stage_performance_table(const uint64_t cycles[3], const Performance_t
     std::snprintf(buf1, sizeof(buf1), "%3.1f", avg_miss_latency[1] * cache_miss_pct[1]/100);
     std::snprintf(buf2, sizeof(buf2), "%3.1f", avg_miss_latency[2] * cache_miss_pct[2]/100);
     std::printf(" %-36s | %-20s | %-20s | %-20s \n", "AMAT (cycles)", buf0, buf1, buf2);
+    std::printf("=========================================================================================================\n");
+    std::snprintf(buf0, sizeof(buf0), "%ld", perf[0].flush);
+    std::snprintf(buf1, sizeof(buf1), "%ld", perf[1].flush);
+    std::snprintf(buf2, sizeof(buf2), "%ld", perf[2].flush);
+    std::printf(" %-36s | %-20s | %-20s | %-20s \n", "Flushes (count)", buf0, buf1, buf2);
     std::printf("=========================================================================================================\n\n");
               
 }
