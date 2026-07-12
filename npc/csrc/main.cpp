@@ -306,7 +306,7 @@ void execute(uint64_t n){
       if(top->cache_miss) program[stage].cache_miss++;    //same as hit
     }
     if(top->cache_miss) program[stage].cache_miss_cycles++; // if we are missing we calculate for how long we miss
-    if(top->flush) program[state].flush++; //flush stays only for a cycle so ok.
+    if(top->flush) program[stage].flush++; //flush stays only for a cycle so ok.
     }
 
     if(top->pc == prev_pc){
