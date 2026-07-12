@@ -145,6 +145,10 @@ always_ff @(posedge clk) begin
         end else begin
             case (state)
                 WAIT_AR: begin
+                    if(arvalid && !trans) begin
+                        trans<=1;
+                        miss_addr<=ifu_addr;
+                    end
                     if (arready && arvalid) begin
                         state <= WAIT_R;
                     end
@@ -156,6 +160,7 @@ always_ff @(posedge clk) begin
                             block_tag[index] <= tag;
                             block_valid[index] <= 1'b1;
                             fill_count <= 0;
+                            trans<=0;
                             state <= WAIT_AR;
                         end else begin
                             block_cache[index][fill_count] <= rdata;
