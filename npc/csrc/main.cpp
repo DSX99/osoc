@@ -392,6 +392,7 @@ void execute(uint64_t n){
           printf("pc:%x\n", cpu.pc);
           difftest_regcpy(&cpu, 1);
           device_access = 0;
+          difftest_exec(1);
         }
 
         difftest_regcpy(&ref_cpu, 0);
