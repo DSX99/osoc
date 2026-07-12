@@ -37,6 +37,7 @@ localparam int WORDS_IN_BLOCK = BLOCK_SIZE/4;
 logic [31:0] block_cache [NUMBER_OF_BLOCKS][WORDS_IN_BLOCK];
 
 logic [31:0] miss_addr;
+logic trans;
 
 logic [32-index_off-off-1:0] tag;
 logic [index_off-1:0] index;
@@ -46,7 +47,7 @@ logic [1:0] word_align;
 logic [32-index_off-off-1:0] block_tag [NUMBER_OF_BLOCKS];
 logic block_valid[NUMBER_OF_BLOCKS];
 
-assign {tag, index, word_select, word_align} = ifu_addr;
+assign {tag, index, word_select, word_align} = trans ? miss_addr : ifu_addr;
 
 typedef enum {
    IDLE, WAIT_AR, WAIT_R
@@ -115,9 +116,12 @@ always_ff @(posedge clk) begin
         if(ifu_addr >= 32'ha0000000 && ifu_addr < 32'hc0000000)begin
             case (state)
                 WAIT_AR: begin
+                    if(arvalid && !trans) begin
+                        trans<=1;
+                        miss_addr<=ifu_addr;
+                    end
                     if (arready && arvalid) begin
                         state <= WAIT_R;
-                        miss_addr<=addr;
                     end
                 end
                 WAIT_R: begin
@@ -127,6 +131,7 @@ always_ff @(posedge clk) begin
                             block_tag[index] <= tag;
                             block_valid[index] <= 1'b1;
                             fill_count <= 0;
+                            trans<=0;
                             state <= WAIT_AR;
                         end else begin
                             block_cache[index][fill_count] <= rdata;
