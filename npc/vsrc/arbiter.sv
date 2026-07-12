@@ -176,7 +176,7 @@ always_ff @(posedge clk) begin
         read_select<=0;
     end else begin
         if (!read_busy) begin
-            if (arvalid && arready) begin
+            if (arvalid) begin
                 read_busy  <= 1'b1;
                 read_select <= read_select_comb;
             end
@@ -187,11 +187,11 @@ always_ff @(posedge clk) begin
         end
 
         if (!write_busy) begin
-            if (awvalid && awready) begin
+            if (awvalid) begin
                 write_busy <= 1'b1;
             end
         end else begin
-            if (bvalid && bready && wlast) begin
+            if (bvalid && bready) begin
                 write_busy <= 1'b0;
             end
         end
