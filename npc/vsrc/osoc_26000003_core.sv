@@ -425,7 +425,7 @@ module osoc_26000003_core (
 
     // LSU Instance
     lsu lsu_mod (
-        .clk(clock), .rst(reset), 
+        .clk(clock), .rst(reset), .flush(flush),
         .bus_in_next_pc(ex_ls_bus_next_pc_ls),
         .bus_in_alu_out(ex_ls_bus_alu_out_ls),
         .bus_in_data_rs2(ex_ls_bus_data_rs2_ls),
