@@ -273,40 +273,71 @@ void execute(uint64_t n){
     
     //couting performance
 
+    bool is_lsu_stall    = (top->ex_ls_valid_ls && !top->ex_ls_ready_ls);
+    bool is_ifu_transfer = (top->if_de_valid_if && top->if_de_ready_if);
+    bool is_ls_transfer  = (top->ex_ls_valid_ls && top->ex_ls_ready_ls);
+    // Since ex_ls_ready_ex is just wired directly to ex_ls_ready_ls in the SV:
+    bool is_ex_transfer  = (top->ex_ls_valid_ex && top->ex_ls_ready_ls);
 
-    if((top->if_de_valid_if == 0) && !(top->ex_ls_valid_ls && !top->ex_ls_ready_ls)){ //!!valid(i.e. cache fetches) && !lsu_stall
+    // 1. IFU Stalls (IFU has no data, and we aren't already blaming the LSU for the stall)
+    if (!top->if_de_valid_if && !is_lsu_stall) {
       program[stage].ifu_stall_cycle++;
     }
-    if(top->__PVT__rready_ifu && top->__PVT__rvalid_ifu){ //if cache handshakes, means we got one more word
+
+    // 2. Instructions Fetched & Cache Events
+    // Evaluated exactly when the IFU successfully hands off an instruction to DE
+    if (is_ifu_transfer) {
       program[stage].ifu_fetch_instr++;
+      if (top->cache_hit)  program[stage].cache_hit++;
+      if (top->cache_miss) program[stage].cache_miss++;
     }
-    prev_ifu = (top->if_de_valid_if && top->if_de_ready_if);
-    if(top->branch && top->ex_ls_valid_ex){            //if we do branch (problem here is that it is calculated on alu and may even not be written back, better if to check on wb stage but it requires extra routing and not sure will it change smth or not)
+
+    // 3. Branches Evaluated (EX Stage)
+    // Counted exactly when a branch instruction successfully leaves the EX stage
+    if (top->branch && is_ex_transfer) {
       program[stage].possible_branch_count++;
     }
-    if(top->branch_taken){                            // connected to same wire that triggers branch for pc              
-      program[stage].branch_taken++;
+
+    // 4. Writeback / Retire (WB Stage)
+    // reg_valid_e is the combinational valid signal for the WB stage (ls_wb_valid_wb)
+    if (top->reg_valid_e) {
+      program[stage].writeback++;
+      
+      // Branches taken and flushes are resolved and applied at the WB stage
+      if (top->branch_taken) program[stage].branch_taken++;
+      if (top->flush)        program[stage].flush++;
     }
-    if(top->ex_ls_valid_ls && !top->ex_ls_ready_ls){  // lsu_stall, ls is not ready while ex gives valid data
+
+    // 5. LSU Stalls
+    if (is_lsu_stall) {
       program[stage].lsu_stall_cycle++;
     }
-    if(top->ex_ls_valid_ls && top->ex_ls_ready_ls){   // we do handshake
-      if(top->ex_ls_bus_lsu_re_ls){             // if we read
-        program[stage].lsu_read_data++;
+
+    // 6. Memory Operations
+    // Counted exactly when the LS stage successfully completes its operation
+    if (is_ls_transfer) {
+      if (top->ex_ls_bus_lsu_re_ls) program[stage].lsu_read_data++;
+      if (top->ex_ls_bus_lsu_we_ls) program[stage].lsu_write_data++;
+    }
+
+    // 7. Cache Miss Penalty Cycles
+    // The miss signal correctly stays high for the duration of the memory fetch
+    if (top->cache_miss) {
+      program[stage].cache_miss_cycles++;
+    }
+
+    // =========================================================================
+
+    // Infinite stall detection (Keep your existing PC checker)
+    if (top->pc == prev_pc) {
+      stall_count++;
+      if (stall_count > 2000000 && !(stall_count % 500000)) {
+        printf("Possibly infinite stall\n");
       }
-      if(top->ex_ls_bus_lsu_we_ls){             // if we wrote
-        program[stage].lsu_write_data++;
-      }
+    } else {
+      stall_count = 0;
     }
-    if(top->reg_valid){                         //if we write
-      program[stage].writeback++;
-    }
-    if(top->pc != prev_pc){
-      if(top->cache_hit) program[stage].cache_hit++;      //we change hit/miss only on new pc (it also counters when we go ahead of what should have been branch)
-      if(top->cache_miss) program[stage].cache_miss++;    //same as hit
-    }
-    if(top->cache_miss) program[stage].cache_miss_cycles++; // if we are missing we calculate for how long we miss
-    if(top->flush) program[stage].flush++; //flush stays only for a cycle so ok.
+    prev_pc = top->pc;
     }
 
     if(top->pc == prev_pc){
