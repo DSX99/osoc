@@ -179,7 +179,7 @@ void execute(uint64_t n){
   char str[128];
   uint8_t inst[4];
   CPU_state ref_cpu;
-  bool device_access = 0;
+  int device_access = 0;
 
   if(fail && do_diff){ 
     printf("failed\n");
@@ -308,7 +308,7 @@ void execute(uint64_t n){
 
     if((top->__PVT__io_master_araddr == 0x200bff8) || (top->__PVT__io_master_araddr == 0x200bffc)){
       printf("device call\n");
-      device_access = 1;
+      device_access++;
     }
 
     if(top->pc == prev_pc){
@@ -391,7 +391,7 @@ void execute(uint64_t n){
           cpu.pc = top->pc;
           printf("pc:%x\n", cpu.pc);
           difftest_regcpy(&cpu, 1);
-          device_access = 0;
+          device_access--;
           difftest_exec(1);
         }
 
