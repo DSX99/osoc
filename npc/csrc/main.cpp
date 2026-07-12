@@ -306,11 +306,6 @@ void execute(uint64_t n){
     if(top->cache_miss) program[stage].cache_miss_cycles++;
     }
 
-    if((top->__PVT__io_master_araddr == 0x200bff8) || (top->__PVT__io_master_araddr == 0x200bffc)){
-      printf("device call\n");
-      device_access++;
-    }
-
     if(top->pc == prev_pc){
       stall_count++;
       if(stall_count>2000000 && !(stall_count % 500000)){
@@ -442,6 +437,10 @@ void execute(uint64_t n){
             return;
           }
         }
+    }
+    if((top->__PVT__io_master_araddr == 0x200bff8) || (top->__PVT__io_master_araddr == 0x200bffc)){
+      printf("device call\n");
+      device_access++;
     }
   }
 }
