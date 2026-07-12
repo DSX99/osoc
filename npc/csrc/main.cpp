@@ -63,15 +63,15 @@ void reset(VysyxSoCFull *soc,int n){
   soc->reset=1;
   for(int i=0; i<n; i++){
     #ifdef CONFIG_FST
-    contextp->timeInc(1);
     tracep->dump(contextp->time());
     #endif
+    contextp->timeInc(1);
     soc->clock=1;
     soc->eval();
     #ifdef CONFIG_FST
-    contextp->timeInc(1);
     tracep->dump(contextp->time());
     #endif
+    contextp->timeInc(1);
     soc->clock=0;
     soc->eval();
   }
@@ -324,6 +324,7 @@ void execute(uint64_t n){
     if((!batch) && top->reg_valid && do_diff) difftest_exec(1);
 
     if(contextp->gotFinish()){
+      printf("Got finish at time %ld", contextp->time());
       #ifdef CONFIG_FST
       tracep->close();
       #endif
@@ -352,7 +353,7 @@ void execute(uint64_t n){
       }else{
         printf("\033[032mGOOD\033[0m\n");
       }
-      printf("Finished in %ld\n",contextp->time());
+      printf("Finished in %lu\n",contextp->time());
       break;
     }
     if(check_watchpoints()){
@@ -381,7 +382,7 @@ void execute(uint64_t n){
 
         if (ref_cpu.pc != top->pc) {
           printf("Difference with REF pc, should:0x%08x, actually:0x%08x\n", ref_cpu.pc, top->pc);
-          printf("%d\n",contextp->time());
+          printf("%lu\n",contextp->time());
           ret = 1;
           inst[0] = (top->opcode) & 0xff;
           inst[1] = (top->opcode >> 8) & 0xff;
