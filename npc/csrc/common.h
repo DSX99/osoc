@@ -1,21 +1,21 @@
-// #include "VysyxSoCFull.h"
-// #include "VysyxSoCFull___024root.h"
-// #include "VysyxSoCFull_osoc_26000003.h"
-// #include "VysyxSoCFull_osoc_26000003_core.h"
-// #include "VysyxSoCFull_ysyxSoCFull.h"
-// #include "VysyxSoCFull_ysyxSoCASIC.h"
-// #include "VysyxSoCFull_CPU.h"
-// #include "VysyxSoCFull_regs.h"
-// #define SOC
+#include "VysyxSoCFull.h"
+#include "VysyxSoCFull___024root.h"
+#include "VysyxSoCFull_osoc_26000003.h"
+#include "VysyxSoCFull_osoc_26000003_core.h"
+#include "VysyxSoCFull_ysyxSoCFull.h"
+#include "VysyxSoCFull_ysyxSoCASIC.h"
+#include "VysyxSoCFull_CPU.h"
+#include "VysyxSoCFull_regs.h"
+#define SOC
 
 
 
-#include "Vosoc_26000003_func.h"
-#include "Vosoc_26000003_func___024root.h"
-#include "Vosoc_26000003_func_osoc_26000003_func.h"
-#include "Vosoc_26000003_func_osoc_26000003_core.h"
-#include "Vosoc_26000003_func_regs.h"
-#define NPC
+// #include "Vosoc_26000003_func.h"
+// #include "Vosoc_26000003_func___024root.h"
+// #include "Vosoc_26000003_func_osoc_26000003_func.h"
+// #include "Vosoc_26000003_func_osoc_26000003_core.h"
+// #include "Vosoc_26000003_func_regs.h"
+// #define NPC
 
 
 
