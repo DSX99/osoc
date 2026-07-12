@@ -307,7 +307,7 @@ void execute(uint64_t n){
     }
 
     if((top->__PVT__io_master_araddr == 0x200bff8) || (top->__PVT__io_master_araddr == 0x200bffc)){
-      print("device call\n");
+      printf("device call\n");
       device_access = 1;
     }
 
