@@ -109,6 +109,7 @@ always_ff @(posedge clk) begin
             WAIT_AR: begin
                 if(arvalid && !trans) begin
                     trans<=1;
+                    burst_reg <= burst_addr;
                     miss_addr<=ifu_addr;
                 end
                 if (arready && arvalid) begin
