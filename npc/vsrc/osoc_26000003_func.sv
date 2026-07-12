@@ -1,4 +1,4 @@
-module osoc_26000003 (
+module osoc_26000003_func (
     input  logic        clock,
     input  logic        reset
     
@@ -131,6 +131,7 @@ module osoc_26000003 (
     logic        cawvalid, carvalid;
     logic        cawready, cwready; 
     logic        carready, crready; 
+    logic        crlast;
 
     logic match_aw, match_ar;
     assign match_aw = (core_awaddr[31:16] == 16'h0200) || trans[0];
@@ -188,7 +189,7 @@ module osoc_26000003 (
             core_rvalid       = crvalid;
             core_rdata        = crdata;
             core_rresp        = 2'b00;
-            core_rlast        = 1'b0;
+            core_rlast        = crlast;
             core_rid          = core_arid;
         end else begin
             io_master_arvalid = core_arvalid;
@@ -307,7 +308,8 @@ module osoc_26000003 (
         .cawready(cawready),
         .cwready(cwready),
         .crready(crready),
-        .crvalid(crvalid)
+        .crvalid(crvalid),
+        .crlast(crlast)
     );
 
     axi_slave_lsu axi_slave_lsu_mod (
@@ -315,11 +317,15 @@ module osoc_26000003 (
         .rst(reset), 
         .araddr(io_master_araddr), 
         .arvalid(io_master_arvalid), 
+        .arlen(io_master_arlen),
+        .arsize(io_master_arsize),
+        .arburst(io_master_arburst),
         .arready(io_master_arready), 
         .rdata(io_master_rdata), 
         .rresp(io_master_rresp), 
         .rvalid(io_master_rvalid), 
         .rready(io_master_rready),
+        .rlast(io_master_rlast),
         .awaddr(io_master_awaddr), 
         .awvalid(io_master_awvalid), 
         .awready(io_master_awready), 

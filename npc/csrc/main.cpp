@@ -63,15 +63,15 @@ void reset(VysyxSoCFull *soc,int n){
   soc->reset=1;
   for(int i=0; i<n; i++){
     #ifdef CONFIG_FST
-    contextp->timeInc(1);
     tracep->dump(contextp->time());
     #endif
+    contextp->timeInc(1);
     soc->clock=1;
     soc->eval();
     #ifdef CONFIG_FST
-    contextp->timeInc(1);
     tracep->dump(contextp->time());
     #endif
+    contextp->timeInc(1);
     soc->clock=0;
     soc->eval();
   }
@@ -179,6 +179,7 @@ void execute(uint64_t n){
   char str[128];
   uint8_t inst[4];
   CPU_state ref_cpu;
+  int device_access = 0;
 
   if(fail && do_diff){ 
     printf("failed\n");
@@ -217,17 +218,22 @@ void execute(uint64_t n){
       //   break;
       // }
       
-      if(!((contextp->time()) % 100000000)&&batch){
-        printf("time:%lu\n", contextp->time());
-      }
-      
-      if(!batch && top->opcode!=0 && top->reg_valid){
-        inst[0] = (top->opcode) & 0xff;
-        inst[1] = (top->opcode >> 8) & 0xff;
-        inst[2] = (top->opcode >> 16) & 0xff;
-        inst[3] = (top->opcode >> 24) & 0xff;
+    if(!((contextp->time()) % 100000000)&&batch){
+      printf("time:%lu\n", contextp->time());
+    }
+    
+    if(!batch && top->opcode!=0 && top->reg_valid){
+      inst[0] = (top->opcode) & 0xff;
+      inst[1] = (top->opcode >> 8) & 0xff;
+      inst[2] = (top->opcode >> 16) & 0xff;
+      inst[3] = (top->opcode >> 24) & 0xff;
+      if(top->opcode!=0){
         disassemble(str, 128, top->pc, inst, 4);
-        if(n<10){
+      } else {
+        printf("zero opcode\n");
+        return;
+      }
+      if(n<10){
         printf("0x%08x: %02x %02x %02x %02x ", top->pc, inst[3], inst[2], inst[1], inst[0]);
         printf("%s\n", str);
       }
@@ -266,38 +272,72 @@ void execute(uint64_t n){
     }
     
     //couting performance
-    if(top->if_de_valid_if == 0){
+
+    bool is_lsu_stall    = (top->ex_ls_valid_ls && !top->ex_ls_ready_ls);
+    bool is_ifu_transfer = (top->if_de_valid_if && top->if_de_ready_if);
+    bool is_ls_transfer  = (top->ex_ls_valid_ls && top->ex_ls_ready_ls);
+    // Since ex_ls_ready_ex is just wired directly to ex_ls_ready_ls in the SV:
+    bool is_ex_transfer  = (top->ex_ls_valid_ex && top->ex_ls_ready_ls);
+
+    // 1. IFU Stalls (IFU has no data, and we aren't already blaming the LSU for the stall)
+    if (!top->if_de_valid_if && !is_lsu_stall) {
       program[stage].ifu_stall_cycle++;
     }
-    if((top->if_de_valid_if && top->if_de_ready_if) && prev_ifu == 0){
+
+    // 2. Instructions Fetched & Cache Events
+    // Evaluated exactly when the IFU successfully hands off an instruction to DE
+    if (is_ifu_transfer) {
       program[stage].ifu_fetch_instr++;
+      if (top->cache_hit)  program[stage].cache_hit++;
+      if (top->cache_miss) program[stage].cache_miss++;
     }
-    prev_ifu = (top->if_de_valid_if && top->if_de_ready_if);
-    if(top->branch){
+
+    // 3. Branches Evaluated (EX Stage)
+    // Counted exactly when a branch instruction successfully leaves the EX stage
+    if (top->branch && is_ex_transfer) {
       program[stage].possible_branch_count++;
     }
-    if(top->branch_taken){
-      program[stage].branch_taken++;
+
+    // 4. Writeback / Retire (WB Stage)
+    // reg_valid_e is the combinational valid signal for the WB stage (ls_wb_valid_wb)
+    if (top->reg_valid_e) {
+      program[stage].writeback++;
+      
+      // Branches taken and flushes are resolved and applied at the WB stage
+      if (top->branch_taken) program[stage].branch_taken++;
+      if (top->flush)        program[stage].flush++;
     }
-    if(top->ex_ls_valid_ls && !top->ex_ls_ready_ls){
+
+    // 5. LSU Stalls
+    if (is_lsu_stall) {
       program[stage].lsu_stall_cycle++;
     }
-    if(top->ex_ls_valid_ls && top->ex_ls_ready_ls){
-      if(top->ex_ls_bus_lsu_re_ls){
-        program[stage].lsu_read_data++;
+
+    // 6. Memory Operations
+    // Counted exactly when the LS stage successfully completes its operation
+    if (is_ls_transfer) {
+      if (top->ex_ls_bus_lsu_re_ls) program[stage].lsu_read_data++;
+      if (top->ex_ls_bus_lsu_we_ls) program[stage].lsu_write_data++;
+    }
+
+    // 7. Cache Miss Penalty Cycles
+    // The miss signal correctly stays high for the duration of the memory fetch
+    if (top->cache_miss) {
+      program[stage].cache_miss_cycles++;
+    }
+
+    // =========================================================================
+
+    // Infinite stall detection (Keep your existing PC checker)
+    if (top->pc == prev_pc) {
+      stall_count++;
+      if (stall_count > 2000000 && !(stall_count % 500000)) {
+        printf("Possibly infinite stall\n");
       }
-      if(top->ex_ls_bus_lsu_we_ls){
-        program[stage].lsu_write_data++;
-      }
+    } else {
+      stall_count = 0;
     }
-    if(top->reg_valid){
-      program[stage].writeback++;
-    }
-    if(top->pc != prev_pc){
-      if(top->cache_hit) program[stage].cache_hit++;
-      if(top->cache_miss) program[stage].cache_miss++;
-    }
-    if(top->cache_miss) program[stage].cache_miss_cycles++;
+    prev_pc = top->pc;
     }
 
     if(top->pc == prev_pc){
@@ -327,8 +367,12 @@ void execute(uint64_t n){
         inst[2] = (top->opcode >> 16) & 0xff;
         inst[3] = (top->opcode >> 24) & 0xff;
         printf("0x%08x: %02x %02x %02x %02x ", top->pc, inst[3], inst[2], inst[1], inst[0]);
-        disassemble(str, 128, top->pc, inst, 4);
-        printf("%s\n", str);
+        if(top->opcode!=0){
+          disassemble(str, 128, top->pc, inst, 4);
+          printf("%s\n", str);
+        }else{
+          printf("zero opcode\n");
+        }
         #ifdef ITRACE
         strcpy(itrace[point],str);
         point = (point+1)%ITRACE_VAL;
@@ -341,7 +385,7 @@ void execute(uint64_t n){
       }else{
         printf("\033[032mGOOD\033[0m\n");
       }
-      printf("Finished in %ld\n",contextp->time());
+      printf("Finished in %lu\n",contextp->time());
       break;
     }
     if(check_watchpoints()){
@@ -350,8 +394,12 @@ void execute(uint64_t n){
       inst[2] = (top->opcode >> 16) & 0xff;
       inst[3] = (top->opcode >> 24) & 0xff;
       printf("0x%08x: %02x %02x %02x %02x ", top->pc, inst[3], inst[2], inst[1], inst[0]);
-      disassemble(str, 128, top->pc, inst, 4);
-      printf("%s\n", str);
+      if(top->opcode!=0){
+        disassemble(str, 128, top->pc, inst, 4);
+        printf("%s\n", str);
+      }else{
+        printf("zero opcode\n");
+      }
       #ifdef ITRACE
       strcpy(itrace[point],str);
       point = (point+1)%ITRACE_VAL;
@@ -361,19 +409,38 @@ void execute(uint64_t n){
     n--;
     
     if(!batch && do_diff && top->reg_valid) {
+        if(device_access){
+          for(int i = 0; i < 16; i++){
+            cpu.gpr[i] = top->reg_mod->regs[i];
+            // printf("regs %d:%x\n",i, cpu.gpr[i]);
+          }for(int i = 0; i < 16; i++){
+            cpu.gpr[i+16] = 0;
+            // printf("regs %d:%x\n",i+16, cpu.gpr[i+16]);
+          }
+          cpu.pc = top->pc;
+          // printf("pc:%x\n", cpu.pc);
+          difftest_regcpy(&cpu, 1);
+          device_access--;
+          // printf("device call opcode:%x, value:%d\n", top->opcode, device_access);
+        }
+
         difftest_regcpy(&ref_cpu, 0);
 
         if (ref_cpu.pc != top->pc) {
           printf("Difference with REF pc, should:0x%08x, actually:0x%08x\n", ref_cpu.pc, top->pc);
-          printf("%d\n",contextp->time());
+          printf("%lu\n",contextp->time());
           ret = 1;
           inst[0] = (top->opcode) & 0xff;
           inst[1] = (top->opcode >> 8) & 0xff;
           inst[2] = (top->opcode >> 16) & 0xff;
           inst[3] = (top->opcode >> 24) & 0xff;
           printf("0x%08x: %02x %02x %02x %02x ", top->pc, inst[3], inst[2], inst[1], inst[0]);
-          // disassemble(str, 128, top->pc, inst, 4);
-          printf("%s\n", str);
+          if(top->opcode!=0){
+            disassemble(str, 128, top->pc, inst, 4);
+            printf("%s\n", str);
+          }else{
+            printf("zero opcode\n");
+          }
           #ifdef ITRACE
           strcpy(itrace[point],str);
           point = (point+1)%ITRACE_VAL;
@@ -391,8 +458,12 @@ void execute(uint64_t n){
             inst[2] = (top->opcode >> 16) & 0xff;
             inst[3] = (top->opcode >> 24) & 0xff;
             printf("0x%08x: %02x %02x %02x %02x ", top->pc, inst[3], inst[2], inst[1], inst[0]);
-            disassemble(str, 128, top->pc, inst, 4);
-            printf("%s\n", str);
+            if(top->opcode!=0){
+              disassemble(str, 128, top->pc, inst, 4);
+              printf("%s\n", str);
+            }else{
+              printf("zero opcode\n");
+            }
             #ifdef ITRACE
             strcpy(itrace[point],str);
             point = (point+1)%ITRACE_VAL;
@@ -400,6 +471,10 @@ void execute(uint64_t n){
             return;
           }
         }
+    }
+    if((top->__PVT__io_master_araddr == 0x200bff8) || (top->__PVT__io_master_araddr == 0x200bffc) || (top->__PVT__io_master_araddr == 0x10000005)){
+      device_access++;
+      // printf("device call opcode:%x, value:%d\n", top->opcode, device_access);
     }
   }
 }
@@ -536,6 +611,11 @@ void print_stage_performance_table(const uint64_t cycles[3], const Performance_t
     std::snprintf(buf1, sizeof(buf1), "%3.1f", avg_miss_latency[1] * cache_miss_pct[1]/100);
     std::snprintf(buf2, sizeof(buf2), "%3.1f", avg_miss_latency[2] * cache_miss_pct[2]/100);
     std::printf(" %-36s | %-20s | %-20s | %-20s \n", "AMAT (cycles)", buf0, buf1, buf2);
+    std::printf("=========================================================================================================\n");
+    std::snprintf(buf0, sizeof(buf0), "%ld", perf[0].flush);
+    std::snprintf(buf1, sizeof(buf1), "%ld", perf[1].flush);
+    std::snprintf(buf2, sizeof(buf2), "%ld", perf[2].flush);
+    std::printf(" %-36s | %-20s | %-20s | %-20s \n", "Flushes (count)", buf0, buf1, buf2);
     std::printf("=========================================================================================================\n\n");
               
 }

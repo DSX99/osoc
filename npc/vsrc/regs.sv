@@ -25,11 +25,6 @@ module regs (
         data_rs2 = regs[rs2[3:0]];
     end
 
-    always_comb begin
-        `ifndef SYNTHESIS
-        if(finish) $finish;
-        `endif 
-    end
 
     always_ff @(posedge clk) begin
         if(rst) begin
@@ -42,5 +37,9 @@ module regs (
                 regs[0]<=0;
             end
         end
+
+        `ifndef SYNTHESIS
+        if(finish) $finish;
+        `endif 
     end
 endmodule

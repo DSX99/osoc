@@ -66,28 +66,40 @@ module osoc_26000003_core (
     output logic [3:0]   io_slave_rid
 );
 
-    logic [31:0] pc /* verilator public */, opcode /* verilator public */, pc_e /* verilator public */;
+    logic [31:0] pc /* verilator public */, prev_pc /* verilator public */, opcode /* verilator public */, pc_e /* verilator public */;
     logic reg_valid /* verilator public */, reg_valid_e /* verilator public */;
 
     logic if_de_valid_if /* verilator public */, if_de_ready_if /*verilator public*/, ex_ls_valid_ls /* verilator public */, ex_ls_ready_ls /* verilator public */;
     logic branch /* verilator public */, branch_taken /* verilator public */, ex_ls_bus_lsu_we_ls /* verilator public*/, ex_ls_bus_lsu_re_ls /* verilator public*/;
     logic cache_hit/* verilator public */, cache_miss/* verilator public */, rst/* verilator public */;
+    logic ex_ls_valid_ex /* verilator public */;
 
     assign rst = reset;
-
-    assign opcode = opcode_over_wb; 
 
     logic [31:0] opcode_over_ex, opcode_over_ls, opcode_over_wb;
 
     assign reg_valid_e = ls_wb_valid_wb;
     
+    always_comb begin
+        branch_taken = ls_wb_bus_branch_wb;
+    end
+
     always_ff @(posedge clock) begin
         if (reset) begin
             reg_valid <= 1'b0;
             pc   <= 32'b0;
+            prev_pc<=0;
+            opcode <= 0 ;
         end else begin
             reg_valid <= reg_valid_e;
-            pc   <= pc_e;
+            pc   <= ls_wb_bus_branch_wb ? pc_in : pc_e;
+            `ifndef SYNTHESIS
+            prev_pc <= pc_e - 4;
+            `endif
+            `ifdef SYNTHESIS
+            prev_pc <= 0;
+            `endif
+            opcode <= opcode_over_wb;
         end
     end
 
@@ -155,7 +167,8 @@ module osoc_26000003_core (
     logic [1:0]  ex_ls_bus_mux_select_ex;
     logic        ex_ls_bus_mux_select_pc_ex;
     logic        ex_ls_bus_branch_ex;
-    logic        ex_ls_valid_ex, ex_ls_ready_ex;
+    // logic        ex_ls_valid_ex; //declared as public
+    logic        ex_ls_ready_ex;
 
     logic [31:0] ex_ls_bus_next_pc_ls;
     logic [31:0] ex_ls_bus_alu_out_ls;
@@ -202,10 +215,13 @@ module osoc_26000003_core (
         .data_in(pc_in), 
         .pc(pc_ifu), 
         .next_pc(next_pc), 
-        .valid(if_de_valid_if && if_de_ready_if)
+        .valid(if_de_valid_if && if_de_ready_if),
+        .wb_valid(ls_wb_valid_wb)
     );
     assign pc_in = ls_wb_bus_mux_select_pc_wb ? ls_wb_bus_csr_out_wb : ls_wb_bus_alu_out_wb;
-    logic flush = ls_wb_bus_branch_wb;
+    logic flush /*verilator public*/;
+
+    assign flush = ls_wb_bus_branch_wb; 
     
     logic [31:0] pc_ifu, next_pc;
 
@@ -221,7 +237,7 @@ module osoc_26000003_core (
 
     icache icache_mod(
         .clk(clock), .rst(reset),
-        .ifu_addr(cache_addr), .valid(cache_valid), .opcode(cache_opcode), .ready(cache_ready),
+        .ifu_addr(cache_addr), .valid(cache_valid & !ls_wb_bus_branch_wb), .opcode(cache_opcode), .ready(cache_ready),
         .araddr(araddr_ifu), .arvalid(arvalid_ifu), .arready(arready_ifu), 
         .arlen(arlen_ifu), .arsize(arsize_ifu), .arburst(arburst_ifu),
 
@@ -358,7 +374,7 @@ module osoc_26000003_core (
         .bus_out_branch(ex_ls_bus_branch_ex),
         .valid_left(de_ex_valid_ex), .ready_left(de_ex_ready_alu),
         .valid_right(ex_ls_valid_alu), .ready_right(ex_ls_ready_ex),   
-        .branch(branch), .branch_taken(branch_taken)
+        .branch(branch)
     );
 
     logic [31:0] csr_in;
@@ -417,7 +433,7 @@ module osoc_26000003_core (
 
     // LSU Instance
     lsu lsu_mod (
-        .clk(clock), .rst(reset), 
+        .clk(clock), .rst(reset), .flush(flush),
         .bus_in_next_pc(ex_ls_bus_next_pc_ls),
         .bus_in_alu_out(ex_ls_bus_alu_out_ls),
         .bus_in_data_rs2(ex_ls_bus_data_rs2_ls),

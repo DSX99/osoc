@@ -28,7 +28,7 @@ extern VysyxSoCFull_osoc_26000003_core *top;
 #endif
 
 #ifdef NPC
-extern Vosoc_26000003_func_osoc_26000003_func *top;
+extern Vosoc_26000003_func_osoc_26000003_core *top;
 #endif
 
 void init_regex();
@@ -116,7 +116,7 @@ static int cmd_x(char *args) {
   }else{
     long size = strtol(size_str, &endptr_size, 0);
     long val = expr(args,&success);
-    if((val >= 0x30000000 && val<0x3fffffff)||(val >= 0x80000000 && val < 0x9fffffff)){
+    if((val >= 0x30000000 && val<0x3fffffff)||(val >= 0x80000000 && val < 0x9fffffff)||(val >= 0xa0000000 && val < 0xafffffff)){
       if( !(success) || *endptr_size != '\0'){
         printf("Correct use x N ECPR , where N is an integer and EXPR is a expression.\n");
         return 0;

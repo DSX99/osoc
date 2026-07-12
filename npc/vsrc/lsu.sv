@@ -1,6 +1,7 @@
 module lsu (
     input logic clk,
     input logic rst,
+    input logic flush,
 
     input logic [31:0] bus_in_next_pc,       
     input logic [31:0] bus_in_alu_out,       
@@ -52,6 +53,7 @@ module lsu (
 
     logic unused_branch;
     logic done_r, done_w;
+    logic trans_r, trans_w;
 
     assign wlast = wvalid;
 
@@ -93,10 +95,10 @@ module lsu (
 
         if(!rst) begin
         //read
-        if(bus_in_lsu_re) begin
+        if(bus_in_lsu_re || trans_r) begin
         case(lsu_r)
             IDLE_R: begin
-                if (bus_in_lsu_re && valid_left) begin
+                if (bus_in_lsu_re && valid_left && !flush) begin
                     arvalid = 1;
                     araddr  = bus_in_alu_out;
                 end
@@ -150,10 +152,10 @@ module lsu (
         end
 
         //write
-        if(bus_in_lsu_we) begin
+        if(bus_in_lsu_we || trans_w) begin
         case(lsu_w)
             IDLE_W: begin
-                if (bus_in_lsu_we && valid_left) begin
+                if (bus_in_lsu_we && valid_left && !flush) begin
                     awaddr  = bus_in_alu_out; 
                     awvalid = 1;
                     wdata   = (bus_in_data_rs2 << (bus_in_alu_out[1:0] * 8));
@@ -193,21 +195,23 @@ module lsu (
         end else begin
             case (lsu_r)
                 IDLE_R: begin
-                    if (bus_in_lsu_re && valid_left) begin
-                        lsu_r   <= WAIT_AR;
+                    if (bus_in_lsu_re && valid_left && !flush) begin
+                        lsu_r <= WAIT_AR;
+                        trans_r<=1;
                         if (arready && arvalid) begin
-                            lsu_r   <= WAIT_R;
+                            lsu_r <= WAIT_R;
                         end
                     end
                 end
                 WAIT_AR: begin
                     if (arready && arvalid) begin
-                        lsu_r   <= WAIT_R;
+                        lsu_r <= WAIT_R;
                     end
                 end
                 WAIT_R: begin
                     if (rvalid && rready) begin
                         lsu_r <= IDLE_R;
+                        trans_r<=0;
                     end
                 end
                 default: ;
@@ -241,7 +245,7 @@ module lsu (
         end else begin
             case (lsu_w)
                 IDLE_W: begin
-                    if (bus_in_lsu_we && valid_left) begin
+                    if (bus_in_lsu_we && valid_left && !flush) begin
                         lsu_w   <= WAIT_W;
                         if (wready) begin 
                             done_wdata <= 1;
