@@ -69,8 +69,8 @@ always_comb begin
     arlen=0;
     arsize=0;
 
-    if (valid && !rst) begin
-        if (hit) begin
+    if ((valid && !rst) || trans) begin
+        if (hit & !trans) begin
             opcode = block_cache[index][word_select];
             ready  = 1'b1;
         end else begin
@@ -112,7 +112,7 @@ always_ff @(posedge clk) begin
         for(int i = 0; i < NUMBER_OF_BLOCKS; i = i + 1) begin
             block_valid[i] <= 1'b0;
         end
-    end else if (valid && !hit) begin
+    end else if ((valid && !hit) || trans) begin
         if(ifu_addr >= 32'ha0000000 && ifu_addr < 32'hc0000000)begin
             case (state)
                 WAIT_AR: begin
