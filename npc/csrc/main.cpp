@@ -384,7 +384,7 @@ void execute(uint64_t n){
             // printf("regs %d:%x\n",i+16, cpu.gpr[i+16]);
           }
           cpu.pc = top->pc;
-          printf("pc:%x\n", cpu.pc);
+          // printf("pc:%x\n", cpu.pc);
           difftest_regcpy(&cpu, 1);
           device_access--;
           // printf("device call opcode:%x, value:%d\n", top->opcode, device_access);
