@@ -103,11 +103,16 @@ extern "C" void sdram_write(uint32_t addr, uint32_t data, uint32_t mask) {
             (flash[addr-FLASH_OFFSET+2]<<16)|
             (flash[addr-FLASH_OFFSET+1]<<8)|
             (flash[addr-FLASH_OFFSET]));
-        }else if(addr>=PSRAM_OFFSET && addr<(PSRAM_OFFSET + 0x20000000)){
+        }else if(addr>=PSRAM_OFFSET && addr<(PSRAM_OFFSET + 0x400000)){
             return ((psram[addr-PSRAM_OFFSET+3]<<24)|
             (psram[addr-PSRAM_OFFSET+2]<<16)|
             (psram[addr-PSRAM_OFFSET+1]<<8)|
             (psram[addr-PSRAM_OFFSET]));    
+        }else if(addr>=SDRAM_OFFSET && addr<(SDRAM_OFFSET + 0x8000000)){
+            return ((sdram[addr-SDRAM_OFFSET+3]<<24)|
+            (sdram[addr-SDRAM_OFFSET+2]<<16)|
+            (sdram[addr-SDRAM_OFFSET+1]<<8)|
+            (sdram[addr-SDRAM_OFFSET]));  
         }else{
             printf("Illegal memory read access at addr:0x%08x at pc: 0x%08x\n",addr, top->pc);
             fail=1;
