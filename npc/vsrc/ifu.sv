@@ -9,6 +9,11 @@ module ifu (
     output logic [31:0] bus_out_next_pc,    // Predicted or sequential PC (PC + 4)
     output logic [31:0] bus_out_opcode,     // The raw 32-bit instruction machine code
 
+    // Exception / speculation tracking (placeholder pass-through)
+    output logic [3:0]  bus_out_mcause,
+    output logic         bus_out_exception,
+    output logic         bus_out_speculate,
+
     // Handshake control signals
     output logic valid,
     input  logic ready,
@@ -38,6 +43,11 @@ module ifu (
 
         valid = cache_ready;
         bus_out_opcode = cache_opcode;
+
+        // TODO: exception/speculation detection at fetch time
+        bus_out_mcause    = 4'b0;
+        bus_out_exception = 1'b0;
+        bus_out_speculate = 1'b0;
     end
 
 endmodule

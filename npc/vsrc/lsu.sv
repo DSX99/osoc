@@ -3,26 +3,36 @@ module lsu (
     input logic rst,
     input logic flush,
 
-    input logic [31:0] bus_in_next_pc,       
-    input logic [31:0] bus_in_alu_out,       
-    input logic [31:0] bus_in_data_rs2,      
-    input logic [31:0] bus_in_csr_out,       
-    input logic        bus_in_lsu_we,        
-    input logic        bus_in_lsu_re,        
-    input logic [2:0]  bus_in_lsu_oper,      
-    input logic [4:0]  bus_in_rd,            
-    input logic [1:0]  bus_in_mux_select,    
-    input logic        bus_in_mux_select_pc, 
-    input logic        bus_in_branch,        
+    input logic [31:0] bus_in_pc,
+    input logic [31:0] bus_in_next_pc,
+    input logic [31:0] bus_in_alu_out,
+    input logic [31:0] bus_in_data_rs2,
+    input logic [31:0] bus_in_csr_out,
+    input logic        bus_in_lsu_we,
+    input logic        bus_in_lsu_re,
+    input logic [2:0]  bus_in_lsu_oper,
+    input logic [4:0]  bus_in_rd,
+    input logic [1:0]  bus_in_mux_select,
+    input logic        bus_in_mux_select_pc,
+    input logic        bus_in_branch,
 
-    output logic [31:0] bus_out_alu_out,       
-    output logic [31:0] bus_out_lsu_out,       
-    output logic [31:0] bus_out_next_pc,       
-    output logic [31:0] bus_out_csr_out,       
-    output logic [4:0]  bus_out_rd,            
-    output logic [1:0]  bus_out_mux_select,    
-    output logic        bus_out_mux_select_pc, 
+    input logic [3:0]  bus_in_mcause,
+    input logic         bus_in_exception,
+    input logic         bus_in_speculate,
+
+    output logic [31:0] bus_out_pc,
+    output logic [31:0] bus_out_alu_out,
+    output logic [31:0] bus_out_lsu_out,
+    output logic [31:0] bus_out_next_pc,
+    output logic [31:0] bus_out_csr_out,
+    output logic [4:0]  bus_out_rd,
+    output logic [1:0]  bus_out_mux_select,
+    output logic        bus_out_mux_select_pc,
     output logic        bus_out_branch,
+
+    output logic [3:0]  bus_out_mcause,
+    output logic         bus_out_exception,
+    output logic         bus_out_speculate,
 
     input  logic valid_left, ready_right,
     output logic ready_left, valid_right,
@@ -61,6 +71,7 @@ module lsu (
 
         unused_branch = |rresp | |bresp;
 
+        bus_out_pc            = 0;
         bus_out_alu_out       = 0;
         bus_out_next_pc       = 0;
         bus_out_csr_out       = 0;
@@ -69,7 +80,12 @@ module lsu (
         bus_out_mux_select_pc = 0;
         bus_out_branch        = 0;
 
-        if (valid_left && ready_right) begin 
+        bus_out_mcause        = 0;
+        bus_out_exception     = 0;
+        bus_out_speculate     = 0;
+
+        if (valid_left && ready_right) begin
+            bus_out_pc            = bus_in_pc;
             bus_out_alu_out       = bus_in_alu_out;
             bus_out_next_pc       = bus_in_next_pc;
             bus_out_csr_out       = bus_in_csr_out;
@@ -77,7 +93,12 @@ module lsu (
             bus_out_mux_select    = bus_in_mux_select;
             bus_out_mux_select_pc = bus_in_mux_select_pc;
             bus_out_branch        = bus_in_branch;
-        end 
+
+            // TODO: exception detection during memory access (e.g. misaligned/fault)
+            bus_out_mcause        = bus_in_mcause;
+            bus_out_exception     = bus_in_exception;
+            bus_out_speculate     = bus_in_speculate;
+        end
 
 
         arvalid = 0;
@@ -242,12 +263,14 @@ module lsu (
             done_aw     <= 0;
             done_wdata  <= 0;
             lsu_w       <= IDLE_W;
+            trans_w     <= 0;
         end else begin
             case (lsu_w)
                 IDLE_W: begin
                     if (bus_in_lsu_we && valid_left && !flush) begin
                         lsu_w   <= WAIT_W;
-                        if (wready) begin 
+                        trans_w <= 1;
+                        if (wready) begin
                             done_wdata <= 1;
                         end
                         if (awready) begin
@@ -278,7 +301,8 @@ module lsu (
                 end
                 WAIT_COMMIT: begin
                     if (ready_right) begin
-                        lsu_w <= IDLE_W;
+                        lsu_w   <= IDLE_W;
+                        trans_w <= 0;
                     end
                 end
                 default: ;

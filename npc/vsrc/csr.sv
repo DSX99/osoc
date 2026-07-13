@@ -1,12 +1,13 @@
 module csr(
     input logic clk,
     input logic rst,
-    input logic [1:0] oper,
+    input logic exception,
     input logic [4:0] cause,
     input logic [11:0] addr,
-    input logic [31:0] data_in,
     input logic [31:0] pc,
+    input logic [31:0] data_in,
     output logic [31:0] data_out,
+    output logic [31:0] mtvec,
 
     input logic valid_left, ready_right,
     output logic ready_left, valid_right
@@ -46,6 +47,7 @@ always_comb begin
     endcase
     if(cause != 0) working_reg = MTVEC;
     data_out = regs[working_reg];
+    mtvec = regs[MTVEC];
 end
 
 always_ff @(posedge clk) begin
@@ -55,24 +57,11 @@ always_ff @(posedge clk) begin
         end
         regs[MSTATUS] <= 32'h00001800;
     end else begin
-        if(valid_left && ready_left) begin
-            case(oper)
-                2'b00: ;
-                2'b01 : begin
-                    regs[working_reg] <= data_in;
-                end
-                2'b10 : begin
-                    regs[working_reg] <= regs[working_reg] | data_in;
-                end
-                2'b11 : begin
-                    regs[working_reg] <= regs[working_reg] & (~data_in);
-                end
-            endcase
-
-            if(cause !=0) begin
-                regs[MEPS]<=pc;
-                regs[MCAUSE]<={27'b0,cause};
-            end
+        if(exception) begin
+            regs[MEPS]<=pc;
+            regs[MCAUSE]<={27'b0,cause};
+        end else begin
+            regs[working_reg] <= data_in;
         end
     end
 end

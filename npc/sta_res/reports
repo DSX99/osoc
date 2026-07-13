@@ -1004,8 +1004,118 @@ Finished in 4659307126
  Flushes (count)                      | 525                  | 1816                 | 42591716             
 =========================================================================================================
 
-make[1]: Leaving directory '/home/dsx99/osoc/ysyx-workbench/npc'
-
    Chip area for module '\osoc_26000003_core': 23861.600000
      of which used for sequential elements: 11999.680000 (50.29%)
   MAX FREQ 968.898MHZ
+
+
+
+// better run of pipeline without exeption handling
+  ======= Running MicroBench [input *train*] =======
+[qsort] Quick sort: time:100000000
+time:200000000
+time:300000000
+* Passed.
+  min time: 62.859 ms [0]
+[queen] Queen placement: time:400000000
+time:500000000
+* Passed.
+  min time: 130.260 ms [0]
+[bf] Brainf**k interpreter: time:600000000
+time:700000000
+time:800000000
+time:900000000
+time:1000000000
+time:1100000000
+* Passed.
+  min time: 288.608 ms [0]
+[fib] Fibonacci number: time:1200000000
+time:1300000000
+time:1400000000
+time:1500000000
+time:1600000000
+time:1700000000
+time:1800000000
+time:1900000000
+time:2000000000
+time:2100000000
+time:2200000000
+time:2300000000
+time:2400000000
+time:2500000000
+time:2600000000
+time:2700000000
+* Passed.
+  min time: 864.657 ms [0]
+[sieve] Eratosthenes sieve: time:2800000000
+time:2900000000
+time:3000000000
+* Passed.
+  min time: 111.113 ms [0]
+[15pz] A* 15-puzzle search: time:3100000000
+time:3200000000
+* Passed.
+  min time: 110.076 ms [0]
+[dinic] Dinic's maxflow algorithm: time:3300000000
+time:3400000000
+* Passed.
+  min time: 90.294 ms [0]
+[lzip] Lzip compression: time:3500000000
+time:3600000000
+time:3700000000
+* Passed.
+  min time: 91.952 ms [0]
+[ssort] Suffix sort: time:3800000000
+time:3900000000
+time:4000000000
+* Passed.
+  min time: 111.221 ms [0]
+[md5] MD5 digest: time:4100000000
+time:4200000000
+time:4300000000
+time:4400000000
+time:4500000000
+time:4600000000
+time:4700000000
+* Passed.
+  min time: 218.775 ms [0]
+==================================================
+MicroBench PASS
+Scored time: 2079.815 ms
+Total  time: 2394.663 ms
+- vsrc/regs.sv:42: Verilog $finish
+GOOD
+Finished in 4702562118
+
+=========================================================================================================
+                                    MULTI-STAGE PERFORMANCE REPORT                                       
+=========================================================================================================
+ Performance Metric                   | 0: PREBOOT           | 1: BOOT              | 2: PROGRAM           
+---------------------------------------------------------------------------------------------------------
+ Execution Cycles                     | 2178217              | 28464351             | 2320638491           
+ Instructions Retired (WB)            | 2637                 | 20005                | 196017814            
+ Cycles Per Instruction (CPI)         | 826.021              | 1422.862             | 11.839               
+ Instructions Per Cycle (IPC)         | 0.001                | 0.001                | 0.084                
+---------------------------------------------------------------------------------------------------------
+ IFU Fetched Instructions             | 0                    | 0                    | 0                    
+ IFU Stall Cycles                     | 125546 (5.8%)        | 87666 (0.3%)         | 1070639681 (46.1%)   
+---------------------------------------------------------------------------------------------------------
+ Control Branches + Jumps Executed    | 528                  | 1833                 | 78648296             
+ Branches + Jumps Taken               | 525 (99.4%)          | 1816 (99.1%)         | 42590907 (54.2%)     
+---------------------------------------------------------------------------------------------------------
+ LSU Data Reads (Loads)               | 524                  | 7234                 | 15832384             
+ LSU Data Writes (Stores)             | 525                  | 7244                 | 7257352              
+ LSU Stall Cycles                     | 2046766 (94.0%)      | 28349324 (99.6%)     | 740284462 (31.9%)    
+---------------------------------------------------------------------------------------------------------
+ Cache Hits                           | 3153 (99.8%)         | 14531 (66.6%)        | 206576022 (86.6%)    
+ Cache Misses                         | 7 (0.2%)             | 7290 (33.4%)         | 31827439 (13.4%)     
+ Cache Miss Penalty Cycles            | 125022               | 112995               | 1278506256           
+ Avg Cache Miss Latency (cyc)         | 17860.29             | 15.50                | 40.17                
+=========================================================================================================
+ AMAT (cycles)                        | 39.6                 | 5.2                  | 5.4                  
+=========================================================================================================
+ Flushes (count)                      | 525                  | 1816                 | 42590907             
+=========================================================================================================
+Chip area for module '\osoc_26000003_core': 23861.600000
+  of which used for sequential elements: 11999.680000 (50.29%)
+MAX FREQ 968.898MHZ

@@ -1,30 +1,33 @@
 module decode (
-    // =========================================================================
-    // Explicit Inputs (from pipeline_bus_pkg::if_to_id_bus_t)
-    // =========================================================================
-    input logic [31:0] bus_in_pc,            // PC of the fetched instruction
-    input logic [31:0] bus_in_next_pc,       // Predicted or sequential PC (PC + 4)
-    input logic [31:0] bus_in_opcode,        // The raw 32-bit instruction machine code
+    input logic [31:0] bus_in_pc,            
+    input logic [31:0] bus_in_next_pc,        
+    input logic [31:0] bus_in_opcode,        
 
-    // =========================================================================
-    // Explicit Outputs (to pipeline_bus_pkg::id_to_ex_bus_t)
-    // =========================================================================
-    output logic [31:0] bus_out_pc,            // Used for AUIPC and Branch target calculations
-    output logic [31:0] bus_out_next_pc,       // Carried through for JAL/JALR return addresses
-    output logic [31:0] bus_out_imm,           // Fully decoded immediate value
-    output logic [4:0]  bus_out_rs1,           // to WB to read rs1
-    output logic [4:0]  bus_out_rs2,           // to WB to read rs2
-    output logic [7:0]  bus_out_alu_op,        // ALU operation selection
-    output logic [2:0]  bus_out_csr_oper,      // CSR operation type (csrrw, csrrs, etc.)
-    output logic [4:0]  bus_out_cause,         // Exception/Interrupt cause if detected in ID
-    output logic        bus_out_lsu_we,        // Memory Write Enable (Store)
-    output logic        bus_out_lsu_re,        // Memory Read Enable (Load)
-    output logic [2:0]  bus_out_lsu_oper,      // LSU width/sign extension code
-    output logic [4:0]  bus_out_rd,            // Destination register address (x0 - x31)
-    output logic [1:0]  bus_out_mux_select,    // Selector for Write-Back data multiplexer
-    output logic        bus_out_mux_select_pc, // selector for pc write
+    input logic [3:0]  bus_in_mcause,
+    input logic         bus_in_exception,
+    input logic         bus_in_speculate,
 
-    // Handshake control signals
+    output logic [31:0] bus_out_pc,            
+    output logic [31:0] bus_out_next_pc,       
+
+    output logic [3:0]  bus_out_mcause,
+    output logic        bus_out_exception,
+    output logic        bus_out_speculate,
+
+    output logic [31:0] bus_out_imm,            
+    output logic [4:0]  bus_out_rs1,
+    output logic [4:0]  bus_out_rs2,
+    output logic [4:0]  bus_out_csr,
+    output logic [7:0]  bus_out_alu_op,        
+    output logic [2:0]  bus_out_csr_oper,       
+    output logic [4:0]  bus_out_cause,          
+    output logic        bus_out_lsu_we,         
+    output logic        bus_out_lsu_re,         
+    output logic [2:0]  bus_out_lsu_oper,       
+    output logic [4:0]  bus_out_rd,             
+    output logic [1:0]  bus_out_mux_select,     
+    output logic        bus_out_mux_select_pc,  
+
     input  logic valid_left, ready_right,
     output logic ready_left, valid_right,
 
@@ -79,6 +82,12 @@ module decode (
         // Initialize all explicit output bus signals to default state ('0)
         bus_out_pc            = bus_in_pc;
         bus_out_next_pc       = bus_in_next_pc;
+
+        // TODO: exception detection during decode (illegal instr, etc.)
+        bus_out_mcause        = bus_in_mcause;
+        bus_out_exception     = bus_in_exception;
+        bus_out_speculate     = bus_in_speculate;
+
         bus_out_imm           = '0;
         bus_out_rs1           = '0;
         bus_out_rs2           = '0;
@@ -168,22 +177,24 @@ module decode (
                 bus_out_mux_select = 2'b11;
                 case(func3)
                     3'b000: begin
-                        if(!(|func7) && rs2_val==1) begin
+                        if(!(|func7) && rs2_val==1) begin //ebreak
                             finish=1;
-                        end else if(!(|func7 | |rs2_val)) begin
+                        end else if(!(|func7 | |rs2_val)) begin // ecall
                             bus_out_cause         = 5'd11;
                             bus_out_alu_op        = 8'b10010000;
                             bus_out_mux_select_pc = 1'b1;
-                        end else begin
+                        end else if(func7 == 7'b0011000 && rs2 == 5'b00010) begin //mret
                             bus_out_alu_op        = 8'b10010000;
                             bus_out_mux_select_pc = 1'b1;
                             bus_out_rs1           = 0;
                             bus_out_rd            = 0;
                             bus_out_csr_oper      = 3'b001;
                             bus_out_imm           = {20'b0, 12'h341};
+                        end else begin
+                            ;   //raise exception
                         end
                     end
-                    default: begin
+                    default: begin  // csr oper
                         bus_out_csr_oper = func3;
                     end
                 endcase 

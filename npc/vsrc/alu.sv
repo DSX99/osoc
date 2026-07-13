@@ -1,35 +1,41 @@
 module alu (
-    // =========================================================================
-    // Explicit Inputs (from pipeline_bus_pkg::id_to_ex_bus_t)
-    // =========================================================================
-    input logic [31:0] bus_in_pc,            // Used for AUIPC and Branch target calculations
-    input logic [31:0] bus_in_next_pc,       // Carried through for JAL/JALR return addresses
-    input logic [31:0] bus_in_imm,           // Fully decoded immediate value
-    input logic [31:0] bus_in_data_rs1,      // Register file source 1 data (or forwarded)
-    input logic [31:0] bus_in_data_rs2,      // Register file source 2 data (or forwarded)
-    input logic [7:0]  bus_in_alu_op,        // ALU operation selection
-    input logic        bus_in_lsu_we,        // Memory Write Enable (Store)
-    input logic        bus_in_lsu_re,        // Memory Read Enable (Load)
-    input logic [2:0]  bus_in_lsu_oper,      // LSU width/sign extension code
-    input logic [4:0]  bus_in_rd,            // Destination register address (x0 - x31)
-    input logic [1:0]  bus_in_mux_select,    // Selector for Write-Back data multiplexer
-    input logic        bus_in_mux_select_pc, // selector for pc write
+    input logic [31:0] bus_in_pc,
+    input logic [31:0] bus_in_next_pc,
+    input logic [31:0] bus_in_imm,
 
-    // =========================================================================
-    // Explicit Outputs (to pipeline_bus_pkg::ex_to_ls_bus_t)
-    // =========================================================================
-    output logic [31:0] bus_out_next_pc,       // Carried through for JAL/JALR return addresses
-    output logic [31:0] bus_out_alu_out,       // Computed ALU result / Memory Address for LSU
-    output logic [31:0] bus_out_data_rs2,      // Data to be written to memory for store instructions
-    output logic        bus_out_lsu_we,        // Memory Write Enable
-    output logic        bus_out_lsu_re,        // Memory Read Enable
-    output logic [2:0]  bus_out_lsu_oper,      // LSU width/sign extension code
-    output logic [4:0]  bus_out_rd,            // Destination register address
-    output logic [1:0]  bus_out_mux_select,    // Selector for Write-Back data multiplexer
-    output logic        bus_out_mux_select_pc, // selector for pc write
-    output logic        bus_out_branch,        // Branch indicator produced by ALU
+    input logic [3:0]  bus_in_mcause,
+    input logic        bus_in_exception,
+    input logic        bus_in_speculate,
 
-    // Handshake control signals
+    input logic [31:0] bus_in_data_rs1,
+    input logic [31:0] bus_in_data_rs2,
+    input logic [31:0] bus_in_data_csr,      
+    input logic [4:0]  bus_in_rs1,      
+    input logic [7:0]  bus_in_alu_op,
+    input logic        bus_in_lsu_we,
+    input logic        bus_in_lsu_re,        
+    input logic [2:0]  bus_in_lsu_oper,      
+    input logic [4:0]  bus_in_rd,            
+    input logic [1:0]  bus_in_mux_select,    
+    input logic        bus_in_mux_select_pc, 
+
+    output logic [31:0] bus_out_pc,            
+    output logic [31:0] bus_out_next_pc,       
+    output logic [31:0] bus_out_alu_out,       
+    output logic [31:0] bus_out_csr_data,
+    output logic [31:0] bus_out_data_rs2,       
+
+    output logic [3:0]  bus_out_mcause,
+    output logic        bus_out_exception,
+    output logic        bus_out_speculate,
+    output logic        bus_out_lsu_we,        
+    output logic        bus_out_lsu_re,        
+    output logic [2:0]  bus_out_lsu_oper,      
+    output logic [4:0]  bus_out_rd,            
+    output logic [1:0]  bus_out_mux_select,    
+    output logic        bus_out_mux_select_pc, 
+    output logic        bus_out_branch,        
+
     input  logic valid_left, ready_right,
     output logic ready_left, valid_right,
 
@@ -52,7 +58,6 @@ module alu (
         valid_right = valid_left;
         ready_left  = ready_right;
 
-        // Default Assignments
         bus_out_alu_out       = '0;
         bus_out_branch        = '0;
 
@@ -85,9 +90,16 @@ module alu (
             endcase
         end
 
-        // Propagate control signals explicitly
+        bus_out_csr_data =  bus_in_data_csr;
+
+        bus_out_pc            = bus_in_pc;
         bus_out_next_pc       = bus_in_next_pc;
         bus_out_data_rs2      = bus_in_data_rs2;
+
+        // TODO: exception detection during execute (e.g. misaligned branch target)
+        bus_out_mcause        = bus_in_mcause;
+        bus_out_exception     = bus_in_exception;
+        bus_out_speculate     = bus_in_speculate;
         bus_out_lsu_we        = bus_in_lsu_we;
         bus_out_lsu_re        = bus_in_lsu_re;
         bus_out_lsu_oper      = bus_in_lsu_oper;
