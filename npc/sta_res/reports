@@ -742,7 +742,7 @@ test list [1 item(s)]: wanshu
 [        wanshu] PASS
 
 
-
+// burst
 dsx99@dsx-99:~/osoc/ysyx-workbench/am-kernels/benchmarks/microbench$ make run mainargs=train
 
 make -C /home/dsx99/osoc/ysyx-workbench/npc run ARGS=""-b" " IMG=/home/dsx99/osoc/ysyx-workbench/am-kernels/benchmarks/microbench/build/microbench-riscv32-ysyx.bin
@@ -874,3 +874,138 @@ Finished in 3501801080
 
 make[1]: Leaving directory '/home/dsx99/osoc/ysyx-workbench/npc'
 dsx99@dsx-99:~/osoc/ysyx-workbench/am-kernels/benchmarks/microbench$ 
+
+
+
+
+//pipeline
+dsx99@dsx-99:~/osoc/ysyx-workbench/am-kernels/benchmarks/microbench$ make run mainargs=train
+make -C /home/dsx99/osoc/ysyx-workbench/npc run ARGS=""-b" " IMG=/home/dsx99/osoc/ysyx-workbench/am-kernels/benchmarks/microbench/build/microbench-riscv32-ysyx.bin
+make[1]: Entering directory '/home/dsx99/osoc/ysyx-workbench/npc'
+make[2]: Entering directory '/home/dsx99/osoc/ysyx-workbench'
+make[2]: Leaving directory '/home/dsx99/osoc/ysyx-workbench'
+mkdir -p obj_dir
+gcc -c -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/capstone/repo/include -I/home/dsx99/osoc/ysyx-workbench/nemu/include -g -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/repo -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/repo/build -DCONFIG_ISA_riscv32 -O2 /home/dsx99/osoc/ysyx-workbench/nemu/src/utils/disasm.c -o obj_dir/disasm.o
+verilator vsrc/osoc_26000003_core.sv vsrc/osoc_26000003.sv vsrc/CLINT.sv vsrc/alu.sv vsrc/arbiter.sv vsrc/axi_slave.sv vsrc/axi_slave_lsu.sv vsrc/csr.sv vsrc/decode.sv vsrc/exu.sv vsrc/icache.sv vsrc/ifu.sv vsrc/lsu.sv vsrc/pc.sv vsrc/pipeline_bus_pkg.sv vsrc/regs.sv /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/ps2/ps2_top_apb.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/vga/vga_top_apb.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/uart16550/rtl/uart_top_apb.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/uart16550/rtl/uart_sync_flops.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/uart16550/rtl/uart_tfifo.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/uart16550/rtl/uart_defines.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/uart16550/rtl/raminfr.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/uart16550/rtl/uart_transmitter.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/uart16550/rtl/uart_rfifo.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/uart16550/rtl/uart_regs.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/uart16550/rtl/uart_receiver.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/spi/rtl/spi_top_apb.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/spi/rtl/spi_shift.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/spi/rtl/spi_clgen.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/spi/rtl/spi_defines.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/spi/rtl/spi_top.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/psram/psram.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/psram/efabless/EF_PSRAM_CTRL_wb.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/psram/efabless/EF_PSRAM_CTRL.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/psram/psram_top_apb.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/bitrev/bitrev.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/gpio/gpio_top_apb.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/amba/apb_delayer.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/amba/axi4_delayer.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/flash/flash.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/sdram/core_sdram_axi4/sdram_axi_core.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/sdram/core_sdram_axi4/sdram_axi_pmem.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/sdram/core_sdram_axi4/sdram_axi.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/sdram/sdram.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/sdram/sdram_top_axi.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/sdram/sdram_top_apb.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/build/*.v -cc --exe -Wno-EOFNEWLINE --trace-fst -LDFLAGS "-lreadline -L/home/dsx99/osoc/ysyx-workbench/nemu/tools/capstone/repo -lcapstone /home/dsx99/osoc/ysyx-workbench/npc/obj_dir/disasm.o /home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/build/riscv32-spike-so" -CFLAGS "-I/home/dsx99/osoc/ysyx-workbench/nemu/tools/capstone/repo/include -I/home/dsx99/osoc/ysyx-workbench/nemu/include -g -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/repo -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/repo/build -DCONFIG_ISA_riscv32" --trace-structs --timescale "1ns/1ns" --no-timing -I/home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/uart16550/rtl -I/home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/spi/rtl  --autoflush --quiet --top-module ysyxSoCFull  csrc/main.cpp csrc/watchpoint.cpp csrc/dpi.cpp csrc/expr.cpp csrc/sdb.cpp 
+make -j -C obj_dir -f VysyxSoCFull.mk 
+make[2]: Entering directory '/home/dsx99/osoc/ysyx-workbench/npc/obj_dir'
+ccache g++  -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=1 -DVM_TRACE_FST=1 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/capstone/repo/include -I/home/dsx99/osoc/ysyx-workbench/nemu/include -g -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/repo -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/repo/build -DCONFIG_ISA_riscv32   -Os  -c -o dpi.o ../csrc/dpi.cpp
+ccache g++  -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=1 -DVM_TRACE_FST=1 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/capstone/repo/include -I/home/dsx99/osoc/ysyx-workbench/nemu/include -g -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/repo -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/repo/build -DCONFIG_ISA_riscv32   -Os  -c -o main.o ../csrc/main.cpp
+ccache g++  -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=1 -DVM_TRACE_FST=1 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/capstone/repo/include -I/home/dsx99/osoc/ysyx-workbench/nemu/include -g -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/repo -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/repo/build -DCONFIG_ISA_riscv32   -Os  -c -o sdb.o ../csrc/sdb.cpp
+g++    dpi.o expr.o main.o sdb.o watchpoint.o verilated.o verilated_dpi.o verilated_fst_c.o verilated_threads.o VysyxSoCFull__ALL.a   -lz -lreadline -L/home/dsx99/osoc/ysyx-workbench/nemu/tools/capstone/repo -lcapstone /home/dsx99/osoc/ysyx-workbench/npc/obj_dir/disasm.o /home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/build/riscv32-spike-so  -pthread -lpthread -latomic   -o VysyxSoCFull
+make[2]: Leaving directory '/home/dsx99/osoc/ysyx-workbench/npc/obj_dir'
+LD_LIBRARY_PATH=/home/dsx99/osoc/ysyx-workbench/nemu/tools/capstone/repo:/home/dsx99/osoc/ysyx-workbench/nemu/build obj_dir/VysyxSoCFull -b  /home/dsx99/osoc/ysyx-workbench/am-kernels/benchmarks/microbench/build/microbench-riscv32-ysyx.bin
+
+NPC
+
+The image is /home/dsx99/osoc/ysyx-workbench/am-kernels/benchmarks/microbench/build/microbench-riscv32-ysyx.bin, size = 29568
+======= Running MicroBench [input *train*] =======
+[qsort] Quick sort: time:100000000
+time:200000000
+* Passed.
+  min time: 481.496 ms [0]
+[queen] Queen placement: time:300000000
+time:400000000
+time:500000000
+* Passed.
+  min time: 997.806 ms [0]
+[bf] Brainf**k interpreter: time:600000000
+time:700000000
+time:800000000
+time:900000000
+time:1000000000
+* Passed.
+  min time: 2210.764 ms [0]
+[fib] Fibonacci number: time:1100000000
+time:1200000000
+time:1300000000
+time:1400000000
+time:1500000000
+time:1600000000
+time:1700000000
+time:1800000000
+time:1900000000
+time:2000000000
+time:2100000000
+time:2200000000
+time:2300000000
+time:2400000000
+time:2500000000
+time:2600000000
+time:2700000000
+* Passed.
+  min time: 6623.340 ms [0]
+[sieve] Eratosthenes sieve: time:2800000000
+time:2900000000
+* Passed.
+  min time: 849.776 ms [0]
+[15pz] A* 15-puzzle search: time:3000000000
+time:3100000000
+* Passed.
+  min time: 843.182 ms [0]
+[dinic] Dinic's maxflow algorithm: time:3200000000
+time:3300000000
+* Passed.
+  min time: 691.666 ms [0]
+[lzip] Lzip compression: time:3400000000
+time:3500000000
+time:3600000000
+time:3700000000
+* Passed.
+  min time: 704.362 ms [0]
+[ssort] Suffix sort: time:3800000000
+time:3900000000
+time:4000000000
+* Passed.
+  min time: 851.964 ms [0]
+[md5] MD5 digest: time:4100000000
+time:4200000000
+time:4300000000
+time:4400000000
+time:4500000000
+time:4600000000
+* Passed.
+  min time: 1675.834 ms [0]
+==================================================
+MicroBench PASS
+Scored time: 15930.190 ms <- wrong freq
+Total  time: 18340.020 ms
+- vsrc/regs.sv:42: Verilog $finish
+GOOD
+Finished in 4659307126
+
+=========================================================================================================
+                                    MULTI-STAGE PERFORMANCE REPORT                                       
+=========================================================================================================
+ Performance Metric                   | 0: PREBOOT           | 1: BOOT              | 2: PROGRAM           
+---------------------------------------------------------------------------------------------------------
+ Execution Cycles                     | 665856               | 8771712              | 2320215995           
+ Instructions Retired (WB)            | 2637                 | 20005                | 196020771            
+ Cycles Per Instruction (CPI)         | 252.505              | 438.476              | 11.837               
+ Instructions Per Cycle (IPC)         | 0.004                | 0.002                | 0.084                
+---------------------------------------------------------------------------------------------------------
+ IFU Fetched Instructions             | 3687                 | 21837                | 316558007            
+ IFU Stall Cycles                     | 38465 (5.8%)         | 65910 (0.8%)         | 1070264601 (46.1%)   
+---------------------------------------------------------------------------------------------------------
+ Control Branches + Jumps Executed    | 528                  | 1833                 | 78650151             
+ Branches + Jumps Taken               | 525 (99.4%)          | 1816 (99.1%)         | 42591716 (54.2%)     
+---------------------------------------------------------------------------------------------------------
+ LSU Data Reads (Loads)               | 524                  | 7234                 | 15832450             
+ LSU Data Writes (Stores)             | 525                  | 7244                 | 7257410              
+ LSU Stall Cycles                     | 621486 (93.3%)       | 8678443 (98.9%)      | 740230483 (31.9%)    
+---------------------------------------------------------------------------------------------------------
+ Cache Hits                           | 3687 (100.0%)        | 21837 (100.0%)       | 316558007 (100.0%)   
+ Cache Misses                         | 0 (0.0%)             | 0 (0.0%)             | 0 (0.0%)             
+ Cache Miss Penalty Cycles            | 37941                | 74915                | 1278347701           
+ Avg Cache Miss Latency (cyc)         | 0.00                 | 0.00                 | 0.00                 
+=========================================================================================================
+ AMAT (cycles)                        | 0.0                  | 0.0                  | 0.0                  
+=========================================================================================================
+ Flushes (count)                      | 525                  | 1816                 | 42591716             
+=========================================================================================================
+
+make[1]: Leaving directory '/home/dsx99/osoc/ysyx-workbench/npc'
+
+   Chip area for module '\osoc_26000003_core': 23861.600000
+     of which used for sequential elements: 11999.680000 (50.29%)
+  MAX FREQ 968.898MHZ
