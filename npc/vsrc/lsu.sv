@@ -71,34 +71,21 @@ module lsu (
 
         unused_branch = |rresp | |bresp;
 
-        bus_out_pc            = 0;
-        bus_out_alu_out       = 0;
-        bus_out_next_pc       = 0;
-        bus_out_csr_out       = 0;
-        bus_out_rd            = 0;
-        bus_out_mux_select    = 0;
-        bus_out_mux_select_pc = 0;
-        bus_out_branch        = 0;
 
-        bus_out_mcause        = 0;
-        bus_out_exception     = 0;
-        bus_out_speculate     = 0;
+        bus_out_pc            = bus_in_pc;
+        bus_out_alu_out       = bus_in_alu_out;
+        bus_out_next_pc       = bus_in_next_pc;
+        bus_out_csr_out       = bus_in_csr_out;
+        bus_out_rd            = bus_in_rd;
+        bus_out_mux_select    = bus_in_mux_select;
+        bus_out_mux_select_pc = bus_in_mux_select_pc;
+        bus_out_branch        = bus_in_branch;
 
-        if (valid_left && ready_right) begin
-            bus_out_pc            = bus_in_pc;
-            bus_out_alu_out       = bus_in_alu_out;
-            bus_out_next_pc       = bus_in_next_pc;
-            bus_out_csr_out       = bus_in_csr_out;
-            bus_out_rd            = bus_in_rd;
-            bus_out_mux_select    = bus_in_mux_select;
-            bus_out_mux_select_pc = bus_in_mux_select_pc;
-            bus_out_branch        = bus_in_branch;
+        // TODO: exception detection during memory access (e.g. misaligned/fault)
+        bus_out_mcause        = bus_in_mcause;
+        bus_out_exception     = bus_in_exception;
+        bus_out_speculate     = bus_in_speculate;
 
-            // TODO: exception detection during memory access (e.g. misaligned/fault)
-            bus_out_mcause        = bus_in_mcause;
-            bus_out_exception     = bus_in_exception;
-            bus_out_speculate     = bus_in_speculate;
-        end
 
 
         arvalid = 0;

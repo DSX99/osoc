@@ -40,7 +40,7 @@ module apb_delayer(
   reg        buff_pslverr;
 
 
-  parameter ADD = 105;
+  parameter ADD = 113;
 
   reg set;
   reg [9:0] count;

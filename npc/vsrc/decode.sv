@@ -17,16 +17,14 @@ module decode (
     output logic [31:0] bus_out_imm,            
     output logic [4:0]  bus_out_rs1,
     output logic [4:0]  bus_out_rs2,
-    output logic [4:0]  bus_out_csr,
-    output logic [7:0]  bus_out_alu_op,        
-    output logic [2:0]  bus_out_csr_oper,       
-    output logic [4:0]  bus_out_cause,          
-    output logic        bus_out_lsu_we,         
-    output logic        bus_out_lsu_re,         
-    output logic [2:0]  bus_out_lsu_oper,       
-    output logic [4:0]  bus_out_rd,             
-    output logic [1:0]  bus_out_mux_select,     
-    output logic        bus_out_mux_select_pc,  
+    output logic [11:0]  bus_out_csr,
+    output logic [7:0]  bus_out_alu_op,
+    output logic        bus_out_lsu_we,
+    output logic        bus_out_lsu_re,
+    output logic [2:0]  bus_out_lsu_oper,
+    output logic [4:0]  bus_out_rd,
+    output logic [1:0]  bus_out_mux_select,
+    output logic        bus_out_mux_select_pc,
 
     input  logic valid_left, ready_right,
     output logic ready_left, valid_right,
@@ -34,6 +32,10 @@ module decode (
     input  logic [4:0] ex_rd,
     input  logic [4:0] ls_rd,
     input  logic [4:0] wb_rd,
+
+    input logic [11:0] ex_csr,
+    input logic [11:0] ls_csr,
+    input logic [11:0] wb_csr,
 
     output logic finish
 );
@@ -60,7 +62,7 @@ module decode (
 
     // alu_op[7] = change rs2_val to imm
     // alu_op[6] = change rs1_val to pc
-    // alu_op[5:3] branch or arithmetics (5:4): 11-atomic, 10-mult, 01-branch, 00-arithmetic, 3-extra (sub/srai)
+    // alu_op[5:3] branch or arithmetics (5:4): 11-csr, 10-mult, 01-branch, 00-arithmetic, 3-extra (sub/srai)
     // alu_op[2:0] directly operation, alu_op[2:0] copied from instr
 
     logic ex_match;
@@ -73,27 +75,25 @@ module decode (
 
     logic reg_match;
 
-    assign reg_match = ex_match | ls_match | wb_match;
+    assign reg_match = (ex_match | ls_match | wb_match) | (|ex_csr | |ls_csr | |wb_csr);
 
     always_comb begin
         valid_right = valid_left & !reg_match;
         ready_left  = ready_right & !reg_match;
 
+        bus_out_speculate = bus_in_speculate;
+        bus_out_exception = bus_in_exception;
+        bus_out_mcause = bus_in_mcause; 
+
         // Initialize all explicit output bus signals to default state ('0)
         bus_out_pc            = bus_in_pc;
         bus_out_next_pc       = bus_in_next_pc;
 
-        // TODO: exception detection during decode (illegal instr, etc.)
-        bus_out_mcause        = bus_in_mcause;
-        bus_out_exception     = bus_in_exception;
-        bus_out_speculate     = bus_in_speculate;
-
         bus_out_imm           = '0;
         bus_out_rs1           = '0;
         bus_out_rs2           = '0;
+        bus_out_csr           = '0;
         bus_out_alu_op        = '0;
-        bus_out_csr_oper      = '0;
-        bus_out_cause         = '0;
         bus_out_lsu_we        = '0;
         bus_out_lsu_re        = '0;
         bus_out_lsu_oper      = '0;
@@ -155,10 +155,16 @@ module decode (
                 bus_out_rd  = rd_val;
                 bus_out_rs1 = rs1_val;
                 bus_out_imm = imm_i;
-                if(func3==3'b001 && |func7) ; //raise exception 
+                if(func3==3'b001 && |func7) begin
+                    bus_out_exception = 1; //raise exception
+                    bus_out_mcause = 2;
+                end
                 if(func3==3'b101) begin
                     bus_out_alu_op = {4'b1000, inst[30], func3};
-                    if(inst[31]|(|inst[29:25])) ; //raise exception
+                    if(inst[31]|(|inst[29:25])) begin
+                        bus_out_exception = 1; //raise exception
+                        bus_out_mcause = 2;
+                    end
                 end
                 else bus_out_alu_op = {5'b10000, func3};
             end
@@ -167,40 +173,55 @@ module decode (
                 bus_out_rs1    = rs1_val;
                 bus_out_rs2    = rs2_val;
                 bus_out_alu_op = {2'b00, inst[25], 1'b0, inst[30], func3}; // inst[30] splits ADD/SUB and SRL/SRA
-                if(inst[25] && inst[30]) ; //raise exception
-                if(inst[31]|(|inst[29:26])) ; //raise exception
+                if(inst[25] && inst[30]) begin
+                    bus_out_exception = 1; //raise exception
+                    bus_out_mcause = 2;
+                end
+                if(inst[31]|(|inst[29:26])) begin
+                    bus_out_exception = 1; //raise exception
+                    bus_out_mcause = 2;
+                end
             end
             7'b1110011: begin // SYSTEM (ECALL, EBREAK) + CSR
                 bus_out_rd         = rd_val;
                 bus_out_rs1        = rs1_val;
-                bus_out_imm        = imm_i;
+                bus_out_csr        = imm_i[11:0];
                 bus_out_mux_select = 2'b11;
+                bus_out_alu_op    = {5'b00110, func3};
                 case(func3)
                     3'b000: begin
                         if(!(|func7) && rs2_val==1) begin //ebreak
                             finish=1;
+                            bus_out_exception = 1; //raise exception (ebreak)
+                            bus_out_mcause = 3;
                         end else if(!(|func7 | |rs2_val)) begin // ecall
-                            bus_out_cause         = 5'd11;
+                            bus_out_exception = 1; //raise exception (ecall)
+                            bus_out_mcause = 11;
                             bus_out_alu_op        = 8'b10010000;
                             bus_out_mux_select_pc = 1'b1;
-                        end else if(func7 == 7'b0011000 && rs2 == 5'b00010) begin //mret
+                        end else if(func7 == 7'b0011000 && rs2_val == 5'b00010) begin //mret
                             bus_out_alu_op        = 8'b10010000;
                             bus_out_mux_select_pc = 1'b1;
-                            bus_out_rs1           = 0;
-                            bus_out_rd            = 0;
-                            bus_out_csr_oper      = 3'b001;
-                            bus_out_imm           = {20'b0, 12'h341};
+                            bus_out_csr           = {12'h341};
                         end else begin
-                            ;   //raise exception
+                            bus_out_exception = 1; //raise exception
+                            bus_out_mcause = 2;
                         end
                     end
                     default: begin  // csr oper
-                        bus_out_csr_oper = func3;
+                        bus_out_alu_op    = {5'b00110, func3};
                     end
                 endcase 
             end
             default: ;
         endcase
+
+
+        if(bus_in_exception) begin
+            bus_out_rd = 0;
+            bus_out_exception = bus_in_exception;
+            bus_out_mcause = bus_in_mcause;             
+        end
     end
 
 endmodule

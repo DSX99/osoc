@@ -63,15 +63,15 @@ void reset(Vosoc_26000003_func *soc,int n){
   soc->reset=1;
   for(int i=0; i<n; i++){
     #ifdef CONFIG_FST
-    contextp->timeInc(1);
     tracep->dump(contextp->time());
     #endif
+    contextp->timeInc(1);
     soc->clock=1;
     soc->eval();
     #ifdef CONFIG_FST
-    contextp->timeInc(1);
     tracep->dump(contextp->time());
     #endif
+    contextp->timeInc(1);
     soc->clock=0;
     soc->eval();
   }
@@ -162,7 +162,7 @@ int main(int argc, char** argv) {
   #endif
   
   delete soc;
-  return (ret || (!finished && qexit));
+  return (ret || (!finished && qexit) || fail);
 }
 
 

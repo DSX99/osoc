@@ -22,7 +22,7 @@ module alu (
     output logic [31:0] bus_out_pc,            
     output logic [31:0] bus_out_next_pc,       
     output logic [31:0] bus_out_alu_out,       
-    output logic [31:0] bus_out_csr_data,
+    output logic [31:0] bus_out_data_csr,
     output logic [31:0] bus_out_data_rs2,       
 
     output logic [3:0]  bus_out_mcause,
@@ -47,7 +47,7 @@ module alu (
     // alu_op[5:3] branch or arithmetics (5:4): 11-idk, 10-mult, 01-branch, 00-arithmetic, 3-extra (sub/srai)
     // alu_op[2:0] directly operation, alu_op[2:0] copied from instr
 
-    logic [31:0] val1, val2;
+    logic [31:0] val1, val2, csr_imm;
 
     assign val1 = bus_in_alu_op[6] ? bus_in_pc : bus_in_data_rs1;
     assign val2 = bus_in_alu_op[7] ? bus_in_imm : bus_in_data_rs2;
@@ -60,6 +60,7 @@ module alu (
 
         bus_out_alu_out       = '0;
         bus_out_branch        = '0;
+        csr_imm=0;
 
         if (bus_in_alu_op[5:4] == 2'b00) begin
             case (bus_in_alu_op[2:0])
@@ -87,10 +88,19 @@ module alu (
                 5: bus_out_branch = $signed(bus_in_data_rs1) >= $signed(bus_in_data_rs2);
                 6: bus_out_branch = bus_in_data_rs1 <  bus_in_data_rs2;
                 7: bus_out_branch = bus_in_data_rs1 >= bus_in_data_rs2;
+                default:;
+            endcase
+        end else if(bus_in_alu_op[5:4] == 2'b11) begin //csr
+            csr_imm = bus_in_alu_op[2] ? {27'b0,bus_in_rs1} : bus_in_data_rs1;
+            case(bus_in_alu_op[1:0])
+                0: ; 
+                1: bus_out_alu_out = csr_imm;
+                2: bus_out_alu_out = bus_in_data_csr |  csr_imm;
+                3: bus_out_alu_out = bus_in_data_csr & ~csr_imm;
             endcase
         end
 
-        bus_out_csr_data =  bus_in_data_csr;
+        bus_out_data_csr =  bus_in_data_csr;
 
         bus_out_pc            = bus_in_pc;
         bus_out_next_pc       = bus_in_next_pc;
