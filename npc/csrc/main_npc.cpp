@@ -62,10 +62,6 @@ void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 void reset(Vosoc_26000003_func *soc,int n){
   soc->reset=1;
   for(int i=0; i<n; i++){
-    #ifdef CONFIG_FST
-    contextp->timeInc(1);
-    tracep->dump(contextp->time());
-    #endif
     soc->clock=1;
     soc->eval();
     #ifdef CONFIG_FST
@@ -74,6 +70,10 @@ void reset(Vosoc_26000003_func *soc,int n){
     #endif
     soc->clock=0;
     soc->eval();
+    #ifdef CONFIG_FST
+    contextp->timeInc(1);
+    tracep->dump(contextp->time());
+    #endif
   }
   soc->reset=0;
 }
