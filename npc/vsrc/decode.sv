@@ -153,10 +153,16 @@ module decode (
                 bus_out_rd  = rd_val;
                 bus_out_rs1 = rs1_val;
                 bus_out_imm = imm_i;
-                if(func3==3'b001 && |func7) ; //raise exception 
+                if(func3==3'b001 && |func7) begin
+                    bus_out_exception = 1; //raise exception
+                    bus_out_mcause = 2;
+                end
                 if(func3==3'b101) begin
                     bus_out_alu_op = {4'b1000, inst[30], func3};
-                    if(inst[31]|(|inst[29:25])) ; //raise exception
+                    if(inst[31]|(|inst[29:25])) begin
+                        bus_out_exception = 1; //raise exception
+                        bus_out_mcause = 2;
+                    end
                 end
                 else bus_out_alu_op = {5'b10000, func3};
             end
@@ -165,8 +171,14 @@ module decode (
                 bus_out_rs1    = rs1_val;
                 bus_out_rs2    = rs2_val;
                 bus_out_alu_op = {2'b00, inst[25], 1'b0, inst[30], func3}; // inst[30] splits ADD/SUB and SRL/SRA
-                if(inst[25] && inst[30]) ; //raise exception
-                if(inst[31]|(|inst[29:26])) ; //raise exception
+                if(inst[25] && inst[30]) begin
+                    bus_out_exception = 1; //raise exception
+                    bus_out_mcause = 2;
+                end
+                if(inst[31]|(|inst[29:26])) begin
+                    bus_out_exception = 1; //raise exception
+                    bus_out_mcause = 2;
+                end
             end
             7'b1110011: begin // SYSTEM (ECALL, EBREAK) + CSR
                 bus_out_rd         = rd_val;
@@ -178,8 +190,11 @@ module decode (
                     3'b000: begin
                         if(!(|func7) && rs2_val==1) begin //ebreak
                             finish=1;
+                            bus_out_exception = 1; //raise exception (ebreak)
+                            bus_out_mcause = 3;
                         end else if(!(|func7 | |rs2_val)) begin // ecall
-                            bus_out_mcause        = 4'd11;
+                            bus_out_exception = 1; //raise exception (ecall)
+                            bus_out_mcause = 11;
                             bus_out_alu_op        = 8'b10010000;
                             bus_out_mux_select_pc = 1'b1;
                         end else if(func7 == 7'b0011000 && rs2_val == 5'b00010) begin //mret
@@ -187,7 +202,8 @@ module decode (
                             bus_out_mux_select_pc = 1'b1;
                             bus_out_csr           = {12'h341};
                         end else begin
-                            ;   //raise exception
+                            bus_out_exception = 1; //raise exception
+                            bus_out_mcause = 2;
                         end
                     end
                     default: begin  // csr oper
