@@ -62,6 +62,8 @@ always_ff @(posedge clk) begin
             regs[i] <= 32'h0;
         end
         regs[MSTATUS] <= 32'h00001800;
+        regs[MVENDORID] = 32'h20445358;
+        regs[MARCHID] = 32'h20393920;
     end else begin
         if(valid) begin
             if(exception) begin
