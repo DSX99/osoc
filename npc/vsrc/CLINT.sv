@@ -14,7 +14,7 @@ module CLINT(
 );
 
 parameter NUM = 1; //possibly can be changed on start of simulation, may be good
-parameter DEN = 969;
+parameter DEN = 900;
 
 logic [11:0]  divisor; 
 logic [63:0] mtime; 
