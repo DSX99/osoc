@@ -162,7 +162,7 @@ int main(int argc, char** argv) {
   #endif
   
   delete soc;
-  return (ret || (!finished && qexit));
+  return (ret || (!finished && qexit) || fail);
 }
 
 
