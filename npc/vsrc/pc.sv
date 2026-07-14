@@ -11,7 +11,7 @@ module pc(
 );
 
     initial begin
-        pc = 32'h80000000;
+        pc = 32'h30000000;
     end
 
     assign next_pc = pc + 4;
@@ -19,7 +19,7 @@ module pc(
 
     always_ff @(posedge clk) begin
         if(rst) begin
-            pc<=32'h80000000;
+            pc<=32'h30000000;
         end else begin
             if(valid) begin
                 pc<=next_pc;
