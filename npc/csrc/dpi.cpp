@@ -131,7 +131,7 @@ extern "C" void sdram_write(uint32_t addr, uint32_t data, uint32_t mask) {
     #define VGACTL_ADDR     (DEVICE_BASE + 0x0000100)
 
     #define ROM_OFFSET  0x80000000
-    #define MEM_SIZE    0x00100000
+    #define MEM_SIZE    0x10000000
     
     extern Vosoc_26000003_func_osoc_26000003_core *top;
     uint8_t mem[MEM_SIZE]; 
