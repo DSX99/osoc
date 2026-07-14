@@ -43,7 +43,7 @@ always_comb begin
     case(waddr)
         12'h300: working_reg_w = MSTATUS;
         12'h305: working_reg_w = MTVEC;
-        12'h340: working_reg_r = MSCRATCH;
+        12'h340: working_reg_w = MSCRATCH;
         12'h341: working_reg_w = MEPS;
         12'h342: working_reg_w = MCAUSE;
         12'hF11: working_reg_w = MVENDORID;

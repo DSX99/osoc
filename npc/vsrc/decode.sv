@@ -65,9 +65,9 @@ module decode (
     logic ls_match;
     logic wb_match;
 
-    assign ex_match = ((ex_rd == bus_out_rs1 && bus_out_rs1!=0) || (ex_rd == bus_out_rs2 && bus_out_rs2!=0));
-    assign ls_match = ((ls_rd == bus_out_rs1 && bus_out_rs1!=0) || (ls_rd == bus_out_rs2 && bus_out_rs2!=0));
-    assign wb_match = ((wb_rd == bus_out_rs1 && bus_out_rs1!=0) || (wb_rd == bus_out_rs2 && bus_out_rs2!=0));
+    assign ex_match = ((ex_rd == bus_out_rs1) || (ex_rd == bus_out_rs2)) && (ex_rd!=0);
+    assign ls_match = ((ls_rd == bus_out_rs1) || (ls_rd == bus_out_rs2)) && (ls_rd!=0);
+    assign wb_match = ((wb_rd == bus_out_rs1) || (wb_rd == bus_out_rs2)) && (wb_rd!=0);
 
     logic reg_match;
 
