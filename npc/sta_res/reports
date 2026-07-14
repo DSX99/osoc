@@ -743,40 +743,8 @@ test list [1 item(s)]: wanshu
 
 
 // burst
-dsx99@dsx-99:~/osoc/ysyx-workbench/am-kernels/benchmarks/microbench$ make run mainargs=train
-
-make -C /home/dsx99/osoc/ysyx-workbench/npc run ARGS=""-b" " IMG=/home/dsx99/osoc/ysyx-workbench/am-kernels/benchmarks/microbench/build/microbench-riscv32-ysyx.bin
-make[1]: Entering directory '/home/dsx99/osoc/ysyx-workbench/npc'
-make[2]: Entering directory '/home/dsx99/osoc/ysyx-workbench'
-make[2]: Leaving directory '/home/dsx99/osoc/ysyx-workbench'
-make[2]: Entering directory '/home/dsx99/osoc/ysyx-workbench/npc/obj_dir'
-make[2]: Nothing to be done for 'default'.
-make[2]: Leaving directory '/home/dsx99/osoc/ysyx-workbench/npc/obj_dir'
-
-                RUNNING WITH FST
 
 NPC
-
-The image is /home/dsx99/osoc/ysyx-workbench/am-kernels/benchmarks/microbench/build/microbench-riscv32-ysyx.bin, size = 29568
-time:0
-======= Running MicroBench [input *train*] =======
-[qsort] Quick sort: ^Cmake[1]: *** [Makefile:68: run] Interrupt
-make: *** [/home/dsx99/osoc/ysyx-workbench/abstract-machine/scripts/platform/ysyx.mk:35: run] Interrupt
-
-dsx99@dsx-99:~/osoc/ysyx-workbench/am-kernels/benchmarks/microbench$ make run mainargs=train
-make -C /home/dsx99/osoc/ysyx-workbench/npc run ARGS=""-b" " IMG=/home/dsx99/osoc/ysyx-workbench/am-kernels/benchmarks/microbench/build/microbench-riscv32-ysyx.bin
-make[1]: Entering directory '/home/dsx99/osoc/ysyx-workbench/npc'
-make[2]: Entering directory '/home/dsx99/osoc/ysyx-workbench'
-make[2]: Leaving directory '/home/dsx99/osoc/ysyx-workbench'
-make[2]: Entering directory '/home/dsx99/osoc/ysyx-workbench/npc/obj_dir'
-ccache g++  -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=1 -DVM_TRACE_FST=1 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/capstone/repo/include -I/home/dsx99/osoc/ysyx-workbench/nemu/include -g -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/repo -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/repo/build -DCONFIG_ISA_riscv32   -Os  -c -o dpi.o ../csrc/dpi.cpp
-ccache g++  -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=1 -DVM_TRACE_FST=1 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/capstone/repo/include -I/home/dsx99/osoc/ysyx-workbench/nemu/include -g -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/repo -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/repo/build -DCONFIG_ISA_riscv32   -Os  -c -o main.o ../csrc/main.cpp
-ccache g++  -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=1 -DVM_TRACE_FST=1 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/capstone/repo/include -I/home/dsx99/osoc/ysyx-workbench/nemu/include -g -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/repo -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/repo/build -DCONFIG_ISA_riscv32   -Os  -c -o sdb.o ../csrc/sdb.cpp
-g++    dpi.o expr.o main.o sdb.o watchpoint.o verilated.o verilated_dpi.o verilated_fst_c.o verilated_threads.o VysyxSoCFull__ALL.a   -lz -lreadline -L/home/dsx99/osoc/ysyx-workbench/nemu/tools/capstone/repo -lcapstone /home/dsx99/osoc/ysyx-workbench/npc/obj_dir/disasm.o /home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/build/riscv32-spike-so  -pthread -lpthread -latomic   -o VysyxSoCFull
-make[2]: Leaving directory '/home/dsx99/osoc/ysyx-workbench/npc/obj_dir'
-
-NPC
-
 The image is /home/dsx99/osoc/ysyx-workbench/am-kernels/benchmarks/microbench/build/microbench-riscv32-ysyx.bin, size = 29568
 time:0
 ======= Running MicroBench [input *train*] =======
@@ -878,26 +846,9 @@ dsx99@dsx-99:~/osoc/ysyx-workbench/am-kernels/benchmarks/microbench$
 
 
 
-//pipeline
-dsx99@dsx-99:~/osoc/ysyx-workbench/am-kernels/benchmarks/microbench$ make run mainargs=train
-make -C /home/dsx99/osoc/ysyx-workbench/npc run ARGS=""-b" " IMG=/home/dsx99/osoc/ysyx-workbench/am-kernels/benchmarks/microbench/build/microbench-riscv32-ysyx.bin
-make[1]: Entering directory '/home/dsx99/osoc/ysyx-workbench/npc'
-make[2]: Entering directory '/home/dsx99/osoc/ysyx-workbench'
-make[2]: Leaving directory '/home/dsx99/osoc/ysyx-workbench'
-mkdir -p obj_dir
-gcc -c -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/capstone/repo/include -I/home/dsx99/osoc/ysyx-workbench/nemu/include -g -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/repo -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/repo/build -DCONFIG_ISA_riscv32 -O2 /home/dsx99/osoc/ysyx-workbench/nemu/src/utils/disasm.c -o obj_dir/disasm.o
-verilator vsrc/osoc_26000003_core.sv vsrc/osoc_26000003.sv vsrc/CLINT.sv vsrc/alu.sv vsrc/arbiter.sv vsrc/axi_slave.sv vsrc/axi_slave_lsu.sv vsrc/csr.sv vsrc/decode.sv vsrc/exu.sv vsrc/icache.sv vsrc/ifu.sv vsrc/lsu.sv vsrc/pc.sv vsrc/pipeline_bus_pkg.sv vsrc/regs.sv /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/ps2/ps2_top_apb.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/vga/vga_top_apb.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/uart16550/rtl/uart_top_apb.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/uart16550/rtl/uart_sync_flops.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/uart16550/rtl/uart_tfifo.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/uart16550/rtl/uart_defines.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/uart16550/rtl/raminfr.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/uart16550/rtl/uart_transmitter.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/uart16550/rtl/uart_rfifo.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/uart16550/rtl/uart_regs.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/uart16550/rtl/uart_receiver.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/spi/rtl/spi_top_apb.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/spi/rtl/spi_shift.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/spi/rtl/spi_clgen.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/spi/rtl/spi_defines.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/spi/rtl/spi_top.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/psram/psram.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/psram/efabless/EF_PSRAM_CTRL_wb.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/psram/efabless/EF_PSRAM_CTRL.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/psram/psram_top_apb.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/bitrev/bitrev.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/gpio/gpio_top_apb.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/amba/apb_delayer.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/amba/axi4_delayer.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/flash/flash.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/sdram/core_sdram_axi4/sdram_axi_core.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/sdram/core_sdram_axi4/sdram_axi_pmem.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/sdram/core_sdram_axi4/sdram_axi.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/sdram/sdram.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/sdram/sdram_top_axi.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/sdram/sdram_top_apb.v /home/dsx99/osoc/ysyx-workbench/ysyxSoC/build/*.v -cc --exe -Wno-EOFNEWLINE --trace-fst -LDFLAGS "-lreadline -L/home/dsx99/osoc/ysyx-workbench/nemu/tools/capstone/repo -lcapstone /home/dsx99/osoc/ysyx-workbench/npc/obj_dir/disasm.o /home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/build/riscv32-spike-so" -CFLAGS "-I/home/dsx99/osoc/ysyx-workbench/nemu/tools/capstone/repo/include -I/home/dsx99/osoc/ysyx-workbench/nemu/include -g -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/repo -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/repo/build -DCONFIG_ISA_riscv32" --trace-structs --timescale "1ns/1ns" --no-timing -I/home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/uart16550/rtl -I/home/dsx99/osoc/ysyx-workbench/ysyxSoC/perip/spi/rtl  --autoflush --quiet --top-module ysyxSoCFull  csrc/main.cpp csrc/watchpoint.cpp csrc/dpi.cpp csrc/expr.cpp csrc/sdb.cpp 
-make -j -C obj_dir -f VysyxSoCFull.mk 
-make[2]: Entering directory '/home/dsx99/osoc/ysyx-workbench/npc/obj_dir'
-ccache g++  -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=1 -DVM_TRACE_FST=1 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/capstone/repo/include -I/home/dsx99/osoc/ysyx-workbench/nemu/include -g -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/repo -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/repo/build -DCONFIG_ISA_riscv32   -Os  -c -o dpi.o ../csrc/dpi.cpp
-ccache g++  -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=1 -DVM_TRACE_FST=1 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/capstone/repo/include -I/home/dsx99/osoc/ysyx-workbench/nemu/include -g -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/repo -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/repo/build -DCONFIG_ISA_riscv32   -Os  -c -o main.o ../csrc/main.cpp
-ccache g++  -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=1 -DVM_TRACE_FST=1 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/capstone/repo/include -I/home/dsx99/osoc/ysyx-workbench/nemu/include -g -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/repo -I/home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/repo/build -DCONFIG_ISA_riscv32   -Os  -c -o sdb.o ../csrc/sdb.cpp
-g++    dpi.o expr.o main.o sdb.o watchpoint.o verilated.o verilated_dpi.o verilated_fst_c.o verilated_threads.o VysyxSoCFull__ALL.a   -lz -lreadline -L/home/dsx99/osoc/ysyx-workbench/nemu/tools/capstone/repo -lcapstone /home/dsx99/osoc/ysyx-workbench/npc/obj_dir/disasm.o /home/dsx99/osoc/ysyx-workbench/nemu/tools/spike-diff/build/riscv32-spike-so  -pthread -lpthread -latomic   -o VysyxSoCFull
-make[2]: Leaving directory '/home/dsx99/osoc/ysyx-workbench/npc/obj_dir'
-LD_LIBRARY_PATH=/home/dsx99/osoc/ysyx-workbench/nemu/tools/capstone/repo:/home/dsx99/osoc/ysyx-workbench/nemu/build obj_dir/VysyxSoCFull -b  /home/dsx99/osoc/ysyx-workbench/am-kernels/benchmarks/microbench/build/microbench-riscv32-ysyx.bin
+//pipeline (bad one)
 
 NPC
-
 The image is /home/dsx99/osoc/ysyx-workbench/am-kernels/benchmarks/microbench/build/microbench-riscv32-ysyx.bin, size = 29568
 ======= Running MicroBench [input *train*] =======
 [qsort] Quick sort: time:100000000
@@ -1010,7 +961,7 @@ Finished in 4659307126
 
 
 
-// better run of pipeline without exeption handling
+// better run of pipeline without exeption handling (still bad one)
   ======= Running MicroBench [input *train*] =======
 [qsort] Quick sort: time:100000000
 time:200000000
@@ -1081,7 +1032,7 @@ time:4700000000
   min time: 218.775 ms [0]
 ==================================================
 MicroBench PASS
-Scored time: 2079.815 ms
+Scored time: 2079.815 ms <- wrong freq (turns out axi was 3 times faster then should have been (sorry next one is okay))
 Total  time: 2394.663 ms
 - vsrc/regs.sv:42: Verilog $finish
 GOOD
@@ -1119,3 +1070,7 @@ Finished in 4702562118
 Chip area for module '\osoc_26000003_core': 23861.600000
   of which used for sequential elements: 11999.680000 (50.29%)
 MAX FREQ 968.898MHZ
+
+
+
+// normal measurement of pipeline with exceptions but without forwarding and branch prediction
