@@ -81,14 +81,11 @@ module decode (
         valid_right = valid_left & !reg_match;
         ready_left  = ready_right & !reg_match;
 
+        bus_out_speculate = bus_in_speculate;
+
         // Initialize all explicit output bus signals to default state ('0)
         bus_out_pc            = bus_in_pc;
         bus_out_next_pc       = bus_in_next_pc;
-
-        // TODO: exception detection during decode (illegal instr, etc.)
-        bus_out_mcause        = bus_in_mcause;
-        bus_out_exception     = bus_in_exception;
-        bus_out_speculate     = bus_in_speculate;
 
         bus_out_imm           = '0;
         bus_out_rs1           = '0;
@@ -200,6 +197,13 @@ module decode (
             end
             default: ;
         endcase
+
+
+        if(bus_in_exception) begin
+            bus_out_rd = 0;
+            bus_out_exception = bus_in_exception;
+            bus_out_mcause = bus_in_mcause;             
+        end
     end
 
 endmodule

@@ -44,10 +44,20 @@ module ifu (
         valid = cache_ready;
         bus_out_opcode = cache_opcode;
 
-        // TODO: exception/speculation detection at fetch time
         bus_out_mcause    = 4'b0;
-        bus_out_exception = 1'b0;
-        bus_out_speculate = 1'b0;
+        bus_out_exception = 1'b0; 
+        
+        if(pc[0])begin      //misaligned (idk btw will i do C or not)
+            bus_out_exception=1;
+            bus_out_mcause=0;
+        end
+
+        if(1'b0)begin       //page fault
+            bus_out_exception=1;
+            bus_out_mcause=12;
+        end
+
+        bus_out_speculate = 1'b0; //change dependent on branch predictor
     end
 
 endmodule
