@@ -10,13 +10,13 @@ module csr(
     input logic valid
 );
 
-logic [31:0] regs [7:0];
+logic [31:0] regs [32];
 
-typedef enum bit [2:0]{
-    UNUSED, MEPS, MSTATUS, MCAUSE, MTVEC, MVENDORID, MARCHID
+typedef enum bit [4:0]{
+    UNUSED, MEPS, MSTATUS, MCAUSE, MTVEC, MVENDORID, MARCHID, MSCRATCH
 } csr_t;
 
-logic [2:0] working_reg_r,working_reg_w;
+logic [4:0] working_reg_r,working_reg_w;
 
 initial begin
     for(int i = 0; i < 32; i++) begin
@@ -33,6 +33,7 @@ always_comb begin
     case(raddr)
         12'h300: working_reg_r = MSTATUS;
         12'h305: working_reg_r = MTVEC;
+        12'h340: working_reg_r = MSCRATCH;
         12'h341: working_reg_r = MEPS;
         12'h342: working_reg_r = MCAUSE;
         12'hF11: working_reg_r = MVENDORID;
@@ -42,6 +43,7 @@ always_comb begin
     case(waddr)
         12'h300: working_reg_w = MSTATUS;
         12'h305: working_reg_w = MTVEC;
+        12'h340: working_reg_r = MSCRATCH;
         12'h341: working_reg_w = MEPS;
         12'h342: working_reg_w = MCAUSE;
         12'hF11: working_reg_w = MVENDORID;
