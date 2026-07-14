@@ -338,7 +338,7 @@ module osoc_26000003_core (
         .ls_rd(ex_ls_bus_rd_ls),
         .wb_rd(ls_wb_bus_rd_wb),
 
-        .ex_csr(de_ex_bus_csr_de),
+        .ex_csr(de_ex_bus_csr_ex),
         .ls_csr(ex_ls_bus_csr_ls),
         .wb_csr(ls_wb_bus_csr_wb),
 
