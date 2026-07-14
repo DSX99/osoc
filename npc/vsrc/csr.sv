@@ -75,6 +75,7 @@ always_ff @(posedge clk) begin
                 if(working_reg_w!=0) regs[working_reg_w] <= data_in;
             end
         end
+        regs[MEPS][1:0]<=0; //change to [0] when C appears
     end
 end
 
