@@ -70,7 +70,7 @@ always_ff @(posedge clk) begin
                 regs[MEPS]<=pc;
                 regs[MCAUSE]<={28'b0,cause};
             end else begin
-                regs[working_reg_w] <= data_in;
+                if(working_reg_w!=0) regs[working_reg_w] <= data_in;
             end
         end
     end
