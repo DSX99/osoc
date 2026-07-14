@@ -33,6 +33,10 @@ module decode (
     input  logic [4:0] ls_rd,
     input  logic [4:0] wb_rd,
 
+    input logic [11:0] ex_csr,
+    input logic [11:0] ls_csr,
+    input logic [11:0] wb_csr,
+
     output logic finish
 );
 
@@ -71,7 +75,7 @@ module decode (
 
     logic reg_match;
 
-    assign reg_match = (ex_match | ls_match | wb_match);
+    assign reg_match = (ex_match | ls_match | wb_match) | (|ex_csr | |ls_csr | |wb_csr);
 
     always_comb begin
         valid_right = valid_left & !reg_match;

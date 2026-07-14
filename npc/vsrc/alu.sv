@@ -3,7 +3,6 @@ module alu (
     input logic [31:0] bus_in_next_pc,
     input logic [31:0] bus_in_imm,
 
-    input logic [11:0] bus_in_csr,
     input logic [3:0]  bus_in_mcause,
     input logic        bus_in_exception,
     input logic        bus_in_speculate,
@@ -57,7 +56,7 @@ module alu (
 
     always_comb begin
         valid_right = valid_left;
-        ready_left  = ready_right & !(|bus_in_csr);
+        ready_left  = ready_right;
 
         bus_out_alu_out       = '0;
         bus_out_branch        = '0;

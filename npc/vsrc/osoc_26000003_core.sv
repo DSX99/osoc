@@ -338,6 +338,10 @@ module osoc_26000003_core (
         .ls_rd(ex_ls_bus_rd_ls),
         .wb_rd(ls_wb_bus_rd_wb),
 
+        .ex_csr(de_ex_bus_csr_de),
+        .ls_csr(ex_ls_bus_csr_ls),
+        .wb_csr(ls_wb_bus_csr_wb),
+
         .finish(finish_de)
     );
 
@@ -417,7 +421,6 @@ module osoc_26000003_core (
         .bus_in_rd(de_ex_bus_rd_ex),
         .bus_in_mux_select(de_ex_bus_mux_select_ex),
         .bus_in_mux_select_pc(de_ex_bus_mux_select_pc_ex),
-        .bus_in_csr(de_ex_bus_csr_ex),
         .bus_in_mcause(de_ex_bus_mcause_ex),
         .bus_in_exception(de_ex_bus_exception_ex),
         .bus_in_speculate(de_ex_bus_speculate_ex),
