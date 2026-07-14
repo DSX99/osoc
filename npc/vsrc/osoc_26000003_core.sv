@@ -951,6 +951,7 @@ always_ff @(posedge clk) begin
             de_ex_valid             <= de_ex_valid_de;
             if(!de_ex_valid_de) begin
                 de_ex_bus_rd           <= 0;
+                de_ex_bus_csr          <= 0;
             end
         end
     end
@@ -1114,6 +1115,7 @@ always_ff @(posedge clk) begin
                 ex_ls_bus_rd        <=0;
                 ex_ls_bus_lsu_we    <= 0;
                 ex_ls_bus_lsu_re    <= 0;
+                ex_ls_bus_csr       <= 0;
             end
         end
     end
@@ -1253,7 +1255,10 @@ always_ff @(posedge clk) begin
         end
         if(ls_wb_ready_wb) begin
             ls_wb_valid             <= ls_wb_valid_ls;
-            if(!ls_wb_valid_ls) ls_wb_bus_rd<=0;
+            if(!ls_wb_valid_ls) begin
+                ls_wb_bus_csr<=0;
+                ls_wb_bus_rd<=0;
+            end
         end
 
         if(ls_wb_bus_branch_wb) begin
