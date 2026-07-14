@@ -82,6 +82,8 @@ module decode (
         ready_left  = ready_right & !reg_match;
 
         bus_out_speculate = bus_in_speculate;
+        bus_out_exception = bus_in_exception;
+        bus_out_mcause = bus_in_mcause; 
 
         // Initialize all explicit output bus signals to default state ('0)
         bus_out_pc            = bus_in_pc;
