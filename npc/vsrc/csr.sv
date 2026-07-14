@@ -13,7 +13,7 @@ module csr(
 logic [31:0] regs [32];
 
 typedef enum bit [4:0]{
-    UNUSED, MEPS, MSTATUS, MCAUSE, MTVEC, MVENDORID, MARCHID, MSCRATCH
+    UNUSED, MEPS, MSTATUS, MCAUSE, MTVEC, MVENDORID, MARCHID, MSCRATCH, MTVAL
 } csr_t;
 
 logic [4:0] working_reg_r,working_reg_w;
@@ -36,6 +36,7 @@ always_comb begin
         12'h340: working_reg_r = MSCRATCH;
         12'h341: working_reg_r = MEPS;
         12'h342: working_reg_r = MCAUSE;
+        12'h343: working_reg_r = MTVAL;
         12'hF11: working_reg_r = MVENDORID;
         12'hF12: working_reg_r = MARCHID;
         default working_reg_r = UNUSED;
@@ -46,6 +47,7 @@ always_comb begin
         12'h340: working_reg_w = MSCRATCH;
         12'h341: working_reg_w = MEPS;
         12'h342: working_reg_w = MCAUSE;
+        12'h343: working_reg_w = MTVAL;
         12'hF11: working_reg_w = MVENDORID;
         12'hF12: working_reg_w = MARCHID;
         default working_reg_w = UNUSED;
