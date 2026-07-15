@@ -282,8 +282,8 @@ void execute(uint64_t n){
       program[stage].ifu_stall_cycle++;
     }
 
-    if(!top->reg_valid_e){
-      program[stage].writeback++;
+    if(is_ifu_transfer){
+      program[stage].ifu_fetch_instr++;
     }
 
     if(top->pc != prev_pc){
