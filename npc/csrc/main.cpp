@@ -276,10 +276,14 @@ void execute(uint64_t n){
     bool is_lsu_stall    = (top->ex_ls_valid_ls && !top->ex_ls_ready_ls);
     bool is_ifu_transfer = (top->if_de_valid_if && top->if_de_ready_if);
     bool is_ls_transfer  = (top->ex_ls_valid_ls && top->ex_ls_ready_ls);
-    bool is_ex_transfer  = (top->ex_ls_valid_ex && top->ex_ls_ready_ls);
+    bool is_ex_transfer  = (top->ex_ls_valid_ex && top->ex_ls_ready_ex);
 
     if (!top->if_de_valid_if && !is_lsu_stall) { //ifu is not ready while nothing else stops
       program[stage].ifu_stall_cycle++;
+    }
+
+    if(!top->reg_valid_e){
+      program[stage].writeback++;
     }
 
     if(top->pc != prev_pc){
@@ -307,7 +311,7 @@ void execute(uint64_t n){
       if (top->ex_ls_bus_lsu_we_ls) program[stage].lsu_write_data++;
     }
 
-    if (top->cache_miss) {
+    if (top->cache_miss && !is_lsu_stall) {
       program[stage].cache_miss_cycles++;
     }
 
