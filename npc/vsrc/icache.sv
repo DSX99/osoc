@@ -130,7 +130,7 @@ always_ff @(posedge clk) begin
                 end
                 WAIT_R: begin
                     if (rvalid && rready) begin
-                        if(fill_count==3'b111) begin
+                        if(fill_count==2'b11) begin
                             block_cache[index][fill_count][~latest_row] <= rdata;
                             block_tag[index][~latest_row] <= tag;
                             block_valid[index][~latest_row] <= 1'b1;
