@@ -93,7 +93,7 @@ module decode (
 
     logic reg_match;
 //
-    assign reg_match = (((ex_match_rs1 | ex_match_rs2) && (!ex_valid || ex_lsu_re) ) | ((ls_match_rs1 | ls_match_rs2) && !ls_valid) | ((wb_match_rs1 | wb_match_rs2) && !wb_valid)) | (|ex_csr | |ls_csr | |wb_csr);
+    assign reg_match = (((ex_match_rs1 | ex_match_rs2) && (!ex_valid | ex_lsu_re) ) | ((ls_match_rs1 | ls_match_rs2) && !ls_valid) | ((wb_match_rs1 | wb_match_rs2) && !wb_valid)) | (|ex_csr | |ls_csr | |wb_csr);
 
     always_comb begin
         valid_right = valid_left & !reg_match;
