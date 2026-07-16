@@ -27,8 +27,8 @@ module icache(
 logic unused_bits;
 assign unused_bits = |rresp | |word_align;
 
-parameter BLOCK_SIZE = 16;
-parameter NUMBER_OF_BLOCKS = 2;
+parameter BLOCK_SIZE = 32;
+parameter NUMBER_OF_BLOCKS = 16;
 // here i use 2 rows
 
 localparam int off = $clog2(BLOCK_SIZE);
@@ -58,7 +58,7 @@ typedef enum {
    WAIT_AR, WAIT_R
 } cache_state_t;
 cache_state_t state;
-logic [1:0] fill_count; 
+logic [2:0] fill_count; 
 
 logic hit_0, hit_1;
 assign hit_0 = block_valid[index][0] && (tag == block_tag[index][0]);
@@ -91,7 +91,7 @@ always_comb begin
                     if(do_burst)begin
                         arburst = 2'b01;
                         arsize = 3'b010;
-                        arlen = 8'd3;
+                        arlen = 8'd7;
                     end
                     araddr  = {tag, index, fill_count, 2'b00};
                 end
@@ -130,7 +130,7 @@ always_ff @(posedge clk) begin
                 end
                 WAIT_R: begin
                     if (rvalid && rready) begin
-                        if(fill_count==2'b11) begin
+                        if(fill_count==3'b111) begin
                             block_cache[index][fill_count][~latest_row] <= rdata;
                             block_tag[index][~latest_row] <= tag;
                             block_valid[index][~latest_row] <= 1'b1;
