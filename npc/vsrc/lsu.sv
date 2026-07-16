@@ -22,7 +22,6 @@ module lsu (
 
     output logic [31:0] bus_out_pc,
     output logic [31:0] bus_out_alu_out,
-    output logic [31:0] bus_out_alu_out,
     output logic [31:0] bus_out_next_pc,
     output logic [31:0] bus_out_csr_out,
     output logic [4:0]  bus_out_rd,
