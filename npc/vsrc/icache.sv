@@ -60,6 +60,7 @@ typedef enum {
 cache_state_t state;
 logic [2:0] fill_count; 
 
+logic hit_0, hit_1;
 assign hit_0 = block_valid[index][0] && (tag == block_tag[index][0]);
 assign hit_1 = block_valid[index][1] && (tag == block_tag[index][1]);
 
@@ -108,7 +109,8 @@ always_ff @(posedge clk) begin
         fill_count<=0;
         state <= WAIT_AR;
         for(int i = 0; i < NUMBER_OF_BLOCKS; i = i + 1) begin
-            block_valid[i] <= 1'b0;
+            block_valid[i][0] <= 1'b0;
+            block_valid[i][1] <= 1'b0;
         end
     end else begin
         if (hit) begin
