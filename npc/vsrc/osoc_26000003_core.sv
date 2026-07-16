@@ -596,7 +596,7 @@ module osoc_26000003_core (
     regs reg_mod (
         .clk(clock), .rst(reset), .data_in(reg_in), 
         .rs1(de_ex_bus_rs1_de), .rs2(de_ex_bus_rs2_de), .rd(ls_wb_bus_rd_wb), 
-        .data_rs1(de_ex_bus_data_rs1_de), .data_rs2(de_ex_bus_data_rs2_de), 
+        .data_rs1(de_ex_bus_data_rs1_reg), .data_rs2(de_ex_bus_data_rs2_reg), 
         .valid(ls_wb_valid_wb), .ready(ls_wb_ready_wb),
         .finish(finish_wb)
     );
