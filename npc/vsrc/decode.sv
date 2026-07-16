@@ -78,9 +78,9 @@ module decode (
     // alu_op[5:3] branch or arithmetics (5:4): 11-csr, 10-mult, 01-branch, 00-arithmetic, 3-extra (sub/srai)
     // alu_op[2:0] directly operation, alu_op[2:0] copied from instr
 
-    logic ex_match;
-    logic ls_match;
-    logic wb_match;
+    logic ex_match_rs1 ,ex_match_rs2;
+    logic ls_match_rs1 ,ls_match_rs2;
+    logic wb_match_rs1 ,wb_match_rs2;
 
     assign ex_match_rs1 = (ex_rd == bus_out_rs1) && (ex_rd!=0);
     assign ls_match_rs1 = (ls_rd == bus_out_rs1) && (ls_rd!=0);
