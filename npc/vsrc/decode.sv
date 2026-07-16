@@ -7,6 +7,9 @@ module decode (
     input logic         bus_in_exception,
     input logic         bus_in_speculate,
 
+    input logic [31:0]  bus_in_data_rs1,
+    input logic [31:0]  bus_in_data_rs2,
+ 
     output logic [31:0] bus_out_pc,            
     output logic [31:0] bus_out_next_pc,       
 
@@ -16,7 +19,9 @@ module decode (
 
     output logic [31:0] bus_out_imm,            
     output logic [4:0]  bus_out_rs1,
-    output logic [4:0]  bus_out_rs2,
+    output logic [4:0]  bus_out_rs2,     
+    output logic [4:0]  bus_out_data_rs1,
+    output logic [4:0]  bus_out_data_rs2,
     output logic [11:0]  bus_out_csr,
     output logic [7:0]  bus_out_alu_op,
     output logic        bus_out_lsu_we,
@@ -32,6 +37,14 @@ module decode (
     input  logic [4:0] ex_rd,
     input  logic [4:0] ls_rd,
     input  logic [4:0] wb_rd,
+
+    input  logic [31:0] ex_rd_data,
+    input  logic [31:0] ls_rd_data,
+    input  logic [31:0] wb_rd_data,
+
+    input  logic  ex_valid,
+    input  logic  ls_valid,
+    input  logic  wb_valid,
 
     input logic [11:0] ex_csr,
     input logic [11:0] ls_csr,
@@ -69,17 +82,33 @@ module decode (
     logic ls_match;
     logic wb_match;
 
-    assign ex_match = ((ex_rd == bus_out_rs1) || (ex_rd == bus_out_rs2)) && (ex_rd!=0);
-    assign ls_match = ((ls_rd == bus_out_rs1) || (ls_rd == bus_out_rs2)) && (ls_rd!=0);
-    assign wb_match = ((wb_rd == bus_out_rs1) || (wb_rd == bus_out_rs2)) && (wb_rd!=0);
+    assign ex_match_rs1 = (ex_rd == bus_out_rs1) && (ex_rd!=0);
+    assign ls_match_rs1 = (ls_rd == bus_out_rs1) && (ls_rd!=0);
+    assign wb_match_rs1 = (wb_rd == bus_out_rs1) && (wb_rd!=0);
+
+    assign ex_match_rs2 = (ex_rd == bus_out_rs2) && (ex_rd!=0);
+    assign ls_match_rs2 = (ls_rd == bus_out_rs2) && (ls_rd!=0);
+    assign wb_match_rs2 = (wb_rd == bus_out_rs2) && (wb_rd!=0);
 
     logic reg_match;
-
-    assign reg_match = (ex_match | ls_match | wb_match) | (|ex_csr | |ls_csr | |wb_csr);
+//
+    assign reg_match = ((ex_match && !ex_valid) | (ls_match && !ls_valid) | (wb_match && !wb_valid)) | (|ex_csr | |ls_csr | |wb_csr);
 
     always_comb begin
         valid_right = valid_left & !reg_match;
         ready_left  = ready_right & !reg_match;
+//
+        bus_out_data_rs1 = bus_in_data_rs1;
+        bus_out_data_rs2 = bus_in_data_rs2;
+
+        if(wb_match_rs1 && wb_valid) bus_out_data_rs1 = wb_rd_data;
+        if(ls_match_rs1 && ls_valid) bus_out_data_rs1 = ls_rd_data;
+        if(ex_match_rs1 && ex_valid) bus_out_data_rs1 = ex_rd_data;
+
+        if(wb_match_rs2 && wb_valid) bus_out_data_rs2 = wb_rd_data;
+        if(ls_match_rs2 && ls_valid) bus_out_data_rs2 = ls_rd_data;
+        if(ex_match_rs2 && ex_valid) bus_out_data_rs2 = ex_rd_data;
+
 
         bus_out_speculate = bus_in_speculate;
         bus_out_exception = bus_in_exception;
@@ -141,7 +170,6 @@ module decode (
                 bus_out_alu_op     = 8'b10000000;          
                 bus_out_lsu_oper   = func3;
                 bus_out_lsu_re     = 1'b1;
-                bus_out_mux_select = 2'b01;
             end
             7'b0100011: begin // STORE (SB, SH, SW)
                 bus_out_rs1        = rs1_val;

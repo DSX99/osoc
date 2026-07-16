@@ -22,7 +22,7 @@ module lsu (
 
     output logic [31:0] bus_out_pc,
     output logic [31:0] bus_out_alu_out,
-    output logic [31:0] bus_out_lsu_out,
+    output logic [31:0] bus_out_alu_out,
     output logic [31:0] bus_out_next_pc,
     output logic [31:0] bus_out_csr_out,
     output logic [4:0]  bus_out_rd,
@@ -91,7 +91,6 @@ module lsu (
         arvalid = 0;
         araddr  = 0;
         rready  = 0;
-        bus_out_lsu_out = 0;
         done_r = 0;
 
         awaddr  = 0;
@@ -123,33 +122,33 @@ module lsu (
                     case (bus_in_lsu_oper)
                         0: begin // LB
                             case (bus_in_alu_out[1:0])
-                                2'b00: bus_out_lsu_out = {{24{rdata[7]}}, rdata[7:0]};
-                                2'b01: bus_out_lsu_out = {{24{rdata[15]}}, rdata[15:8]};
-                                2'b10: bus_out_lsu_out = {{24{rdata[23]}}, rdata[23:16]};
-                                2'b11: bus_out_lsu_out = {{24{rdata[31]}}, rdata[31:24]};
+                                2'b00: bus_out_alu_out = {{24{rdata[7]}}, rdata[7:0]};
+                                2'b01: bus_out_alu_out = {{24{rdata[15]}}, rdata[15:8]};
+                                2'b10: bus_out_alu_out = {{24{rdata[23]}}, rdata[23:16]};
+                                2'b11: bus_out_alu_out = {{24{rdata[31]}}, rdata[31:24]};
                             endcase
                         end 
                         1: begin // LH
                             case (bus_in_alu_out[1])
-                                1'b0: bus_out_lsu_out = {{16{rdata[15]}}, rdata[15:0]};
-                                1'b1: bus_out_lsu_out = {{16{rdata[31]}}, rdata[31:16]};
+                                1'b0: bus_out_alu_out = {{16{rdata[15]}}, rdata[15:0]};
+                                1'b1: bus_out_alu_out = {{16{rdata[31]}}, rdata[31:16]};
                             endcase
                         end 
                         2: begin // LW
-                            bus_out_lsu_out = rdata[31:0];
+                            bus_out_alu_out = rdata[31:0];
                         end 
                         4: begin // LBU
                             case (bus_in_alu_out[1:0])
-                                2'b00: bus_out_lsu_out = {{24'b0}, rdata[7:0]};
-                                2'b01: bus_out_lsu_out = {{24'b0}, rdata[15:8]};
-                                2'b10: bus_out_lsu_out = {{24'b0}, rdata[23:16]};
-                                2'b11: bus_out_lsu_out = {{24'b0}, rdata[31:24]};
+                                2'b00: bus_out_alu_out = {{24'b0}, rdata[7:0]};
+                                2'b01: bus_out_alu_out = {{24'b0}, rdata[15:8]};
+                                2'b10: bus_out_alu_out = {{24'b0}, rdata[23:16]};
+                                2'b11: bus_out_alu_out = {{24'b0}, rdata[31:24]};
                             endcase
                         end 
                         5: begin // LHU
                             case (bus_in_alu_out[1])
-                                1'b0: bus_out_lsu_out = {{16'b0}, rdata[15:0]};
-                                1'b1: bus_out_lsu_out = {{16'b0}, rdata[31:16]};
+                                1'b0: bus_out_alu_out = {{16'b0}, rdata[15:0]};
+                                1'b1: bus_out_alu_out = {{16'b0}, rdata[31:16]};
                             endcase
                         end 
                     endcase
