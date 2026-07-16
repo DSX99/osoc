@@ -99,7 +99,7 @@ module axi4_delayer(
   assign out_bready = ready_w ? in_bready : 1'b0;
   assign in_bvalid = ready_w ? out_bvalid : 1'b0;
 
-  parameter ADD = 113;
+  parameter ADD = 89;
 
   reg set;
   reg [9:0] count_r, count_w;

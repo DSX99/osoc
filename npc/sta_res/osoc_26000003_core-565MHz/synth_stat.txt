@@ -6,62 +6,73 @@
         +----------Local Count, excluding submodules.
         |        +-Local Area, excluding submodules.
         |        | 
-    14471        - wires
-    14471        - wire bits
-    14471        - public wires
-    14471        - public wire bits
+    15061        - wires
+    15061        - wire bits
+    15061        - public wires
+    15061        - public wire bits
       383        - ports
       383        - port bits
-    11543 2.24E+04 cells
-      290   308.56   AND2_X1
-       31    41.23   AND3_X1
-        9   14.364   AND4_X1
-      333   442.89   AOI211_X1
-      859  913.976   AOI21_X1
-        3    5.586   AOI21_X2
-      124  197.904   AOI221_X1
-        2    5.852   AOI221_X2
-        8   17.024   AOI222_X1
-      233   309.89   AOI22_X1
-      288  229.824   BUF_X1
-        1     6.65   BUF_X16
-       58   61.712   BUF_X2
-       28   52.136   BUF_X4
-       14   48.412   BUF_X8
-       36   28.728   CLKBUF_X1
-        1    1.064   CLKBUF_X2
-        3     3.99   CLKBUF_X3
-       62  214.396   CLKGATE_X1
-     2651  1.2E+04   DFF_X1
-      441  234.612   INV_X1
-        1     1.33   INV_X4
+    12026 2.32E+04 cells
+      678  721.392   AND2_X1
+        1    2.394   AND2_X4
+        8    10.64   AND3_X1
+        1    1.596   AND3_X2
+        1    2.926   AND3_X4
+        8   12.768   AND4_X1
+      781  1038.73   AOI211_X1
+       26   62.244   AOI211_X2
+     1179 1.25E+03   AOI21_X1
+        4    7.448   AOI21_X2
+        2    6.916   AOI21_X4
+      180   287.28   AOI221_X1
+       14   29.792   AOI222_X1
+      183   243.39   AOI22_X1
+        1    2.394   AOI22_X2
+      225   179.55   BUF_X1
+       14     93.1   BUF_X16
+       98  104.272   BUF_X2
+        1   13.034   BUF_X32
+       29   53.998   BUF_X4
+       17   58.786   BUF_X8
+       49   39.102   CLKBUF_X1
+        5     5.32   CLKBUF_X2
+        7     9.31   CLKBUF_X3
+       58  200.564   CLKGATE_X1
+     2758 1.25E+04   DFF_X1
+      334  177.688   INV_X1
+        2    1.596   INV_X2
         1    0.532   LOGIC0_X1
-     1368 2.55E+03   MUX2_X1
-        3    7.182   MUX2_X2
-     1316 1.05E+03   NAND2_X1
-      184  195.776   NAND3_X1
-       36    47.88   NAND4_X1
-     1215   969.57   NOR2_X1
-        4     5.32   NOR2_X2
-      151  160.664   NOR3_X1
-        1    1.862   NOR3_X2
-       53    70.49   NOR4_X1
-        1    4.788   NOR4_X4
-      464   617.12   OAI211_X1
-      526  559.664   OAI21_X1
-      126  201.096   OAI221_X1
-        9   19.152   OAI222_X1
-      131   174.23   OAI22_X1
-       18   33.516   OAI33_X1
-      140   148.96   OR2_X1
-       38    50.54   OR3_X1
-        7   11.172   OR4_X1
-        2    3.724   OR4_X2
+      945  1759.59   MUX2_X1
+        2    4.788   MUX2_X2
+     1236  986.328   NAND2_X1
+      162  172.368   NAND3_X1
+       59    78.47   NAND4_X1
+        3    7.182   NAND4_X2
+     1325  1057.35   NOR2_X1
+        5     6.65   NOR2_X2
+      194  206.416   NOR3_X1
+        4    7.448   NOR3_X2
+       39    51.87   NOR4_X1
+        5    11.97   NOR4_X2
+        2    9.576   NOR4_X4
+      259   344.47   OAI211_X1
+        1    4.522   OAI211_X4
+      516  549.024   OAI21_X1
+        3    5.586   OAI21_X2
+       65   103.74   OAI221_X1
+       16   34.048   OAI222_X1
+       49    65.17   OAI22_X1
+       12   22.344   OAI33_X1
+      173  184.072   OR2_X1
+        1     1.33   OR2_X2
+        1    2.394   OR2_X4
+       13    17.29   OR3_X1
+        1    1.596   OR3_X2
+        9   14.364   OR4_X1
         1    3.458   OR4_X4
-      165   263.34   XNOR2_X1
-      106  169.176   XOR2_X1
-        1    2.394   XOR2_X2
+      197  314.412   XNOR2_X1
+       63  100.548   XOR2_X1
 
-   Chip area for module '\osoc_26000003_core': 22446.942000
-     of which used for sequential elements: 11987.822000 (53.41%)
+   Chip area for module '\osoc_26000003_core': 23221.268000
+     of which used for sequential elements: 12471.676000 (53.71%)
 
