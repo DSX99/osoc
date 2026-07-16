@@ -27,7 +27,7 @@ module icache(
 logic unused_bits;
 assign unused_bits = |rresp | |word_align;
 
-parameter BLOCK_SIZE = 32;
+parameter BLOCK_SIZE = 16;
 parameter NUMBER_OF_BLOCKS = 2;
 // here i use 2 rows
 
