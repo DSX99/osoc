@@ -58,7 +58,7 @@ typedef enum {
    WAIT_AR, WAIT_R
 } cache_state_t;
 cache_state_t state;
-logic [2:0] fill_count; 
+logic [1:0] fill_count; 
 
 logic hit_0, hit_1;
 assign hit_0 = block_valid[index][0] && (tag == block_tag[index][0]);
@@ -91,7 +91,7 @@ always_comb begin
                     if(do_burst)begin
                         arburst = 2'b01;
                         arsize = 3'b010;
-                        arlen = 8'd7;
+                        arlen = 8'd3;
                     end
                     araddr  = {tag, index, fill_count, 2'b00};
                 end
