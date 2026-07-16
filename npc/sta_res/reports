@@ -1242,3 +1242,172 @@ Finished in 10355132132
    Chip area for module '\osoc_26000003_core': 25805.920000
      of which used for sequential elements: 12837.440000 (49.75%)
      Max Freq  899.821MHz
+
+// changed how cache miss stall is calculated
+NPC
+
+The image is /home/dsx99/osoc/ysyx-workbench/am-kernels/benchmarks/microbench/build/microbench-riscv32-ysyx.bin, size = 29568
+======= Running MicroBench [input *train*] =======
+[qsort] Quick sort: time:100000000
+time:200000000
+time:300000000
+time:400000000
+time:500000000
+time:600000000
+* Passed.
+  min time: 160.223 ms [0]
+[queen] Queen placement: time:700000000
+time:800000000
+time:900000000
+time:1000000000
+time:1100000000
+* Passed.
+  min time: 282.913 ms [0]
+[bf] Brainf**k interpreter: time:1200000000
+time:1300000000
+time:1400000000
+time:1500000000
+time:1600000000
+time:1700000000
+time:1800000000
+time:1900000000
+time:2000000000
+time:2100000000
+time:2200000000
+time:2300000000
+time:2400000000
+time:2500000000
+time:2600000000
+time:2700000000
+* Passed.
+  min time: 883.193 ms [0]
+[fib] Fibonacci number: time:2800000000
+time:2900000000
+time:3000000000
+time:3100000000
+time:3200000000
+time:3300000000
+time:3400000000
+time:3500000000
+time:3600000000
+time:3700000000
+time:3800000000
+time:3900000000
+time:4000000000
+time:4100000000
+time:4200000000
+time:4300000000
+time:4400000000
+time:4500000000
+time:4600000000
+time:4700000000
+time:4800000000
+time:4900000000
+time:5000000000
+time:5100000000
+time:5200000000
+time:5300000000
+time:5400000000
+time:5500000000
+time:5600000000
+time:5700000000
+time:5800000000
+* Passed.
+  min time: 1731.919 ms [0]
+[sieve] Eratosthenes sieve: time:5900000000
+time:6000000000
+time:6100000000
+time:6200000000
+time:6300000000
+time:6400000000
+* Passed.
+  min time: 309.072 ms [0]
+[15pz] A* 15-puzzle search: time:6500000000
+time:6600000000
+time:6700000000
+time:6800000000
+time:6900000000
+* Passed.
+  min time: 272.090 ms [0]
+[dinic] Dinic's maxflow algorithm: time:7000000000
+time:7100000000
+time:7200000000
+time:7300000000
+time:7400000000
+* Passed.
+  min time: 225.955 ms [0]
+[lzip] Lzip compression: time:7500000000
+time:7600000000
+time:7700000000
+time:7800000000
+time:7900000000
+time:8000000000
+time:8100000000
+time:8200000000
+* Passed.
+  min time: 223.205 ms [0]
+[ssort] Suffix sort: time:8300000000
+time:8400000000
+time:8500000000
+time:8600000000
+time:8700000000
+time:8800000000
+time:8900000000
+* Passed.
+  min time: 282.170 ms [0]
+[md5] MD5 digest: time:9000000000
+time:9100000000
+time:9200000000
+time:9300000000
+time:9400000000
+time:9500000000
+time:9600000000
+time:9700000000
+time:9800000000
+time:9900000000
+time:10000000000
+time:10100000000
+time:10200000000
+time:10300000000
+* Passed.
+  min time: 466.102 ms [0]
+==================================================
+MicroBench PASS
+Scored time: 4836.842 ms
+Total  time: 5720.376 ms
+- vsrc/regs.sv:42: Verilog $finish
+GOOD
+Finished in 10355132132
+
+=========================================================================================================
+                                    MULTI-STAGE PERFORMANCE REPORT                                       
+=========================================================================================================
+ Performance Metric                   | 0: PREBOOT           | 1: BOOT              | 2: PROGRAM           
+---------------------------------------------------------------------------------------------------------
+ Execution Cycles                     | 2024737              | 26699698             | 5148841631           
+ Instructions Retired (WB)            | 2637                 | 20005                | 196018615            
+ Cycles Per Instruction (CPI)         | 767.818              | 1334.651             | 26.267               
+ Instructions Per Cycle (IPC)         | 0.001                | 0.001                | 0.038                
+---------------------------------------------------------------------------------------------------------
+ IFU Fetched Instructions             | 3687                 | 21836                | 316480829            
+ IFU Stall Cycles                     | 116710 (5.8%)        | 85480 (0.3%)         | 3186754164 (61.9%)   
+---------------------------------------------------------------------------------------------------------
+ Control Branches + Jumps Executed    | 528                  | 1832                 | 78648073             
+ Branches + Jumps Taken               | 525 (99.4%)          | 1816 (99.1%)         | 42591156 (54.2%)     
+---------------------------------------------------------------------------------------------------------
+ LSU Data Reads (Loads)               | 524                  | 7234                 | 15832405             
+ LSU Data Writes (Stores)             | 525                  | 7244                 | 7257368              
+ LSU Stall Cycles                     | 1902122 (93.9%)      | 26586857 (99.6%)     | 1452537016 (28.2%)   
+---------------------------------------------------------------------------------------------------------
+ Cache Hits                           | 3153 (99.8%)         | 14527 (66.6%)        | 205707695 (86.3%)    
+ Cache Misses                         | 7 (0.2%)             | 7294 (33.4%)         | 32696820 (13.7%)     
+ Cache Miss Penalty Cycles            | 116186               | 85473                | 3149910905           
+ Avg Cache Miss Latency (cyc)         | 16598.00             | 11.72                | 96.34                
+=========================================================================================================
+ AMAT (cycles)                        | 36.8                 | 3.9                  | 13.2                 
+=========================================================================================================
+ Flushes (count)                      | 525                  | 1816                 | 42591156             
+=========================================================================================================
+   Chip area for module '\osoc_26000003_core': 25805.920000
+     of which used for sequential elements: 12837.440000 (49.75%)
+     Max Freq  899.821MHz

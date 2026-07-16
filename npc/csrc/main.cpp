@@ -257,7 +257,7 @@ void execute(uint64_t n){
     soc->eval();
 
     #ifdef OP_TRACE
-    if((top->pc != top->prev_pc) && !top->rst) fwrite(&top->pc,4,1,fp);
+    if((top->reg_valid) && !top->rst) fwrite(&top->pc,4,1,fp);
     #endif
 
     if(!top->rst){
