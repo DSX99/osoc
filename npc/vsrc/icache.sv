@@ -28,7 +28,7 @@ logic unused_bits;
 assign unused_bits = |rresp | |word_align;
 
 parameter BLOCK_SIZE = 32;
-parameter NUMBER_OF_BLOCKS = 16;
+parameter NUMBER_OF_BLOCKS = 4;
 // here i use 2 rows
 
 localparam int off = $clog2(BLOCK_SIZE);
