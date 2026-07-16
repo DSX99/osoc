@@ -1267,7 +1267,6 @@ always_ff @(posedge clk) begin
         if(ls_wb_bus_branch_wb) begin
             ls_wb_bus_pc            <= '0;
             ls_wb_bus_alu_out       <= '0;
-            ls_wb_bus_lsu_out       <= '0;
             ls_wb_bus_next_pc       <= '0;
             ls_wb_bus_csr_out       <= '0;
             ls_wb_bus_rd            <= '0;
