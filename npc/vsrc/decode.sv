@@ -92,13 +92,13 @@ module decode (
     assign wb_match_rs2 = (wb_rd == bus_out_rs2) && (wb_rd!=0);
 
     logic reg_match;
-//
-    assign reg_match = (((ex_match_rs1 | ex_match_rs2) && (!ex_valid | ex_lsu_re) ) | ((ls_match_rs1 | ls_match_rs2) && !ls_valid) | ((wb_match_rs1 | wb_match_rs2) && !wb_valid)) | (|ex_csr | |ls_csr | |wb_csr);
+
+    assign reg_match = (((ex_match_rs1 | ex_match_rs2) && ((!ex_valid) | ex_lsu_re) ) | ((ls_match_rs1 | ls_match_rs2) && !ls_valid) | ((wb_match_rs1 | wb_match_rs2) && !wb_valid)) | (|ex_csr | |ls_csr | |wb_csr);
 
     always_comb begin
         valid_right = valid_left & !reg_match;
         ready_left  = ready_right & !reg_match;
-//
+
         bus_out_data_rs1 = bus_in_data_rs1;
         bus_out_data_rs2 = bus_in_data_rs2;
 
