@@ -41,7 +41,7 @@ cache_t cache[MAX_LINES][MAX_ROWS];
 result_t results[40];
 uint32_t count=0;
 
-double latency[3] = {1695.935976169139, 2.00, 29.088567072685716};
+double latency[3] = {1695.935976169139, 2.00, 50};
 
 uint32_t rows[2] = {1,2};
 uint32_t curr_row=0;
@@ -133,7 +133,12 @@ int main(){
 
                 printf("rows: %d, lines: %d, line length: %d byte requires:%d byte \n", rows[i], lines[j], line_size[k], rows[i]*lines[j]*line_size[k]);
                 for(int i=0;i<3;i++){
-                    printf("Hit %d, miss %d, total access %d (hit chance: %3.1f%%), \033[31mAMAT:%3.1f\033[0m\n", hit_count[i], miss_count[i], access_count[i], (double)hit_count[i]*100/access_count[i], (double)miss_count[i]/access_count[i] * latency[i]);
+                    if(i!=2){
+                        double AMAT = (double)miss_count[i]/access_count[i] * latency[i] * ((double)line_size[k]/4);
+                    }else{
+                        double AMAT = (double)miss_count[i]/access_count[i] * latency[i] + (((double)line_size[k]/4)*10);
+                    }
+                    printf("Hit %d, miss %d, total access %d (hit chance: %3.1f%%), \033[31mAMAT:%3.1f\033[0m\n", hit_count[i], miss_count[i], access_count[i], (double)hit_count[i]*100/access_count[i], AMAT);
                 }
                 printf("\n");
 
