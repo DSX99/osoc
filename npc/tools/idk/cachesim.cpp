@@ -132,18 +132,19 @@ int main(){
                 }
 
                 printf("rows: %d, lines: %d, line length: %d byte requires:%d byte \n", rows[i], lines[j], line_size[k], rows[i]*lines[j]*line_size[k]);
+                double AMAT;
                 for(int i=0;i<3;i++){
                     if(i!=2){
-                        double AMAT = (double)miss_count[i]/access_count[i] * latency[i] * ((double)line_size[k]/4);
+                        AMAT = (double)miss_count[i]/access_count[i] * latency[i] * ((double)line_size[k]/4);
                     }else{
-                        double AMAT = (double)miss_count[i]/access_count[i] * latency[i] + (((double)line_size[k]/4)*10);
+                        AMAT = (double)miss_count[i]/access_count[i] * (latency[i] + (((double)line_size[k]/4)*10));
                     }
                     printf("Hit %d, miss %d, total access %d (hit chance: %3.1f%%), \033[31mAMAT:%3.1f\033[0m\n", hit_count[i], miss_count[i], access_count[i], (double)hit_count[i]*100/access_count[i], AMAT);
                 }
                 printf("\n");
 
                 results[count].size = rows[i]*lines[j]*line_size[k];
-                results[count].AMAT = (double)miss_count[2]/access_count[2] * latency[2];
+                results[count].AMAT = AMAT;
                 results[count].row = rows[i];
                 results[count].line = lines[j];
                 results[count].line_size = line_size[k];
