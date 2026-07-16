@@ -347,6 +347,7 @@ module osoc_26000003_core (
         .wb_rd_data(ls_wb_bus_alu_out_wb),
 
         .ex_valid(ex_ls_valid_ex),
+        .ex_lsu_re(de_ex_bus_lsu_we_ex),
         .ls_valid(ls_wb_valid_ls),
         .wb_valid(ls_wb_valid_wb),
 

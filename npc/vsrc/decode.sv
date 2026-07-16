@@ -43,6 +43,7 @@ module decode (
     input  logic [31:0] wb_rd_data,
 
     input  logic  ex_valid,
+    input  logic  ex_lsu_re,
     input  logic  ls_valid,
     input  logic  wb_valid,
 
@@ -92,7 +93,7 @@ module decode (
 
     logic reg_match;
 //
-    assign reg_match = (((ex_match_rs1 | ex_match_rs2) && !ex_valid) | ((ls_match_rs1 | ls_match_rs2) && !ls_valid) | ((wb_match_rs1 | wb_match_rs2) && !wb_valid)) | (|ex_csr | |ls_csr | |wb_csr);
+    assign reg_match = (((ex_match_rs1 | ex_match_rs2) && (!ex_valid || ex_lsu_re) ) | ((ls_match_rs1 | ls_match_rs2) && !ls_valid) | ((wb_match_rs1 | wb_match_rs2) && !wb_valid)) | (|ex_csr | |ls_csr | |wb_csr);
 
     always_comb begin
         valid_right = valid_left & !reg_match;
@@ -103,11 +104,11 @@ module decode (
 
         if(wb_match_rs1 && wb_valid) bus_out_data_rs1 = wb_rd_data;
         if(ls_match_rs1 && ls_valid) bus_out_data_rs1 = ls_rd_data;
-        if(ex_match_rs1 && ex_valid) bus_out_data_rs1 = ex_rd_data;
+        if(ex_match_rs1 && ex_valid && !ex_lsu_re) bus_out_data_rs1 = ex_rd_data;
 
         if(wb_match_rs2 && wb_valid) bus_out_data_rs2 = wb_rd_data;
         if(ls_match_rs2 && ls_valid) bus_out_data_rs2 = ls_rd_data;
-        if(ex_match_rs2 && ex_valid) bus_out_data_rs2 = ex_rd_data;
+        if(ex_match_rs2 && ex_valid && !ex_lsu_re) bus_out_data_rs2 = ex_rd_data;
 
 
         bus_out_speculate = bus_in_speculate;
