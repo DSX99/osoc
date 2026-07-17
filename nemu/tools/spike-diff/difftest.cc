@@ -18,11 +18,15 @@
 #include "../../include/common.h"
 #include <difftest-def.h>
 
+#undef CONFIG_RVE
+
+
 #define NR_GPR MUXDEF(CONFIG_RVE, 16, 32)
 
 static std::vector<std::pair<reg_t, abstract_device_t*>> difftest_plugin_devices;
 static std::vector<std::string> difftest_htif_args;
-static std::vector<std::pair<reg_t, mem_t*>> difftest_mem;
+static std::vector<std::pair<reg_t, mem_t*>> difftest_mem(
+    1, std::make_pair(reg_t(DRAM_BASE), new mem_t(CONFIG_MSIZE)));
 static debug_module_config_t difftest_dm_config = {
   .progbufsize = 2,
   .max_sba_data_width = 0,
@@ -101,31 +105,6 @@ __EXPORT void difftest_exec(uint64_t n) {
 __EXPORT void difftest_init(int port) {
   difftest_htif_args.push_back("");
   const char *isa = "RV" MUXDEF(CONFIG_RV64, "64", "32") MUXDEF(CONFIG_RVE, "E", "I") "MAFDC";
-
-  reg_t sram_base = 0x0f000000;
-  reg_t sram_size = 0x00002000; // 8KB
-  reg_t flash_base = 0x30000000;
-  reg_t flash_size = 0x10000000; // IDKB
-  reg_t uart_base = 0x10000000;
-  reg_t uart_size = 0x00001000; // 8KB
-  reg_t psram_base = 0x80000000;
-  reg_t psram_size = 0x10000000; // IDKB
-  reg_t sdram_base = 0xa0000000;
-  reg_t sdram_size = 0x20000000; // 128MB (actually more but idk)
-  
-  std::vector<mem_cfg_t> SoC_layout;
-  SoC_layout.push_back(mem_cfg_t(sram_base, sram_size));
-  SoC_layout.push_back(mem_cfg_t(flash_base, flash_size));
-  SoC_layout.push_back(mem_cfg_t(uart_base, uart_size));
-  SoC_layout.push_back(mem_cfg_t(psram_base, psram_size));
-  SoC_layout.push_back(mem_cfg_t(sdram_base, sdram_size));
-
-  difftest_mem.push_back(std::make_pair(sram_base, new mem_t(sram_size)));
-  difftest_mem.push_back(std::make_pair(flash_base, new mem_t(flash_size)));
-  difftest_mem.push_back(std::make_pair(uart_base, new mem_t(uart_size)));
-  difftest_mem.push_back(std::make_pair(psram_base, new mem_t(psram_size)));
-  difftest_mem.push_back(std::make_pair(sdram_base, new mem_t(sdram_size)));
-
   cfg_t *cfg = new cfg_t(/*default_initrd_bounds=*/std::make_pair((reg_t)0, (reg_t)0),
             /*default_bootargs=*/nullptr,
             /*default_isa=*/isa,
@@ -134,7 +113,7 @@ __EXPORT void difftest_init(int port) {
             /*default_misaligned=*/false,
             /*default_endianness*/endianness_little,
             /*default_pmpregions=*/16,
-            /*default_mem_layout=*/SoC_layout,
+            /*default_mem_layout=*/std::vector<mem_cfg_t>(),
             /*default_hartids=*/std::vector<size_t>(1),
             /*default_real_time_clint=*/false,
             /*default_trigger_count=*/4);
