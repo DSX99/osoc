@@ -74,8 +74,8 @@ static inline void update_screen() {
 
 void vga_update_screen() {
   update_screen();
-  printf("val: %d\n",*(vgactl_port_base+4));
-  printf("val: %d\n",mmio_read(CONFIG_VGA_CTL_MMIO+4, 4));
+  printf("val1: %d\n",*(vgactl_port_base+4));
+  printf("val2: %d\n",mmio_read(CONFIG_VGA_CTL_MMIO+4, 4));
   // TODO: call `update_screen()` when the sync register is non-zero,
   // then zero out the sync register
 }
