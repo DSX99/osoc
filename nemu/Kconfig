@@ -230,4 +230,8 @@ config ETRACE
   bool "Enable exception call tracing"
   default n
 
+config DTRACE
+  bool "Enable device call tracing"
+  default n
+  
 endmenu
