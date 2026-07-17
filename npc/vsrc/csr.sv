@@ -52,10 +52,8 @@ always_comb begin
         12'hF12: working_reg_w = MARCHID;
         default working_reg_w = UNUSED;
     endcase
-    if(exception) begin
-        if(cause == 10) data_pc_out = regs[MEPS]; //mret (takes hypervisors cause)
-        else  data_pc_out = regs[MTVEC];
-    end
+    if(exception) data_pc_out = regs[MTVEC];
+    else data_pc_out = regs[MEPS];
 
     data_out = regs[working_reg_r];
 end
