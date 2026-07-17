@@ -141,8 +141,6 @@ int main(int argc, char** argv) {
     return -1;
   }
 
-  soc->enab = 1;
-
   reset(soc, 100);
 
   if(batch){
