@@ -244,15 +244,13 @@ module osoc_26000003_core (
         .clk(clock), 
         .rst(reset), 
         .branch(ls_wb_bus_branch_wb), 
-        .data_in(ls_wb_bus_alu_out_wb), 
-        .csr_branch(ls_wb_bus_exception_wb),
-        .csr_pc(ls_wb_bus_csr_pc_wb),
+        .data_in(pc_in), 
         .pc(pc_ifu), 
         .next_pc(next_pc), 
         .valid(if_de_valid_if && if_de_ready_if),
         .wb_valid(ls_wb_valid_wb)
     );
-
+    assign pc_in = ls_wb_bus_mux_select_pc_wb || ls_wb_bus_exception_wb ? ls_wb_bus_csr_pc_wb : ls_wb_bus_alu_out_wb;
     logic flush /*verilator public*/;
 
     assign flush = ls_wb_bus_branch_wb != ls_wb_bus_speculate_wb; 
@@ -693,7 +691,7 @@ module osoc_26000003_core (
     assign io_slave_rid      = 4'b0;
 
     /* verilator lint_off UNUSED */
-    logic [150:0] unused_signals;
+    logic [149:0] unused_signals;
     /* verilator lint_on UNUSED */
 
     assign unused_signals = {
@@ -717,8 +715,7 @@ module osoc_26000003_core (
         io_slave_arlen,
         io_slave_arsize,
         io_slave_arburst,
-        io_slave_rready, 
-        ls_wb_bus_mux_select_pc_wb, 1'b0
+        io_slave_rready, 1'b0
     };
 
 endmodule
