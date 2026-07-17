@@ -104,7 +104,7 @@ int main(int argc, char** argv) {
   #endif
   #ifdef OP_TRACE
   printf("\n\t\t\033[31mRUNNING WITH OP_TRACE\033[0m\n");
-  fp = fopen("/home/dsx99/osoc/ysyx-workbench/npc/tools/idk/opcodes", "wb");
+  fp = fopen("/home/dsx99/osoc/ysyx-workbench/npc/tools/idk/new_microbench", "wb");
   #endif
   Verilated::commandArgs(argc, argv);
   printf("\n\033[1m\033[36mNPC\033[0m\n\n");
@@ -256,7 +256,7 @@ void execute(uint64_t n){
     soc->eval();
 
     #ifdef OP_TRACE
-    if((top->pc != top->prev_pc) && !top->rst) fwrite(&top->pc,4,1,fp);
+    if((top->reg_valid) && !top->rst) fwrite(&top->pc,4,1,fp);
     #endif
 
     if(!top->rst){
@@ -271,38 +271,57 @@ void execute(uint64_t n){
     }
     
     //couting performance
-    if(top->if_de_valid_if == 0){
+    bool is_lsu_stall    = (top->ex_ls_valid_ls && !top->ex_ls_ready_ls);
+    bool is_ifu_transfer = (top->if_de_valid_if && top->if_de_ready_if);
+    bool is_ls_transfer  = (top->ex_ls_valid_ls && top->ex_ls_ready_ls);
+    bool is_ex_transfer  = (top->ex_ls_valid_ex && top->ex_ls_ready_ls);
+
+    if (!top->if_de_valid_if && !is_lsu_stall) { //ifu is not ready while nothing else stops
       program[stage].ifu_stall_cycle++;
     }
-    if((top->if_de_valid_if && top->if_de_ready_if) && prev_ifu == 0){
+
+    if(is_ifu_transfer){
       program[stage].ifu_fetch_instr++;
     }
-    prev_ifu = (top->if_de_valid_if && top->if_de_ready_if);
-    if(top->branch){
+
+    if(top->pc != prev_pc){
+      if(top->cache_hit) program[stage].cache_hit++;      //we change hit/miss only on new pc (it also counters when we go ahead of what should have been branch)
+      if(top->cache_miss) program[stage].cache_miss++;    //same as hit
+    }
+
+
+    if (top->branch && is_ex_transfer) { //if we do branch or jump inst on ex (problem here is that it is calculated on alu and may even not be written back, better if to check on wb stage but it requires extra routing and not sure will it change smth or not)
       program[stage].possible_branch_count++;
     }
-    if(top->branch_taken){
-      program[stage].branch_taken++;
+
+    if (top->reg_valid_e) {
+      program[stage].writeback++;
+      if (top->branch_taken) program[stage].branch_taken++;
+      if (top->flush)        program[stage].flush++;
     }
-    if(top->ex_ls_valid_ls && !top->ex_ls_ready_ls){
+
+    if (is_lsu_stall) {
       program[stage].lsu_stall_cycle++;
     }
-    if(top->ex_ls_valid_ls && top->ex_ls_ready_ls){
-      if(top->ex_ls_bus_lsu_re_ls){
-        program[stage].lsu_read_data++;
+
+    if (is_ls_transfer) { //handshakes
+      if (top->ex_ls_bus_lsu_re_ls) program[stage].lsu_read_data++;
+      if (top->ex_ls_bus_lsu_we_ls) program[stage].lsu_write_data++;
+    }
+
+    if (top->cache_miss && !is_lsu_stall) {
+      program[stage].cache_miss_cycles++;
+    }
+
+    if (top->pc == prev_pc) {
+      stall_count++;
+      if (stall_count > 2000000 && !(stall_count % 500000)) {
+        printf("Possibly infinite stall\n");
       }
-      if(top->ex_ls_bus_lsu_we_ls){
-        program[stage].lsu_write_data++;
-      }
+    } else {
+      stall_count = 0;
     }
-    if(top->reg_valid){
-      program[stage].writeback++;
-    }
-    if(top->pc != prev_pc){
-      if(top->cache_hit) program[stage].cache_hit++;
-      if(top->cache_miss) program[stage].cache_miss++;
-    }
-    if(top->cache_miss) program[stage].cache_miss_cycles++;
+    prev_pc = top->pc;
     }
 
     if(top->pc == prev_pc){
@@ -350,7 +369,7 @@ void execute(uint64_t n){
       }else{
         printf("\033[032mGOOD\033[0m\n");
       }
-      printf("Finished in %ld\n",contextp->time());
+      printf("Finished in %lu\n",contextp->time());
       break;
     }
     if(check_watchpoints()){

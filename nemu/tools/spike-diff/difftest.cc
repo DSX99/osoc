@@ -107,7 +107,7 @@ __EXPORT void difftest_init(int port) {
   reg_t flash_base = 0x30000000;
   reg_t flash_size = 0x10000000; // IDKB
   reg_t uart_base = 0x10000000;
-  reg_t uart_size = 0x00001000; // 8KB
+  reg_t uart_size = 0x00001000; // 4KB
   reg_t psram_base = 0x80000000;
   reg_t psram_size = 0x10000000; // IDKB
   reg_t sdram_base = 0xa0000000;

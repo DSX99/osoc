@@ -104,7 +104,7 @@ int main(int argc, char** argv) {
   #endif
   #ifdef OP_TRACE
   printf("\n\t\t\033[31mRUNNING WITH OP_TRACE\033[0m\n");
-  fp = fopen("/home/dsx99/osoc/ysyx-workbench/npc/tools/idk/opcodes", "wb");
+  fp = fopen("/home/dsx99/osoc/ysyx-workbench/npc/tools/idk/new_microbench", "wb");
   #endif
   Verilated::commandArgs(argc, argv);
   printf("\n\033[1m\033[36mNPC\033[0m\n\n");
@@ -162,7 +162,7 @@ int main(int argc, char** argv) {
   #endif
   
   delete soc;
-  return (ret || (!finished && qexit));
+  return (ret || (!finished && qexit) || fail);
 }
 
 
@@ -257,7 +257,7 @@ void execute(uint64_t n){
     soc->eval();
 
     #ifdef OP_TRACE
-    if((top->pc != top->prev_pc) && !top->rst) fwrite(&top->pc,4,1,fp);
+    if((top->reg_valid) && !top->rst) fwrite(&top->pc,4,1,fp);
     #endif
 
     if(!top->rst){
@@ -280,6 +280,10 @@ void execute(uint64_t n){
 
     if (!top->if_de_valid_if && !is_lsu_stall) { //ifu is not ready while nothing else stops
       program[stage].ifu_stall_cycle++;
+    }
+
+    if(is_ifu_transfer){
+      program[stage].ifu_fetch_instr++;
     }
 
     if(top->pc != prev_pc){
@@ -307,7 +311,7 @@ void execute(uint64_t n){
       if (top->ex_ls_bus_lsu_we_ls) program[stage].lsu_write_data++;
     }
 
-    if (top->cache_miss) {
+    if (top->cache_miss && !is_lsu_stall) {
       program[stage].cache_miss_cycles++;
     }
 

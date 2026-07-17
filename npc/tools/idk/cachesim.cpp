@@ -41,7 +41,7 @@ cache_t cache[MAX_LINES][MAX_ROWS];
 result_t results[40];
 uint32_t count=0;
 
-double latency[3] = {1695.935976169139, 2.00, 29.088567072685716};
+double latency[3] = {1695.935976169139, 2.00, 50};
 
 uint32_t rows[2] = {1,2};
 uint32_t curr_row=0;
@@ -51,7 +51,7 @@ uint32_t index_shift=0;
 uint32_t index_mask=0;
 uint32_t tag_shift=0;
 
-static char *path = "/home/dsx99/osoc/ysyx-workbench/npc/tools/idk/opcodes";
+static char *path = "/home/dsx99/osoc/ysyx-workbench/npc/tools/idk/microbench";
 
 uint32_t access_count[3];
 uint32_t miss_count[3];
@@ -132,13 +132,19 @@ int main(){
                 }
 
                 printf("rows: %d, lines: %d, line length: %d byte requires:%d byte \n", rows[i], lines[j], line_size[k], rows[i]*lines[j]*line_size[k]);
+                double AMAT;
                 for(int i=0;i<3;i++){
-                    printf("Hit %d, miss %d, total access %d (hit chance: %3.1f%%), \033[31mAMAT:%3.1f\033[0m\n", hit_count[i], miss_count[i], access_count[i], (double)hit_count[i]*100/access_count[i], (double)miss_count[i]/access_count[i] * latency[i]);
+                    if(i!=2){
+                        AMAT = (double)miss_count[i]/access_count[i] * latency[i] * ((double)line_size[k]/4);
+                    }else{
+                        AMAT = (double)miss_count[i]/access_count[i] * (latency[i] + (((double)line_size[k]/4)*10));
+                    }
+                    printf("Hit %d, miss %d, total access %d (hit chance: %3.1f%%), \033[31mAMAT:%3.1f\033[0m\n", hit_count[i], miss_count[i], access_count[i], (double)hit_count[i]*100/access_count[i], AMAT);
                 }
                 printf("\n");
 
                 results[count].size = rows[i]*lines[j]*line_size[k];
-                results[count].AMAT = (double)miss_count[2]/access_count[2] * latency[2];
+                results[count].AMAT = AMAT;
                 results[count].row = rows[i];
                 results[count].line = lines[j];
                 results[count].line_size = line_size[k];
@@ -171,32 +177,3 @@ int main(){
     fclose(fp);
 }
 
-
-
-/*
-=========================================================================================================
- Performance Metric                   | 0: PREBOOT           | 1: BOOT              | 2: PROGRAM           
----------------------------------------------------------------------------------------------------------
- Execution Cycles                     | 1195565              | 15707634             | 2530730300           
- Instructions Retired (WB)            | 2537                 | 18926                | 186490014            
- Cycles Per Instruction (CPI)         | 471.251              | 829.950              | 13.570               
- Instructions Per Cycle (IPC)         | 0.002                | 0.001                | 0.074                
----------------------------------------------------------------------------------------------------------
- IFU Fetched Instructions             | 22                   | 138                  | 43273313             
- IFU Stall Cycles                     | 49908 (4.2%)         | 276 (0.0%)           | 1683625036 (66.5%)   
----------------------------------------------------------------------------------------------------------
- Control Branches + Jumps Executed    | 507                  | 1731                 | 56779278             
- Branches + Jumps Taken               | 505 (99.6%)          | 1719 (99.3%)         | 42757793 (75.3%)     
----------------------------------------------------------------------------------------------------------
- LSU Data Reads (Loads)               | 504                  | 6842                 | 10725002             
- LSU Data Writes (Stores)             | 505                  | 6852                 | 4841881              
- LSU Stall Cycles                     | 1143110 (95.6%)      | 15688432 (99.9%)     | 660615251 (26.1%)    
----------------------------------------------------------------------------------------------------------
- Cache Hits                           | 2515 (99.1%)         | 18788 (99.3%)        | 143216701 (76.8%)    
- Cache Misses                         | 22 (0.9%)            | 138 (0.7%)           | 43273313 (23.2%)     
- Cache Miss Penalty Cycles            | 49908                | 276                  | 1683625036           
- Avg Cache Miss Latency (cyc)         | 2268.55              | 2.00                 | 38.91                
-=========================================================================================================
- AMAT (cycles)                        | 19.7                 | 0.0                  | 9.0                  
-=========================================================================================================
-*/
