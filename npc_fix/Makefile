@@ -75,7 +75,7 @@ npc_run: npc_build
 nvb_build: sim
 	mkdir -p obj_dir_nvb
 	gcc -c $(VERILATOR_CFLAGS) -O2 $(NEMU_HOME)/src/utils/disasm.c -o obj_dir_nvb/disasm.o
-	$(VERILATOR) $(OSOC_SRC) $(VERILOG_FLAGS) --top-module ysyxSoCFull --Mdir obj_dir_nvb $(NVB_CPP_SRC) $(NVBOARD_ARCHIVE) $(addprefix -CFLAGS , $(INCFLAGS))
+	$(VERILATOR) $(OSOC_SRC) -LDFLAGS "$(NVBOARD_ARCHIVE)" $(VERILOG_FLAGS) --top-module ysyxSoCFull --Mdir obj_dir_nvb $(NVB_CPP_SRC) $(addprefix -CFLAGS , $(INCFLAGS))
 	$(MAKE) -j -C obj_dir_nvb -f VysyxSoCFull.mk
 
 nvb_run: nvb_build
