@@ -3,6 +3,8 @@ module pc(
     input logic rst,
     input logic branch,
     input logic [31:0] data_in,
+    input logic csr_branch,
+    input logic [31:0] csr_pc,
     input logic valid,
     input logic wb_valid,
 
