@@ -144,8 +144,6 @@ int main(int argc, char** argv) {
 
   soc->enab = 1;
 
-  nvboard_bindAllPins(soc);
-
   reset(soc, 100);
 
   if(batch){
