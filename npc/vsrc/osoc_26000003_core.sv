@@ -246,7 +246,7 @@ module osoc_26000003_core (
         .branch(ls_wb_bus_branch_wb), 
         .data_in(pc_in), 
         .csr_branch(ls_wb_bus_exception_wb),
-        .csr_pc(ls_wb_bus_csr_pc_wb)
+        .csr_pc(ls_wb_bus_csr_pc_wb),
         .pc(pc_ifu), 
         .next_pc(next_pc), 
         .valid(if_de_valid_if && if_de_ready_if),
