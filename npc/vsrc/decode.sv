@@ -229,7 +229,7 @@ module decode (
                             bus_out_alu_op        = 8'b10010000;
                         end else if(func7 == 7'b0011000 && rs2_val == 5'b00010) begin //mret
                             bus_out_alu_op        = 8'b10010000;
-                            bus_out_mcause = 10;
+                            bus_out_mux_select_pc = 1'b1;
                         end else begin
                             bus_out_exception = 1; //raise exception
                             bus_out_mcause = 2;
