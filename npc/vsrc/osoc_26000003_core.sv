@@ -717,8 +717,8 @@ module osoc_26000003_core (
         io_slave_arlen,
         io_slave_arsize,
         io_slave_arburst,
-        io_slave_rready, 1'b0,
-        ls_wb_bus_mux_select_pc_wb
+        io_slave_rready, 
+        ls_wb_bus_mux_select_pc_wb, 1'b0
     };
 
 endmodule
