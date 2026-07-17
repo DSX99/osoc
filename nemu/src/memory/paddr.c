@@ -63,7 +63,7 @@ word_t paddr_read(paddr_t addr, int len) {
   Log("read from addr:0x%8x, for %d bytes", addr, len);
   #endif
   if (likely(in_pmem(addr))) return pmem_read(addr, len);
-  IFDEF(CONFIG_DEVICE, IFDEF(DTRACE, printf("read device at addr:0x%08x, len:%d", addr, len)); return mmio_read(addr, len));
+  IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
   out_of_bound(addr);
   return 0;
 }
@@ -73,6 +73,6 @@ void paddr_write(paddr_t addr, int len, word_t data) {
   Log("write to addr:0x%8x, for %d bytes", addr, len);
   #endif
   if (likely(in_pmem(addr))) { pmem_write(addr, len, data); return; }
-  IFDEF(CONFIG_DEVICE, IFDEF(DTRACE, printf("write to device at addr:0x%08x with val:0x%08x, len:%d", addr, data, len)); mmio_write(addr, len, data); return);
+  IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
   out_of_bound(addr);
 }

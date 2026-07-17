@@ -55,9 +55,11 @@ void add_mmio_map(const char *name, paddr_t addr, void *space, uint32_t len, io_
 
 /* bus interface */
 word_t mmio_read(paddr_t addr, int len) {
+  IFDEF(DTRACE, printf("read device at addr:0x%08x, len:%d", addr, len));
   return map_read(addr, len, fetch_mmio_map(addr));
 }
 
 void mmio_write(paddr_t addr, int len, word_t data) {
+  IFDEF(DTRACE, printf("write to device at addr:0x%08x with val:0x%08x, len:%d", addr, data, len));
   map_write(addr, len, data, fetch_mmio_map(addr));
 }
