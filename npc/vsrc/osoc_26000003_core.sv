@@ -244,7 +244,7 @@ module osoc_26000003_core (
         .clk(clock), 
         .rst(reset), 
         .branch(ls_wb_bus_branch_wb), 
-        .data_in(pc_in), 
+        .data_in(ls_wb_bus_alu_out_wb), 
         .csr_branch(ls_wb_bus_exception_wb),
         .csr_pc(ls_wb_bus_csr_pc_wb),
         .pc(pc_ifu), 
