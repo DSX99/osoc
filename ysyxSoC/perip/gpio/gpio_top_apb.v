@@ -38,7 +38,7 @@ assign gpio_seg_5 = hex[5];
 assign gpio_seg_6 = hex[6];
 assign gpio_seg_7 = hex[7];
 
-assign in_prdata = (in_paddr[3:0] == 4'h4) ? {16'b0,gpio_in} : 32'h0;
+assign in_prdata = (in_paddr[3:0] == 4'h4 && !in_pwrite) ? {16'b0,gpio_in} : 32'h0;
 assign in_pslverr = 0;
 assign in_pready = (in_psel && in_penable) ? 1'b1 : 1'b0;
 

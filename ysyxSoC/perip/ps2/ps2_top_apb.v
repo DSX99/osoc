@@ -20,9 +20,10 @@ module ps2_top_apb(
   reg [9:0] buffer; // ps2_data bits
   reg [3:0] count;  // count ps2_data bits
   reg prev;
-  reg [7:0] out;
+  reg [7:0] fifo [16];
+  reg [3:0] startp, finishp;
   
-  assign in_prdata = (in_paddr[3:0] == 4'h0) ? {24'b0,out} : 32'h0;
+  assign in_prdata = (in_paddr[3:0] == 4'h0 && !in_pwrite && !pointers_same) ? {24'b0,fifo[startp]} : 32'h0;
   assign in_pslverr = 0;
   assign in_pready = (in_psel && in_penable) ? 1'b1 : 1'b0;
 
@@ -31,29 +32,43 @@ module ps2_top_apb(
   end
 
   wire sampling = prev && !ps2_clk;
+  wire correct_data = (buffer[0] == 0) && (ps2_data) && (^buffer[9:1]);
+  wire pointers_same = startp==finishp;
 
   always @(posedge clock) begin
     if (reset) begin // reset
         count <= 0;
+        buffer<=0;
+        prev<=0;
+        for (int i = 0; i < 16; i = i + 1) begin
+          fifo[i] <= 0;
+        end
+        finishp<=0;
     end else begin
       if (sampling) begin
         if (count == 4'd10) begin
-          if ((buffer[0] == 0) && (ps2_data) && (^buffer[9:1])) begin
-            count <= 0;
-            out <= buffer[8:1];
-          end else begin
-            buffer[count] <= ps2_data;
-            count <= count + 3'b1;
+          if (correct_data && (finishp+1!=startp)) begin
+            fifo[finishp] <= buffer[8:1];
+            finishp<=finishp+1;
           end
+          count <= 0;
+        end else begin
+          buffer[count] <= ps2_data;
+          count <= count + 3'b1;
         end
       end
     end
   end
 
-  always @(posedge clock) begin
-    if(reset) begin
-      out <= 0;
-    end 
+
+always @(posedge clock) begin
+  if(reset) begin
+    startp<=0;
+  end else begin
+    if(in_psel && in_penable && !in_pwrite && !pointers_same) begin
+      startp<=startp+1;
+    end
   end
+end
 
 endmodule
