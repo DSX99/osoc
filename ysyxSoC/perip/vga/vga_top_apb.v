@@ -64,10 +64,10 @@ always @(posedge clock) begin
   end else begin
     if(in_psel && in_penable) begin
       if(in_pwrite) begin
-        mem[in_paddr - 32'h2100_0000  ]<=(in_pwdata    )&8'hff;
-        mem[in_paddr - 32'h2100_0000+1]<=(in_pwdata>>8 )&8'hff;
-        mem[in_paddr - 32'h2100_0000+2]<=(in_pwdata>>16)&8'hff;
-        mem[in_paddr - 32'h2100_0000+3]<=(in_pwdata>>24)&8'hff;
+        mem[in_paddr - 32'h2100_0000  ]<=(in_pwdata[7:0]  )&8'hff;
+        mem[in_paddr - 32'h2100_0000+1]<=(in_pwdata[15:8] )&8'hff;
+        mem[in_paddr - 32'h2100_0000+2]<=(in_pwdata[23:16])&8'hff;
+        mem[in_paddr - 32'h2100_0000+3]<=(in_pwdata[31:24])&8'hff;
       end
     end
   end
