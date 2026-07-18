@@ -1,6 +1,7 @@
 #include <am.h>
 #include <amdev.h>
 #include <klib-macros.h>
+#include "klib.h"
 #include "riscv.h"
 
 const int ps2_to_am_lut[256] = {
@@ -99,6 +100,31 @@ void __am_uart_rx(AM_UART_RX_T *uart){
 static void __am_timer_config(AM_TIMER_CONFIG_T *cfg) { cfg->present = true; cfg->has_rtc = true; }
 static void __am_input_config(AM_INPUT_CONFIG_T *cfg) { cfg->present = true;  }
 static void __am_uart_config(AM_UART_CONFIG_T *cfg) { cfg->present = true;  }
+void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
+  *cfg = (AM_GPU_CONFIG_T) {
+    .present = true, .has_accel = false,
+    .width = 640, .height = 480,
+    .vmemsz = (640) * (480) * sizeof(uint32_t)
+  };
+}
+
+void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
+  int w = io_read(AM_GPU_CONFIG).width;
+
+  int x = ctl->x;
+  int y = ctl->y;
+  uint32_t *pixels = (uint32_t *)ctl->pixels;
+
+  uint32_t *fb = (uint32_t *)(uintptr_t)(0x21000000);
+
+  for( int i = 0; i<ctl->h; i++){
+    memcpy(&fb[(y+i)*w + x],&pixels[i*ctl->w], ctl->w*sizeof(uint32_t));
+  }
+}
+
+void __am_gpu_status(AM_GPU_STATUS_T *status) {
+  status->ready = true;
+}
 
 
 typedef void (*handler_t)(void *buf);
@@ -108,6 +134,9 @@ static void *lut[128] = {
   [AM_TIMER_UPTIME] = __am_timer_uptime,
   [AM_INPUT_CONFIG] = __am_input_config,
   [AM_INPUT_KEYBRD] = __am_input_keybrd,
+  [AM_GPU_CONFIG  ] = __am_gpu_config,
+  [AM_GPU_FBDRAW  ] = __am_gpu_fbdraw,
+  [AM_GPU_STATUS  ] = __am_gpu_status,
   [AM_UART_CONFIG ] = __am_uart_config,
   [AM_UART_RX     ] = __am_uart_rx,
 };
