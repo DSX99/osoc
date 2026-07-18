@@ -81,9 +81,49 @@ void *memmove(void *dst, const void *src, size_t n) {
 void *memcpy(void *out, const void *in, size_t n) {
   unsigned char *p = (unsigned char *)out;
   unsigned char *q = (unsigned char *)in;
-  for(size_t i=0;i<n;i++){
-    p[i]=q[i];
+  if(n<8 || ((uint32_t)p & 3)!=((uint32_t)q & 3)){
+    while(n--){
+      *p++ = *q++;
+    }
+    return out;
   }
+
+  while(((uint32_t)p & 3) != 0 && n>0){
+    *p++ = *q++;
+    n--;
+  }
+
+  uint32_t *p32 = (uint32_t *)p;
+  uint32_t *q32 = (uint32_t *)q;
+
+  while(n>=16){
+    uint32_t w0 = *q32;
+    uint32_t w1 = *(q32+1);
+    uint32_t w2 = *(q32+2);
+    uint32_t w3 = *(q32+3);
+
+    *p32 = w0;
+    *(p32+1) = w1;
+    *(p32+2) = w2;
+    *(p32+3) = w3;
+
+    q32 += 4;
+    p32 += 4;
+    n -= 16;
+  }
+
+  while(n>=4){
+    *p32++ = *q32++;
+    n -= 4;
+  }
+
+  p = (unsigned char *)p32;
+  q = (unsigned char *)q32;
+
+  while(n--){
+    *p++ = *q++;
+  }
+  
   return out;
 }
 
