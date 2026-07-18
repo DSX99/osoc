@@ -2,12 +2,9 @@ module pc(
     input logic clk,
     input logic rst,
     input logic branch,
-    input logic csr_branch,
-    input logic [31:0] branch_addr,
-    input logic [31:0] csr_branch_addr,
+    input logic [31:0] data_in,
     input logic valid,
     input logic wb_valid,
-    input logic ex_valid,
 
     output logic [31:0] pc,
     output logic [31:0] next_pc
