@@ -130,7 +130,7 @@ int main(int argc, char** argv) {
 
   nvboard_bind_all_pins();
   nvboard_init();
-  uart_set_divisor(1);
+  uart_set_divisor(0);
   
 #ifdef CONFIG_FST
   Verilated::traceEverOn(true);
