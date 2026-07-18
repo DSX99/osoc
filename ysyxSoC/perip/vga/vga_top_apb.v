@@ -58,16 +58,20 @@ end
 
 always @(posedge clock) begin
   if(reset) begin
-    for (int i = 0; i < 307200; i = i + 1) begin
+    for (int i = 0; i < 307200*4; i = i + 1) begin
       mem[i]<=0;
     end
   end else begin
     if(in_psel && in_penable) begin
       if(in_pwrite) begin
-        mem[in_paddr - 32'h2100_0000  ]<=in_pwdata[7:0];
-        mem[in_paddr - 32'h2100_0000+1]<=in_pwdata[15:8];
-        mem[in_paddr - 32'h2100_0000+2]<=in_pwdata[23:16];
-        mem[in_paddr - 32'h2100_0000+3]<=in_pwdata[31:24];
+        if(in_pstrb[0])
+          mem[in_paddr - 32'h2100_0000   ]<=in_pwdata[7:0];
+        if(in_pstrb[1])
+          mem[in_paddr - 32'h2100_0000 +1]<=in_pwdata[15:8];
+        if(in_pstrb[2])
+          mem[in_paddr - 32'h2100_0000 +2]<=in_pwdata[23:16];
+        if(in_pstrb[3])
+          mem[in_paddr - 32'h2100_0000 +3]<=in_pwdata[31:24];
       end
     end
   end
@@ -83,6 +87,6 @@ assign vga_valid = h_valid & v_valid;
 wire [9:0] h_addr = h_valid ? (x_cnt - 10'd145) : 10'd0;
 wire [9:0] v_addr = v_valid ? (y_cnt - 10'd36) : 10'd0;
 
-assign {vga_r, vga_g, vga_b} = vga_valid ? {mem[((h_addr + v_addr*640)<<2) + 2], mem[((h_addr + v_addr*640)<<2) + 1], mem[((h_addr + v_addr*640)<<2) + 0]} : 0;
+assign {vga_r, vga_g, vga_b} = {mem[((h_addr + v_addr*640)<<2) + 2], mem[((h_addr + v_addr*640)<<2) + 1], mem[((h_addr + v_addr*640)<<2) + 0]};
 
 endmodule
