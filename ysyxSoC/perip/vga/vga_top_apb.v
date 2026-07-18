@@ -87,6 +87,8 @@ assign vga_valid = h_valid & v_valid;
 wire [9:0] h_addr = h_valid ? (x_cnt - 10'd145) : 10'd0;
 wire [9:0] v_addr = v_valid ? (y_cnt - 10'd36) : 10'd0;
 
-assign {vga_r, vga_g, vga_b} = {mem[((h_addr + v_addr*640)<<2) + 2], mem[((h_addr + v_addr*640)<<2) + 1], mem[((h_addr + v_addr*640)<<2) + 0]};
+assign vga_r = mem[((h_addr + v_addr*640)<<2) + 2];
+assign vga_g = mem[((h_addr + v_addr*640)<<2) + 1];
+assign vga_b = mem[((h_addr + v_addr*640)<<2) + 0];
 
 endmodule
