@@ -39,7 +39,6 @@ ifdef FAST
 VERILOG_FLAGS += -O3 --x-assign fast --x-initial fast --no-assert
 endif
 
-NVBOARD_ARCHIVE ?=
 ifdef NVB
 OSOC_CPP_SRC = csrc/main_nvb.cpp $(CPP_SRC)
 include $(NVBOARD_HOME)/scripts/nvboard.mk
