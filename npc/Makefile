@@ -39,8 +39,9 @@ ifdef FAST
 VERILOG_FLAGS += -O3 --x-assign fast --x-initial fast --no-assert
 endif
 
+NVBOARD_ARCHIVE ?=
 ifdef NVB
-NVB_CPP_SRC = csrc/main_nvb.cpp $(CPP_SRC)
+OSOC_CPP_SRC = csrc/main_nvb.cpp $(CPP_SRC)
 include $(NVBOARD_HOME)/scripts/nvboard.mk
 endif
 
@@ -57,7 +58,7 @@ lint:
 build: sim 
 	mkdir -p obj_dir
 	gcc -c $(VERILATOR_CFLAGS) -O2 $(NEMU_HOME)/src/utils/disasm.c -o obj_dir/disasm.o
-	$(VERILATOR) $(OSOC_SRC) $(VERILOG_FLAGS) --top-module ysyxSoCFull  $(OSOC_CPP_SRC) $(addprefix -CFLAGS , $(INCFLAGS))
+	$(VERILATOR) $(OSOC_SRC) -LDFLAGS "$(NVBOARD_ARCHIVE)" $(VERILOG_FLAGS) --top-module ysyxSoCFull  $(OSOC_CPP_SRC) $(addprefix -CFLAGS , $(INCFLAGS))
 	$(MAKE) -j -C obj_dir -f VysyxSoCFull.mk 
 
 run: build
@@ -71,15 +72,6 @@ npc_build: sim
 
 npc_run: npc_build
 	@LD_LIBRARY_PATH=$(NEMU_HOME)/tools/capstone/repo:$(NEMU_HOME)/build obj_dir/Vosoc_26000003_func $(ARGS) $(IMG)
-
-nvb_build: sim
-	mkdir -p obj_dir_nvb
-	gcc -c $(VERILATOR_CFLAGS) -O2 $(NEMU_HOME)/src/utils/disasm.c -o obj_dir_nvb/disasm.o
-	$(VERILATOR) $(OSOC_SRC) -LDFLAGS "$(NVBOARD_ARCHIVE)" $(VERILOG_FLAGS) --top-module ysyxSoCFull $(NVB_CPP_SRC) $(addprefix -CFLAGS , $(INCFLAGS))
-	$(MAKE) -j -C obj_dir_nvb -f VysyxSoCFull.mk
-
-nvb_run: nvb_build
-	LD_LIBRARY_PATH=$(NEMU_HOME)/tools/capstone/repo:$(NEMU_HOME)/build obj_dir_nvb/VysyxSoCFull $(ARGS) $(IMG)
 
 gdb: build
 	@--gdb -CFLAGS "-g"
