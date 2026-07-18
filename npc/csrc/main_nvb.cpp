@@ -40,6 +40,7 @@ void execute(uint64_t n);
 void init_sdb();
 void sdb_mainloop(uint32_t *ret);
 bool check_watchpoints();
+void uart_set_divisor(uint16_t d);
 extern "C" {
 void difftest_init(int port);
 void difftest_exec(uint64_t n);
@@ -127,6 +128,7 @@ int main(int argc, char** argv) {
 
   nvboard_bind_all_pins();
   nvboard_init();
+  uart_set_divisor(1);
   
 #ifdef CONFIG_FST
   Verilated::traceEverOn(true);
