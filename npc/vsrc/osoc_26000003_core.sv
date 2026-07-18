@@ -93,7 +93,7 @@ module osoc_26000003_core (
         end else begin
             `ifndef SYNTHESIS
             reg_valid <= reg_valid_e;
-            pc   <= ls_wb_bus_branch_wb ? pc_in : pc_e;
+            pc   <= ls_wb_bus_branch_wb ||  ls_wb_bus_exception_wb ? ls_wb_bus_branch_wb ? ls_wb_bus_alu_out_wb : ls_wb_bus_csr_pc_wb : pc_e;
             prev_pc <= pc_e - 4;
             opcode <= opcode_over_wb;
             `endif
@@ -239,18 +239,19 @@ module osoc_26000003_core (
     logic        ls_wb_bus_branch_wb;
     logic        ls_wb_valid_wb, ls_wb_ready_wb;
 
-    logic [31:0] pc_in;
     pc pc_mod (
         .clk(clock), 
         .rst(reset), 
         .branch(ls_wb_bus_branch_wb), 
-        .data_in(pc_in), 
+        .csr_branch(ls_wb_bus_exception_wb),
+        .branch_addr(ls_wb_bus_alu_out_wb),
+        .csr_branch_addr(ls_wb_bus_csr_pc_wb), 
         .pc(pc_ifu), 
         .next_pc(next_pc), 
         .valid(if_de_valid_if && if_de_ready_if),
         .wb_valid(ls_wb_valid_wb)
     );
-    assign pc_in = ls_wb_bus_mux_select_pc_wb || ls_wb_bus_exception_wb ? ls_wb_bus_csr_pc_wb : ls_wb_bus_alu_out_wb;
+    
     logic flush /*verilator public*/;
 
     assign flush = ls_wb_bus_branch_wb != ls_wb_bus_speculate_wb; 
