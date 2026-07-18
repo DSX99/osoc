@@ -34,7 +34,7 @@ parameter v_active = 35;
 parameter v_backporch = 515;
 parameter v_total = 525;
 
-reg [7:0] mem [307200];
+reg [7:0] mem [307200*4];
 
 reg [9:0] x_cnt;
 reg [9:0] y_cnt;
