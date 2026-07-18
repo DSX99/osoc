@@ -30,6 +30,7 @@ DISASM_OBJ = $(abspath obj_dir/disasm.o)
 
 LDFLAGS += -lreadline -L$(NEMU_HOME)/tools/capstone/repo -lcapstone $(DISASM_OBJ) $(NEMU_HOME)/tools/spike-diff/build/riscv32-spike-so
 
+NVBOARD_ARCHIVE = -l
 ifdef NVB
 OSOC_CPP_SRC = csrc/main_nvb.cpp $(CPP_SRC)
 include $(NVBOARD_HOME)/scripts/nvboard.mk
