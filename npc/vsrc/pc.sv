@@ -2,16 +2,19 @@ module pc(
     input logic clk,
     input logic rst,
     input logic branch,
-    input logic [31:0] data_in,
+    input logic csr_branch,
+    input logic [31:0] branch_addr,
+    input logic [31:0] csr_branch_addr,
     input logic valid,
     input logic wb_valid,
+    input logic ex_valid,
 
     output logic [31:0] pc,
     output logic [31:0] next_pc
 );
 
     initial begin
-        pc = 32'h80000000;
+        pc = 32'h30000000;
     end
 
     assign next_pc = pc + 4;
@@ -19,7 +22,7 @@ module pc(
 
     always_ff @(posedge clk) begin
         if(rst) begin
-            pc<=32'h80000000;
+            pc<=32'h30000000;
         end else begin
             if(valid) begin
                 pc<=next_pc;
