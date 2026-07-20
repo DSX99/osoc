@@ -52,9 +52,12 @@ always_comb begin
         12'hF12: working_reg_w = MARCHID;
         default working_reg_w = UNUSED;
     endcase
-    if(exception) data_pc_out = regs[MTVEC];
-    else data_pc_out = regs[MEPS];
-
+    if(exception)begin
+        if(cause!=10)
+            data_pc_out = regs[MTVEC];
+        else
+            data_pc_out = regs[MEPS];
+    end
     data_out = regs[working_reg_r];
 end
 
@@ -68,7 +71,7 @@ always_ff @(posedge clk) begin
         regs[MARCHID] <= 32'h20393920;
     end else begin
         if(valid) begin
-            if(exception) begin
+            if(exception && cause!=10) begin
                 regs[MEPS]<=pc;
                 regs[MCAUSE]<={28'b0,cause};
             end else begin
