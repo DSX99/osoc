@@ -226,7 +226,6 @@ module decode (
                         end else if(!(|func7 | |rs2_val)) begin // ecall
                             bus_out_exception = 1; //raise exception (ecall)
                             bus_out_mcause = 11;
-                            bus_out_alu_op        = 8'b10010000;
                             bus_out_mux_select_pc = 1'b1;
                         end else if(func7 == 7'b0011000 && rs2_val == 5'b00010) begin //mret
                             bus_out_mux_select_pc = 1'b1;
