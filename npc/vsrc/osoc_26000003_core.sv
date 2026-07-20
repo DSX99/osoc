@@ -297,7 +297,7 @@ module osoc_26000003_core (
     if_de_pipeline if_de_pipeline_mod (
         .clk(clock),
         .rst(reset),
-        .flush(flush),
+        .flush(flush | flush_ex),
 
         .if_de_bus_pc_if(if_de_bus_pc_if),
         .if_de_bus_next_pc_if(if_de_bus_next_pc_if),
@@ -377,7 +377,7 @@ module osoc_26000003_core (
     de_ex_pipeline de_ex_pipeline_mod (
         .clk                        (clock),
         .rst                        (reset),
-        .flush                      (flush),
+        .flush                      (flush | flush_ex),
 
         .opcode_in(if_de_bus_opcode_de),
         .opcode_out(opcode_over_ex),  
@@ -491,7 +491,7 @@ module osoc_26000003_core (
         .ex_ls_bus_mux_select_ex    (ex_ls_bus_mux_select_ex),
         .ex_ls_bus_mux_select_pc_ex (ex_ls_bus_mux_select_pc_ex),
         .ex_ls_bus_branch_ex        (ex_ls_bus_branch_ex),
-        .ex_ls_valid_ex             (ex_ls_valid_ex),
+        .ex_ls_valid_ex             (ex_ls_valid_ex & !flush_ex),
         .ex_ls_ready_ex             (ex_ls_ready_ex),
 
         .ex_ls_bus_mcause_ex        (ex_ls_bus_mcause_ex),
