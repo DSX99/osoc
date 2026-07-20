@@ -1,12 +1,12 @@
-Generate the report at 2026-07-20T10:35:18
+Generate the report at 2026-07-20T10:30:33
 Report : Averaged Power
  +---------------+----------------+--------------+---------------+-------------+-----------+
 | Power Group   | Internal Power | Switch Power | Leakage Power | Total Power | (%)       |
 +---------------+----------------+--------------+---------------+-------------+-----------+
-| combinational | 5.161e-03      | 0.000e+00    | 2.975e-04     | 5.458e-03   | (56.084%) |
-| sequential    | 4.156e-03      | 0.000e+00    | 1.180e-04     | 4.274e-03   | (43.916%) |
+| combinational | 5.281e-03      | 0.000e+00    | 3.016e-04     | 5.583e-03   | (56.812%) |
+| sequential    | 4.127e-03      | 0.000e+00    | 1.177e-04     | 4.244e-03   | (43.188%) |
 +---------------+----------------+--------------+---------------+-------------+-----------+
 Net Switch Power   ==    0.000e+00 (0.000%)
-Cell Internal Power   ==    9.316e-03 (95.731%)
-Cell Leakage Power   ==    4.155e-04 (4.269%)
-Total Power   ==  9.732e-03 W
+Cell Internal Power   ==    9.408e-03 (95.733%)
+Cell Leakage Power   ==    4.194e-04 (4.267%)
+Total Power   ==  9.827e-03 W
