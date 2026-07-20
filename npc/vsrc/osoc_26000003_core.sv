@@ -1013,7 +1013,7 @@ module ex_ls_pipeline(
     input  logic [1:0]  ex_ls_bus_mux_select_ex,
     input  logic        ex_ls_bus_mux_select_pc_ex,
     input  logic        ex_ls_bus_branch_ex,
-    input  logic        ex_ls_bus_diff_pc_ex,
+    input  logic [31:0] ex_ls_bus_diff_pc_ex,
     input  logic        ex_ls_valid_ex,
     output logic        ex_ls_ready_ex,
 
