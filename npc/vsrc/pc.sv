@@ -25,24 +25,22 @@ module pc(
         pc = 32'h80000000;
     end
 
-    assign next_pc = ((speculation!=branch) && speculation && ex_valid ? mispred_addr : pc) + (do_spec ? {{19{addr_spec[11]}},addr_spec,1'b0} : 4);
-    
+    assign next_pc = pc + (do_spec ? {{11{addr_spec[19]}}, addr_spec, 1'b0} : 4);
+
     always_ff @(posedge clk) begin
         if(rst) begin
-            pc<=32'h80000000;
+            pc <= 32'h80000000;
         end else begin
-            if(valid) begin
-                pc<=next_pc;
-            end
-            if(ex_valid && (speculation!=branch))begin
-                if(speculation)begin
-                    pc<=next_pc;
+            if(wb_valid && csr_branch) begin
+                pc <= csr_branch_addr;
+            end else if(ex_valid && (speculation != branch)) begin
+                if(speculation) begin
+                    pc <= mispred_addr + 4;
                 end else begin
-                    pc<=branch_addr;
+                    pc <= branch_addr;
                 end
-            end
-            if(wb_valid && csr_branch)begin
-                pc<=csr_branch_addr;
+            end else if(valid) begin
+                pc <= next_pc;
             end
         end
     end

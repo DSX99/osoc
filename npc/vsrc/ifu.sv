@@ -101,10 +101,10 @@ module ifu (
             bus_out_speculate = 1'b1;
             do_spec=1;
             if(hit_0)begin
-                addr_spec = block_offset[INDEX_OFF][0];
+                addr_spec = block_offset[index][0];
             end
             if(hit_1)begin
-                addr_spec = block_offset[INDEX_OFF][1];
+                addr_spec = block_offset[index][1];
             end
         end else
             bus_out_speculate = 1'b0;
@@ -116,6 +116,7 @@ module ifu (
                 block_valid[i][0] <= 1'b0;
                 block_valid[i][1] <= 1'b0;
             end
+            latest_row<=0;
         end else begin
             if(hit)begin
                 latest_row<=hit_1;
