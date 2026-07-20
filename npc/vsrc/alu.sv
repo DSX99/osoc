@@ -35,6 +35,7 @@ module alu (
     output logic [1:0]  bus_out_mux_select,    
     output logic        bus_out_mux_select_pc, 
     output logic        bus_out_branch,        
+    output logci [31:0] bus_out_diff_pc;
 
     input  logic valid_left, ready_right,
     output logic ready_left, valid_right,
@@ -116,6 +117,14 @@ module alu (
         bus_out_rd            = bus_in_rd;
         bus_out_mux_select    = bus_in_mux_select;
         bus_out_mux_select_pc = bus_in_mux_select_pc;
+    
+
+        if (branch) begin
+            bus_out_diff_pc = bus_out_alu_out; 
+        end else begin
+            bus_out_diff_pc = current_ex_pc + 4;
+        end
+
     end
 
 endmodule
