@@ -36,6 +36,7 @@ module alu (
     output logic        bus_out_mux_select_pc, 
     output logic        bus_out_branch,        
     output logic [31:0] bus_out_diff_pc,
+    output logic [31:0] bus_out_branch_addr,
 
     input  logic valid_left, ready_right,
     output logic ready_left, valid_right,
@@ -81,7 +82,8 @@ module alu (
                 7: bus_out_alu_out = val1 & val2;
             endcase
         end else if (bus_in_alu_op[5:4] == 2'b01) begin
-            bus_out_alu_out = val1 + val2;
+            bus_out_alu_out = bus_out_pc + 4;
+            bus_out_branch_addr = val1 + val2;
             case (bus_in_alu_op[2:0])
                 0: bus_out_branch = bus_in_data_rs1 == bus_in_data_rs2;
                 1: bus_out_branch = bus_in_data_rs1 != bus_in_data_rs2;

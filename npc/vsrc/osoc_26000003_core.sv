@@ -250,7 +250,7 @@ module osoc_26000003_core (
         .branch(ex_ls_bus_branch_ex), 
         .csr_branch(ls_wb_bus_exception_wb),
         .speculation(ex_ls_bus_speculate_ex),
-        .branch_addr(ex_ls_bus_alu_out_ex),
+        .branch_addr(ex_branch_addr),
         .csr_branch_addr(ls_wb_bus_csr_pc_wb), 
         .mispred_addr(ex_ls_bus_pc_ex),
         .pc(pc_ifu), 
@@ -469,6 +469,7 @@ module osoc_26000003_core (
         .bus_out_exception(ex_ls_bus_exception_ex),
         .bus_out_speculate(ex_ls_bus_speculate_ex),
         .bus_out_diff_pc(ex_ls_bus_diff_pc_ex),
+        .bus_out_branch_addr(ex_branch_addr),
         .valid_left(de_ex_valid_ex), .ready_left(de_ex_ready_ex),
         .valid_right(ex_ls_valid_ex), .ready_right(ex_ls_ready_ex),
         .branch(branch)
