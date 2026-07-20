@@ -88,6 +88,7 @@ void __am_input_keybrd(AM_INPUT_KEYBRD_T *kbd) {
     kbd->keycode = ps2_to_am_lut[data];
     break;
   }
+  printf("keycode:%d", kbd->keycode);
 }
 void __am_uart_rx(AM_UART_RX_T *uart){
   if(*(uint8_t *)(0x10000005L) & 1){ //check fifo buffer (0-empty)
