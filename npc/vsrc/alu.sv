@@ -82,7 +82,7 @@ module alu (
                 7: bus_out_alu_out = val1 & val2;
             endcase
         end else if (bus_in_alu_op[5:4] == 2'b01) begin
-            bus_out_alu_out = bus_out_pc + 4;
+            bus_out_alu_out = bus_in_pc + 4;
             bus_out_branch_addr = val1 + val2;
             case (bus_in_alu_op[2:0])
                 0: bus_out_branch = bus_in_data_rs1 == bus_in_data_rs2;
