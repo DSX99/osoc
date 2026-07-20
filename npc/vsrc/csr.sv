@@ -52,6 +52,7 @@ always_comb begin
         12'hF12: working_reg_w = MARCHID;
         default working_reg_w = UNUSED;
     endcase
+    data_pc_out=0;
     if(exception)begin
         if(cause!=10)
             data_pc_out = regs[MTVEC];

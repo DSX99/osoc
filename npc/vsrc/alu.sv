@@ -62,6 +62,7 @@ module alu (
 
         bus_out_alu_out       = '0;
         bus_out_branch        = '0;
+        bus_out_branch_addr   = '0;
         csr_imm=0;
 
         if (bus_in_alu_op[5:4] == 2'b00) begin
