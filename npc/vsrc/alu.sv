@@ -122,7 +122,7 @@ module alu (
         if (branch) begin
             bus_out_diff_pc = bus_out_alu_out; 
         end else begin
-            bus_out_diff_pc = current_ex_pc + 4;
+            bus_out_diff_pc = bus_in_pc + 4;
         end
 
     end
