@@ -103,7 +103,7 @@ module alu (
         bus_out_data_csr =  bus_in_data_csr;
 
         bus_out_pc            = bus_in_pc;
-        bus_out_next_pc       = bus_in_next_pc;
+        bus_out_next_pc       = bus_out_speculate & !bus_out_branch ? : bus_in_next_pc;
         bus_out_data_rs2      = bus_in_data_rs2;
 
         // TODO: exception detection during execute (e.g. misaligned branch target)
