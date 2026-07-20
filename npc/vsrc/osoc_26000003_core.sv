@@ -93,7 +93,7 @@ module osoc_26000003_core (
         end else begin
             `ifndef SYNTHESIS
             reg_valid <= reg_valid_e;
-            pc   <= ls_wb_bus_branch_wb ||  ls_wb_bus_exception_wb ? ls_wb_bus_branch_wb ? ls_wb_bus_alu_out_wb : ls_wb_bus_csr_pc_wb : pc_e;
+            pc   <=  pc_e; //ls_wb_bus_branch_wb ||  ls_wb_bus_exception_wb ? ls_wb_bus_branch_wb ? ls_wb_bus_alu_out_wb : ls_wb_bus_csr_pc_wb :
             prev_pc <= pc_e - 4;
             opcode <= opcode_over_wb;
             `endif
