@@ -242,24 +242,34 @@ module osoc_26000003_core (
     pc pc_mod (
         .clk(clock), 
         .rst(reset), 
+        .do_spec(do_spec),
+        .addr_spec(addr_spec),
         .branch(ls_wb_bus_branch_wb), 
         .csr_branch(ls_wb_bus_exception_wb),
-        .branch_addr(ls_wb_bus_alu_out_wb),
+        .speculation(ex_ls_bus_speculate_ex),
+        .branch_addr(ex_ls_bus_alu_out_ex),
         .csr_branch_addr(ls_wb_bus_csr_pc_wb), 
+        .mispred_addr(ex_ls_bus_pc_ex),
         .pc(pc_ifu), 
         .next_pc(next_pc), 
         .valid(if_de_valid_if && if_de_ready_if),
+        .ex_valid(ex_ls_valid_ex && ex_ls_ready_ex && !ex_ls_bus_exception_ls && !ls_wb_bus_exception_wb),
         .wb_valid(ls_wb_valid_wb)
     );
-    
-    logic flush /*verilator public*/;
 
-    assign flush = ls_wb_bus_branch_wb != ls_wb_bus_speculate_wb; 
+    logic flush /*verilator public*/, flush_ex /*verilator public*/;
+
+    assign flush = ls_wb_bus_exception_wb;
+    assign flush_ex = ex_ls_bus_branch_ex != ex_ls_bus_speculate_ex; 
     
     logic [31:0] pc_ifu, next_pc;
 
+    logic do_spec;
+    logic [11:0] addr_spec;
+
     // IFU
     ifu ifu_mod (
+        .clk(clock), .rst(reset),
         .pc(pc_ifu), .next_pc(next_pc),
         .bus_out_pc(if_de_bus_pc_if),
         .bus_out_next_pc(if_de_bus_next_pc_if),
@@ -268,7 +278,9 @@ module osoc_26000003_core (
         .bus_out_exception(if_de_bus_exception_if),
         .bus_out_speculate(if_de_bus_speculate_if),
         .valid(if_de_valid_if), .ready(if_de_ready_if),
-        .cache_addr(cache_addr), .cache_valid(cache_valid), .cache_opcode(cache_opcode), .cache_ready(cache_ready)
+        .cache_addr(cache_addr), .cache_valid(cache_valid), .cache_opcode(cache_opcode), .cache_ready(cache_ready),
+        .do_spec(do_spec), .addr_spec(addr_spec),
+        .pc_to_write(de_ex_bus_pc_ex), .offset_to_write(de_ex_bus_imm_ex[12:1]), .write(ex_ls_bus_branch_ex && !ex_ls_bus_speculate_ex)
     );
 
     icache icache_mod(

@@ -53,7 +53,7 @@ sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 
 lint:
-	$(VERILATOR) --lint-only vsrc/osoc_26000003_core.sv vsrc/osoc_26000003.sv vsrc/CLINT.sv $(VERILOG_SRC) $(VERILOG_FLAGS) -Wall -Wno-EOFNEWLINE --top-module osoc_26000003 -Wno-DECLFILENAME
+	$(VERILATOR) --lint-only vsrc/osoc_26000003_core.sv vsrc/osoc_26000003.sv vsrc/CLINT.sv $(VERILOG_SRC) $(VERILOG_FLAGS) -Wall -Wno-UNUSEDSIGNAL -Wno-EOFNEWLINE --top-module osoc_26000003 -Wno-DECLFILENAME
 
 build: sim 
 	mkdir -p obj_dir

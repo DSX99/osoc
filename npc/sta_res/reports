@@ -1774,3 +1774,199 @@ Finished in 8363684052
    Chip area for module '\osoc_26000003_core': 23221.268000
      of which used for sequential elements: 12471.676000 (53.71%)
   Max Freq 1153.844MHz                                              turns out i was doing wrong pdk builds, this one on nangate45
+
+
+
+// branch prediction
+trace = /home/dsx99/osoc/ysyx-workbench/npc/tools/idk/new_microbench_save, size = 784163976 bytes (196040994 addresses)
+
+No branch pred: mispred 42593441/196040993 (21.73%)
+trace = /home/dsx99/osoc/ysyx-workbench/npc/tools/idk/new_microbench_save, size = 784163976 bytes (196040994 addresses)
+
+=== taken-target reach (BTB-independent) ===
+total taken transfers: 42593441
+  imm[ 8:1] (+-256B): out-of-range 3791945 (8.9027% of taken)
+  imm[ 9:1] (+-512B): out-of-range 3246696 (7.6225% of taken)
+  imm[10:1] (+-1024B): out-of-range 2486774 (5.8384% of taken)
+  imm[11:1] (+-2048B): out-of-range 2178838 (5.1154% of taken)
+  imm[12:1] (+-4096B): out-of-range 1904151 (4.4705% of taken)
+  imm[13:1] (+-8192B): out-of-range 1863235 (4.3745% of taken)
+  imm[14:1] (+-16384B): out-of-range 13127 (0.0308% of taken)
+  imm[16:1] (+-65536B): out-of-range 3 (0.0000% of taken)
+  imm[20:1] (+-1048576B): out-of-range 3 (0.0000% of taken)
+
+########## offset field = imm[12:1] ##########
+
+=== mode: static ===
+static  entries    1 (  1 sets x 1 ways):  MPKI 168.29  mispred 32991844/196040993 (16.83%)  [cold 30095802, dir 991880, target 11, range 1904151]
+static  entries    2 (  2 sets x 1 ways):  MPKI 159.13  mispred 31196325/196040993 (15.91%)  [cold 27486304, dir 1775815, target 30055, range 1904151]
+static  entries    4 (  4 sets x 1 ways):  MPKI 156.55  mispred 30689759/196040993 (15.65%)  [cold 26592186, dir 2073397, target 120025, range 1904151]
+static  entries    8 (  8 sets x 1 ways):  MPKI 156.55  mispred 30689759/196040993 (15.65%)  [cold 26592186, dir 2073397, target 120025, range 1904151]
+static  entries    2 (  1 sets x 2 ways):  MPKI  83.98  mispred 16463296/196040993 (8.40%)  [cold 5214004, dir 9226886, target 118255, range 1904151]
+static  entries    4 (  2 sets x 2 ways):  MPKI  75.55  mispred 14811198/196040993 (7.56%)  [cold 2624509, dir 10054290, target 228248, range 1904151]
+static  entries    8 (  4 sets x 2 ways):  MPKI  72.50  mispred 14212440/196040993 (7.25%)  [cold 1551522, dir 10372158, target 384609, range 1904151]
+static  entries   16 (  8 sets x 2 ways):  MPKI  72.50  mispred 14212440/196040993 (7.25%)  [cold 1551522, dir 10372158, target 384609, range 1904151]
+static  entries    4 (  1 sets x 4 ways):  MPKI  74.04  mispred 14514985/196040993 (7.40%)  [cold 2023670, dir 10149184, target 437980, range 1904151]
+static  entries    8 (  2 sets x 4 ways):  MPKI  71.94  mispred 14102918/196040993 (7.19%)  [cold 1262353, dir 10483597, target 452817, range 1904151]
+static  entries   16 (  4 sets x 4 ways):  MPKI  69.39  mispred 13603282/196040993 (6.94%)  [cold 169190, dir 11064899, target 465042, range 1904151]
+static  entries   32 (  8 sets x 4 ways):  MPKI  69.39  mispred 13603282/196040993 (6.94%)  [cold 169190, dir 11064899, target 465042, range 1904151]
+
+=== mode: 1-bit  ===
+1-bit   entries    1 (  1 sets x 1 ways):  MPKI 168.29  mispred 32991860/196040993 (16.83%)  [cold 30095802, dir 991896, target 11, range 1904151]
+1-bit   entries    2 (  2 sets x 1 ways):  MPKI 159.97  mispred 31359778/196040993 (16.00%)  [cold 27486304, dir 1939268, target 30055, range 1904151]
+1-bit   entries    4 (  4 sets x 1 ways):  MPKI 156.90  mispred 30758559/196040993 (15.69%)  [cold 26592186, dir 2142197, target 120025, range 1904151]
+1-bit   entries    8 (  8 sets x 1 ways):  MPKI 156.90  mispred 30758559/196040993 (15.69%)  [cold 26592186, dir 2142197, target 120025, range 1904151]
+1-bit   entries    2 (  1 sets x 2 ways):  MPKI  82.11  mispred 16096617/196040993 (8.21%)  [cold 5214004, dir 8860207, target 118255, range 1904151]
+1-bit   entries    4 (  2 sets x 2 ways):  MPKI  77.32  mispred 15158478/196040993 (7.73%)  [cold 2624509, dir 10401570, target 228248, range 1904151]
+1-bit   entries    8 (  4 sets x 2 ways):  MPKI  73.56  mispred 14420734/196040993 (7.36%)  [cold 1551522, dir 10580452, target 384609, range 1904151]
+1-bit   entries   16 (  8 sets x 2 ways):  MPKI  73.56  mispred 14420734/196040993 (7.36%)  [cold 1551522, dir 10580452, target 384609, range 1904151]
+1-bit   entries    4 (  1 sets x 4 ways):  MPKI  75.20  mispred 14742881/196040993 (7.52%)  [cold 2023670, dir 10377080, target 437980, range 1904151]
+1-bit   entries    8 (  2 sets x 4 ways):  MPKI  72.79  mispred 14270085/196040993 (7.28%)  [cold 1262353, dir 10650764, target 452817, range 1904151]
+1-bit   entries   16 (  4 sets x 4 ways):  MPKI  68.70  mispred 13468335/196040993 (6.87%)  [cold 169190, dir 10929952, target 465042, range 1904151]
+1-bit   entries   32 (  8 sets x 4 ways):  MPKI  68.70  mispred 13468335/196040993 (6.87%)  [cold 169190, dir 10929952, target 465042, range 1904151]
+
+=== mode: 2-bit  ===
+2-bit   entries    1 (  1 sets x 1 ways):  MPKI 168.29  mispred 32991844/196040993 (16.83%)  [cold 30095802, dir 991880, target 11, range 1904151]
+2-bit   entries    2 (  2 sets x 1 ways):  MPKI 159.43  mispred 31255130/196040993 (15.94%)  [cold 27486304, dir 1834620, target 30055, range 1904151]
+2-bit   entries    4 (  4 sets x 1 ways):  MPKI 155.92  mispred 30566478/196040993 (15.59%)  [cold 26592186, dir 1950116, target 120025, range 1904151]
+2-bit   entries    8 (  8 sets x 1 ways):  MPKI 155.92  mispred 30566478/196040993 (15.59%)  [cold 26592186, dir 1950116, target 120025, range 1904151]
+2-bit   entries    2 (  1 sets x 2 ways):  MPKI  81.03  mispred 15884924/196040993 (8.10%)  [cold 5214004, dir 8648514, target 118255, range 1904151]
+2-bit   entries    4 (  2 sets x 2 ways):  MPKI  73.74  mispred 14455104/196040993 (7.37%)  [cold 2624509, dir 9698196, target 228248, range 1904151]
+2-bit   entries    8 (  4 sets x 2 ways):  MPKI  69.55  mispred 13635475/196040993 (6.96%)  [cold 1551522, dir 9795193, target 384609, range 1904151]
+2-bit   entries   16 (  8 sets x 2 ways):  MPKI  69.55  mispred 13635475/196040993 (6.96%)  [cold 1551522, dir 9795193, target 384609, range 1904151]
+2-bit   entries    4 (  1 sets x 4 ways):  MPKI  71.77  mispred 14069505/196040993 (7.18%)  [cold 2023670, dir 9703704, target 437980, range 1904151]
+2-bit   entries    8 (  2 sets x 4 ways):  MPKI  68.43  mispred 13414743/196040993 (6.84%)  [cold 1262353, dir 9795422, target 452817, range 1904151]
+2-bit   entries   16 (  4 sets x 4 ways):  MPKI  63.43  mispred 12434161/196040993 (6.34%)  [cold 169190, dir 9895778, target 465042, range 1904151]
+2-bit   entries   32 (  8 sets x 4 ways):  MPKI  63.43  mispred 12434161/196040993 (6.34%)  [cold 169190, dir 9895778, target 465042, range 1904151]
+
+########## offset field = imm[13:1] ##########
+
+=== mode: static ===
+static  entries    1 (  1 sets x 1 ways):  MPKI 168.29  mispred 32991847/196040993 (16.83%)  [cold 30136721, dir 991880, target 11, range 1863235]
+static  entries    2 (  2 sets x 1 ways):  MPKI 159.13  mispred 31196336/196040993 (15.91%)  [cold 27527230, dir 1775815, target 30056, range 1863235]
+static  entries    4 (  4 sets x 1 ways):  MPKI 156.69  mispred 30717629/196040993 (15.67%)  [cold 26660381, dir 2073387, target 120626, range 1863235]
+static  entries    8 (  8 sets x 1 ways):  MPKI 156.69  mispred 30717629/196040993 (15.67%)  [cold 26660381, dir 2073387, target 120626, range 1863235]
+static  entries    2 (  1 sets x 2 ways):  MPKI  83.98  mispred 16463299/196040993 (8.40%)  [cold 5254923, dir 9226886, target 118255, range 1863235]
+static  entries    4 (  2 sets x 2 ways):  MPKI  75.73  mispred 14846984/196040993 (7.57%)  [cold 2701218, dir 10054280, target 228251, range 1863235]
+static  entries    8 (  4 sets x 2 ways):  MPKI  72.35  mispred 14183300/196040993 (7.23%)  [cold 1569999, dir 10364174, target 385892, range 1863235]
+static  entries   16 (  8 sets x 2 ways):  MPKI  72.35  mispred 14183300/196040993 (7.23%)  [cold 1569999, dir 10364174, target 385892, range 1863235]
+static  entries    4 (  1 sets x 4 ways):  MPKI  74.20  mispred 14546370/196040993 (7.42%)  [cold 2095945, dir 10149065, target 438125, range 1863235]
+static  entries    8 (  2 sets x 4 ways):  MPKI  71.78  mispred 14072322/196040993 (7.18%)  [cold 1271626, dir 10483555, target 453906, range 1863235]
+static  entries   16 (  4 sets x 4 ways):  MPKI  69.12  mispred 13549547/196040993 (6.91%)  [cold 180126, dir 11039582, target 466604, range 1863235]
+static  entries   32 (  8 sets x 4 ways):  MPKI  69.12  mispred 13549547/196040993 (6.91%)  [cold 180126, dir 11039582, target 466604, range 1863235]
+
+=== mode: 1-bit  ===
+1-bit   entries    1 (  1 sets x 1 ways):  MPKI 168.29  mispred 32991860/196040993 (16.83%)  [cold 30136721, dir 991893, target 11, range 1863235]
+1-bit   entries    2 (  2 sets x 1 ways):  MPKI 159.97  mispred 31359787/196040993 (16.00%)  [cold 27527230, dir 1939266, target 30056, range 1863235]
+1-bit   entries    4 (  4 sets x 1 ways):  MPKI 156.99  mispred 30776432/196040993 (15.70%)  [cold 26660381, dir 2132190, target 120626, range 1863235]
+1-bit   entries    8 (  8 sets x 1 ways):  MPKI 156.99  mispred 30776432/196040993 (15.70%)  [cold 26660381, dir 2132190, target 120626, range 1863235]
+1-bit   entries    2 (  1 sets x 2 ways):  MPKI  82.11  mispred 16096617/196040993 (8.21%)  [cold 5254923, dir 8860204, target 118255, range 1863235]
+1-bit   entries    4 (  2 sets x 2 ways):  MPKI  77.45  mispred 15184267/196040993 (7.75%)  [cold 2701218, dir 10391563, target 228251, range 1863235]
+1-bit   entries    8 (  4 sets x 2 ways):  MPKI  73.43  mispred 14396196/196040993 (7.34%)  [cold 1569999, dir 10577070, target 385892, range 1863235]
+1-bit   entries   16 (  8 sets x 2 ways):  MPKI  73.43  mispred 14396196/196040993 (7.34%)  [cold 1569999, dir 10577070, target 385892, range 1863235]
+1-bit   entries    4 (  1 sets x 4 ways):  MPKI  75.36  mispred 14774266/196040993 (7.54%)  [cold 2095945, dir 10376961, target 438125, range 1863235]
+1-bit   entries    8 (  2 sets x 4 ways):  MPKI  72.63  mispred 14239285/196040993 (7.26%)  [cold 1271626, dir 10650518, target 453906, range 1863235]
+1-bit   entries   16 (  4 sets x 4 ways):  MPKI  68.54  mispred 13436913/196040993 (6.85%)  [cold 180126, dir 10926948, target 466604, range 1863235]
+1-bit   entries   32 (  8 sets x 4 ways):  MPKI  68.54  mispred 13436913/196040993 (6.85%)  [cold 180126, dir 10926948, target 466604, range 1863235]
+
+=== mode: 2-bit  ===
+2-bit   entries    1 (  1 sets x 1 ways):  MPKI 168.29  mispred 32991847/196040993 (16.83%)  [cold 30136721, dir 991880, target 11, range 1863235]
+2-bit   entries    2 (  2 sets x 1 ways):  MPKI 159.43  mispred 31255141/196040993 (15.94%)  [cold 27527230, dir 1834620, target 30056, range 1863235]
+2-bit   entries    4 (  4 sets x 1 ways):  MPKI 156.06  mispred 30594338/196040993 (15.61%)  [cold 26660381, dir 1950096, target 120626, range 1863235]
+2-bit   entries    8 (  8 sets x 1 ways):  MPKI 156.06  mispred 30594338/196040993 (15.61%)  [cold 26660381, dir 1950096, target 120626, range 1863235]
+2-bit   entries    2 (  1 sets x 2 ways):  MPKI  81.03  mispred 15884927/196040993 (8.10%)  [cold 5254923, dir 8648514, target 118255, range 1863235]
+2-bit   entries    4 (  2 sets x 2 ways):  MPKI  73.92  mispred 14490880/196040993 (7.39%)  [cold 2701218, dir 9698176, target 228251, range 1863235]
+2-bit   entries    8 (  4 sets x 2 ways):  MPKI  69.42  mispred 13610123/196040993 (6.94%)  [cold 1569999, dir 9790997, target 385892, range 1863235]
+2-bit   entries   16 (  8 sets x 2 ways):  MPKI  69.42  mispred 13610123/196040993 (6.94%)  [cold 1569999, dir 9790997, target 385892, range 1863235]
+2-bit   entries    4 (  1 sets x 4 ways):  MPKI  71.93  mispred 14100890/196040993 (7.19%)  [cold 2095945, dir 9703585, target 438125, range 1863235]
+2-bit   entries    8 (  2 sets x 4 ways):  MPKI  68.27  mispred 13383998/196040993 (6.83%)  [cold 1271626, dir 9795231, target 453906, range 1863235]
+2-bit   entries   16 (  4 sets x 4 ways):  MPKI  63.28  mispred 12405107/196040993 (6.33%)  [cold 180126, dir 9895142, target 466604, range 1863235]
+2-bit   entries   32 (  8 sets x 4 ways):  MPKI  63.28  mispred 12405107/196040993 (6.33%)  [cold 180126, dir 9895142, target 466604, range 1863235]
+
+########## offset field = imm[16:1] ##########
+
+=== mode: static ===
+static  entries    1 (  1 sets x 1 ways):  MPKI 169.34  mispred 33196917/196040993 (16.93%)  [cold 32206128, dir 990775, target 11, range 3]
+static  entries    2 (  2 sets x 1 ways):  MPKI 162.32  mispred 31821474/196040993 (16.23%)  [cold 30046805, dir 1744593, target 30073, range 3]
+static  entries    4 (  4 sets x 1 ways):  MPKI 158.21  mispred 31014762/196040993 (15.82%)  [cold 28852002, dir 2042084, target 120673, range 3]
+static  entries    8 (  8 sets x 1 ways):  MPKI 158.21  mispred 31014762/196040993 (15.82%)  [cold 28852002, dir 2042084, target 120673, range 3]
+static  entries    2 (  1 sets x 2 ways):  MPKI  85.93  mispred 16846382/196040993 (8.59%)  [cold 7509844, dir 9218280, target 118255, range 3]
+static  entries    4 (  2 sets x 2 ways):  MPKI  77.23  mispred 15140101/196040993 (7.72%)  [cold 4890018, dir 10021630, target 228450, range 3]
+static  entries    8 (  4 sets x 2 ways):  MPKI  68.94  mispred 13514699/196040993 (6.89%)  [cold 2782186, dir 10346389, target 386121, range 3]
+static  entries   16 (  8 sets x 2 ways):  MPKI  68.94  mispred 13514699/196040993 (6.89%)  [cold 2782186, dir 10346389, target 386121, range 3]
+static  entries    4 (  1 sets x 4 ways):  MPKI  78.29  mispred 15348387/196040993 (7.83%)  [cold 5280933, dir 9629313, target 438138, range 3]
+static  entries    8 (  2 sets x 4 ways):  MPKI  62.61  mispred 12275087/196040993 (6.26%)  [cold 1337550, dir 10483426, target 454108, range 3]
+static  entries   16 (  4 sets x 4 ways):  MPKI  59.62  mispred 11687396/196040993 (5.96%)  [cold 181054, dir 11039377, target 466962, range 3]
+static  entries   32 (  8 sets x 4 ways):  MPKI  59.62  mispred 11687396/196040993 (5.96%)  [cold 181054, dir 11039377, target 466962, range 3]
+
+=== mode: 1-bit  ===
+1-bit   entries    1 (  1 sets x 1 ways):  MPKI 169.34  mispred 33196917/196040993 (16.93%)  [cold 32206128, dir 990775, target 11, range 3]
+1-bit   entries    2 (  2 sets x 1 ways):  MPKI 163.15  mispred 31984089/196040993 (16.32%)  [cold 30046805, dir 1907208, target 30073, range 3]
+1-bit   entries    4 (  4 sets x 1 ways):  MPKI 158.47  mispred 31066286/196040993 (15.85%)  [cold 28852002, dir 2093608, target 120673, range 3]
+1-bit   entries    8 (  8 sets x 1 ways):  MPKI 158.47  mispred 31066286/196040993 (15.85%)  [cold 28852002, dir 2093608, target 120673, range 3]
+1-bit   entries    2 (  1 sets x 2 ways):  MPKI  83.76  mispred 16420423/196040993 (8.38%)  [cold 7509844, dir 8792321, target 118255, range 3]
+1-bit   entries    4 (  2 sets x 2 ways):  MPKI  78.76  mispred 15439818/196040993 (7.88%)  [cold 4890018, dir 10321347, target 228450, range 3]
+1-bit   entries    8 (  4 sets x 2 ways):  MPKI  69.80  mispred 13683217/196040993 (6.98%)  [cold 2782186, dir 10514907, target 386121, range 3]
+1-bit   entries   16 (  8 sets x 2 ways):  MPKI  69.80  mispred 13683217/196040993 (6.98%)  [cold 2782186, dir 10514907, target 386121, range 3]
+1-bit   entries    4 (  1 sets x 4 ways):  MPKI  75.52  mispred 14805233/196040993 (7.55%)  [cold 5280933, dir 9086159, target 438138, range 3]
+1-bit   entries    8 (  2 sets x 4 ways):  MPKI  63.38  mispred 12425521/196040993 (6.34%)  [cold 1337550, dir 10633860, target 454108, range 3]
+1-bit   entries   16 (  4 sets x 4 ways):  MPKI  59.04  mispred 11574814/196040993 (5.90%)  [cold 181054, dir 10926795, target 466962, range 3]
+1-bit   entries   32 (  8 sets x 4 ways):  MPKI  59.04  mispred 11574814/196040993 (5.90%)  [cold 181054, dir 10926795, target 466962, range 3]
+
+=== mode: 2-bit  ===
+2-bit   entries    1 (  1 sets x 1 ways):  MPKI 169.34  mispred 33196917/196040993 (16.93%)  [cold 32206128, dir 990775, target 11, range 3]
+2-bit   entries    2 (  2 sets x 1 ways):  MPKI 162.62  mispred 31880270/196040993 (16.26%)  [cold 30046805, dir 1803389, target 30073, range 3]
+2-bit   entries    4 (  4 sets x 1 ways):  MPKI 157.58  mispred 30891461/196040993 (15.76%)  [cold 28852002, dir 1918783, target 120673, range 3]
+2-bit   entries    8 (  8 sets x 1 ways):  MPKI 157.58  mispred 30891461/196040993 (15.76%)  [cold 28852002, dir 1918783, target 120673, range 3]
+2-bit   entries    2 (  1 sets x 2 ways):  MPKI  82.98  mispred 16267550/196040993 (8.30%)  [cold 7509844, dir 8639448, target 118255, range 3]
+2-bit   entries    4 (  2 sets x 2 ways):  MPKI  75.41  mispred 14783997/196040993 (7.54%)  [cold 4890018, dir 9665526, target 228450, range 3]
+2-bit   entries    8 (  4 sets x 2 ways):  MPKI  66.01  mispred 12941503/196040993 (6.60%)  [cold 2782186, dir 9773193, target 386121, range 3]
+2-bit   entries   16 (  8 sets x 2 ways):  MPKI  66.01  mispred 12941503/196040993 (6.60%)  [cold 2782186, dir 9773193, target 386121, range 3]
+2-bit   entries    4 (  1 sets x 4 ways):  MPKI  74.28  mispred 14561406/196040993 (7.43%)  [cold 5280933, dir 8842332, target 438138, range 3]
+2-bit   entries    8 (  2 sets x 4 ways):  MPKI  59.10  mispred 11586260/196040993 (5.91%)  [cold 1337550, dir 9794599, target 454108, range 3]
+2-bit   entries   16 (  4 sets x 4 ways):  MPKI  53.78  mispred 10543140/196040993 (5.38%)  [cold 181054, dir 9895121, target 466962, range 3]
+2-bit   entries   32 (  8 sets x 4 ways):  MPKI  53.78  mispred 10543140/196040993 (5.38%)  [cold 181054, dir 9895121, target 466962, range 3]
+
+########## offset field = imm[31:1] (unlimited / baseline) ##########
+
+=== mode: static ===
+static  entries    1 (  1 sets x 1 ways):  MPKI 169.34  mispred 33196917/196040993 (16.93%)  [cold 32206131, dir 990775, target 11, range 0]
+static  entries    2 (  2 sets x 1 ways):  MPKI 162.32  mispred 31821474/196040993 (16.23%)  [cold 30046808, dir 1744593, target 30073, range 0]
+static  entries    4 (  4 sets x 1 ways):  MPKI 158.21  mispred 31014762/196040993 (15.82%)  [cold 28852005, dir 2042084, target 120673, range 0]
+static  entries    8 (  8 sets x 1 ways):  MPKI 158.21  mispred 31014762/196040993 (15.82%)  [cold 28852005, dir 2042084, target 120673, range 0]
+static  entries    2 (  1 sets x 2 ways):  MPKI  85.93  mispred 16846382/196040993 (8.59%)  [cold 7509847, dir 9218280, target 118255, range 0]
+static  entries    4 (  2 sets x 2 ways):  MPKI  77.23  mispred 15140101/196040993 (7.72%)  [cold 4890021, dir 10021630, target 228450, range 0]
+static  entries    8 (  4 sets x 2 ways):  MPKI  68.94  mispred 13514699/196040993 (6.89%)  [cold 2782189, dir 10346389, target 386121, range 0]
+static  entries   16 (  8 sets x 2 ways):  MPKI  68.94  mispred 13514699/196040993 (6.89%)  [cold 2782189, dir 10346389, target 386121, range 0]
+static  entries    4 (  1 sets x 4 ways):  MPKI  78.29  mispred 15348387/196040993 (7.83%)  [cold 5280936, dir 9629313, target 438138, range 0]
+static  entries    8 (  2 sets x 4 ways):  MPKI  62.61  mispred 12275087/196040993 (6.26%)  [cold 1337553, dir 10483426, target 454108, range 0]
+static  entries   16 (  4 sets x 4 ways):  MPKI  59.62  mispred 11687398/196040993 (5.96%)  [cold 181060, dir 11039376, target 466962, range 0]
+static  entries   32 (  8 sets x 4 ways):  MPKI  59.62  mispred 11687398/196040993 (5.96%)  [cold 181060, dir 11039376, target 466962, range 0]
+
+=== mode: 1-bit  ===
+1-bit   entries    1 (  1 sets x 1 ways):  MPKI 169.34  mispred 33196917/196040993 (16.93%)  [cold 32206131, dir 990775, target 11, range 0]
+1-bit   entries    2 (  2 sets x 1 ways):  MPKI 163.15  mispred 31984089/196040993 (16.32%)  [cold 30046808, dir 1907208, target 30073, range 0]
+1-bit   entries    4 (  4 sets x 1 ways):  MPKI 158.47  mispred 31066286/196040993 (15.85%)  [cold 28852005, dir 2093608, target 120673, range 0]
+1-bit   entries    8 (  8 sets x 1 ways):  MPKI 158.47  mispred 31066286/196040993 (15.85%)  [cold 28852005, dir 2093608, target 120673, range 0]
+1-bit   entries    2 (  1 sets x 2 ways):  MPKI  83.76  mispred 16420423/196040993 (8.38%)  [cold 7509847, dir 8792321, target 118255, range 0]
+1-bit   entries    4 (  2 sets x 2 ways):  MPKI  78.76  mispred 15439818/196040993 (7.88%)  [cold 4890021, dir 10321347, target 228450, range 0]
+1-bit   entries    8 (  4 sets x 2 ways):  MPKI  69.80  mispred 13683217/196040993 (6.98%)  [cold 2782189, dir 10514907, target 386121, range 0]
+1-bit   entries   16 (  8 sets x 2 ways):  MPKI  69.80  mispred 13683217/196040993 (6.98%)  [cold 2782189, dir 10514907, target 386121, range 0]
+1-bit   entries    4 (  1 sets x 4 ways):  MPKI  75.52  mispred 14805233/196040993 (7.55%)  [cold 5280936, dir 9086159, target 438138, range 0]
+1-bit   entries    8 (  2 sets x 4 ways):  MPKI  63.38  mispred 12425521/196040993 (6.34%)  [cold 1337553, dir 10633860, target 454108, range 0]
+1-bit   entries   16 (  4 sets x 4 ways):  MPKI  59.04  mispred 11574816/196040993 (5.90%)  [cold 181060, dir 10926794, target 466962, range 0]
+1-bit   entries   32 (  8 sets x 4 ways):  MPKI  59.04  mispred 11574816/196040993 (5.90%)  [cold 181060, dir 10926794, target 466962, range 0]
+
+=== mode: 2-bit  ===
+2-bit   entries    1 (  1 sets x 1 ways):  MPKI 169.34  mispred 33196917/196040993 (16.93%)  [cold 32206131, dir 990775, target 11, range 0]
+2-bit   entries    2 (  2 sets x 1 ways):  MPKI 162.62  mispred 31880270/196040993 (16.26%)  [cold 30046808, dir 1803389, target 30073, range 0]
+2-bit   entries    4 (  4 sets x 1 ways):  MPKI 157.58  mispred 30891461/196040993 (15.76%)  [cold 28852005, dir 1918783, target 120673, range 0]
+2-bit   entries    8 (  8 sets x 1 ways):  MPKI 157.58  mispred 30891461/196040993 (15.76%)  [cold 28852005, dir 1918783, target 120673, range 0]
+2-bit   entries    2 (  1 sets x 2 ways):  MPKI  82.98  mispred 16267550/196040993 (8.30%)  [cold 7509847, dir 8639448, target 118255, range 0]
+2-bit   entries    4 (  2 sets x 2 ways):  MPKI  75.41  mispred 14783997/196040993 (7.54%)  [cold 4890021, dir 9665526, target 228450, range 0]
+2-bit   entries    8 (  4 sets x 2 ways):  MPKI  66.01  mispred 12941503/196040993 (6.60%)  [cold 2782189, dir 9773193, target 386121, range 0]
+2-bit   entries   16 (  8 sets x 2 ways):  MPKI  66.01  mispred 12941503/196040993 (6.60%)  [cold 2782189, dir 9773193, target 386121, range 0]
+2-bit   entries    4 (  1 sets x 4 ways):  MPKI  74.28  mispred 14561406/196040993 (7.43%)  [cold 5280936, dir 8842332, target 438138, range 0]
+2-bit   entries    8 (  2 sets x 4 ways):  MPKI  59.10  mispred 11586260/196040993 (5.91%)  [cold 1337553, dir 9794599, target 454108, range 0]
+2-bit   entries   16 (  4 sets x 4 ways):  MPKI  53.78  mispred 10543142/196040993 (5.38%)  [cold 181060, dir 9895120, target 466962, range 0]
+2-bit   entries   32 (  8 sets x 4 ways):  MPKI  53.78  mispred 10543142/196040993 (5.38%)  [cold 181060, dir 9895120, target 466962, range 0]
