@@ -564,6 +564,7 @@ module osoc_26000003_core (
     ls_wb_pipeline ls_wb_pipeline_mod (
         .clk                        (clock),
         .rst                        (reset),
+        .flush                      (flush),
 
         .opcode_in(opcode_over_ls),
         .opcode_out(opcode_over_wb),

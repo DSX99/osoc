@@ -25,7 +25,7 @@ module pc(
         pc = 32'h80000000;
     end
 
-    assign next_pc = pc + (do_spec ? {{11{addr_spec[19]}}, addr_spec, 1'b0} : 4);
+    assign next_pc = pc + (do_spec ? {{19{addr_spec[11]}}, addr_spec, 1'b0} : 4);
 
     always_ff @(posedge clk) begin
         if(rst) begin
