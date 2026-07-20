@@ -1037,7 +1037,7 @@ module ex_ls_pipeline(
     output logic [1:0]  ex_ls_bus_mux_select_ls,
     output logic        ex_ls_bus_mux_select_pc_ls,
     output logic        ex_ls_bus_branch_ls,
-    output logic        ex_ls_bus_diff_pc_ls,
+    output logic [31:0] ex_ls_bus_diff_pc_ls,
     output logic        ex_ls_valid_ls,
     input  logic        ex_ls_ready_ls,
 
