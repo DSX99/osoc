@@ -244,7 +244,7 @@ module osoc_26000003_core (
         .rst(reset), 
         .do_spec(do_spec),
         .addr_spec(addr_spec),
-        .branch(ls_wb_bus_branch_wb), 
+        .branch(ex_ls_bus_branch_ex), 
         .csr_branch(ls_wb_bus_exception_wb),
         .speculation(ex_ls_bus_speculate_ex),
         .branch_addr(ex_ls_bus_alu_out_ex),
