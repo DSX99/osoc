@@ -187,6 +187,8 @@ module osoc_26000003_core (
     // logic        ex_ls_valid_ex; //declared as public
     logic        ex_ls_ready_ex;
 
+    logic [31:0] ex_branch_addr; //ex -> pc
+
     // Exception / speculation tracking (EX -> LS)
     logic [3:0]  ex_ls_bus_mcause_ex, ex_ls_bus_mcause_ls;
     logic        ex_ls_bus_exception_ex, ex_ls_bus_exception_ls;
