@@ -1197,6 +1197,7 @@ module ls_wb_pipeline(
     output logic [1:0]  ls_wb_bus_mux_select_wb,
     output logic        ls_wb_bus_mux_select_pc_wb,
     output logic        ls_wb_bus_branch_wb,
+    output logic [31:0] ls_wb_bus_diff_pc_wb,
     output logic        ls_wb_valid_wb,
     input  logic        ls_wb_ready_wb,
 
