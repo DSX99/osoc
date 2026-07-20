@@ -260,7 +260,7 @@ module osoc_26000003_core (
     logic flush /*verilator public*/, flush_ex /*verilator public*/;
 
     assign flush = ls_wb_bus_exception_wb;
-    assign flush_ex = ex_ls_bus_branch_ex != ex_ls_bus_speculate_ex; 
+    assign flush_ex = (ex_ls_bus_branch_ex != ex_ls_bus_speculate_ex) && ex_ls_valid_ex && ex_ls_ready_ex && !ex_ls_bus_exception_ls && !ls_wb_bus_exception_wb;  
     
     logic [31:0] pc_ifu, next_pc;
 
