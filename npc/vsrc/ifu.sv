@@ -124,7 +124,7 @@ module ifu (
             if(write) begin
                 block_tag[pc_to_write[INDEX_OFF+OFF-1:OFF]][!latest_row]<=pc_to_write[31:INDEX_OFF+OFF];
                 block_offset[pc_to_write[INDEX_OFF+OFF-1:OFF]][!latest_row]<=offset_to_write;
-                block_valid[pc_to_write[INDEX_OFF+OFF-1:OFF]][latest_row]<=1;
+                block_valid[pc_to_write[INDEX_OFF+OFF-1:OFF]][!latest_row]<=1;
             end
         end
     end
