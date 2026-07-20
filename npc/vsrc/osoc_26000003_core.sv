@@ -491,7 +491,7 @@ module osoc_26000003_core (
         .ex_ls_bus_mux_select_ex    (ex_ls_bus_mux_select_ex),
         .ex_ls_bus_mux_select_pc_ex (ex_ls_bus_mux_select_pc_ex),
         .ex_ls_bus_branch_ex        (ex_ls_bus_branch_ex),
-        .ex_ls_valid_ex             (ex_ls_valid_ex & !(flush_ex && speculation)),
+        .ex_ls_valid_ex             (ex_ls_valid_ex & !(flush_ex && ex_ls_bus_speculate_ex)),
         .ex_ls_ready_ex             (ex_ls_ready_ex),
 
         .ex_ls_bus_mcause_ex        (ex_ls_bus_mcause_ex),
