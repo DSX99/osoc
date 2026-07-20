@@ -184,13 +184,6 @@ module osoc_26000003_func (
             io_master_arsize  = 3'b0;
             io_master_arburst = 2'b0;
             core_arready      = carready; 
-
-            io_master_rready  = 1'b0;
-            core_rvalid       = crvalid;
-            core_rdata        = crdata;
-            core_rresp        = 2'b00;
-            core_rlast        = crlast;
-            core_rid          = core_arid;
         end else begin
             io_master_arvalid = core_arvalid;
             io_master_araddr  = core_araddr;
@@ -199,7 +192,16 @@ module osoc_26000003_func (
             io_master_arsize  = core_arsize;
             io_master_arburst = core_arburst;
             core_arready      = io_master_arready;
+        end
 
+        if (trans[1]) begin
+            io_master_rready  = 1'b0;
+            core_rvalid       = crvalid;
+            core_rdata        = crdata;
+            core_rresp        = 2'b00;
+            core_rlast        = crlast;
+            core_rid          = core_arid;
+        end else begin
             io_master_rready  = core_rready;
             core_rvalid       = io_master_rvalid;
             core_rdata        = io_master_rdata;

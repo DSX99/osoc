@@ -83,9 +83,6 @@ void try_cache(uint32_t addr){
         }
     }
 
-    // printf("%d",change_row);
-    // std::cin.get();
-
     if (!hit) {
         miss_count[stage]++;
         cache[set_index][change_row].tag = tag;

@@ -93,8 +93,8 @@ module osoc_26000003_core (
         end else begin
             `ifndef SYNTHESIS
             reg_valid <= reg_valid_e;
-            pc   <= ls_wb_bus_branch_wb ? pc_in : pc_e;
-            prev_pc <= pc_e - 4;
+            pc   <=  ls_wb_bus_exception_wb ?  ls_wb_bus_csr_pc_wb : pc_e;
+            prev_pc <= pc;
             opcode <= opcode_over_wb;
             `endif
             `ifdef SYNTHESIS
@@ -106,7 +106,7 @@ module osoc_26000003_core (
         end
     end
 
-    assign pc_e = ls_wb_bus_next_pc_wb;
+    assign pc_e = ls_wb_bus_diff_pc_wb;
 
     // IF to DE
     logic [31:0] if_de_bus_pc_if, if_de_bus_pc_de;
@@ -183,8 +183,11 @@ module osoc_26000003_core (
     logic [1:0]  ex_ls_bus_mux_select_ex;
     logic        ex_ls_bus_mux_select_pc_ex;
     logic        ex_ls_bus_branch_ex;
+    logic [31:0] ex_ls_bus_diff_pc_ex;
     // logic        ex_ls_valid_ex; //declared as public
     logic        ex_ls_ready_ex;
+
+    logic [31:0] ex_branch_addr; //ex -> pc
 
     // Exception / speculation tracking (EX -> LS)
     logic [3:0]  ex_ls_bus_mcause_ex, ex_ls_bus_mcause_ls;
@@ -204,6 +207,7 @@ module osoc_26000003_core (
     logic [1:0]  ex_ls_bus_mux_select_ls;
     logic        ex_ls_bus_mux_select_pc_ls;
     logic        ex_ls_bus_branch_ls;
+    logic [31:0] ex_ls_bus_diff_pc_ls;
     // logic        ex_ls_valid_ls, ex_ls_ready_ls; //declared as public
 
     // LS to WB Bus signals
@@ -237,28 +241,40 @@ module osoc_26000003_core (
     logic [1:0]  ls_wb_bus_mux_select_wb;
     logic        ls_wb_bus_mux_select_pc_wb;
     logic        ls_wb_bus_branch_wb;
+    logic [31:0] ls_wb_bus_diff_pc_wb;
     logic        ls_wb_valid_wb, ls_wb_ready_wb;
 
-    logic [31:0] pc_in;
     pc pc_mod (
         .clk(clock), 
         .rst(reset), 
-        .branch(ls_wb_bus_branch_wb), 
-        .data_in(pc_in), 
+        .do_spec(do_spec),
+        .addr_spec(addr_spec),
+        .branch(ex_ls_bus_branch_ex), 
+        .csr_branch(ls_wb_bus_exception_wb),
+        .speculation(ex_ls_bus_speculate_ex),
+        .branch_addr(ex_branch_addr),
+        .csr_branch_addr(ls_wb_bus_csr_pc_wb), 
+        .mispred_addr(ex_ls_bus_pc_ex),
         .pc(pc_ifu), 
         .next_pc(next_pc), 
         .valid(if_de_valid_if && if_de_ready_if),
+        .ex_valid(ex_ls_valid_ex && ex_ls_ready_ex && !ex_ls_bus_exception_ls && !ls_wb_bus_exception_wb),
         .wb_valid(ls_wb_valid_wb)
     );
-    assign pc_in = ls_wb_bus_mux_select_pc_wb || ls_wb_bus_exception_wb ? ls_wb_bus_csr_pc_wb : ls_wb_bus_alu_out_wb;
-    logic flush /*verilator public*/;
 
-    assign flush = ls_wb_bus_branch_wb != ls_wb_bus_speculate_wb; 
+    logic flush /*verilator public*/, flush_ex /*verilator public*/;
+
+    assign flush = ls_wb_bus_exception_wb;
+    assign flush_ex = (ex_ls_bus_branch_ex != ex_ls_bus_speculate_ex) && ex_ls_valid_ex && ex_ls_ready_ex && !ex_ls_bus_exception_ls && !ls_wb_bus_exception_wb;  
     
     logic [31:0] pc_ifu, next_pc;
 
+    logic do_spec;
+    logic [11:0] addr_spec;
+
     // IFU
     ifu ifu_mod (
+        .clk(clock), .rst(reset),
         .pc(pc_ifu), .next_pc(next_pc),
         .bus_out_pc(if_de_bus_pc_if),
         .bus_out_next_pc(if_de_bus_next_pc_if),
@@ -267,12 +283,14 @@ module osoc_26000003_core (
         .bus_out_exception(if_de_bus_exception_if),
         .bus_out_speculate(if_de_bus_speculate_if),
         .valid(if_de_valid_if), .ready(if_de_ready_if),
-        .cache_addr(cache_addr), .cache_valid(cache_valid), .cache_opcode(cache_opcode), .cache_ready(cache_ready)
+        .cache_addr(cache_addr), .cache_valid(cache_valid), .cache_opcode(cache_opcode), .cache_ready(cache_ready),
+        .do_spec(do_spec), .addr_spec(addr_spec),
+        .pc_to_write(de_ex_bus_pc_ex), .offset_to_write(de_ex_bus_imm_ex[12:1]), .write(ex_ls_bus_branch_ex && !ex_ls_bus_speculate_ex && de_ex_bus_alu_op_ex[6] & !(|de_ex_bus_imm_ex[31:13]))
     );
 
     icache icache_mod(
         .clk(clock), .rst(reset),
-        .ifu_addr(cache_addr), .valid(cache_valid & !ls_wb_bus_branch_wb), .opcode(cache_opcode), .ready(cache_ready),
+        .ifu_addr(cache_addr), .valid(cache_valid & !(flush | flush_ex)), .opcode(cache_opcode), .ready(cache_ready),
         .araddr(araddr_ifu), .arvalid(arvalid_ifu), .arready(arready_ifu), 
         .arlen(arlen_ifu), .arsize(arsize_ifu), .arburst(arburst_ifu),
 
@@ -284,7 +302,7 @@ module osoc_26000003_core (
     if_de_pipeline if_de_pipeline_mod (
         .clk(clock),
         .rst(reset),
-        .flush(flush),
+        .flush(flush | flush_ex),
 
         .if_de_bus_pc_if(if_de_bus_pc_if),
         .if_de_bus_next_pc_if(if_de_bus_next_pc_if),
@@ -344,7 +362,7 @@ module osoc_26000003_core (
 
         .ex_rd_data(ex_ls_bus_alu_out_ex),
         .ls_rd_data(ls_wb_bus_alu_out_ls),
-        .wb_rd_data(ls_wb_bus_alu_out_wb),
+        .wb_rd_data(reg_in),
 
         .ex_valid(ex_ls_valid_ex),
         .ex_lsu_re(de_ex_bus_lsu_re_ex),
@@ -364,7 +382,7 @@ module osoc_26000003_core (
     de_ex_pipeline de_ex_pipeline_mod (
         .clk                        (clock),
         .rst                        (reset),
-        .flush                      (flush),
+        .flush                      (flush | flush_ex),
 
         .opcode_in(if_de_bus_opcode_de),
         .opcode_out(opcode_over_ex),  
@@ -452,6 +470,8 @@ module osoc_26000003_core (
         .bus_out_mcause(ex_ls_bus_mcause_ex),
         .bus_out_exception(ex_ls_bus_exception_ex),
         .bus_out_speculate(ex_ls_bus_speculate_ex),
+        .bus_out_diff_pc(ex_ls_bus_diff_pc_ex),
+        .bus_out_branch_addr(ex_branch_addr),
         .valid_left(de_ex_valid_ex), .ready_left(de_ex_ready_ex),
         .valid_right(ex_ls_valid_ex), .ready_right(ex_ls_ready_ex),
         .branch(branch)
@@ -478,6 +498,7 @@ module osoc_26000003_core (
         .ex_ls_bus_mux_select_ex    (ex_ls_bus_mux_select_ex),
         .ex_ls_bus_mux_select_pc_ex (ex_ls_bus_mux_select_pc_ex),
         .ex_ls_bus_branch_ex        (ex_ls_bus_branch_ex),
+        .ex_ls_bus_diff_pc_ex       (ex_ls_bus_diff_pc_ex),
         .ex_ls_valid_ex             (ex_ls_valid_ex),
         .ex_ls_ready_ex             (ex_ls_ready_ex),
 
@@ -500,6 +521,7 @@ module osoc_26000003_core (
         .ex_ls_bus_mux_select_ls    (ex_ls_bus_mux_select_ls),
         .ex_ls_bus_mux_select_pc_ls (ex_ls_bus_mux_select_pc_ls),
         .ex_ls_bus_branch_ls        (ex_ls_bus_branch_ls),
+        .ex_ls_bus_diff_pc_ls       (ex_ls_bus_diff_pc_ls),
         .ex_ls_valid_ls             (ex_ls_valid_ls),
         .ex_ls_ready_ls             (ex_ls_ready_ls),
 
@@ -551,6 +573,7 @@ module osoc_26000003_core (
     ls_wb_pipeline ls_wb_pipeline_mod (
         .clk                        (clock),
         .rst                        (reset),
+        .flush                      (flush),
 
         .opcode_in(opcode_over_ls),
         .opcode_out(opcode_over_wb),
@@ -564,6 +587,7 @@ module osoc_26000003_core (
         .ls_wb_bus_mux_select_ls    (ls_wb_bus_mux_select_ls),
         .ls_wb_bus_mux_select_pc_ls (ls_wb_bus_mux_select_pc_ls),
         .ls_wb_bus_branch_ls        (ls_wb_bus_branch_ls),
+        .ls_wb_bus_diff_pc_ls       (ex_ls_bus_diff_pc_ls),
         .ls_wb_valid_ls             (ls_wb_valid_ls),
         .ls_wb_ready_ls             (ls_wb_ready_ls),
 
@@ -582,6 +606,7 @@ module osoc_26000003_core (
         .ls_wb_bus_mux_select_wb    (ls_wb_bus_mux_select_wb),
         .ls_wb_bus_mux_select_pc_wb (ls_wb_bus_mux_select_pc_wb),
         .ls_wb_bus_branch_wb        (ls_wb_bus_branch_wb),
+        .ls_wb_bus_diff_pc_wb       (ls_wb_bus_diff_pc_wb),
         .ls_wb_valid_wb             (ls_wb_valid_wb),
         .ls_wb_ready_wb             (ls_wb_ready_wb),
 
@@ -991,6 +1016,7 @@ module ex_ls_pipeline(
     input  logic [1:0]  ex_ls_bus_mux_select_ex,
     input  logic        ex_ls_bus_mux_select_pc_ex,
     input  logic        ex_ls_bus_branch_ex,
+    input  logic [31:0] ex_ls_bus_diff_pc_ex,
     input  logic        ex_ls_valid_ex,
     output logic        ex_ls_ready_ex,
 
@@ -1014,6 +1040,7 @@ module ex_ls_pipeline(
     output logic [1:0]  ex_ls_bus_mux_select_ls,
     output logic        ex_ls_bus_mux_select_pc_ls,
     output logic        ex_ls_bus_branch_ls,
+    output logic [31:0] ex_ls_bus_diff_pc_ls,
     output logic        ex_ls_valid_ls,
     input  logic        ex_ls_ready_ls,
 
@@ -1037,6 +1064,7 @@ logic [11:0] ex_ls_bus_csr;
 logic [1:0]  ex_ls_bus_mux_select;
 logic        ex_ls_bus_mux_select_pc;
 logic        ex_ls_bus_branch;
+logic [31:0] ex_ls_bus_diff_pc;
 logic        ex_ls_valid;
 
 logic finish;
@@ -1062,6 +1090,7 @@ assign ex_ls_bus_csr_ls           = ex_ls_bus_csr;
 assign ex_ls_bus_mux_select_ls    = ex_ls_bus_mux_select;
 assign ex_ls_bus_mux_select_pc_ls = ex_ls_bus_mux_select_pc;
 assign ex_ls_bus_branch_ls        = ex_ls_bus_branch;
+assign ex_ls_bus_diff_pc_ls       = ex_ls_bus_diff_pc;
 assign ex_ls_valid_ls             = ex_ls_valid;
 assign opcode_out = opcode;
 
@@ -1088,6 +1117,7 @@ always_ff @(posedge clk) begin
         ex_ls_bus_mux_select    <= '0;
         ex_ls_bus_mux_select_pc <= '0;
         ex_ls_bus_branch        <= '0;
+        ex_ls_bus_diff_pc       <= '0;
         ex_ls_valid             <= '0;
 
         ex_ls_bus_mcause        <= '0;
@@ -1112,6 +1142,7 @@ always_ff @(posedge clk) begin
             ex_ls_bus_mux_select    <= ex_ls_bus_mux_select_ex;
             ex_ls_bus_mux_select_pc <= ex_ls_bus_mux_select_pc_ex;
             ex_ls_bus_branch        <= ex_ls_bus_branch_ex;
+            ex_ls_bus_diff_pc       <= ex_ls_bus_diff_pc_ex;
 
             ex_ls_bus_mcause        <= ex_ls_bus_mcause_ex;
             ex_ls_bus_exception     <= ex_ls_bus_exception_ex;
@@ -1137,6 +1168,8 @@ module ls_wb_pipeline(
     input  logic clk,
     input  logic rst,
 
+    input  logic flush,
+
     input  logic [31:0]opcode_in,
     output logic [31:0] opcode_out,
 
@@ -1146,10 +1179,11 @@ module ls_wb_pipeline(
     input  logic [31:0] ls_wb_bus_next_pc_ls,
     input  logic [31:0] ls_wb_bus_csr_out_ls,
     input  logic [4:0]  ls_wb_bus_rd_ls,
-    input  logic [11:0]  ls_wb_bus_csr_ls,
+    input  logic [11:0] ls_wb_bus_csr_ls,
     input  logic [1:0]  ls_wb_bus_mux_select_ls,
     input  logic        ls_wb_bus_mux_select_pc_ls,
     input  logic        ls_wb_bus_branch_ls,
+    input  logic [31:0] ls_wb_bus_diff_pc_ls,
     input  logic        ls_wb_valid_ls,
     output logic        ls_wb_ready_ls,
 
@@ -1169,6 +1203,7 @@ module ls_wb_pipeline(
     output logic [1:0]  ls_wb_bus_mux_select_wb,
     output logic        ls_wb_bus_mux_select_pc_wb,
     output logic        ls_wb_bus_branch_wb,
+    output logic [31:0] ls_wb_bus_diff_pc_wb,
     output logic        ls_wb_valid_wb,
     input  logic        ls_wb_ready_wb,
 
@@ -1189,6 +1224,7 @@ logic [11:0] ls_wb_bus_csr;
 logic [1:0]  ls_wb_bus_mux_select;
 logic        ls_wb_bus_mux_select_pc;
 logic        ls_wb_bus_branch;
+logic [31:0] ls_wb_bus_diff_pc;
 logic        ls_wb_valid;
 
 logic finish;
@@ -1210,6 +1246,7 @@ assign ls_wb_bus_csr_wb           = ls_wb_bus_csr;
 assign ls_wb_bus_mux_select_wb    = ls_wb_bus_mux_select;
 assign ls_wb_bus_mux_select_pc_wb = ls_wb_bus_mux_select_pc;
 assign ls_wb_bus_branch_wb        = ls_wb_bus_branch;
+assign ls_wb_bus_diff_pc_wb       = ls_wb_bus_diff_pc;
 assign ls_wb_valid_wb             = ls_wb_valid;
 
 assign ls_wb_bus_mcause_wb    = ls_wb_bus_mcause;
@@ -1231,6 +1268,7 @@ always_ff @(posedge clk) begin
         ls_wb_bus_mux_select    <= '0;
         ls_wb_bus_mux_select_pc <= '0;
         ls_wb_bus_branch        <= '0;
+        ls_wb_bus_diff_pc       <= '0;
         ls_wb_valid             <= '0;
         opcode<=0;
         finish<=0;
@@ -1250,6 +1288,7 @@ always_ff @(posedge clk) begin
             ls_wb_bus_mux_select    <= ls_wb_bus_mux_select_ls;
             ls_wb_bus_mux_select_pc <= ls_wb_bus_mux_select_pc_ls;
             ls_wb_bus_branch        <= ls_wb_bus_branch_ls;
+            ls_wb_bus_diff_pc       <= ls_wb_bus_diff_pc_ls;
 
             ls_wb_bus_mcause        <= ls_wb_bus_mcause_ls;
             ls_wb_bus_exception     <= ls_wb_bus_exception_ls;
@@ -1265,7 +1304,7 @@ always_ff @(posedge clk) begin
             end
         end
 
-        if(ls_wb_bus_branch_wb) begin
+        if(flush) begin
             ls_wb_bus_pc            <= '0;
             ls_wb_bus_alu_out       <= '0;
             ls_wb_bus_next_pc       <= '0;
@@ -1274,6 +1313,7 @@ always_ff @(posedge clk) begin
             ls_wb_bus_mux_select    <= '0;
             ls_wb_bus_mux_select_pc <= '0;
             ls_wb_bus_branch        <= '0;
+            ls_wb_bus_diff_pc       <= '0;
             ls_wb_valid             <= '0;
             opcode<=0;
             finish<=0;

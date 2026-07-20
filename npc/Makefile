@@ -30,6 +30,12 @@ DISASM_OBJ = $(abspath obj_dir/disasm.o)
 
 LDFLAGS += -lreadline -L$(NEMU_HOME)/tools/capstone/repo -lcapstone $(DISASM_OBJ) $(NEMU_HOME)/tools/spike-diff/build/riscv32-spike-so
 
+NVBOARD_ARCHIVE = 
+ifdef NVB
+OSOC_CPP_SRC = csrc/main_nvb.cpp $(CPP_SRC)
+include $(NVBOARD_HOME)/scripts/nvboard.mk
+endif
+
 VERILOG_FLAGS := -cc --exe -Wno-EOFNEWLINE --trace-fst -LDFLAGS "$(LDFLAGS)" -CFLAGS "$(VERILATOR_CFLAGS)" --trace-structs --timescale "1ns/1ns" --no-timing $(INCLUDES) --autoflush
 ifndef NS
 VERILOG_FLAGS += --quiet
@@ -39,15 +45,6 @@ ifdef FAST
 VERILOG_FLAGS += -O3 --x-assign fast --x-initial fast --no-assert
 endif
 
-NVB_HEAD_SRC ?= 
-
-# ifdef NVB
-# CPP_SRC += csrc/main_nvb.cpp $(NVBOARD_HOME)/src/*.cpp 
-# INC_PATH += $(NVBOARD_HOME)/include/ /usr/include/SDL2 $(NPC_HOME)/usr/include
-# else
-# CPP_SRC += csrc/main.cpp 
-# endif
-
 INCFLAGS = $(addprefix -I, $(INC_PATH))
 
 LIBCAPSTONE = $(NEMU_HOME)/tools/capstone/repo/libcapstone.so.5
@@ -56,12 +53,12 @@ sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 
 lint:
-	$(VERILATOR) --lint-only vsrc/osoc_26000003_core.sv vsrc/osoc_26000003.sv vsrc/CLINT.sv $(VERILOG_SRC) $(VERILOG_FLAGS) -Wall -Wno-EOFNEWLINE --top-module osoc_26000003 -Wno-DECLFILENAME
+	$(VERILATOR) --lint-only vsrc/osoc_26000003_core.sv vsrc/osoc_26000003.sv vsrc/CLINT.sv $(VERILOG_SRC) $(VERILOG_FLAGS) -Wall -Wno-UNUSEDSIGNAL -Wno-EOFNEWLINE --top-module osoc_26000003 -Wno-DECLFILENAME
 
 build: sim 
 	mkdir -p obj_dir
 	gcc -c $(VERILATOR_CFLAGS) -O2 $(NEMU_HOME)/src/utils/disasm.c -o obj_dir/disasm.o
-	$(VERILATOR) $(OSOC_SRC) $(VERILOG_FLAGS) --top-module ysyxSoCFull  $(OSOC_CPP_SRC) $(addprefix -CFLAGS , $(INCFLAGS))
+	$(VERILATOR) $(OSOC_SRC) -LDFLAGS "$(NVBOARD_ARCHIVE)" $(VERILOG_FLAGS) --top-module ysyxSoCFull  $(OSOC_CPP_SRC) $(addprefix -CFLAGS , $(INCFLAGS))
 	$(MAKE) -j -C obj_dir -f VysyxSoCFull.mk 
 
 run: build

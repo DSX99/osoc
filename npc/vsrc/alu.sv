@@ -35,6 +35,8 @@ module alu (
     output logic [1:0]  bus_out_mux_select,    
     output logic        bus_out_mux_select_pc, 
     output logic        bus_out_branch,        
+    output logic [31:0] bus_out_diff_pc,
+    output logic [31:0] bus_out_branch_addr,
 
     input  logic valid_left, ready_right,
     output logic ready_left, valid_right,
@@ -60,6 +62,7 @@ module alu (
 
         bus_out_alu_out       = '0;
         bus_out_branch        = '0;
+        bus_out_branch_addr   = '0;
         csr_imm=0;
 
         if (bus_in_alu_op[5:4] == 2'b00) begin
@@ -80,7 +83,8 @@ module alu (
                 7: bus_out_alu_out = val1 & val2;
             endcase
         end else if (bus_in_alu_op[5:4] == 2'b01) begin
-            bus_out_alu_out = val1 + val2;
+            bus_out_alu_out = bus_in_pc + 4;
+            bus_out_branch_addr = val1 + val2;
             case (bus_in_alu_op[2:0])
                 0: bus_out_branch = bus_in_data_rs1 == bus_in_data_rs2;
                 1: bus_out_branch = bus_in_data_rs1 != bus_in_data_rs2;
@@ -103,7 +107,7 @@ module alu (
         bus_out_data_csr =  bus_in_data_csr;
 
         bus_out_pc            = bus_in_pc;
-        bus_out_next_pc       = bus_in_next_pc;
+        bus_out_next_pc       = bus_out_pc+4;
         bus_out_data_rs2      = bus_in_data_rs2;
 
         // TODO: exception detection during execute (e.g. misaligned branch target)
@@ -116,6 +120,14 @@ module alu (
         bus_out_rd            = bus_in_rd;
         bus_out_mux_select    = bus_in_mux_select;
         bus_out_mux_select_pc = bus_in_mux_select_pc;
+    
+
+        if (bus_out_branch) begin
+            bus_out_diff_pc = bus_out_branch_addr; 
+        end else begin
+            bus_out_diff_pc = bus_in_pc + 4;
+        end
+
     end
 
 endmodule

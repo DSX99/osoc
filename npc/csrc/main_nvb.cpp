@@ -28,8 +28,7 @@ static uint32_t qexit = 0;
 VerilatedContext *contextp;
 VerilatedFstC *tracep;
 VysyxSoCFull* soc; 
-VysyxSoCFull_osoc_26000003 *top;
-bool skip_inst=0;
+VysyxSoCFull_osoc_26000003_core *top;
 CPU_state cpu;
 bool fail=0;
 bool valid_cycle=0;
@@ -37,10 +36,11 @@ bool valid_cycle=0;
 char itrace[16][128];
 int point=0;
 
-void execute(uint32_t n);
+void execute(uint64_t n);
 void init_sdb();
 void sdb_mainloop(uint32_t *ret);
 bool check_watchpoints();
+void uart_set_divisor(uint16_t d);
 extern "C" {
 void difftest_init(int port);
 void difftest_exec(uint64_t n);
@@ -79,6 +79,8 @@ void nvboard_bind_all_pins() {
 	nvboard_bind_pin( &soc->externalPins_gpio_seg_7, 8, SEG7A, SEG7B, SEG7C, SEG7D, SEG7E, SEG7F, SEG7G, DEC7P);
 	nvboard_bind_pin( &soc->externalPins_ps2_clk, 1, PS2_CLK);
 	nvboard_bind_pin( &soc->externalPins_ps2_data, 1, PS2_DAT);
+	nvboard_bind_pin( &soc->externalPins_uart_tx, 1, UART_TX);
+	nvboard_bind_pin( &soc->externalPins_uart_rx, 1, UART_RX);
 }
 
 static int parse_args(int argc, char *argv[]) {
@@ -124,10 +126,11 @@ int main(int argc, char** argv) {
   // contextp->threads(4); // can be used in future to increase speed
 
   soc = new VysyxSoCFull{contextp};
-  top = soc->ysyxSoCFull->asic->cpu->cpu;
+  top = soc->ysyxSoCFull->asic->cpu->cpu->core;
 
   nvboard_bind_all_pins();
   nvboard_init();
+  uart_set_divisor(16);
   
 #ifdef CONFIG_FST
   Verilated::traceEverOn(true);
@@ -141,10 +144,6 @@ int main(int argc, char** argv) {
     fprintf(stderr, "Error: Simulation model instantiation failed!\n");
     return -1;
   }
-
-  soc->enab = 1;
-
-  nvboard_bindAllPins(soc);
 
   reset(soc, 100);
 
@@ -172,13 +171,14 @@ const char *regs[] = {
 };
 
 
-void execute(uint32_t n){
+void execute(uint64_t n){
 
   char str[128];
   uint8_t inst[4];
   CPU_state ref_cpu;
+  int device_access = 0;
 
-  if(fail && do_diff){ 
+  if(fail && do_diff){
     printf("failed\n");
     difftest_regcpy(&ref_cpu, 0);
 
@@ -250,14 +250,12 @@ void execute(uint32_t n){
 
     valid_cycle = top->reg_valid;
 
-    if(fail){ 
+    if(fail){
       printf("failed\n");
       return;
     }
 
-    bool current_cycle_is_skipped = skip_inst;
-
-    if((!batch) && (!current_cycle_is_skipped) && top->reg_valid && do_diff) difftest_exec(1);
+    if((!batch) && top->reg_valid && do_diff) difftest_exec(1);
 
     if(contextp->gotFinish()){
       #ifdef CONFIG_FST
@@ -302,12 +300,39 @@ void execute(uint32_t n){
     }
     n--;
     
-    if(!batch && do_diff) {
-      if (!current_cycle_is_skipped && !(top->lsu_device_call)) {
-        difftest_regcpy(&ref_cpu, 0);
+    if(!batch && do_diff && top->reg_valid) {
+      if(device_access){
+        for(int i = 0; i < 32; i++){
+          cpu.gpr[i] = top->reg_mod->regs[i];
+        }
+        cpu.pc = top->pc;
+        difftest_regcpy(&cpu, 1);
+        device_access--;
+      }
 
-        if (ref_cpu.pc != top->pc) {
-          printf("Difference with REF pc, should:0x%08x, actually:0x%08x\n", ref_cpu.pc, top->prev_pc);
+      difftest_regcpy(&ref_cpu, 0);
+
+      if (ref_cpu.pc != top->pc) {
+        printf("Difference with REF pc, should:0x%08x, actually:0x%08x\n", ref_cpu.pc, top->prev_pc);
+        ret = 1;
+        inst[0] = (top->opcode) & 0xff;
+        inst[1] = (top->opcode >> 8) & 0xff;
+        inst[2] = (top->opcode >> 16) & 0xff;
+        inst[3] = (top->opcode >> 24) & 0xff;
+        printf("0x%08x: %02x %02x %02x %02x ", top->prev_pc, inst[3], inst[2], inst[1], inst[0]);
+        disassemble(str, 128, top->pc, inst, 4);
+        printf("%s\n", str);
+        #ifdef ITRACE
+        strcpy(itrace[point],str);
+        point = (point+1)%ITRACE_VAL;
+        #endif
+        return;
+      }
+
+      for(int i = 0; i < 32; i++){
+        if(ref_cpu.gpr[i] != top->reg_mod->regs[i]){
+          printf("Difference with REF %s, should:0x%08x, actually:0x%08x, pc: 0x%08x\n",
+                 regs[i], ref_cpu.gpr[i], top->reg_mod->regs[i], top->prev_pc);
           ret = 1;
           inst[0] = (top->opcode) & 0xff;
           inst[1] = (top->opcode >> 8) & 0xff;
@@ -320,37 +345,12 @@ void execute(uint32_t n){
           strcpy(itrace[point],str);
           point = (point+1)%ITRACE_VAL;
           #endif
-          return; 
+          return;
         }
-
-        for(int i = 0; i < 32; i++){
-          if(ref_cpu.gpr[i] != top->reg_mod->regs[i]){
-            printf("Difference with REF %s, should:0x%08x, actually:0x%08x, pc: 0x%08x\n", 
-                   regs[i], ref_cpu.gpr[i], top->reg_mod->regs[i], top->prev_pc);
-            ret = 1;
-            inst[0] = (top->opcode) & 0xff;
-            inst[1] = (top->opcode >> 8) & 0xff;
-            inst[2] = (top->opcode >> 16) & 0xff;
-            inst[3] = (top->opcode >> 24) & 0xff;
-            printf("0x%08x: %02x %02x %02x %02x ", top->prev_pc, inst[3], inst[2], inst[1], inst[0]);
-            disassemble(str, 128, top->pc, inst, 4);
-            printf("%s\n", str);
-            #ifdef ITRACE
-            strcpy(itrace[point],str);
-            point = (point+1)%ITRACE_VAL;
-            #endif
-            return;
-          }
-        }
-      } 
-      else {
-        for(int i = 0; i < 32; i++){
-          cpu.gpr[i] = top->reg_mod->regs[i];
-        }
-        cpu.pc = top->pc;
-        difftest_regcpy(&cpu, 1);
-        skip_inst = 0; 
       }
+    }
+    if((top->__PVT__io_master_araddr == 0x200bff8) || (top->__PVT__io_master_araddr == 0x200bffc) || (top->__PVT__io_master_araddr == 0x10000005)){
+      device_access++;
     }
   }
 }
