@@ -119,7 +119,7 @@ module alu (
         bus_out_mux_select_pc = bus_in_mux_select_pc;
     
 
-        if (branch) begin
+        if (bus_out_branch) begin
             bus_out_diff_pc = bus_out_alu_out; 
         end else begin
             bus_out_diff_pc = bus_in_pc + 4;
