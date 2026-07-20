@@ -183,6 +183,7 @@ module osoc_26000003_core (
     logic [1:0]  ex_ls_bus_mux_select_ex;
     logic        ex_ls_bus_mux_select_pc_ex;
     logic        ex_ls_bus_branch_ex;
+    logic [31:0] ex_ls_bus_diff_pc_ex;
     // logic        ex_ls_valid_ex; //declared as public
     logic        ex_ls_ready_ex;
 
@@ -204,6 +205,7 @@ module osoc_26000003_core (
     logic [1:0]  ex_ls_bus_mux_select_ls;
     logic        ex_ls_bus_mux_select_pc_ls;
     logic        ex_ls_bus_branch_ls;
+    logic [31:0] ex_ls_bus_diff_pc_ls;
     // logic        ex_ls_valid_ls, ex_ls_ready_ls; //declared as public
 
     // LS to WB Bus signals
@@ -237,6 +239,7 @@ module osoc_26000003_core (
     logic [1:0]  ls_wb_bus_mux_select_wb;
     logic        ls_wb_bus_mux_select_pc_wb;
     logic        ls_wb_bus_branch_wb;
+    logic [31:0] ls_wb_bus_diff_pc_wb;
     logic        ls_wb_valid_wb, ls_wb_ready_wb;
 
     pc pc_mod (
