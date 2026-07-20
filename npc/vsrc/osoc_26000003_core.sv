@@ -584,7 +584,7 @@ module osoc_26000003_core (
         .ls_wb_bus_mux_select_ls    (ls_wb_bus_mux_select_ls),
         .ls_wb_bus_mux_select_pc_ls (ls_wb_bus_mux_select_pc_ls),
         .ls_wb_bus_branch_ls        (ls_wb_bus_branch_ls),
-        .ls_wb_bus_diff_pc_ls       (ls_wb_bus_diff_pc_ls),
+        .ls_wb_bus_diff_pc_ls       (ex_ls_bus_diff_pc_ls),
         .ls_wb_valid_ls             (ls_wb_valid_ls),
         .ls_wb_ready_ls             (ls_wb_ready_ls),
 
