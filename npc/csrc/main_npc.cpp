@@ -400,25 +400,16 @@ void execute(uint64_t n){
           soc->eval();
           for(int i = 0; i < 16; i++){
             cpu.gpr[i] = top->reg_mod->regs[i];
-            printf("regs %d:%x, npc:%x\n",i, cpu.gpr[i], top->reg_mod->regs[i]);
+            // printf("regs %d:%x, npc:%x\n",i, cpu.gpr[i], top->reg_mod->regs[i]);
           }for(int i = 0; i < 16; i++){
             cpu.gpr[i+16] = 0;
-            printf("regs %d:%x\n",i+16, cpu.gpr[i+16]);
+            // printf("regs %d:%x\n",i+16, cpu.gpr[i+16]);
           }
           cpu.pc = top->pc;
-          printf("spike pc:%x, npc pc:%x\n", cpu.pc, top->pc);
+          // printf("spike pc:%x, npc pc:%x\n", cpu.pc, top->pc);
           difftest_regcpy(&cpu, 1);
           device_access--;
-          printf("device call -- value:%d\n", device_access);
-        }
-
-        
-
-        printf("1\n");
-        for(int i = 0; i < 16; i++){
-          printf("regs %d:%x, npc:%x\n",i, cpu.gpr[i], top->reg_mod->regs[i]);
-        }for(int i = 0; i < 16; i++){
-          printf("regs %d:%x\n",i+16, cpu.gpr[i+16]);
+          // printf("device call -- value:%d\n", device_access);
         }
 
         difftest_regcpy(&ref_cpu, 0);
