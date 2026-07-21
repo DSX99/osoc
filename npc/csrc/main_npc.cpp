@@ -437,8 +437,8 @@ void execute(uint64_t n){
 
         for(int i = 0; i < 16; i++){
           if(ref_cpu.gpr[i] != top->reg_mod->regs[i]){
-            printf("Difference with REF %s, should:0x%08x, actually:0x%08x, pc: 0x%08x\n", 
-                   regs[i], ref_cpu.gpr[i], top->reg_mod->regs[i], top->pc);
+            printf("Difference with REF %s(%d), should:0x%08x, actually:0x%08x, pc: 0x%08x\n", 
+                   regs[i], i, ref_cpu.gpr[i], top->reg_mod->regs[i], top->pc);
             ret = 1;
             inst[0] = (top->opcode) & 0xff;
             inst[1] = (top->opcode >> 8) & 0xff;
