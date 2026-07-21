@@ -295,7 +295,7 @@ void execute(uint64_t n){
       program[stage].possible_branch_count++;
     }
 
-    if (top->reg_valid_e) {
+    if (top->reg_valid) {
       program[stage].writeback++;
       if (top->branch_taken) program[stage].branch_taken++;
       if (top->flush)        program[stage].flush++;
