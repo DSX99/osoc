@@ -67,7 +67,7 @@ module osoc_26000003_core (
 );
 
     logic [31:0] pc /* verilator public */, prev_pc /* verilator public */, opcode /* verilator public */, pc_e /* verilator public */;
-    logic reg_valid /* verilator public */, reg_valid_e /* verilator public */;
+    logic reg_valid /* verilator public */;
 
     logic if_de_valid_if /* verilator public */, if_de_ready_if /*verilator public*/, ex_ls_valid_ls /* verilator public */, ex_ls_ready_ls /* verilator public */;
     logic branch /* verilator public */, branch_taken /* verilator public */, ex_ls_bus_lsu_we_ls /* verilator public*/, ex_ls_bus_lsu_re_ls /* verilator public*/;
@@ -78,7 +78,7 @@ module osoc_26000003_core (
 
     logic [31:0] opcode_over_ex, opcode_over_ls, opcode_over_wb;
 
-    assign reg_valid_e = ls_wb_valid_wb;
+    assign reg_valid = ls_wb_valid_wb;
     
     always_comb begin
         branch_taken = ls_wb_bus_branch_wb;
@@ -92,7 +92,6 @@ module osoc_26000003_core (
             opcode <= 0 ;
         end else begin
             `ifndef SYNTHESIS
-            reg_valid <= reg_valid_e;
             pc   <=  ls_wb_bus_exception_wb ?  ls_wb_bus_csr_pc_wb : pc_e;
             prev_pc <= pc;
             opcode <= opcode_over_wb;
