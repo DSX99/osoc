@@ -50,7 +50,7 @@ module ifu (
     parameter SIZE_OF_OFFSET = 12;
     // here i use 2 rows
 
-    localparam int OFF = 1;
+    localparam int OFF = 2;
     localparam int INDEX_OFF = $clog2(NUMBER_OF_BLOCKS);
 
     logic [32-INDEX_OFF-OFF-1:0] block_tag [NUMBER_OF_BLOCKS][2];
