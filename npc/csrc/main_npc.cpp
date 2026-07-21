@@ -179,6 +179,7 @@ void execute(uint64_t n){
   char str[128];
   uint8_t inst[4];
   CPU_state ref_cpu;
+  int device_access = 0;
 
   if(fail && do_diff){ 
     printf("failed\n");
@@ -395,6 +396,21 @@ void execute(uint64_t n){
     if(!batch && do_diff && top->reg_valid) {
         printf("CHECK\n");
 
+        if(device_access){
+          for(int i = 0; i < 16; i++){
+            cpu.gpr[i] = top->reg_mod->regs[i];
+            // printf("regs %d:%x\n",i, cpu.gpr[i]);
+          }for(int i = 0; i < 16; i++){
+            cpu.gpr[i+16] = 0;
+            // printf("regs %d:%x\n",i+16, cpu.gpr[i+16]);
+          }
+          cpu.pc = top->pc;
+          // printf("pc:%x\n", cpu.pc);
+          difftest_regcpy(&cpu, 1);
+          device_access--;
+          // printf("device call opcode:%x, value:%d\n", top->opcode, device_access);
+        }
+
         difftest_regcpy(&ref_cpu, 0);
 
         if (ref_cpu.pc != top->pc) {
@@ -442,6 +458,10 @@ void execute(uint64_t n){
             return;
           }
       }
+    }
+    if((top->__PVT__io_master_araddr == 0x200bff8) || (top->__PVT__io_master_araddr == 0x200bffc) || (top->__PVT__io_master_araddr == 0x10000005)){
+      device_access++;
+      // printf("device call opcode:%x, value:%d\n", top->opcode, device_access);
     }
   }
 }
