@@ -399,7 +399,7 @@ void execute(uint64_t n){
         if(device_access){
           for(int i = 0; i < 16; i++){
             cpu.gpr[i] = top->reg_mod->regs[i];
-            printf("regs %d:%x\n",i, cpu.gpr[i]);
+            printf("regs %d:%x, npc:%x\n",i, cpu.gpr[i], top->reg_mod->regs[i]);
           }for(int i = 0; i < 16; i++){
             cpu.gpr[i+16] = 0;
             printf("regs %d:%x\n",i+16, cpu.gpr[i+16]);
@@ -459,7 +459,6 @@ void execute(uint64_t n){
           }
       }
     }
-    asm volatile("nop");
     if((top->__PVT__io_master_araddr == 0x200bff8) || (top->__PVT__io_master_araddr == 0x200bffc) || (top->__PVT__io_master_araddr == 0x10000005)){
       device_access++;
       printf("device call ++ value:%d\n", device_access);
