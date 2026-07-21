@@ -103,7 +103,7 @@ __EXPORT void difftest_init(int port) {
   const char *isa = "RV" MUXDEF(CONFIG_RV64, "64", "32") MUXDEF(CONFIG_RVE, "E", "I") "MAFDC";
 
   reg_t clint_base = 0x02000000;
-  reg_t clint_size = 0x00002000; // 8KB
+  reg_t clint_size = 0x00010000; // 8KB
   reg_t sram_base = 0x0f000000;
   reg_t sram_size = 0x00002000; // 8KB
   reg_t flash_base = 0x30000000;
