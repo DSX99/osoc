@@ -86,7 +86,6 @@ module osoc_26000003_core (
 
     always_ff @(posedge clock) begin
         if (reset) begin
-            reg_valid <= 1'b0;
             pc   <= 32'b0;
             prev_pc<=0;
             opcode <= 0 ;
