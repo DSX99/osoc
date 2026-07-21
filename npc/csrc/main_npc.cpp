@@ -470,7 +470,7 @@ void execute(uint64_t n){
       }
     }
     if((top->__PVT__io_master_araddr == 0x200bff8) || (top->__PVT__io_master_araddr == 0x200bffc) || (top->__PVT__io_master_araddr == 0x10000005)){
-      device_access++;
+      device_access+=2;
       printf("device call ++ value:%d\n", device_access);
     }
   }
