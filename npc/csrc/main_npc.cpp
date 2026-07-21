@@ -416,7 +416,22 @@ void execute(uint64_t n){
           }
         }
 
+        printf("1\n");
+        for(int i = 0; i < 16; i++){
+          printf("regs %d:%x, npc:%x\n",i, cpu.gpr[i], top->reg_mod->regs[i]);
+        }for(int i = 0; i < 16; i++){
+          printf("regs %d:%x\n",i+16, cpu.gpr[i+16]);
+        }
+
         difftest_regcpy(&ref_cpu, 0);
+
+        
+        printf("2\n");
+        for(int i = 0; i < 16; i++){
+          printf("regs %d:%x, npc:%x\n",i, cpu.gpr[i], top->reg_mod->regs[i]);
+        }for(int i = 0; i < 16; i++){
+          printf("regs %d:%x\n",i+16, cpu.gpr[i+16]);
+        }
 
         if (ref_cpu.pc != top->pc) {
           printf("Difference with REF pc, should:0x%08x, actually:0x%08x\n", ref_cpu.pc, top->pc);
@@ -438,12 +453,6 @@ void execute(uint64_t n){
           point = (point+1)%ITRACE_VAL;
           #endif
           return; 
-        }
-        
-        for(int i = 0; i < 16; i++){
-          printf("regs %d:%x, npc:%x\n",i, cpu.gpr[i], top->reg_mod->regs[i]);
-        }for(int i = 0; i < 16; i++){
-          printf("regs %d:%x\n",i+16, cpu.gpr[i+16]);
         }
         
         for(int i = 0; i < 16; i++){
