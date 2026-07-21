@@ -397,7 +397,7 @@ void execute(uint64_t n){
         printf("CHECK\n");
 
         if(device_access){
-          top->eval();
+          soc->eval();
           for(int i = 0; i < 16; i++){
             cpu.gpr[i] = top->reg_mod->regs[i];
             printf("regs %d:%x, npc:%x\n",i, cpu.gpr[i], top->reg_mod->regs[i]);
