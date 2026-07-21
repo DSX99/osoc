@@ -394,7 +394,7 @@ void execute(uint64_t n){
     n--;
     
     if(!batch && do_diff && top->reg_valid) {
-        printf("CHECK\n");
+        // printf("CHECK\n");
 
         if(device_access){
           soc->eval();
