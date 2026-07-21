@@ -409,6 +409,11 @@ void execute(uint64_t n){
           difftest_regcpy(&cpu, 1);
           device_access--;
           printf("device call -- value:%d\n", device_access);
+          for(int i = 0; i < 16; i++){
+            printf("regs %d:%x, npc:%x\n",i, cpu.gpr[i], top->reg_mod->regs[i]);
+          }for(int i = 0; i < 16; i++){
+            printf("regs %d:%x\n",i+16, cpu.gpr[i+16]);
+          }
         }
 
         difftest_regcpy(&ref_cpu, 0);
