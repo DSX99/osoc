@@ -15,6 +15,8 @@ uint64_t __start_time;
 //   uptime->us = ((uint64_t)high<<32) + (uint64_t)low - __start_time;
 // }
 
+#define CLINT_ADDR      (0x02000000)
+#define TIME_REG        (0xBFF8)
 
 //CLINT
 void __am_timer_init() {
