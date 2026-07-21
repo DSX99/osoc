@@ -399,16 +399,16 @@ void execute(uint64_t n){
         if(device_access){
           for(int i = 0; i < 16; i++){
             cpu.gpr[i] = top->reg_mod->regs[i];
-            // printf("regs %d:%x\n",i, cpu.gpr[i]);
+            printf("regs %d:%x\n",i, cpu.gpr[i]);
           }for(int i = 0; i < 16; i++){
             cpu.gpr[i+16] = 0;
-            // printf("regs %d:%x\n",i+16, cpu.gpr[i+16]);
+            printf("regs %d:%x\n",i+16, cpu.gpr[i+16]);
           }
           cpu.pc = top->pc;
-          // printf("pc:%x\n", cpu.pc);
+          printf("pc:%x\n", cpu.pc);
           difftest_regcpy(&cpu, 1);
           device_access--;
-          // printf("device call opcode:%x, value:%d\n", top->opcode, device_access);
+          printf("device call opcode:%x, value:%d\n", top->opcode, device_access);
         }
 
         difftest_regcpy(&ref_cpu, 0);
