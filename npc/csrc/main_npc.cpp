@@ -406,7 +406,7 @@ void execute(uint64_t n){
             printf("regs %d:%x\n",i+16, cpu.gpr[i+16]);
           }
           cpu.pc = top->pc;
-          printf("pc:%x\n", cpu.pc);
+          printf("spike pc:%x, npc pc:%x\n", cpu.pc, top->pc);
           difftest_regcpy(&cpu, 1);
           device_access--;
           printf("device call -- value:%d\n", device_access);
