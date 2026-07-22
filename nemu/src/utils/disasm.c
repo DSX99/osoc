@@ -33,7 +33,9 @@ static csh handle;
 
 void init_disasm() {
   void *dl_handle;
-  dl_handle = dlopen("tools/capstone/repo/libcapstone." CS_LIB_SUFFIX, RTLD_LAZY);
+  char path[512];
+  snprintf(path, sizeof(path), "%s/tools/capstone/repo/libcapstone." CS_LIB_SUFFIX, getenv("NEMU_HOME"));
+  dl_handle = dlopen(path, RTLD_LAZY);
   assert(dl_handle);
 
   cs_err (*cs_open_dl)(cs_arch arch, cs_mode mode, csh *handle) = NULL;
