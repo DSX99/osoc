@@ -37,6 +37,7 @@ SECTIONS {
     _text_start = .;
     *(.text*)
     *(.rodata*)
+    *(.srodata*)
     _text_end = .;
   } >sdram AT> flash : text
 

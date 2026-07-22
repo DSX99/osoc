@@ -16,7 +16,7 @@ OSOC_SRC = vsrc/osoc_26000003_core.sv vsrc/osoc_26000003.sv vsrc/CLINT.sv $(VERI
 NPC_SRC = vsrc/osoc_26000003_func.sv vsrc/osoc_26000003_core.sv vsrc/CLINT.sv $(VERILOG_SRC)
 STA_SRC = vsrc/osoc_26000003_core.sv $(filter-out vsrc/axi%, $(VERILOG_SRC))
 CPP_SRC = $(shell find csrc/ -name "*.cpp" -not -name "main.cpp" -not -name "main_npc.cpp" -not -name "main_nvb.cpp")
-OSOC_CPP_SRC = csrc/main.cpp $(CPP_SRC)
+OSOC_CPP_SRC = csrc/main_nvb.cpp $(CPP_SRC)
 NPC_CPP_SRC = csrc/main_npc.cpp $(CPP_SRC)
 
 
@@ -26,11 +26,8 @@ ARGS ?=
 VERILATOR_CFLAGS += -I$(NEMU_HOME)/tools/capstone/repo/include -I$(NEMU_HOME)/include -g -I$(NEMU_HOME)/tools/spike-diff/repo -I$(NEMU_HOME)/tools/spike-diff/repo/build
 VERILATOR_CFLAGS += -DCONFIG_ISA_riscv32
 
-DISASM_OBJ = $(abspath obj_dir/disasm.o)
+LDFLAGS += -lreadline -L$(NEMU_HOME)/tools/capstone/repo -lcapstone $(NEMU_HOME)/tools/spike-diff/build/riscv32-spike-so
 
-LDFLAGS += -lreadline -L$(NEMU_HOME)/tools/capstone/repo -lcapstone $(DISASM_OBJ) $(NEMU_HOME)/tools/spike-diff/build/riscv32-spike-so
-
-OSOC_CPP_SRC = csrc/main_nvb.cpp $(CPP_SRC)
 include $(NVBOARD_HOME)/scripts/nvboard.mk
 
 
@@ -56,24 +53,20 @@ lint:
 build: sim 
 	mkdir -p obj_dir
 	gcc -c $(VERILATOR_CFLAGS) -O2 $(NEMU_HOME)/src/utils/disasm.c -o obj_dir/disasm.o
-	$(VERILATOR) $(OSOC_SRC) -LDFLAGS "$(NVBOARD_ARCHIVE)" $(VERILOG_FLAGS) --top-module ysyxSoCFull  $(OSOC_CPP_SRC) $(addprefix -CFLAGS , $(INCFLAGS)) -CFLAGS "-DSOC" -DSOC=1
+	$(VERILATOR) $(OSOC_SRC) -LDFLAGS "$(NVBOARD_ARCHIVE) $(abspath obj_dir/disasm.o)" $(VERILOG_FLAGS) --top-module ysyxSoCFull  $(OSOC_CPP_SRC) $(addprefix -CFLAGS , $(INCFLAGS)) -CFLAGS "-DSOC" -DSOC=1 --Mdir obj_dir
 	$(MAKE) -j -C obj_dir -f VysyxSoCFull.mk 
 
 run: build
 	LD_LIBRARY_PATH=$(NEMU_HOME)/tools/capstone/repo:$(NEMU_HOME)/build obj_dir/VysyxSoCFull $(ARGS) $(IMG)
 
 npc_build: sim 
-	@mkdir -p obj_dir
-	@gcc -c $(VERILATOR_CFLAGS) -O2 $(NEMU_HOME)/src/utils/disasm.c -o obj_dir/disasm.o
-	@$(VERILATOR) $(NPC_SRC) $(VERILOG_FLAGS) --top-module osoc_26000003_func  $(NPC_CPP_SRC) $(addprefix -CFLAGS , $(INCFLAGS)) -CFLAGS "-DNPC" -DNPC=1
-	@$(MAKE) -j -C obj_dir -f Vosoc_26000003_func.mk 
+	@mkdir -p obj_dir_npc
+	@gcc -c $(VERILATOR_CFLAGS) -O2 $(NEMU_HOME)/src/utils/disasm.c -o obj_dir_npc/disasm.o
+	@$(VERILATOR) $(NPC_SRC) -LDFLAGS "$(abspath obj_dir_npc/disasm.o)" $(VERILOG_FLAGS) --top-module osoc_26000003_func  $(NPC_CPP_SRC) $(addprefix -CFLAGS , $(INCFLAGS)) -CFLAGS "-DNPC" -DNPC=1 --Mdir obj_dir_npc
+	@$(MAKE) -j -C obj_dir_npc -f Vosoc_26000003_func.mk 
 
 npc_run: npc_build
-	@LD_LIBRARY_PATH=$(NEMU_HOME)/tools/capstone/repo:$(NEMU_HOME)/build obj_dir/Vosoc_26000003_func $(ARGS) $(IMG)
-
-gdb: build
-	@--gdb -CFLAGS "-g"
-	@gdb --args obj_dir/Vtop $(ARGS) $(IMG)
+	@LD_LIBRARY_PATH=$(NEMU_HOME)/tools/capstone/repo:$(NEMU_HOME)/build obj_dir_npc/Vosoc_26000003_func $(ARGS) $(IMG)
 
 sta:
 	make -C /home/dsx99/osoc/ysyx-workbench/yosys-sta sta\
@@ -83,5 +76,6 @@ sta:
 
 clean:
 	rm -rf obj_dir
+	rm -rf obj_dir_npc
 
 .PHONY: sim build run lint clean disasm sta npc_run npc_build
