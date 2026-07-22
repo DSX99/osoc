@@ -134,6 +134,7 @@ extern "C" void sdram_write(uint32_t addr, uint32_t data, uint32_t mask) {
     #define DEVICE_BASE 0xa0000000
 
     #define SERIAL_PORT     (DEVICE_BASE + 0x00003f8)
+    #define UART_PORT       (0x10000005)
     #define KBD_ADDR        (DEVICE_BASE + 0x0000060)
     #define RTC_ADDR        (DEVICE_BASE + 0x0000048)
     #define VGACTL_ADDR     (DEVICE_BASE + 0x0000100)
