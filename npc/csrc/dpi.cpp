@@ -21,6 +21,7 @@ static const uint32_t img [] = {
 0x00100073          // ebreak
 };
 
+extern "C" void memwrite(uint32_t addr, uint32_t data, uint32_t type);
 
 #ifdef SOC
 uint8_t flash[FLASH_SIZE];
