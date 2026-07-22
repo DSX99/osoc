@@ -21,8 +21,15 @@ static const uint32_t img [] = {
 0x00100073          // ebreak
 };
 
-extern "C" void memwrite(uint32_t addr, uint32_t data, uint32_t type);
-
+extern "C" {
+    void memwrite(uint32_t addr, uint32_t data, uint32_t type);
+    void mrom_read(uint32_t addr, uint32_t *data);
+    void flash_read(uint32_t addr, uint32_t *data);
+    void psram_write(uint32_t addr, uint32_t data, uint32_t half);
+    void psram_read(uint32_t addr, uint32_t *data);
+    void sdram_write(uint32_t addr, uint32_t data, uint32_t mask);
+    void sdram_read(uint32_t addr, uint32_t *data);   
+}
 #ifdef SOC
 uint8_t flash[FLASH_SIZE];
 uint8_t psram[PSRAM_SIZE];
