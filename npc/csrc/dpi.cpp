@@ -184,7 +184,7 @@ extern "C" void sdram_write(uint32_t addr, uint32_t data, uint32_t mask) {
             fflush(stdout);
         }else{
             printf("Illegal memory write access at addr:0x%08x at pc: 0x%08x\n",addr, top->pc);
-            // assert(0);
+            assert(0);
         }
     }
 

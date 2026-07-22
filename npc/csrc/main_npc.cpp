@@ -179,7 +179,6 @@ void execute(uint64_t n){
   char str[128];
   uint8_t inst[4];
   CPU_state ref_cpu;
-  int device_access = 0;
 
   if(fail && do_diff){ 
     printf("failed\n");
@@ -394,23 +393,7 @@ void execute(uint64_t n){
     n--;
     
     if(!batch && do_diff && top->reg_valid) {
-        // printf("CHECK\n");
-
-        if(device_access){
-          soc->eval();
-          for(int i = 0; i < 16; i++){
-            cpu.gpr[i] = top->reg_mod->regs[i];
-            // printf("regs %d:%x, npc:%x\n",i, cpu.gpr[i], top->reg_mod->regs[i]);
-          }for(int i = 0; i < 16; i++){
-            cpu.gpr[i+16] = 0;
-            // printf("regs %d:%x\n",i+16, cpu.gpr[i+16]);
-          }
-          cpu.pc = top->pc;
-          // printf("spike pc:%x, npc pc:%x\n", cpu.pc, top->pc);
-          difftest_regcpy(&cpu, 1);
-          device_access--;
-          // printf("device call -- value:%d\n", device_access);
-        }
+        printf("CHECK\n");
 
         difftest_regcpy(&ref_cpu, 0);
 
@@ -435,11 +418,11 @@ void execute(uint64_t n){
           #endif
           return; 
         }
-        
+
         for(int i = 0; i < 16; i++){
           if(ref_cpu.gpr[i] != top->reg_mod->regs[i]){
-            printf("Difference with REF %s(%d), should:0x%08x, actually:0x%08x, pc: 0x%08x\n", 
-                   regs[i], i, ref_cpu.gpr[i], top->reg_mod->regs[i], top->pc);
+            printf("Difference with REF %s, should:0x%08x, actually:0x%08x, pc: 0x%08x\n", 
+                   regs[i], ref_cpu.gpr[i], top->reg_mod->regs[i], top->pc);
             ret = 1;
             inst[0] = (top->opcode) & 0xff;
             inst[1] = (top->opcode >> 8) & 0xff;
@@ -459,10 +442,6 @@ void execute(uint64_t n){
             return;
           }
       }
-    }
-    if((top->__PVT__io_master_araddr == 0x200bff8) || (top->__PVT__io_master_araddr == 0x200bffc) || (top->__PVT__io_master_araddr == 0x10000005)){
-      device_access+=2;
-      // printf("device call ++ value:%d\n", device_access);
     }
   }
 }

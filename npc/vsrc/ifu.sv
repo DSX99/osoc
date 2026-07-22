@@ -50,7 +50,7 @@ module ifu (
     parameter SIZE_OF_OFFSET = 12;
     // here i use 2 rows
 
-    localparam int OFF = 2;
+    localparam int OFF = 1;
     localparam int INDEX_OFF = $clog2(NUMBER_OF_BLOCKS);
 
     logic [32-INDEX_OFF-OFF-1:0] block_tag [NUMBER_OF_BLOCKS][2];
@@ -126,7 +126,6 @@ module ifu (
                 block_tag[pc_to_write[INDEX_OFF+OFF-1:OFF]][!latest_row]<=pc_to_write[31:INDEX_OFF+OFF];
                 block_offset[pc_to_write[INDEX_OFF+OFF-1:OFF]][!latest_row]<=offset_to_write;
                 block_valid[pc_to_write[INDEX_OFF+OFF-1:OFF]][!latest_row]<=1;
-                latest_row<=!latest_row;
             end
         end
     end
