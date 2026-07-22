@@ -433,6 +433,10 @@ void execute(uint64_t n){
           strcpy(itrace[point],str);
           point = (point+1)%ITRACE_VAL;
           #endif
+          #ifdef CONFIG_FST 
+          tracep->dump(contextp->time());
+          #endif
+          contextp->timeInc(1);
           return; 
         }
         
@@ -456,6 +460,11 @@ void execute(uint64_t n){
             strcpy(itrace[point],str);
             point = (point+1)%ITRACE_VAL;
             #endif
+            
+            #ifdef CONFIG_FST 
+            tracep->dump(contextp->time());
+            #endif
+            contextp->timeInc(1);
             return;
           }
       }
