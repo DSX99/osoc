@@ -22,14 +22,24 @@ module pc(
 );
 
     initial begin
-        pc = 32'h80000000;
+        `ifdef SOC
+            pc = 32'h0000000;
+        `endif
+        `ifdef NPC
+            pc = 32'h80000000;
+        `endif
     end
 
     assign next_pc = pc + (do_spec ? {{19{addr_spec[11]}}, addr_spec, 1'b0} : 4);
 
     always_ff @(posedge clk) begin
         if(rst) begin
-            pc <= 32'h80000000;
+        `ifdef SOC
+            pc = 32'h0000000;
+        `endif
+        `ifdef NPC
+            pc = 32'h80000000;
+        `endif
         end else begin
             if(wb_valid && csr_branch) begin
                 pc <= csr_branch_addr;
