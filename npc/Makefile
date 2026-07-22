@@ -30,11 +30,9 @@ DISASM_OBJ = $(abspath obj_dir/disasm.o)
 
 LDFLAGS += -lreadline -L$(NEMU_HOME)/tools/capstone/repo -lcapstone $(DISASM_OBJ) $(NEMU_HOME)/tools/spike-diff/build/riscv32-spike-so
 
-NVBOARD_ARCHIVE = 
-ifdef NVB
 OSOC_CPP_SRC = csrc/main_nvb.cpp $(CPP_SRC)
 include $(NVBOARD_HOME)/scripts/nvboard.mk
-endif
+
 
 VERILOG_FLAGS := -cc --exe -Wno-EOFNEWLINE --trace-fst -LDFLAGS "$(LDFLAGS)" -CFLAGS "$(VERILATOR_CFLAGS)" --trace-structs --timescale "1ns/1ns" --no-timing $(INCLUDES) --autoflush
 ifndef NS
@@ -58,7 +56,7 @@ lint:
 build: sim 
 	mkdir -p obj_dir
 	gcc -c $(VERILATOR_CFLAGS) -O2 $(NEMU_HOME)/src/utils/disasm.c -o obj_dir/disasm.o
-	$(VERILATOR) $(OSOC_SRC) -LDFLAGS "$(NVBOARD_ARCHIVE)" $(VERILOG_FLAGS) --top-module ysyxSoCFull  $(OSOC_CPP_SRC) $(addprefix -CFLAGS , $(INCFLAGS))
+	$(VERILATOR) $(OSOC_SRC) -LDFLAGS "$(NVBOARD_ARCHIVE)" $(VERILOG_FLAGS) --top-module ysyxSoCFull  $(OSOC_CPP_SRC) $(addprefix -CFLAGS , $(INCFLAGS)) -CFLAGS "-DSOC"
 	$(MAKE) -j -C obj_dir -f VysyxSoCFull.mk 
 
 run: build
@@ -67,7 +65,7 @@ run: build
 npc_build: sim 
 	@mkdir -p obj_dir
 	@gcc -c $(VERILATOR_CFLAGS) -O2 $(NEMU_HOME)/src/utils/disasm.c -o obj_dir/disasm.o
-	@$(VERILATOR) $(NPC_SRC) $(VERILOG_FLAGS) --top-module osoc_26000003_func  $(NPC_CPP_SRC) $(addprefix -CFLAGS , $(INCFLAGS))
+	@$(VERILATOR) $(NPC_SRC) $(VERILOG_FLAGS) --top-module osoc_26000003_func  $(NPC_CPP_SRC) $(addprefix -CFLAGS , $(INCFLAGS)) -CFLAGS "-DNPC"
 	@$(MAKE) -j -C obj_dir -f Vosoc_26000003_func.mk 
 
 npc_run: npc_build
