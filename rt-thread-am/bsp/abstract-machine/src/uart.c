@@ -37,12 +37,12 @@ static int _uart_putc(struct rt_serial_device *serial, char c) {
 }
 
 static int _uart_getc(struct rt_serial_device *serial) {
-//  if(*(uint8_t *)(0x10000005L) & 1){
-//    return *(uint8_t *)(0x10000000L);
-//  }else{
-//    return -1;
-//  }
-   return 0;
+ if(*(uint8_t *)(0x10000005L) & 1){
+   return *(uint8_t *)(0x10000000L);
+ }else{
+   return -1;
+ }
+  //  return 0;
 }
 
 const struct rt_uart_ops _uart_ops = {
