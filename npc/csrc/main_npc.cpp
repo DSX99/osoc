@@ -177,6 +177,7 @@ const char *regs[] = {
 void execute(uint64_t n){
 
   char str[128];
+  char str2[128];
   uint8_t inst[4];
   CPU_state ref_cpu;
   int device_access = 0;
@@ -234,11 +235,11 @@ void execute(uint64_t n){
         return;
       }
       if(n<10){
-        printf("0x%08x: %02x %02x %02x %02x ", top->prev_pc, inst[3], inst[2], inst[1], inst[0]);
-        printf("%s\n", str);
+        sprintf(str2,"0x%08x: %02x %02x %02x %02x %s", top->prev_pc, inst[3], inst[2], inst[1], inst[0], str);
+        printf("%s\n",str2);
       }
       #ifdef ITRACE
-      strcpy(itrace[point],str);
+      strcpy(itrace[point],str2);
       point = (point+1)%ITRACE_VAL;
       #endif
     }
@@ -358,10 +359,11 @@ void execute(uint64_t n){
         }else{
           printf("zero opcode\n");
         }
-        #ifdef ITRACE
-        strcpy(itrace[point],str);
-        point = (point+1)%ITRACE_VAL;
-        #endif
+      #ifdef ITRACE
+      sprintf(str2,"0x%08x: %02x %02x %02x %02x %s", top->prev_pc, inst[3], inst[2], inst[1], inst[0], str);
+      strcpy(itrace[point],str2);
+      point = (point+1)%ITRACE_VAL;
+      #endif
       }
       finished = 1;
       ret = top->reg_mod->regs[10];
@@ -386,7 +388,8 @@ void execute(uint64_t n){
         printf("zero opcode\n");
       }
       #ifdef ITRACE
-      strcpy(itrace[point],str);
+      sprintf(str2,"0x%08x: %02x %02x %02x %02x %s", top->prev_pc, inst[3], inst[2], inst[1], inst[0], str);
+      strcpy(itrace[point],str2);
       point = (point+1)%ITRACE_VAL;
       #endif
       break;
@@ -430,7 +433,8 @@ void execute(uint64_t n){
             printf("zero opcode\n");
           }
           #ifdef ITRACE
-          strcpy(itrace[point],str);
+          sprintf(str2,"0x%08x: %02x %02x %02x %02x %s", top->prev_pc, inst[3], inst[2], inst[1], inst[0], str);
+          strcpy(itrace[point],str2);
           point = (point+1)%ITRACE_VAL;
           #endif
           #ifdef CONFIG_FST 
@@ -457,7 +461,8 @@ void execute(uint64_t n){
               printf("zero opcode\n");
             }
             #ifdef ITRACE
-            strcpy(itrace[point],str);
+            sprintf(str2,"0x%08x: %02x %02x %02x %02x %s", top->prev_pc, inst[3], inst[2], inst[1], inst[0], str);
+            strcpy(itrace[point],str2);
             point = (point+1)%ITRACE_VAL;
             #endif
             
