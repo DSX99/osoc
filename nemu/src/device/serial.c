@@ -39,12 +39,17 @@ static void serial_io_handler(uint32_t offset, int len, bool is_write) {
   }
 }
 
+static void pseudoserial_io_handler(uint32_t offset, int len, bool is_write){
+  return;
+}
+
 void init_serial() {
   serial_base = new_space(8);
 #ifdef CONFIG_HAS_PORT_IO
   add_pio_map ("serial", CONFIG_SERIAL_PORT, serial_base, 8, serial_io_handler);
 #else
   add_mmio_map("serial", CONFIG_SERIAL_MMIO, serial_base, 8, serial_io_handler);
+  add_mmio_map("pseudoserial", 0x10000005, serial_base, 8, pseudoserial_io_handler);
 #endif
 
 }
