@@ -102,6 +102,8 @@ __EXPORT void difftest_init(int port) {
   difftest_htif_args.push_back("");
   const char *isa = "RV" MUXDEF(CONFIG_RV64, "64", "32") MUXDEF(CONFIG_RVE, "E", "I") "MAFDC";
 
+  reg_t clint_base = 0x02000000;
+  reg_t clint_size = 0x00010000; // 8KB
   reg_t sram_base = 0x0f000000;
   reg_t sram_size = 0x00002000; // 8KB
   reg_t flash_base = 0x30000000;
@@ -114,12 +116,14 @@ __EXPORT void difftest_init(int port) {
   reg_t sdram_size = 0x20000000; // 128MB (actually more but idk)
   
   std::vector<mem_cfg_t> SoC_layout;
+  SoC_layout.push_back(mem_cfg_t(clint_base, clint_size));
   SoC_layout.push_back(mem_cfg_t(sram_base, sram_size));
   SoC_layout.push_back(mem_cfg_t(flash_base, flash_size));
   SoC_layout.push_back(mem_cfg_t(uart_base, uart_size));
   SoC_layout.push_back(mem_cfg_t(psram_base, psram_size));
   SoC_layout.push_back(mem_cfg_t(sdram_base, sdram_size));
 
+  difftest_mem.push_back(std::make_pair(clint_base, new mem_t(clint_size)));
   difftest_mem.push_back(std::make_pair(sram_base, new mem_t(sram_size)));
   difftest_mem.push_back(std::make_pair(flash_base, new mem_t(flash_size)));
   difftest_mem.push_back(std::make_pair(uart_base, new mem_t(uart_size)));

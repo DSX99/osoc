@@ -15,17 +15,19 @@ uint64_t __start_time;
 //   uptime->us = ((uint64_t)high<<32) + (uint64_t)low - __start_time;
 // }
 
+#define CLINT_ADDR      (0x02000000)
+#define TIME_REG        (0xBFF8)
 
 //CLINT
 void __am_timer_init() {
-  uint32_t high = *((volatile uint32_t *)(CLINT_ADDR+4));
-  uint32_t low = *((volatile uint32_t *)CLINT_ADDR);
+  uint32_t low = *((volatile uint32_t *)(CLINT_ADDR+TIME_REG));
+  uint32_t high = *((volatile uint32_t *)(CLINT_ADDR+TIME_REG+4));
   __start_time = ((uint64_t)high<<32) + (uint64_t)low;
 }
 
 void __am_timer_uptime(AM_TIMER_UPTIME_T *uptime) {
-  uint32_t high = *((volatile uint32_t *)(CLINT_ADDR+4));
-  uint32_t low = *((volatile uint32_t *)CLINT_ADDR);
+  uint32_t low = *((volatile uint32_t *)(CLINT_ADDR+TIME_REG));
+  uint32_t high = *((volatile uint32_t *)(CLINT_ADDR+TIME_REG+4));
   uptime->us = ((uint64_t)high<<32) + (uint64_t)low - __start_time;
 }
 
