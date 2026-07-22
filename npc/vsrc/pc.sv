@@ -23,7 +23,7 @@ module pc(
 
     initial begin
         `ifdef SOC
-            pc = 32'h0000000;
+            pc = 32'h30000000;
         `endif
         `ifdef NPC
             pc = 32'h80000000;
@@ -35,7 +35,7 @@ module pc(
     always_ff @(posedge clk) begin
         if(rst) begin
         `ifdef SOC
-            pc = 32'h0000000;
+            pc = 32'h30000000;
         `endif
         `ifdef NPC
             pc = 32'h80000000;
