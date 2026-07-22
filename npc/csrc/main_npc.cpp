@@ -235,10 +235,11 @@ void execute(uint64_t n){
         return;
       }
       if(n<10){
-        sprintf(str2,"0x%08x: %02x %02x %02x %02x %s", top->prev_pc, inst[3], inst[2], inst[1], inst[0], str);
-        printf("%s\n",str2);
+        printf("0x%08x: %02x %02x %02x %02x ", top->prev_pc, inst[3], inst[2], inst[1], inst[0]);
+        printf("%s\n", str);
       }
       #ifdef ITRACE
+      sprintf(str2,"0x%08x: %02x %02x %02x %02x %s", top->prev_pc, inst[3], inst[2], inst[1], inst[0], str);
       strcpy(itrace[point],str2);
       point = (point+1)%ITRACE_VAL;
       #endif
