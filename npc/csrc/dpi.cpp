@@ -191,8 +191,6 @@ extern "C" void sdram_write(uint32_t addr, uint32_t data, uint32_t mask) {
         }else if(addr == SERIAL_PORT){
             putchar((uint8_t)data);
             fflush(stdout);
-        }else if(addr == UART_PORT){
-            return 0;
         }else{
             printf("Illegal memory write access at addr:0x%08x at pc: 0x%08x\n",addr, top->pc);
             // assert(0);
@@ -207,7 +205,9 @@ extern "C" void sdram_write(uint32_t addr, uint32_t data, uint32_t mask) {
             (mem[working_addr+2]<<16)|
             (mem[working_addr+1]<<8)|
             (mem[working_addr]));
-        }{
+        }else if(addr == UART_PORT){
+            return 0;
+        }else{
             printf("Illegal memory read access at addr:0x%08x at pc: 0x%08x\n",addr, top->pc);
             fail=1;
         }
