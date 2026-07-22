@@ -239,7 +239,7 @@ void execute(uint64_t n){
         printf("%s\n", str);
       }
       #ifdef ITRACE
-      sprintf(str2,"0x%08x: %02x %02x %02x %02x %s", top->prev_pc, inst[3], inst[2], inst[1], inst[0], str);
+      snprintf(str2,128,"0x%08x: %02x %02x %02x %02x %s", top->prev_pc, inst[3], inst[2], inst[1], inst[0], str);
       strcpy(itrace[point],str2);
       point = (point+1)%ITRACE_VAL;
       #endif
@@ -361,7 +361,7 @@ void execute(uint64_t n){
           printf("zero opcode\n");
         }
       #ifdef ITRACE
-      sprintf(str2,"0x%08x: %02x %02x %02x %02x %s", top->prev_pc, inst[3], inst[2], inst[1], inst[0], str);
+      snprintf(str2,128,"0x%08x: %02x %02x %02x %02x %s", top->prev_pc, inst[3], inst[2], inst[1], inst[0], str);
       strcpy(itrace[point],str2);
       point = (point+1)%ITRACE_VAL;
       #endif
@@ -389,7 +389,7 @@ void execute(uint64_t n){
         printf("zero opcode\n");
       }
       #ifdef ITRACE
-      sprintf(str2,"0x%08x: %02x %02x %02x %02x %s", top->prev_pc, inst[3], inst[2], inst[1], inst[0], str);
+      snprintf(str2,128,"0x%08x: %02x %02x %02x %02x %s", top->prev_pc, inst[3], inst[2], inst[1], inst[0], str);
       strcpy(itrace[point],str2);
       point = (point+1)%ITRACE_VAL;
       #endif
@@ -434,7 +434,7 @@ void execute(uint64_t n){
             printf("zero opcode\n");
           }
           #ifdef ITRACE
-          sprintf(str2,"0x%08x: %02x %02x %02x %02x %s", top->prev_pc, inst[3], inst[2], inst[1], inst[0], str);
+          snprintf(str2,128,"0x%08x: %02x %02x %02x %02x %s", top->prev_pc, inst[3], inst[2], inst[1], inst[0], str);
           strcpy(itrace[point],str2);
           point = (point+1)%ITRACE_VAL;
           #endif
@@ -462,7 +462,7 @@ void execute(uint64_t n){
               printf("zero opcode\n");
             }
             #ifdef ITRACE
-            sprintf(str2,"0x%08x: %02x %02x %02x %02x %s", top->prev_pc, inst[3], inst[2], inst[1], inst[0], str);
+            snprintf(str2,128,"0x%08x: %02x %02x %02x %02x %s", top->prev_pc, inst[3], inst[2], inst[1], inst[0], str);
             strcpy(itrace[point],str2);
             point = (point+1)%ITRACE_VAL;
             #endif
