@@ -154,7 +154,6 @@ class alignas(VL_CACHE_LINE_BYTES) Vosoc_26000003_func_osoc_26000003_core final 
         CData/*0:0*/ __PVT__decode_mod__DOT__wb_match_rs1;
         CData/*0:0*/ __PVT__decode_mod__DOT__wb_match_rs2;
         CData/*0:0*/ decode_mod__DOT____VdfgExtracted_h4e467bd8__0;
-        CData/*0:0*/ __PVT__de_ex_pipeline_mod__DOT__flush;
         CData/*7:0*/ __PVT__de_ex_pipeline_mod__DOT__de_ex_bus_alu_op;
         CData/*0:0*/ __PVT__de_ex_pipeline_mod__DOT__de_ex_bus_lsu_we;
         CData/*0:0*/ __PVT__de_ex_pipeline_mod__DOT__de_ex_bus_lsu_re;
@@ -215,9 +214,9 @@ class alignas(VL_CACHE_LINE_BYTES) Vosoc_26000003_func_osoc_26000003_core final 
         IData/*31:0*/ __PVT__io_slave_rdata;
         IData/*31:0*/ pc;
         IData/*31:0*/ prev_pc;
+        IData/*31:0*/ opcode;
     };
     struct {
-        IData/*31:0*/ opcode;
         IData/*31:0*/ pc_e;
         IData/*31:0*/ __PVT__if_de_bus_next_pc_if;
         IData/*31:0*/ __PVT__cache_opcode;
