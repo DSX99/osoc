@@ -1,4 +1,4 @@
-//Generate the verilog at 2026-07-23T13:34:19 by iSTA.
+//Generate the verilog at 2026-07-23T13:31:15 by iSTA.
 module ysyx_26060184_core (
 clock,
 reset,

@@ -562,6 +562,20 @@ module ysyx_26060184_decode (
     assign reg_match = (((ex_match_rs1 | ex_match_rs2) && ((!ex_valid) | ex_lsu_re) ) | ((ls_match_rs1 | ls_match_rs2) && !ls_valid) | ((wb_match_rs1 | wb_match_rs2) && !wb_valid)) | (|ex_csr | |ls_csr | |wb_csr);
 
     always @(*) begin
+
+        bus_out_rs1 = '0;
+        bus_out_rs2 = '0;
+        case(inst[6:0])
+            7'b1100111: begin bus_out_rs1 = rs1_val; bus_out_rs2 = rs1_val; end // JALR
+            7'b1100011: begin bus_out_rs1 = rs1_val; bus_out_rs2 = rs2_val; end // BRANCH
+            7'b0000011:       bus_out_rs1 = rs1_val;                            // LOAD
+            7'b0100011: begin bus_out_rs1 = rs1_val; bus_out_rs2 = rs2_val; end // STORE
+            7'b0010011:       bus_out_rs1 = rs1_val;                            // OP-IMM
+            7'b0110011: begin bus_out_rs1 = rs1_val; bus_out_rs2 = rs2_val; end // OP
+            7'b1110011:       bus_out_rs1 = rs1_val;                            // SYSTEM
+            default: ;
+        endcase
+
         valid_right = valid_left & !reg_match;
         ready_left  = ready_right & !reg_match;
 
@@ -709,21 +723,6 @@ module ysyx_26060184_decode (
             bus_out_exception = bus_in_exception;
             bus_out_mcause = bus_in_mcause;             
         end
-    end
-
-    always @(*) begin
-        bus_out_rs1 = '0;
-        bus_out_rs2 = '0;
-        case(inst[6:0])
-            7'b1100111: begin bus_out_rs1 = rs1_val; bus_out_rs2 = rs1_val; end // JALR
-            7'b1100011: begin bus_out_rs1 = rs1_val; bus_out_rs2 = rs2_val; end // BRANCH
-            7'b0000011:       bus_out_rs1 = rs1_val;                            // LOAD
-            7'b0100011: begin bus_out_rs1 = rs1_val; bus_out_rs2 = rs2_val; end // STORE
-            7'b0010011:       bus_out_rs1 = rs1_val;                            // OP-IMM
-            7'b0110011: begin bus_out_rs1 = rs1_val; bus_out_rs2 = rs2_val; end // OP
-            7'b1110011:       bus_out_rs1 = rs1_val;                            // SYSTEM
-            default: ;
-        endcase
     end
 
 
