@@ -52,7 +52,6 @@ VM_USER_CLASSES = \
   dpi \
   expr \
   main_npc \
-  main_npc_copy \
   sdb \
   watchpoint \
 
@@ -75,8 +74,6 @@ dpi.o: csrc/dpi.cpp
 expr.o: csrc/expr.cpp 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 main_npc.o: csrc/main_npc.cpp 
-	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
-main_npc_copy.o: csrc/main_npc_copy.cpp 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 sdb.o: csrc/sdb.cpp 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
