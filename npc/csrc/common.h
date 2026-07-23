@@ -1,3 +1,5 @@
+#define SOC
+
 #ifdef SOC
     #include "VysyxSoCFull.h"
     #include "VysyxSoCFull___024root.h"
