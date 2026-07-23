@@ -1,7 +1,464 @@
-module osoc_26000003_core (
+module ysyx_26060184_arbiter(
+    input logic clk, rst,
+
+    //LSU    
+    // Read Addr Channel (AR)
+    input  logic [31:0] araddr_lsu,
+    input  logic        arvalid_lsu,
+    output logic        arready_lsu,
+    // Read Data Channel (R)
+    output logic [31:0] rdata_lsu,
+    output logic [1:0]  rresp_lsu,
+    output logic        rvalid_lsu,
+    input  logic        rready_lsu,
+    // Write Address Channel (AW)
+    input logic [31:0]  awaddr_lsu,
+    input logic         awvalid_lsu,
+    output  logic       awready_lsu,
+    // Write Data Channel (W)
+    input logic [31:0]  wdata_lsu,
+    input logic [3:0]   wstrb_lsu,
+    input logic         wvalid_lsu,
+    input logic         wlast_lsu,
+    output logic        wready_lsu,
+    // Write Response Channel (B)
+    output logic [1:0]  bresp_lsu,
+    output logic        bvalid_lsu,
+    input logic         bready_lsu,
+
+
+    //IFU
+    // Read Addr Channel (AR)
+    input  logic [31:0] araddr_ifu,
+    input  logic        arvalid_ifu,
+    output logic        arready_ifu,
+
+    //burst
+    input logic [7:0] arlen_ifu,
+    input logic [2:0] arsize_ifu,
+    input logic [1:0] arburst_ifu,
+    
+    // Read Data Channel (R)
+    output logic [31:0] rdata_ifu,
+    output logic [1:0]  rresp_ifu,
+    output logic        rvalid_ifu,
+    input  logic        rready_ifu,
+    input  logic        rlast,
+
+
+    //OUT
+    // Read Address Channel (AR)
+    output logic [31:0] araddr,
+    output logic        arvalid,
+    input  logic        arready,
+
+    
+    output logic [7:0] arlen,
+    output logic [2:0] arsize,
+    output logic [1:0] arburst,
+    // Read Data Channel (R)
+    input  logic [31:0] rdata,
+    input  logic [1:0]  rresp,
+    input  logic        rvalid,
+    output logic        rready,
+    // Write Address Channel (AW)
+    output logic [31:0] awaddr,
+    output logic        awvalid,
+    input  logic        awready,
+    // Write Data Channel (W)
+    output logic [31:0] wdata,
+    output logic [3:0]  wstrb,
+    output logic        wvalid,
+    output logic        wlast,
+    input  logic        wready,
+    // Write Response Channel (B)
+    input  logic [1:0]  bresp,
+    input  logic        bvalid,
+    output logic        bready
+);
+
+logic read_select, read_select_comb; // 0-lsu 1-ifu
+logic read_busy, write_busy;
+logic read_sel;                          // channel actually granted right now
+
+assign read_select_comb = ~arvalid_lsu;
+assign read_sel         = read_busy ? read_select : read_select_comb;
+
+// Read address channel
+assign araddr      = read_sel ? araddr_ifu  : araddr_lsu;
+assign arvalid     = read_sel ? arvalid_ifu : arvalid_lsu;
+assign arlen       = read_sel ? arlen_ifu   : 8'b0;
+assign arsize      = read_sel ? arsize_ifu  : 3'b0;
+assign arburst     = read_sel ? arburst_ifu : 2'b0;
+assign arready_lsu = read_sel ? 1'b0    : arready;
+assign arready_ifu = read_sel ? arready : 1'b0;
+
+// Read data channel (only routed once a transaction is actually in flight)
+assign rready      = !read_busy ? 1'b0 : (read_sel ? rready_ifu : rready_lsu);
+
+assign rvalid_lsu  = (read_busy && !read_sel) ? rvalid : 1'b0;
+assign rdata_lsu   = (read_busy && !read_sel) ? rdata  : 32'b0;
+assign rresp_lsu   = (read_busy && !read_sel) ? rresp  : 2'b0;
+
+assign rvalid_ifu  = (read_busy &&  read_sel) ? rvalid : 1'b0;
+assign rdata_ifu   = (read_busy &&  read_sel) ? rdata  : 32'b0;
+assign rresp_ifu   = (read_busy &&  read_sel) ? rresp  : 2'b0;
+
+// Write channels: straight pass-through from the LSU (only master on write)
+assign awaddr      = awaddr_lsu;
+assign awvalid     = awvalid_lsu;
+assign awready_lsu = awready;
+
+assign wdata       = wdata_lsu;
+assign wstrb       = wstrb_lsu;
+assign wvalid      = wvalid_lsu;
+assign wlast       = wlast_lsu;
+assign wready_lsu  = wready;
+
+assign bready      = bready_lsu;
+assign bresp_lsu   = bresp;
+assign bvalid_lsu  = bvalid;
+
+always_ff @(posedge clk) begin
+    if(rst) begin
+        read_busy<=0;
+        write_busy<=0;
+        read_select<=0;
+    end else begin
+        if (!read_busy) begin
+            if (arvalid) begin
+                read_busy  <= 1'b1;
+                read_select <= read_select_comb;
+            end
+        end else begin
+            if (rvalid && rready && rlast) begin
+                read_busy <= 1'b0;
+            end
+        end
+
+        if (!write_busy) begin
+            if (awvalid) begin
+                write_busy <= 1'b1;
+            end
+        end else begin
+            if (bvalid && bready) begin
+                write_busy <= 1'b0;
+            end
+        end
+    end
+end
+
+
+endmodule
+module ysyx_26060184_icache(
+    input logic clk, rst, fencei,
+
+    input logic [31:0] ifu_addr,
+    input logic valid,
+
+    output logic [31:0] opcode,
+    output logic ready,
+
+    // Read Addr Channel (AR)
+    output logic [31:0] araddr,
+    output logic        arvalid,
+    output logic [7:0]  arlen,
+    output logic [2:0]  arsize,
+    output logic [1:0]  arburst,
+    input  logic        arready,
+
+    // Read Data Channel (R)
+    input  logic [31:0] rdata,
+    input  logic [1:0]  rresp,
+    input  logic        rvalid,
+    output logic        rready,
+
+    output logic hit, miss
+);
+
+logic unused_bits;
+assign unused_bits = |rresp | |word_align;
+
+parameter BLOCK_SIZE = 16;
+parameter NUMBER_OF_BLOCKS = 4;
+// here i use 2 rows
+
+localparam int off = $clog2(BLOCK_SIZE);
+localparam int index_off = $clog2(NUMBER_OF_BLOCKS);
+localparam int WORDS_IN_BLOCK = BLOCK_SIZE/4;
+
+logic [31:0] block_cache [NUMBER_OF_BLOCKS][WORDS_IN_BLOCK][2];
+logic latest_row;
+
+logic [31:0] miss_addr;
+logic trans;
+
+logic [32-index_off-off-1:0] tag;
+logic [index_off-1:0] index;
+logic [off-3:0] word_select;
+logic [1:0] word_align;
+
+logic [32-index_off-off-1:0] block_tag [NUMBER_OF_BLOCKS][2];
+logic block_valid[NUMBER_OF_BLOCKS][2];
+logic do_burst, burst_reg, burst_addr;
+
+assign burst_addr = ifu_addr >= 32'ha0000000 && ifu_addr < 32'hc0000000;
+assign {tag, index, word_select, word_align} = trans ? miss_addr : ifu_addr;
+assign do_burst = trans ? burst_reg : burst_addr;
+
+typedef enum {
+   WAIT_AR, WAIT_R
+} cache_state_t;
+cache_state_t state;
+logic [1:0] fill_count; 
+
+logic hit_0, hit_1;
+assign hit_0 = block_valid[index][0] && (tag == block_tag[index][0]);
+assign hit_1 = block_valid[index][1] && (tag == block_tag[index][1]);
+
+assign hit = hit_0 | hit_1;
+
+
+always_comb begin
+    arvalid = 0;
+    araddr  = 0;
+    rready  = 0;
+    ready   = 0;
+    opcode  = 0;
+    miss    = 0;
+    arburst=0;
+    arlen=0;
+    arsize=0;
+
+    if ((valid && !rst) || trans) begin
+        if (hit & !trans) begin
+            opcode = block_cache[index][word_select][hit_1]; //hit_1 is 0 if hit and hit_0 and 1 if hit_1
+            ready  = 1'b1;
+        end else begin
+            miss=1;
+            case (state)
+                WAIT_AR: begin
+                    arvalid = 1'b1;
+                    if(do_burst)begin
+                        arburst = 2'b01;
+                        arsize = 3'b010;
+                        arlen = 8'd3;
+                    end
+                    araddr  = {tag, index, fill_count, 2'b00};
+                end
+                WAIT_R: begin
+                    rready  = 1'b1;
+                end
+                default: ;
+            endcase
+        end
+    end
+end
+
+always_ff @(posedge clk) begin
+    if (rst) begin
+        fill_count<=0;
+        trans<=0;
+        latest_row<=0;
+        burst_reg<=0;
+        miss_addr<=0;
+        state <= WAIT_AR;
+        for(int i = 0; i < NUMBER_OF_BLOCKS; i = i + 1) begin
+            block_valid[i][0] <= 1'b0;
+            block_valid[i][1] <= 1'b0;
+        end
+    end else begin
+        if (hit) begin
+            latest_row<=hit_1;
+        end
+        if ((valid && !hit) || trans) begin
+            case (state)
+                WAIT_AR: begin
+                    if(arvalid && !trans) begin
+                        trans<=1;
+                        burst_reg <= burst_addr;
+                        miss_addr <= ifu_addr;
+                    end
+                    if (arready && arvalid) begin
+                        state <= WAIT_R;
+                    end
+                end
+                WAIT_R: begin
+                    if (rvalid && rready) begin
+                        if(fill_count==2'b11) begin
+                            block_cache[index][fill_count][~latest_row] <= rdata;
+                            block_tag[index][~latest_row] <= tag;
+                            block_valid[index][~latest_row] <= 1'b1;
+                            fill_count <= 0;
+                            trans<=0;
+                            state <= WAIT_AR;
+                        end else begin
+                            block_cache[index][fill_count][~latest_row] <= rdata;
+                            fill_count <= fill_count + 1;
+                            if(do_burst) state <= WAIT_R;
+                            else state <= WAIT_AR;
+                        end
+                    end
+                end
+                default: state <= WAIT_AR;
+            endcase
+        end
+        if (fencei) begin
+            for(int i = 0; i < NUMBER_OF_BLOCKS; i = i + 1) begin
+                block_valid[i][0] <= 1'b0;
+                block_valid[i][1] <= 1'b0;
+            end
+        end
+    end
+end
+
+endmodule
+module ysyx_26060184_ifu (
+    input logic clk,
+    input logic rst,
+
+    input logic [31:0] pc,
+    input logic [31:0] next_pc,
+
+    // =========================================================================
+    // Explicit Outputs (to pipeline_bus_pkg::if_to_id_bus_t)
+    // =========================================================================
+    output logic [31:0] bus_out_pc,         // PC of the fetched instruction
+    output logic [31:0] bus_out_next_pc,    // Predicted or sequential PC (PC + 4)
+    output logic [31:0] bus_out_opcode,     // The raw 32-bit instruction machine code
+
+    // Exception / speculation tracking (placeholder pass-through)
+    output logic [3:0]  bus_out_mcause,
+    output logic         bus_out_exception,
+    output logic         bus_out_speculate,
+
+    // Handshake control signals
+    output logic valid,
+    input  logic ready,
+
+    output logic [31:0] cache_addr,
+    output logic cache_valid,
+
+    input logic [31:0] cache_opcode,
+    input logic cache_ready,
+
+    output logic do_spec,
+    output logic [11:0] addr_spec,
+
+    input logic [31:0] pc_to_write,
+    input logic [11:0] offset_to_write,
+    input logic write,
+    input logic fencei
+);
+
+    typedef enum {
+        WAIT_AR, WAIT_R, AWAIT
+    } IFU_state_t;
+    // IFU_state_t ifu;
+
+    logic unused_bits;
+
+    assign unused_bits = ready;
+
+    
+    //branch pred
+    parameter NUMBER_OF_BLOCKS = 2;
+    parameter SIZE_OF_OFFSET = 12;
+    // here i use 2 rows
+
+    localparam int OFF = 2;
+    localparam int INDEX_OFF = $clog2(NUMBER_OF_BLOCKS);
+
+    logic [32-INDEX_OFF-OFF-1:0] block_tag [NUMBER_OF_BLOCKS][2];
+    logic [SIZE_OF_OFFSET - 1:0] block_offset [NUMBER_OF_BLOCKS][2];
+    logic block_valid [NUMBER_OF_BLOCKS][2];
+    logic latest_row;
+
+    logic [32-INDEX_OFF-OFF-1:0] tag;
+    logic [INDEX_OFF-1:0] index;
+    logic [OFF-1:0] word_align;
+
+    assign {tag, index, word_align} = pc;
+
+    logic hit, hit_0, hit_1;
+
+    assign hit_0 = (block_tag[index][0] == tag) && block_valid[index][0];
+    assign hit_1 = (block_tag[index][1] == tag) && block_valid[index][1];
+
+    assign hit = hit_0 | hit_1 & !fencei;
+
+    always @(*) begin
+        bus_out_pc      = pc;
+        bus_out_next_pc = next_pc;
+
+        cache_valid=1;
+        cache_addr = pc;
+
+        valid = cache_ready;
+        bus_out_opcode = cache_opcode;
+
+        bus_out_mcause    = 4'b0;
+        bus_out_exception = 1'b0; 
+        
+        if(pc[0])begin      //misaligned (idk btw will i do C or not (i will))
+            bus_out_exception=1;
+            bus_out_mcause=0;
+        end
+
+        if(1'b0)begin       //page fault
+            bus_out_exception=1;
+            bus_out_mcause=12;
+        end
+        
+        do_spec=0;
+        addr_spec=0;
+
+        if(hit) begin
+            bus_out_speculate = 1'b1;
+            do_spec=1;
+            if(hit_0)begin
+                addr_spec = block_offset[index][0];
+            end
+            if(hit_1)begin
+                addr_spec = block_offset[index][1];
+            end
+        end else
+            bus_out_speculate = 1'b0;
+    end
+
+    always_ff @(posedge clk) begin
+        if(rst)begin
+            for(int i = 0; i < NUMBER_OF_BLOCKS; i = i + 1) begin
+                block_valid[i][0] <= 1'b0;
+                block_valid[i][1] <= 1'b0;
+            end
+            latest_row<=0;
+        end else begin
+
+            if(fencei) begin
+               for(int i = 0; i < NUMBER_OF_BLOCKS; i = i + 1) begin
+                    block_valid[i][0] <= 1'b0;
+                    block_valid[i][1] <= 1'b0;
+                end 
+            end
+
+            if(hit)begin
+                latest_row<=hit_1;
+            end
+
+            if(write) begin
+                block_tag[pc_to_write[INDEX_OFF+OFF-1:OFF]][!latest_row]<=pc_to_write[31:INDEX_OFF+OFF];
+                block_offset[pc_to_write[INDEX_OFF+OFF-1:OFF]][!latest_row]<=offset_to_write;
+                block_valid[pc_to_write[INDEX_OFF+OFF-1:OFF]][!latest_row]<=1;
+            end
+        end
+    end
+endmodule
+module ysyx_26060184_core (
     input  logic         clock,
     input  logic         reset,
     input  logic         io_interrupt,
+    output logic         finish_top,
 
     // AXI4 Master Interface
     input  logic         io_master_awready,
@@ -75,6 +532,7 @@ module osoc_26000003_core (
     logic ex_ls_valid_ex /* verilator public */;
 
     assign rst = reset;
+    assign finish_top = finish_wb;
 
     logic [31:0] opcode_over_ex, opcode_over_ls, opcode_over_wb;
 
@@ -87,22 +545,14 @@ module osoc_26000003_core (
     always_ff @(posedge clock) begin
         if (reset) begin
             reg_valid <= 1'b0;
-            pc   <= 32'b0;
-            prev_pc<=0;
-            opcode <= 0 ;
+            pc        <= 32'b0;
+            prev_pc   <= 32'b0;
+            opcode    <= 32'b0;
         end else begin
-            `ifndef SYNTHESIS
-            reg_valid <= reg_valid_e;
-            pc   <=  ls_wb_bus_exception_wb ?  ls_wb_bus_csr_pc_wb : pc_e;
-            prev_pc <= pc;
-            opcode <= opcode_over_wb;
-            `endif
-            `ifdef SYNTHESIS
-            prev_pc <= 0;
+            prev_pc   <= 0;
             reg_valid <= 0;
-            pc <= 0;
-            opcode <=0;
-            `endif
+            pc        <= 0;
+            opcode    <= 0;
         end
     end
 
@@ -249,7 +699,7 @@ module osoc_26000003_core (
     logic fencei_commit;         // single-cycle-effective: safe to invalidate + flush
     logic pipeline_drained_for_fencei, store_idle_for_fencei;
 
-    pc ysyx_26060184_pc (
+    ysyx_26060184_pc pc_mod (
         .clk(clock), 
         .rst(reset), 
         .do_spec(do_spec),
@@ -278,7 +728,7 @@ module osoc_26000003_core (
     logic [11:0] addr_spec;
 
     // IFU
-    ifu ysyx_26060184_ifu (
+    ysyx_26060184_ifu ifu_mod (
         .clk(clock), .rst(reset),
         .pc(pc_ifu), .next_pc(next_pc),
         .bus_out_pc(if_de_bus_pc_if),
@@ -294,7 +744,7 @@ module osoc_26000003_core (
         .fencei(fencei)
     );
 
-    icache ysyx_26060184_icache(
+    ysyx_26060184_icache icache_mod(
         .clk(clock), .rst(reset), .fencei(fencei_commit),
         .ifu_addr(cache_addr), .valid(cache_valid & !(flush | flush_ex)), .opcode(cache_opcode), .ready(cache_ready),
         .araddr(araddr_ifu), .arvalid(arvalid_ifu), .arready(arready_ifu), 
@@ -305,7 +755,7 @@ module osoc_26000003_core (
         .hit(cache_hit), .miss(cache_miss)
     );
 
-    if_de_pipeline ysyx_26060184_if_de_pipeline (
+    ysyx_26060184_if_de_pipeline if_de_pipeline_mod (
         .clk(clock),
         .rst(reset),
         .flush(flush | flush_ex),
@@ -332,7 +782,7 @@ module osoc_26000003_core (
     );
 
     // Decoder
-    decode ysyx_26060184_decode (
+    ysyx_26060184_decode decode_mod (
         .bus_in_pc(if_de_bus_pc_de),
         .bus_in_next_pc(if_de_bus_next_pc_de),
         .bus_in_opcode(if_de_bus_opcode_de),
@@ -394,7 +844,7 @@ module osoc_26000003_core (
     //finish routing
     logic finish_de,finish_ex,finish_ls,finish_wb;
 
-    de_ex_pipeline ysyx_26060184_de_ex_pipeline (
+    ysyx_26060184_de_ex_pipeline de_ex_pipeline_mod (
         .clk                        (clock),
         .rst                        (reset),
         .flush                      (flush | flush_ex),
@@ -452,7 +902,7 @@ module osoc_26000003_core (
     );
 
     // ALU module block
-    alu ysyx_26060184_alu (
+    ysyx_26060184_alu alu_mod (
         .bus_in_pc(de_ex_bus_pc_ex),
         .bus_in_next_pc(de_ex_bus_next_pc_ex),
         .bus_in_imm(de_ex_bus_imm_ex),
@@ -492,7 +942,7 @@ module osoc_26000003_core (
         .branch(branch)
     );
 
-    ex_ls_pipeline ysyx_26060184_ex_ls_pipeline (
+    ysyx_26060184_ex_ls_pipeline ex_ls_pipeline_mod (
         .clk                        (clock),
         .rst                        (reset),
         .flush                      (flush),
@@ -548,7 +998,7 @@ module osoc_26000003_core (
     );
 
     // LSU Instance
-    lsu ysyx_26060184_lsu (
+    ysyx_26060184_lsu lsu_mod (
         .clk(clock), .rst(reset), .flush(flush),
         .bus_in_pc(ex_ls_bus_pc_ls),
         .bus_in_next_pc(ex_ls_bus_next_pc_ls),
@@ -586,7 +1036,7 @@ module osoc_26000003_core (
         .active_trans(active_trans)
     );
 
-    ls_wb_pipeline ysyx_26060184_ls_wb_pipeline (
+    ysyx_26060184_ls_wb_pipeline ls_wb_pipeline_mod (
         .clk                        (clock),
         .rst                        (reset),
         .flush                      (flush),
@@ -635,7 +1085,7 @@ module osoc_26000003_core (
 
     // WB / Regfile Instance
     logic [31:0] reg_in;
-    regs ysyx_26060184_reg (
+    ysyx_26060184_regs reg_mod (
         .clk(clock), .rst(reset), .data_in(reg_in), 
         .rs1(de_ex_bus_rs1_de), .rs2(de_ex_bus_rs2_de), .rd(ls_wb_bus_rd_wb), 
         .data_rs1(de_ex_bus_data_rs1_reg), .data_rs2(de_ex_bus_data_rs2_reg), 
@@ -643,7 +1093,7 @@ module osoc_26000003_core (
         .finish(finish_wb)
     );
 
-    csr ysyx_26060184_csr (
+    ysyx_26060184_csr csr_mod (
         .clk(clock), .rst(reset), .raddr(de_ex_bus_csr_de), .waddr(ls_wb_bus_csr_wb),
         .data_in(ls_wb_bus_alu_out_wb), .data_out(de_ex_bus_data_csr_de), .pc(ls_wb_bus_pc_wb), .data_pc_out(ls_wb_bus_csr_pc_wb),
         .cause(ls_wb_bus_mcause_wb), .exception(ls_wb_bus_exception_wb),
@@ -679,7 +1129,7 @@ module osoc_26000003_core (
 
 
     // Arbiter Module
-    arbiter ysyx_26060184_arbiter (
+    ysyx_26060184_arbiter arbiter_mod (
         .clk(clock), .rst(reset),
         .araddr_lsu(araddr_lsu), .arvalid_lsu(arvalid_lsu), .arready_lsu(arready_lsu), .rdata_lsu(rdata_lsu), .rresp_lsu(rresp_lsu), .rvalid_lsu(rvalid_lsu), .rready_lsu(rready_lsu),
         .awaddr_lsu(awaddr_lsu), .awvalid_lsu(awvalid_lsu), .awready_lsu(awready_lsu), .wdata_lsu(wdata_lsu), .wstrb_lsu(wstrb_lsu), .wvalid_lsu(wvalid_lsu), .wready_lsu(wready_lsu),
@@ -761,7 +1211,7 @@ module osoc_26000003_core (
 
 endmodule
 
-module if_de_pipeline(
+module ysyx_26060184_if_de_pipeline(
     input logic clk,
     input logic rst,
     input logic flush,
@@ -834,511 +1284,47 @@ always_ff @(posedge clk) begin
 end
 
 endmodule
+module ysyx_26060184_pc(
+    input logic clk,
+    input logic rst,
 
-module de_ex_pipeline(
-    input  logic clk,
-    input  logic rst,
-    input  logic flush,
+    input logic do_spec,
+    input logic [11:0] addr_spec,
 
-    input  logic [31:0]opcode_in,
-    output logic [31:0] opcode_out,
+    input logic branch,
+    input logic csr_branch,
+    input logic speculation,
 
-    // Decode stage inputs
-    input  logic [31:0] de_ex_bus_pc_de,
-    input  logic [31:0] de_ex_bus_next_pc_de,
-    input  logic [31:0] de_ex_bus_imm_de,
-    input  logic [31:0] de_ex_bus_data_rs1_de,
-    input  logic [31:0] de_ex_bus_data_rs2_de,
-    input  logic [31:0] de_ex_bus_data_csr_de,
-    input  logic [7:0]  de_ex_bus_alu_op_de,
-    input  logic        de_ex_bus_lsu_we_de,
-    input  logic        de_ex_bus_lsu_re_de,
-    input  logic [2:0]  de_ex_bus_lsu_oper_de,
-    input  logic [4:0]  de_ex_bus_rd_de,
-    input  logic [4:0]  de_ex_bus_rs1_de,
-    input  logic [11:0]  de_ex_bus_csr_de,
-    input  logic [1:0]  de_ex_bus_mux_select_de,
-    input  logic        de_ex_bus_mux_select_pc_de,
-    input  logic        de_ex_valid_de,
-    output logic        de_ex_ready_de,
+    input logic [31:0] branch_addr,
+    input logic [31:0] csr_branch_addr,
+    input logic [31:0] mispred_addr,
 
-    input logic [3:0]  de_ex_bus_mcause_de,
-    input logic         de_ex_bus_exception_de,
-    input logic         de_ex_bus_speculate_de,
+    input logic valid,
+    input logic wb_valid,
+    input logic ex_valid,
 
-    input logic finish_de,
-
-    // Execute stage outputs
-    output logic [31:0] de_ex_bus_pc_ex,
-    output logic [31:0] de_ex_bus_next_pc_ex,
-    output logic [31:0] de_ex_bus_imm_ex,
-    output logic [31:0] de_ex_bus_data_rs1_ex,
-    output logic [31:0] de_ex_bus_data_rs2_ex,
-    output logic [31:0] de_ex_bus_data_csr_ex,
-    output logic [7:0]  de_ex_bus_alu_op_ex,
-    output logic        de_ex_bus_lsu_we_ex,
-    output logic        de_ex_bus_lsu_re_ex,
-    output logic [2:0]  de_ex_bus_lsu_oper_ex,
-    output logic [4:0]  de_ex_bus_rd_ex,
-    output logic [4:0]  de_ex_bus_rs1_ex,
-    output  logic [11:0]  de_ex_bus_csr_ex,
-    output logic [1:0]  de_ex_bus_mux_select_ex,
-    output logic        de_ex_bus_mux_select_pc_ex,
-    output logic        de_ex_valid_ex,
-    input  logic        de_ex_ready_ex,
-
-    output logic [3:0]  de_ex_bus_mcause_ex,
-    output logic         de_ex_bus_exception_ex,
-    output logic         de_ex_bus_speculate_ex,
-
-    output logic finish_ex
+    output logic [31:0] pc,
+    output logic [31:0] next_pc
 );
 
-logic [31:0] de_ex_bus_pc;
-logic [31:0] de_ex_bus_next_pc;
-logic [31:0] de_ex_bus_imm;
-logic [31:0] de_ex_bus_data_rs1;
-logic [31:0] de_ex_bus_data_rs2;
-logic [31:0] de_ex_bus_data_csr;
-logic [7:0]  de_ex_bus_alu_op;
-logic        de_ex_bus_lsu_we;
-logic        de_ex_bus_lsu_re;
-logic [2:0]  de_ex_bus_lsu_oper;
-logic [4:0]  de_ex_bus_rd;
-logic [4:0]  de_ex_bus_rs1;
-logic [11:0] de_ex_bus_csr;
-logic [1:0]  de_ex_bus_mux_select;
-logic        de_ex_bus_mux_select_pc;
-logic        de_ex_valid;
-logic        finish;
+    assign next_pc = pc + (do_spec ? {{19{addr_spec[11]}}, addr_spec, 1'b0} : 4);
 
-logic [31:0] opcode;
-
-logic [3:0]  de_ex_bus_mcause;
-logic        de_ex_bus_exception;
-logic        de_ex_bus_speculate;
-
-assign de_ex_ready_de = de_ex_ready_ex;
-always_comb begin
-    opcode_out = opcode;
-
-    de_ex_bus_pc_ex            = de_ex_bus_pc;
-    de_ex_bus_next_pc_ex       = de_ex_bus_next_pc;
-    de_ex_bus_imm_ex           = de_ex_bus_imm;
-    de_ex_bus_data_rs1_ex      = de_ex_bus_data_rs1;
-    de_ex_bus_data_rs2_ex      = de_ex_bus_data_rs2;
-    de_ex_bus_data_csr_ex      = de_ex_bus_data_csr;
-    de_ex_bus_alu_op_ex        = de_ex_bus_alu_op;
-    de_ex_bus_lsu_we_ex        = de_ex_bus_lsu_we;
-    de_ex_bus_lsu_re_ex        = de_ex_bus_lsu_re;
-    de_ex_bus_lsu_oper_ex      = de_ex_bus_lsu_oper;
-    de_ex_bus_rd_ex            = de_ex_bus_rd;
-    de_ex_bus_rs1_ex           = de_ex_bus_rs1;
-    de_ex_bus_csr_ex           = de_ex_bus_csr;
-    de_ex_bus_mux_select_ex    = de_ex_bus_mux_select;
-    de_ex_bus_mux_select_pc_ex = de_ex_bus_mux_select_pc;
-    de_ex_valid_ex             = de_ex_valid;
-
-    de_ex_bus_mcause_ex        = de_ex_bus_mcause;
-    de_ex_bus_exception_ex     = de_ex_bus_exception;
-    de_ex_bus_speculate_ex     = de_ex_bus_speculate;
-
-    finish_ex = finish;
-end
-
-always_ff @(posedge clk) begin
-    if (rst || flush) begin
-        opcode <=0;
-
-        de_ex_bus_pc            <= 0;
-        de_ex_bus_next_pc       <= 0;
-        de_ex_bus_imm           <= 0;
-        de_ex_bus_data_rs1      <= 0;
-        de_ex_bus_data_rs2      <= 0;
-        de_ex_bus_data_csr      <= 0;
-        de_ex_bus_alu_op        <= 0;
-        de_ex_bus_lsu_we        <= 0;
-        de_ex_bus_lsu_re        <= 0;
-        de_ex_bus_lsu_oper      <= 0;
-        de_ex_bus_rd            <= 0;
-        de_ex_bus_rs1           <= 0;
-        de_ex_bus_csr           <= 0;
-        de_ex_bus_mux_select    <= 0;
-        de_ex_bus_mux_select_pc <= 0;
-        de_ex_valid             <= 0;
-
-        de_ex_bus_mcause        <= 0;
-        de_ex_bus_exception     <= 0;
-        de_ex_bus_speculate     <= 0;
-
-        finish<=0;
-    end else begin
-        if (de_ex_ready_de && de_ex_valid_de) begin
-            opcode<=opcode_in;
-
-            de_ex_bus_pc            <= de_ex_bus_pc_de;
-            de_ex_bus_next_pc       <= de_ex_bus_next_pc_de;
-            de_ex_bus_imm           <= de_ex_bus_imm_de;
-            de_ex_bus_data_rs1      <= de_ex_bus_data_rs1_de;
-            de_ex_bus_data_rs2      <= de_ex_bus_data_rs2_de;
-            de_ex_bus_data_csr      <= de_ex_bus_data_csr_de;
-            de_ex_bus_alu_op        <= de_ex_bus_alu_op_de;
-            de_ex_bus_lsu_we        <= de_ex_bus_lsu_we_de;
-            de_ex_bus_lsu_re        <= de_ex_bus_lsu_re_de;
-            de_ex_bus_lsu_oper      <= de_ex_bus_lsu_oper_de;
-            de_ex_bus_rd            <= de_ex_bus_rd_de;
-            de_ex_bus_rs1           <= de_ex_bus_rs1_de;
-            de_ex_bus_csr           <= de_ex_bus_csr_de;
-            de_ex_bus_mux_select    <= de_ex_bus_mux_select_de;
-            de_ex_bus_mux_select_pc <= de_ex_bus_mux_select_pc_de;
-
-            de_ex_bus_mcause        <= de_ex_bus_mcause_de;
-            de_ex_bus_exception     <= de_ex_bus_exception_de;
-            de_ex_bus_speculate     <= de_ex_bus_speculate_de;
-
-            finish<=finish_de;
-        end
-        if(de_ex_ready_ex) begin
-            de_ex_valid             <= de_ex_valid_de;
-            if(!de_ex_valid_de) begin
-                de_ex_bus_rd           <= 0;
-                de_ex_bus_csr          <= 0;
+    always_ff @(posedge clk) begin
+        if(rst) begin
+            pc<=32'h80000000;
+        end else begin
+            if(wb_valid && csr_branch) begin
+                pc <= csr_branch_addr;
+            end else if(ex_valid && (speculation != branch)) begin
+                if(speculation) begin
+                    pc <= mispred_addr + 4;
+                end else begin
+                    pc <= branch_addr;
+                end
+            end else if(valid) begin
+                pc <= next_pc;
             end
         end
     end
-end
-
-endmodule
-
-module ex_ls_pipeline(
-    input  logic clk,
-    input  logic rst,
-    input  logic flush,
-
-    input  logic [31:0]opcode_in,
-    output logic [31:0] opcode_out,
-
-    // Execute stage inputs
-    input  logic [31:0] ex_ls_bus_pc_ex,
-    input  logic [31:0] ex_ls_bus_next_pc_ex,
-    input  logic [31:0] ex_ls_bus_alu_out_ex,
-    input  logic [31:0] ex_ls_bus_data_rs2_ex,
-    input  logic [31:0] ex_ls_bus_csr_out_ex,
-    input  logic        ex_ls_bus_lsu_we_ex,
-    input  logic        ex_ls_bus_lsu_re_ex,
-    input  logic [2:0]  ex_ls_bus_lsu_oper_ex,
-    input  logic [4:0]  ex_ls_bus_rd_ex,
-    input  logic [11:0]  ex_ls_bus_csr_ex,
-    input  logic [1:0]  ex_ls_bus_mux_select_ex,
-    input  logic        ex_ls_bus_mux_select_pc_ex,
-    input  logic        ex_ls_bus_branch_ex,
-    input  logic [31:0] ex_ls_bus_diff_pc_ex,
-    input  logic        ex_ls_valid_ex,
-    output logic        ex_ls_ready_ex,
-
-    input logic [3:0]  ex_ls_bus_mcause_ex,
-    input logic         ex_ls_bus_exception_ex,
-    input logic         ex_ls_bus_speculate_ex,
-
-    input logic finish_ex,
-
-    // Load/Store stage outputs
-    output logic [31:0] ex_ls_bus_pc_ls,
-    output logic [31:0] ex_ls_bus_next_pc_ls,
-    output logic [31:0] ex_ls_bus_alu_out_ls,
-    output logic [31:0] ex_ls_bus_data_rs2_ls,
-    output logic [31:0] ex_ls_bus_csr_out_ls,
-    output logic        ex_ls_bus_lsu_we_ls,
-    output logic        ex_ls_bus_lsu_re_ls,
-    output logic [2:0]  ex_ls_bus_lsu_oper_ls,
-    output logic [4:0]  ex_ls_bus_rd_ls,
-    output logic [11:0] ex_ls_bus_csr_ls,
-    output logic [1:0]  ex_ls_bus_mux_select_ls,
-    output logic        ex_ls_bus_mux_select_pc_ls,
-    output logic        ex_ls_bus_branch_ls,
-    output logic [31:0] ex_ls_bus_diff_pc_ls,
-    output logic        ex_ls_valid_ls,
-    input  logic        ex_ls_ready_ls,
-
-    output logic [3:0]  ex_ls_bus_mcause_ls,
-    output logic         ex_ls_bus_exception_ls,
-    output logic         ex_ls_bus_speculate_ls,
-
-    output logic finish_ls
-);
-
-logic [31:0] ex_ls_bus_pc;
-logic [31:0] ex_ls_bus_next_pc;
-logic [31:0] ex_ls_bus_alu_out;
-logic [31:0] ex_ls_bus_data_rs2;
-logic [31:0] ex_ls_bus_csr_out;
-logic        ex_ls_bus_lsu_we;
-logic        ex_ls_bus_lsu_re;
-logic [2:0]  ex_ls_bus_lsu_oper;
-logic [4:0]  ex_ls_bus_rd;
-logic [11:0] ex_ls_bus_csr;
-logic [1:0]  ex_ls_bus_mux_select;
-logic        ex_ls_bus_mux_select_pc;
-logic        ex_ls_bus_branch;
-logic [31:0] ex_ls_bus_diff_pc;
-logic        ex_ls_valid;
-
-logic finish;
-
-logic [31:0] opcode;
-
-logic [3:0]  ex_ls_bus_mcause;
-logic        ex_ls_bus_exception;
-logic        ex_ls_bus_speculate;
-
-assign ex_ls_ready_ex = ex_ls_ready_ls;
-
-assign ex_ls_bus_pc_ls            = ex_ls_bus_pc;
-assign ex_ls_bus_next_pc_ls       = ex_ls_bus_next_pc;
-assign ex_ls_bus_alu_out_ls       = ex_ls_bus_alu_out;
-assign ex_ls_bus_data_rs2_ls      = ex_ls_bus_data_rs2;
-assign ex_ls_bus_csr_out_ls       = ex_ls_bus_csr_out;
-assign ex_ls_bus_lsu_we_ls        = ex_ls_bus_lsu_we;
-assign ex_ls_bus_lsu_re_ls        = ex_ls_bus_lsu_re;
-assign ex_ls_bus_lsu_oper_ls      = ex_ls_bus_lsu_oper;
-assign ex_ls_bus_rd_ls            = ex_ls_bus_rd;
-assign ex_ls_bus_csr_ls           = ex_ls_bus_csr;
-assign ex_ls_bus_mux_select_ls    = ex_ls_bus_mux_select;
-assign ex_ls_bus_mux_select_pc_ls = ex_ls_bus_mux_select_pc;
-assign ex_ls_bus_branch_ls        = ex_ls_bus_branch;
-assign ex_ls_bus_diff_pc_ls       = ex_ls_bus_diff_pc;
-assign ex_ls_valid_ls             = ex_ls_valid;
-assign opcode_out = opcode;
-
-assign ex_ls_bus_mcause_ls    = ex_ls_bus_mcause;
-assign ex_ls_bus_exception_ls = ex_ls_bus_exception;
-assign ex_ls_bus_speculate_ls = ex_ls_bus_speculate;
-
-assign finish_ls = finish;
-
-always_ff @(posedge clk) begin
-    if (rst || flush) begin
-        opcode<=0;
-
-        ex_ls_bus_pc             <= '0;
-        ex_ls_bus_next_pc       <= '0;
-        ex_ls_bus_alu_out       <= '0;
-        ex_ls_bus_data_rs2      <= '0;
-        ex_ls_bus_csr_out       <= '0;
-        ex_ls_bus_lsu_we        <= '0;
-        ex_ls_bus_lsu_re        <= '0;
-        ex_ls_bus_lsu_oper      <= '0;
-        ex_ls_bus_rd            <= '0;
-        ex_ls_bus_csr           <= '0;
-        ex_ls_bus_mux_select    <= '0;
-        ex_ls_bus_mux_select_pc <= '0;
-        ex_ls_bus_branch        <= '0;
-        ex_ls_bus_diff_pc       <= '0;
-        ex_ls_valid             <= '0;
-
-        ex_ls_bus_mcause        <= '0;
-        ex_ls_bus_exception     <= '0;
-        ex_ls_bus_speculate     <= '0;
-
-        finish<=0;
-    end else begin
-        if (ex_ls_ready_ex && ex_ls_valid_ex) begin
-            opcode<=opcode_in;
-
-            ex_ls_bus_pc             <= ex_ls_bus_pc_ex;
-            ex_ls_bus_next_pc       <= ex_ls_bus_next_pc_ex;
-            ex_ls_bus_alu_out       <= ex_ls_bus_alu_out_ex;
-            ex_ls_bus_data_rs2      <= ex_ls_bus_data_rs2_ex;
-            ex_ls_bus_csr_out       <= ex_ls_bus_csr_out_ex;
-            ex_ls_bus_lsu_we        <= ex_ls_bus_lsu_we_ex;
-            ex_ls_bus_lsu_re        <= ex_ls_bus_lsu_re_ex;
-            ex_ls_bus_lsu_oper      <= ex_ls_bus_lsu_oper_ex;
-            ex_ls_bus_rd            <= ex_ls_bus_rd_ex;
-            ex_ls_bus_csr           <= ex_ls_bus_csr_ex;
-            ex_ls_bus_mux_select    <= ex_ls_bus_mux_select_ex;
-            ex_ls_bus_mux_select_pc <= ex_ls_bus_mux_select_pc_ex;
-            ex_ls_bus_branch        <= ex_ls_bus_branch_ex;
-            ex_ls_bus_diff_pc       <= ex_ls_bus_diff_pc_ex;
-
-            ex_ls_bus_mcause        <= ex_ls_bus_mcause_ex;
-            ex_ls_bus_exception     <= ex_ls_bus_exception_ex;
-            ex_ls_bus_speculate     <= ex_ls_bus_speculate_ex;
-
-            finish<=finish_ex;
-        end
-        if(ex_ls_ready_ls) begin
-            ex_ls_valid             <= ex_ls_valid_ex;
-            if(!ex_ls_valid_ex) begin
-                ex_ls_bus_rd        <=0;
-                ex_ls_bus_lsu_we    <= 0;
-                ex_ls_bus_lsu_re    <= 0;
-                ex_ls_bus_csr       <= 0;
-            end
-        end
-    end
-end
-
-endmodule
-
-module ls_wb_pipeline(
-    input  logic clk,
-    input  logic rst,
-
-    input  logic flush,
-
-    input  logic [31:0]opcode_in,
-    output logic [31:0] opcode_out,
-
-    // Load/Store stage inputs
-    input  logic [31:0] ls_wb_bus_pc_ls,
-    input  logic [31:0] ls_wb_bus_alu_out_ls,
-    input  logic [31:0] ls_wb_bus_next_pc_ls,
-    input  logic [31:0] ls_wb_bus_csr_out_ls,
-    input  logic [4:0]  ls_wb_bus_rd_ls,
-    input  logic [11:0] ls_wb_bus_csr_ls,
-    input  logic [1:0]  ls_wb_bus_mux_select_ls,
-    input  logic        ls_wb_bus_mux_select_pc_ls,
-    input  logic        ls_wb_bus_branch_ls,
-    input  logic [31:0] ls_wb_bus_diff_pc_ls,
-    input  logic        ls_wb_valid_ls,
-    output logic        ls_wb_ready_ls,
-
-    input logic [3:0]  ls_wb_bus_mcause_ls,
-    input logic         ls_wb_bus_exception_ls,
-    input logic         ls_wb_bus_speculate_ls,
-
-    input logic finish_ls,
-
-    // Writeback stage outputs
-    output logic [31:0] ls_wb_bus_pc_wb,
-    output logic [31:0] ls_wb_bus_alu_out_wb,
-    output logic [31:0] ls_wb_bus_next_pc_wb,
-    output logic [31:0] ls_wb_bus_csr_out_wb,
-    output logic [4:0]  ls_wb_bus_rd_wb,
-    output  logic [11:0]  ls_wb_bus_csr_wb,
-    output logic [1:0]  ls_wb_bus_mux_select_wb,
-    output logic        ls_wb_bus_mux_select_pc_wb,
-    output logic        ls_wb_bus_branch_wb,
-    output logic [31:0] ls_wb_bus_diff_pc_wb,
-    output logic        ls_wb_valid_wb,
-    input  logic        ls_wb_ready_wb,
-
-    // Signals ready to be committed at WB (exception/CSR commit logic TBD)
-    output logic [3:0]  ls_wb_bus_mcause_wb,
-    output logic         ls_wb_bus_exception_wb,
-    output logic         ls_wb_bus_speculate_wb,
-
-    output logic finish_wb
-);
-
-logic [31:0] ls_wb_bus_pc;
-logic [31:0] ls_wb_bus_alu_out;
-logic [31:0] ls_wb_bus_next_pc;
-logic [31:0] ls_wb_bus_csr_out;
-logic [4:0]  ls_wb_bus_rd;
-logic [11:0] ls_wb_bus_csr;
-logic [1:0]  ls_wb_bus_mux_select;
-logic        ls_wb_bus_mux_select_pc;
-logic        ls_wb_bus_branch;
-logic [31:0] ls_wb_bus_diff_pc;
-logic        ls_wb_valid;
-
-logic finish;
-
-logic [31:0] opcode;
-
-logic [3:0]  ls_wb_bus_mcause;
-logic        ls_wb_bus_exception;
-logic        ls_wb_bus_speculate;
-
-assign ls_wb_ready_ls = ls_wb_ready_wb;
-
-assign ls_wb_bus_pc_wb            = ls_wb_bus_pc;
-assign ls_wb_bus_alu_out_wb       = ls_wb_bus_alu_out;
-assign ls_wb_bus_next_pc_wb       = ls_wb_bus_next_pc;
-assign ls_wb_bus_csr_out_wb       = ls_wb_bus_csr_out;
-assign ls_wb_bus_rd_wb            = ls_wb_bus_rd;
-assign ls_wb_bus_csr_wb           = ls_wb_bus_csr;
-assign ls_wb_bus_mux_select_wb    = ls_wb_bus_mux_select;
-assign ls_wb_bus_mux_select_pc_wb = ls_wb_bus_mux_select_pc;
-assign ls_wb_bus_branch_wb        = ls_wb_bus_branch;
-assign ls_wb_bus_diff_pc_wb       = ls_wb_bus_diff_pc;
-assign ls_wb_valid_wb             = ls_wb_valid;
-
-assign ls_wb_bus_mcause_wb    = ls_wb_bus_mcause;
-assign ls_wb_bus_exception_wb = ls_wb_bus_exception;
-assign ls_wb_bus_speculate_wb = ls_wb_bus_speculate;
-
-assign finish_wb = finish;
-
-assign opcode_out = opcode;
-
-always_ff @(posedge clk) begin
-    if (rst) begin
-        ls_wb_bus_pc            <= '0;
-        ls_wb_bus_alu_out       <= '0;
-        ls_wb_bus_next_pc       <= '0;
-        ls_wb_bus_csr_out       <= '0;
-        ls_wb_bus_rd            <= '0;
-        ls_wb_bus_csr           <= '0;
-        ls_wb_bus_mux_select    <= '0;
-        ls_wb_bus_mux_select_pc <= '0;
-        ls_wb_bus_branch        <= '0;
-        ls_wb_bus_diff_pc       <= '0;
-        ls_wb_valid             <= '0;
-        opcode<=0;
-        finish<=0;
-
-        ls_wb_bus_mcause        <= '0;
-        ls_wb_bus_exception     <= '0;
-        ls_wb_bus_speculate     <= '0;
-    end else begin
-        if (ls_wb_ready_ls && ls_wb_valid_ls) begin
-            opcode<=opcode_in;
-            ls_wb_bus_pc            <= ls_wb_bus_pc_ls;
-            ls_wb_bus_alu_out       <= ls_wb_bus_alu_out_ls;
-            ls_wb_bus_next_pc       <= ls_wb_bus_next_pc_ls;
-            ls_wb_bus_csr_out       <= ls_wb_bus_csr_out_ls;
-            ls_wb_bus_rd            <= ls_wb_bus_rd_ls;
-            ls_wb_bus_csr           <= ls_wb_bus_csr_ls;
-            ls_wb_bus_mux_select    <= ls_wb_bus_mux_select_ls;
-            ls_wb_bus_mux_select_pc <= ls_wb_bus_mux_select_pc_ls;
-            ls_wb_bus_branch        <= ls_wb_bus_branch_ls;
-            ls_wb_bus_diff_pc       <= ls_wb_bus_diff_pc_ls;
-
-            ls_wb_bus_mcause        <= ls_wb_bus_mcause_ls;
-            ls_wb_bus_exception     <= ls_wb_bus_exception_ls;
-            ls_wb_bus_speculate     <= ls_wb_bus_speculate_ls;
-
-            finish<=finish_ls;
-        end
-        if(ls_wb_ready_wb) begin
-            ls_wb_valid             <= ls_wb_valid_ls;
-            if(!ls_wb_valid_ls) begin
-                ls_wb_bus_csr<=0;
-                ls_wb_bus_rd<=0;
-            end
-        end
-
-        if(flush) begin
-            ls_wb_bus_pc            <= '0;
-            ls_wb_bus_alu_out       <= '0;
-            ls_wb_bus_next_pc       <= '0;
-            ls_wb_bus_csr_out       <= '0;
-            ls_wb_bus_rd            <= '0;
-            ls_wb_bus_mux_select    <= '0;
-            ls_wb_bus_mux_select_pc <= '0;
-            ls_wb_bus_branch        <= '0;
-            ls_wb_bus_diff_pc       <= '0;
-            ls_wb_valid             <= '0;
-            opcode<=0;
-            finish<=0;
-
-            ls_wb_bus_mcause        <= '0;
-            ls_wb_bus_exception     <= '0;
-            ls_wb_bus_speculate     <= '0;
-        end
-    end
-end
 
 endmodule

@@ -38,13 +38,13 @@ module pc(
     always_ff @(posedge clk) begin
         if(rst) begin
         `ifdef SOC
-            pc = 32'h30000000;
+            pc <= 32'h30000000;
         `endif
         `ifdef NPC
-            pc = 32'h80000000;
+            pc <= 32'h80000000;
         `endif
         `ifdef __ICARUS__
-            pc = 32'h80000000;
+            pc <= 32'h80000000;
         `endif
         end else begin
             if(wb_valid && csr_branch) begin

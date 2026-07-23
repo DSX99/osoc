@@ -52,6 +52,7 @@ always_ff @(posedge clk) begin
         clint_r<=IDLE_R;
         divisor<=0;
         crvalid<=0;
+        buff<=0;
     end else begin
         if(divisor == DEN) divisor<=1;
         else divisor<= divisor+1;

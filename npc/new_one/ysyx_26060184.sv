@@ -1,4 +1,4 @@
-module ysyx_26060184_CLINT(
+module CLINT(
     input logic clk, rst,
 
     input logic [31:0] caddr,
@@ -91,7 +91,7 @@ end
 
 
 endmodule
-module ysyx_26060184_alu (
+module alu (
     input logic [31:0] bus_in_pc,
     input logic [31:0] bus_in_next_pc,
     input logic [31:0] bus_in_imm,
@@ -149,7 +149,7 @@ module ysyx_26060184_alu (
 
     assign branch = bus_in_alu_op[5:4] == 2'b01;
 
-    always @(*) begin
+    always_comb begin
         valid_right = valid_left;
         ready_left  = ready_right;
 
@@ -224,7 +224,7 @@ module ysyx_26060184_alu (
     end
 
 endmodule
-module ysyx_26060184_arbiter(
+module arbiter(
     input logic clk, rst,
 
     //LSU    
@@ -455,7 +455,7 @@ end
 
 
 endmodule
-module ysyx_26060184_decode (
+module decode (
     input logic [31:0] bus_in_pc,            
     input logic [31:0] bus_in_next_pc,        
     input logic [31:0] bus_in_opcode,        
@@ -558,20 +558,6 @@ module ysyx_26060184_decode (
     assign reg_match = (((ex_match_rs1 | ex_match_rs2) && ((!ex_valid) | ex_lsu_re) ) | ((ls_match_rs1 | ls_match_rs2) && !ls_valid) | ((wb_match_rs1 | wb_match_rs2) && !wb_valid)) | (|ex_csr | |ls_csr | |wb_csr);
 
     always @(*) begin
-
-        bus_out_rs1 = '0;
-        bus_out_rs2 = '0;
-        case(inst[6:0])
-            7'b1100111: begin bus_out_rs1 = rs1_val; bus_out_rs2 = rs1_val; end // JALR
-            7'b1100011: begin bus_out_rs1 = rs1_val; bus_out_rs2 = rs2_val; end // BRANCH
-            7'b0000011:       bus_out_rs1 = rs1_val;                            // LOAD
-            7'b0100011: begin bus_out_rs1 = rs1_val; bus_out_rs2 = rs2_val; end // STORE
-            7'b0010011:       bus_out_rs1 = rs1_val;                            // OP-IMM
-            7'b0110011: begin bus_out_rs1 = rs1_val; bus_out_rs2 = rs2_val; end // OP
-            7'b1110011:       bus_out_rs1 = rs1_val;                            // SYSTEM
-            default: ;
-        endcase
-
         valid_right = valid_left & !reg_match & !(is_fencei & fencei_stall);
         ready_left  = ready_right & !reg_match & !(is_fencei & fencei_stall);
 
@@ -596,6 +582,8 @@ module ysyx_26060184_decode (
         bus_out_next_pc       = bus_in_next_pc;
 
         bus_out_imm           = '0;
+        bus_out_rs1           = '0;
+        bus_out_rs2           = '0;
         bus_out_csr           = '0;
         bus_out_alu_op        = '0;
         bus_out_lsu_we        = '0;
@@ -627,22 +615,29 @@ module ysyx_26060184_decode (
             end            
             7'b1100111: begin // JALR
                 bus_out_rd         = rd_val;
+                bus_out_rs1        = rs1_val;
+                bus_out_rs2        = rs1_val;
                 bus_out_imm        = imm_i;
                 bus_out_alu_op     = 8'b10010000;
                 bus_out_mux_select = 2'b10;
             end
             7'b1100011: begin // BRANCH (BEQ, BNE, BLT, BGE, BLTU, BGEU)
+                bus_out_rs1       = rs1_val;
+                bus_out_rs2       = rs2_val;
                 bus_out_imm       = imm_b;
                 bus_out_alu_op    = {5'b11010, func3};
             end
             7'b0000011: begin // LOAD (LB, LH, LW, LBU, LHU)
                 bus_out_rd         = rd_val;
+                bus_out_rs1        = rs1_val;
                 bus_out_imm        = imm_i;
                 bus_out_alu_op     = 8'b10000000;          
                 bus_out_lsu_oper   = func3;
                 bus_out_lsu_re     = 1'b1;
             end
             7'b0100011: begin // STORE (SB, SH, SW)
+                bus_out_rs1        = rs1_val;
+                bus_out_rs2        = rs2_val;
                 bus_out_imm        = imm_s;
                 bus_out_alu_op     = 8'b10000000; // Address = RS1 + Imm          
                 bus_out_lsu_oper   = func3;
@@ -650,6 +645,7 @@ module ysyx_26060184_decode (
             end
             7'b0010011: begin // OP-IMM (ADDI, SLTI, SLTIU, XORI, ORI, ANDI, SLLI, SRLI, SRAI)
                 bus_out_rd  = rd_val;
+                bus_out_rs1 = rs1_val;
                 bus_out_imm = imm_i;
                 if(func3==3'b001 && |func7) begin
                     bus_out_exception = 1; //raise exception
@@ -666,6 +662,8 @@ module ysyx_26060184_decode (
             end
             7'b0110011: begin // OP (ADD, SUB, SLL, SLT, SLTU, XOR, SRL, SRA, OR, AND)
                 bus_out_rd     = rd_val;
+                bus_out_rs1    = rs1_val;
+                bus_out_rs2    = rs2_val;
                 bus_out_alu_op = {2'b00, inst[25], 1'b0, inst[30], func3}; // inst[30] splits ADD/SUB and SRL/SRA
                 if(inst[25] && inst[30]) begin
                     bus_out_exception = 1; //raise exception
@@ -678,6 +676,7 @@ module ysyx_26060184_decode (
             end
             7'b1110011: begin // SYSTEM (ECALL, EBREAK) + CSR
                 bus_out_rd         = rd_val;
+                bus_out_rs1        = rs1_val;
                 bus_out_csr        = imm_i[11:0];
                 bus_out_mux_select = 2'b11;
                 bus_out_alu_op    = {5'b00110, func3};
@@ -706,7 +705,7 @@ module ysyx_26060184_decode (
                 endcase 
             end
             7'b0001111:begin //fencei
-                if(func3==3'b001) begin
+                if(func3==3'b001 && valid_left) begin
                     fencei=1;
                 end
             end
@@ -722,355 +721,310 @@ module ysyx_26060184_decode (
     end
 
 endmodule
-module ysyx_26060184_icache (
-    input  logic        clk,
-    input  logic        rst,
-    input  logic        fencei,
- 
-    input  logic [31:0] ifu_addr,
-    input  logic        valid,
- 
+module icache(
+    input logic clk, rst, fencei,
+
+    input logic [31:0] ifu_addr,
+    input logic valid,
+
     output logic [31:0] opcode,
-    output logic        ready,
- 
-    // Read Address Channel (AR)
+    output logic ready,
+
+    // Read Addr Channel (AR)
     output logic [31:0] araddr,
     output logic        arvalid,
     output logic [7:0]  arlen,
     output logic [2:0]  arsize,
     output logic [1:0]  arburst,
     input  logic        arready,
- 
+
     // Read Data Channel (R)
     input  logic [31:0] rdata,
     input  logic [1:0]  rresp,
     input  logic        rvalid,
     output logic        rready,
- 
-    output logic        hit,
-    output logic        miss
+
+    output logic hit, miss
 );
- 
-    // -------------------------------------------------------------------------
-    // Geometry
-    // -------------------------------------------------------------------------
-    parameter int BLOCK_SIZE       = 16;   // bytes per line
-    parameter int NUMBER_OF_BLOCKS = 4;    // sets
-    localparam int N_WAYS          = 2;
- 
-    localparam int OFF_W          = $clog2(BLOCK_SIZE);        // 4 : byte offset in line
-    localparam int SET_W          = $clog2(NUMBER_OF_BLOCKS);  // 2 : set index
-    localparam int WORDS_IN_BLOCK = BLOCK_SIZE / 4;            // 4
-    localparam int WORD_W         = $clog2(WORDS_IN_BLOCK);    // 2 : word select in line
-    localparam int WAY_W          = $clog2(N_WAYS);            // 1
-    localparam int TAG_W          = 32 - SET_W - OFF_W;        // 26
- 
-    // flat entry-address widths / depths
-    localparam int TAG_IDX_W  = SET_W + WAY_W;              // 3
-    localparam int DATA_IDX_W = SET_W + WORD_W + WAY_W;     // 5
-    localparam int TAG_DEPTH  = 1 << TAG_IDX_W;             // 8
-    localparam int DATA_DEPTH = 1 << DATA_IDX_W;            // 32
- 
-    // -------------------------------------------------------------------------
-    // Flat storage
-    // -------------------------------------------------------------------------
-                  logic [31:0]      block_cache [0:DATA_DEPTH-1];
-    (* mem2reg *) logic [TAG_W-1:0] block_tag   [0:TAG_DEPTH-1];
-                  logic [TAG_DEPTH-1:0] block_valid;   // packed -> always flops
- 
-    logic latest_row;
- 
-    // -------------------------------------------------------------------------
-    // Address decomposition
-    // -------------------------------------------------------------------------
-    logic [31:0]        miss_addr;
-    logic               trans;
- 
-    logic [TAG_W-1:0]   tag;
-    logic [SET_W-1:0]   index;
-    logic [WORD_W-1:0]  word_select;
-    logic [1:0]         word_align;
- 
-    logic do_burst, burst_reg, burst_addr;
- 
-    assign burst_addr = (ifu_addr >= 32'ha0000000) && (ifu_addr < 32'hc0000000);
-    assign {tag, index, word_select, word_align} = trans ? miss_addr : ifu_addr;
-    assign do_burst   = trans ? burst_reg : burst_addr;
- 
-    logic unused_bits;
-    assign unused_bits = |rresp | |word_align;
- 
-    // -------------------------------------------------------------------------
-    // Flat entry addresses
-    // -------------------------------------------------------------------------
-    logic [TAG_IDX_W-1:0]  tag_idx_w0, tag_idx_w1;   // read: way 0 / way 1
-    logic [TAG_IDX_W-1:0]  tag_idx_fill;             // write: victim way
-    logic [DATA_IDX_W-1:0] data_idx_rd, data_idx_fill;
- 
-    logic [WORD_W-1:0] fill_count;
-    logic hit_0, hit_1;
- 
-    assign tag_idx_w0   = {index, {WAY_W{1'b0}}};
-    assign tag_idx_w1   = {index, {WAY_W{1'b1}}};
-    assign tag_idx_fill = {index, ~latest_row};
- 
-    assign data_idx_rd   = {index, word_select, hit_1};
-    assign data_idx_fill = {index, fill_count,  ~latest_row};
- 
-    // -------------------------------------------------------------------------
-    // Hit detection
-    // -------------------------------------------------------------------------
-    assign hit_0 = block_valid[tag_idx_w0] && (tag == block_tag[tag_idx_w0]);
-    assign hit_1 = block_valid[tag_idx_w1] && (tag == block_tag[tag_idx_w1]);
-    assign hit   = hit_0 | hit_1;
- 
-    typedef enum logic [0:0] { WAIT_AR, WAIT_R } cache_state_t;
-    cache_state_t state;
- 
-    // -------------------------------------------------------------------------
-    // Request / response path
-    // -------------------------------------------------------------------------
-    always_comb begin
-        arvalid = 1'b0;
-        araddr  = 32'b0;
-        rready  = 1'b0;
-        ready   = 1'b0;
-        opcode  = 32'b0;
-        miss    = 1'b0;
-        arburst = 2'b0;
-        arlen   = 8'b0;
-        arsize  = 3'b0;
- 
-        if ((valid && !rst) || trans) begin
-            if (hit & !trans) begin
-                opcode = block_cache[data_idx_rd];  // hit_1 selects the way
-                ready  = 1'b1;
-            end else begin
-                miss = 1'b1;
-                case (state)
-                    WAIT_AR: begin
-                        arvalid = 1'b1;
-                        if (do_burst) begin
-                            arburst = 2'b01;
-                            arsize  = 3'b010;
-                            arlen   = WORDS_IN_BLOCK - 1;
-                        end
-                        // FIXME(separate bug): the non-burst path leaves
-                        // arsize = 3'b000 (1 byte/beat) and arburst = 2'b00.
-                        // Behaviour preserved here on purpose so this file is a
-                        // clean A/B test; fix once the array question is settled.
-                        araddr = {tag, index, fill_count, 2'b00};
-                    end
-                    WAIT_R: begin
-                        rready = 1'b1;
-                    end
-                    default: ;
-                endcase
-            end
-        end
-    end
- 
-    // -------------------------------------------------------------------------
-    // Fill FSM
-    // -------------------------------------------------------------------------
-    always_ff @(posedge clk) begin
-        if (rst) begin
-            fill_count  <= '0;
-            trans       <= 1'b0;
-            latest_row  <= 1'b0;
-            burst_reg   <= 1'b0;
-            miss_addr   <= 32'b0;
-            state       <= WAIT_AR;
-            block_valid <= '0;
+
+logic unused_bits;
+assign unused_bits = |rresp | |word_align;
+
+parameter BLOCK_SIZE = 16;
+parameter NUMBER_OF_BLOCKS = 4;
+// here i use 2 rows
+
+localparam int off = $clog2(BLOCK_SIZE);
+localparam int index_off = $clog2(NUMBER_OF_BLOCKS);
+localparam int WORDS_IN_BLOCK = BLOCK_SIZE/4;
+
+logic [31:0] block_cache [NUMBER_OF_BLOCKS][WORDS_IN_BLOCK][2];
+logic latest_row;
+
+logic [31:0] miss_addr;
+logic trans;
+
+logic [32-index_off-off-1:0] tag;
+logic [index_off-1:0] index;
+logic [off-3:0] word_select;
+logic [1:0] word_align;
+
+logic [32-index_off-off-1:0] block_tag [NUMBER_OF_BLOCKS][2];
+logic block_valid[NUMBER_OF_BLOCKS][2];
+logic do_burst, burst_reg, burst_addr;
+
+assign burst_addr = ifu_addr >= 32'ha0000000 && ifu_addr < 32'hc0000000;
+assign {tag, index, word_select, word_align} = trans ? miss_addr : ifu_addr;
+assign do_burst = trans ? burst_reg : burst_addr;
+
+typedef enum {
+   WAIT_AR, WAIT_R
+} cache_state_t;
+cache_state_t state;
+logic [1:0] fill_count; 
+
+logic hit_0, hit_1;
+assign hit_0 = block_valid[index][0] && (tag == block_tag[index][0]);
+assign hit_1 = block_valid[index][1] && (tag == block_tag[index][1]);
+
+assign hit = hit_0 | hit_1;
+
+
+always_comb begin
+    arvalid = 0;
+    araddr  = 0;
+    rready  = 0;
+    ready   = 0;
+    opcode  = 0;
+    miss    = 0;
+
+    arburst=0;
+    arlen=0;
+    arsize=0;
+
+    if ((valid && !rst) || trans) begin
+        if (hit & !trans) begin
+            opcode = block_cache[index][word_select][hit_1]; //hit_1 is 0 if hit and hit_0 and 1 if hit_1
+            ready  = 1'b1;
         end else begin
-            if (hit) latest_row <= hit_1;
- 
-            if ((valid && !hit) || trans) begin
-                case (state)
-                    WAIT_AR: begin
-                        if (arvalid && !trans) begin
-                            trans     <= 1'b1;
-                            burst_reg <= burst_addr;
-                            miss_addr <= ifu_addr;
-                        end
-                        if (arready && arvalid) state <= WAIT_R;
+            miss=1;
+            case (state)
+                WAIT_AR: begin
+                    arvalid = 1'b1;
+                    if(do_burst)begin
+                        arburst = 2'b01;
+                        arsize = 3'b010;
+                        arlen = 8'd3;
                     end
- 
-                    WAIT_R: begin
-                        if (rvalid && rready) begin
-                            block_cache[data_idx_fill] <= rdata;
- 
-                            // WORDS_IN_BLOCK is a power of two and fill_count is
-                            // exactly WORD_W bits, so &fill_count == last word.
-                            if (&fill_count) begin
-                                block_tag  [tag_idx_fill] <= tag;
-                                block_valid[tag_idx_fill] <= 1'b1;
-                                fill_count <= '0;
-                                trans      <= 1'b0;
-                                state      <= WAIT_AR;
-                            end else begin
-                                fill_count <= fill_count + 1'b1;
-                                state      <= do_burst ? WAIT_R : WAIT_AR;
-                            end
-                        end
-                    end
- 
-                    default: state <= WAIT_AR;
-                endcase
-            end
- 
-            if (fencei) block_valid <= '0;
+                    araddr  = {tag, index, fill_count, 2'b00};
+                end
+                WAIT_R: begin
+                    rready  = 1'b1;
+                end
+                default: ;
+            endcase
         end
     end
- 
+end
+
+always_ff @(posedge clk) begin
+    if (rst) begin
+        fill_count<=0;
+        trans<=0;
+        latest_row<=0;
+        burst_reg<=0;
+        miss_addr<=0;
+        state <= WAIT_AR;
+        for(int i = 0; i < NUMBER_OF_BLOCKS; i = i + 1) begin
+            block_valid[i][0] <= 1'b0;
+            block_valid[i][1] <= 1'b0;
+        end
+    end else begin
+        if (hit) begin
+            latest_row<=hit_1;
+        end
+        if ((valid && !hit) || trans) begin
+            case (state)
+                WAIT_AR: begin
+                    if(arvalid && !trans) begin
+                        trans<=1;
+                        burst_reg <= burst_addr;
+                        miss_addr <= ifu_addr;
+                    end
+                    if (arready && arvalid) begin
+                        state <= WAIT_R;
+                    end
+                end
+                WAIT_R: begin
+                    if (rvalid && rready) begin
+                        if(fill_count==2'b11) begin
+                            block_cache[index][fill_count][~latest_row] <= rdata;
+                            block_tag[index][~latest_row] <= tag;
+                            block_valid[index][~latest_row] <= 1'b1;
+                            fill_count <= 0;
+                            trans<=0;
+                            state <= WAIT_AR;
+                        end else begin
+                            block_cache[index][fill_count][~latest_row] <= rdata;
+                            fill_count <= fill_count + 1;
+                            if(do_burst) state <= WAIT_R;
+                            else state <= WAIT_AR;
+                        end
+                    end
+                end
+                default: state <= WAIT_AR;
+            endcase
+        end
+        if (fencei) begin
+            for(int i = 0; i < NUMBER_OF_BLOCKS; i = i + 1) begin
+                block_valid[i][0] <= 1'b0;
+                block_valid[i][1] <= 1'b0;
+            end
+        end
+    end
+end
+
 endmodule
-module ysyx_26060184_ifu (
-    input  logic        clk,
-    input  logic        rst,
- 
-    input  logic [31:0] pc,
-    input  logic [31:0] next_pc,
- 
-    output logic [31:0] bus_out_pc,
-    output logic [31:0] bus_out_next_pc,
-    output logic [31:0] bus_out_opcode,
- 
+module ifu (
+    input logic clk,
+    input logic rst,
+
+    input logic [31:0] pc,
+    input logic [31:0] next_pc,
+
+    // =========================================================================
+    // Explicit Outputs (to pipeline_bus_pkg::if_to_id_bus_t)
+    // =========================================================================
+    output logic [31:0] bus_out_pc,         // PC of the fetched instruction
+    output logic [31:0] bus_out_next_pc,    // Predicted or sequential PC (PC + 4)
+    output logic [31:0] bus_out_opcode,     // The raw 32-bit instruction machine code
+
+    // Exception / speculation tracking (placeholder pass-through)
     output logic [3:0]  bus_out_mcause,
-    output logic        bus_out_exception,
-    output logic        bus_out_speculate,
- 
-    output logic        valid,
-    input  logic        ready,
- 
+    output logic         bus_out_exception,
+    output logic         bus_out_speculate,
+
+    // Handshake control signals
+    output logic valid,
+    input  logic ready,
+
     output logic [31:0] cache_addr,
-    output logic        cache_valid,
- 
-    input  logic [31:0] cache_opcode,
-    input  logic        cache_ready,
- 
-    output logic        do_spec,
+    output logic cache_valid,
+
+    input logic [31:0] cache_opcode,
+    input logic cache_ready,
+
+    output logic do_spec,
     output logic [11:0] addr_spec,
- 
-    input  logic [31:0] pc_to_write,
-    input  logic [11:0] offset_to_write,
-    input  logic        write,
-    input  logic        fencei
+
+    input logic [31:0] pc_to_write,
+    input logic [11:0] offset_to_write,
+    input logic write,
+    input logic fencei
 );
- 
+
+    typedef enum {
+        WAIT_AR, WAIT_R, AWAIT
+    } IFU_state_t;
+    // IFU_state_t ifu;
+
     logic unused_bits;
+
     assign unused_bits = ready;
- 
-    // -------------------------------------------------------------------------
-    // BTB geometry
-    // -------------------------------------------------------------------------
-    parameter int NUMBER_OF_BLOCKS = 2;    // sets
-    parameter int SIZE_OF_OFFSET   = 12;
-    localparam int N_WAYS          = 2;
- 
-    localparam int OFF_W = 2;                            // instructions are 4B aligned
-    localparam int SET_W = $clog2(NUMBER_OF_BLOCKS);     // 1
-    localparam int WAY_W = $clog2(N_WAYS);               // 1
-    localparam int TAG_W = 32 - SET_W - OFF_W;           // 29
- 
-    localparam int IDX_W = SET_W + WAY_W;                // 2
-    localparam int DEPTH = 1 << IDX_W;                   // 4
- 
-    // -------------------------------------------------------------------------
-    // Flat storage: entry address = {set, way}
-    // -------------------------------------------------------------------------
-    (* mem2reg *) logic [TAG_W-1:0]           block_tag    [0:DEPTH-1];
-    (* mem2reg *) logic [SIZE_OF_OFFSET-1:0]  block_offset [0:DEPTH-1];
-                  logic [DEPTH-1:0]           block_valid;   // packed -> flops
- 
+
+    
+    //branch pred
+    parameter NUMBER_OF_BLOCKS = 2;
+    parameter SIZE_OF_OFFSET = 12;
+    // here i use 2 rows
+
+    localparam int OFF = 2;
+    localparam int INDEX_OFF = $clog2(NUMBER_OF_BLOCKS);
+
+    logic [32-INDEX_OFF-OFF-1:0] block_tag [NUMBER_OF_BLOCKS][2];
+    logic [SIZE_OF_OFFSET - 1:0] block_offset [NUMBER_OF_BLOCKS][2];
+    logic block_valid [NUMBER_OF_BLOCKS][2];
     logic latest_row;
- 
-    // -------------------------------------------------------------------------
-    // Lookup address
-    // -------------------------------------------------------------------------
-    logic [TAG_W-1:0] tag;
-    logic [SET_W-1:0] index;
-    logic [OFF_W-1:0] word_align;
- 
+
+    logic [32-INDEX_OFF-OFF-1:0] tag;
+    logic [INDEX_OFF-1:0] index;
+    logic [OFF-1:0] word_align;
+
     assign {tag, index, word_align} = pc;
- 
-    logic [IDX_W-1:0] idx_w0, idx_w1;
-    assign idx_w0 = {index, {WAY_W{1'b0}}};
-    assign idx_w1 = {index, {WAY_W{1'b1}}};
- 
+
     logic hit, hit_0, hit_1;
-    assign hit_0 = block_valid[idx_w0] && (block_tag[idx_w0] == tag);
-    assign hit_1 = block_valid[idx_w1] && (block_tag[idx_w1] == tag);
- 
-    // CHANGED: original was `hit_0 | hit_1 & !fencei`, which parses as
-    // `hit_0 | (hit_1 & !fencei)` because & binds tighter than |.
+
+    assign hit_0 = (block_tag[index][0] == tag) && block_valid[index][0];
+    assign hit_1 = (block_tag[index][1] == tag) && block_valid[index][1];
+
     assign hit = (hit_0 | hit_1) & !fencei;
- 
-    // -------------------------------------------------------------------------
-    // Write address
-    // -------------------------------------------------------------------------
-    logic [SET_W-1:0] wr_set;
-    logic [IDX_W-1:0] wr_idx;
- 
-    assign wr_set = pc_to_write[SET_W+OFF_W-1:OFF_W];
-    assign wr_idx = {wr_set, ~latest_row};
- 
-    // -------------------------------------------------------------------------
+
     always_comb begin
         bus_out_pc      = pc;
         bus_out_next_pc = next_pc;
- 
-        cache_valid = 1'b1;
-        cache_addr  = pc;
- 
-        valid          = cache_ready;
+
+        cache_valid=1;
+        cache_addr = pc;
+
+        valid = cache_ready;
         bus_out_opcode = cache_opcode;
- 
+
         bus_out_mcause    = 4'b0;
-        bus_out_exception = 1'b0;
- 
-        if (pc[0]) begin            // misaligned
-            bus_out_exception = 1'b1;
-            bus_out_mcause    = 4'd0;
+        bus_out_exception = 1'b0; 
+        
+        if(pc[0])begin      //misaligned (idk btw will i do C or not (i will))
+            bus_out_exception=1;
+            bus_out_mcause=0;
         end
- 
-        if (1'b0) begin             // page fault placeholder
-            bus_out_exception = 1'b1;
-            bus_out_mcause    = 4'd12;
+
+        if(1'b0)begin       //page fault
+            bus_out_exception=1;
+            bus_out_mcause=12;
         end
- 
-        do_spec   = 1'b0;
-        addr_spec = 12'b0;
- 
-        if (hit) begin
+        
+        do_spec=0;
+        addr_spec=0;
+
+        if(hit) begin
             bus_out_speculate = 1'b1;
-            do_spec           = 1'b1;
-            // way 1 wins when both ways alias, matching the original ordering
-            addr_spec         = hit_1 ? block_offset[idx_w1] : block_offset[idx_w0];
-        end else begin
+            do_spec=1;
+            if(hit_0)begin
+                addr_spec = block_offset[index][0];
+            end
+            if(hit_1)begin
+                addr_spec = block_offset[index][1];
+            end
+        end else
             bus_out_speculate = 1'b0;
-        end
     end
- 
+
     always_ff @(posedge clk) begin
-        if (rst) begin
-            block_valid <= '0;
-            latest_row  <= 1'b0;
+        if(rst)begin
+            for(int i = 0; i < NUMBER_OF_BLOCKS; i = i + 1) begin
+                block_valid[i][0] <= 1'b0;
+                block_valid[i][1] <= 1'b0;
+            end
+            latest_row<=0;
         end else begin
-            if (fencei)   block_valid <= '0;
-            if (hit)      latest_row  <= hit_1;
- 
-            if (write) begin
-                block_tag   [wr_idx] <= pc_to_write[31:SET_W+OFF_W];
-                block_offset[wr_idx] <= offset_to_write;
-                block_valid [wr_idx] <= 1'b1;
+            if(fencei) begin
+               for(int i = 0; i < NUMBER_OF_BLOCKS; i = i + 1) begin
+                    block_valid[i][0] <= 1'b0;
+                    block_valid[i][1] <= 1'b0;
+                end 
+            end
+            if(hit)begin
+                latest_row<=hit_1;
+            end
+
+            if(write) begin
+                block_tag[pc_to_write[INDEX_OFF+OFF-1:OFF]][!latest_row]<=pc_to_write[31:INDEX_OFF+OFF];
+                block_offset[pc_to_write[INDEX_OFF+OFF-1:OFF]][!latest_row]<=offset_to_write;
+                block_valid[pc_to_write[INDEX_OFF+OFF-1:OFF]][!latest_row]<=1;
             end
         end
     end
- 
 endmodule
- 
-
-module ysyx_26060184_lsu (
+module lsu (
     input logic clk,
     input logic rst,
     input logic flush,
@@ -1128,7 +1082,7 @@ module ysyx_26060184_lsu (
     input  logic        bvalid,
     output logic        bready,
 
-    output logic        active_trans
+    output logic active_trans
 
 );
 
@@ -1142,16 +1096,13 @@ module ysyx_26060184_lsu (
 
     assign active_trans = trans_r | trans_w;
 
-    logic [31:0] nx_araddr, nx_awaddr, nx_wdata, nx_alu_out;
-    logic        nx_arvalid, nx_rready, nx_awvalid, nx_wvalid, nx_bready;
-
     always @(*) begin
 
         unused_branch = |rresp | |bresp;
 
 
         bus_out_pc            = bus_in_pc;
-        nx_alu_out       = bus_in_alu_out;
+        bus_out_alu_out       = bus_in_alu_out;
         bus_out_next_pc       = bus_in_next_pc;
         bus_out_csr_out       = bus_in_csr_out;
         bus_out_rd            = bus_in_rd;
@@ -1166,17 +1117,17 @@ module ysyx_26060184_lsu (
 
 
 
-        nx_arvalid = 0;
-        nx_araddr  = 0;
-        nx_rready  = 0;
+        arvalid = 0;
+        araddr  = 0;
+        rready  = 0;
         done_r = 0;
 
-        nx_awaddr  = 0;
-        nx_awvalid = 0;
-        nx_wdata = 0;
-        nx_wvalid = 0;
+        awaddr  = 0;
+        awvalid = 0;
+        wdata = 0;
+        wvalid = 0;
         done_w = 0;
-        nx_bready = 0;
+        bready = 0;
 
         if(!rst) begin
         //read
@@ -1184,49 +1135,49 @@ module ysyx_26060184_lsu (
         case(lsu_r)
             IDLE_R: begin
                 if (bus_in_lsu_re && valid_left && !flush) begin
-                    nx_arvalid = 1;
-                    nx_araddr  = bus_in_alu_out;
+                    arvalid = 1;
+                    araddr  = bus_in_alu_out;
                 end
             end
             WAIT_AR: begin
-                nx_arvalid = 1;
-                nx_araddr  = bus_in_alu_out;
+                arvalid = 1;
+                araddr  = bus_in_alu_out;
                 
             end
             WAIT_R: begin
-                nx_rready  = 1;
+                rready  = 1;
 
-                if (rvalid && nx_rready) begin
+                if (rvalid && rready) begin
                     case (bus_in_lsu_oper)
                         0: begin // LB
                             case (bus_in_alu_out[1:0])
-                                2'b00: nx_alu_out = {{24{rdata[7]}}, rdata[7:0]};
-                                2'b01: nx_alu_out = {{24{rdata[15]}}, rdata[15:8]};
-                                2'b10: nx_alu_out = {{24{rdata[23]}}, rdata[23:16]};
-                                2'b11: nx_alu_out = {{24{rdata[31]}}, rdata[31:24]};
+                                2'b00: bus_out_alu_out = {{24{rdata[7]}}, rdata[7:0]};
+                                2'b01: bus_out_alu_out = {{24{rdata[15]}}, rdata[15:8]};
+                                2'b10: bus_out_alu_out = {{24{rdata[23]}}, rdata[23:16]};
+                                2'b11: bus_out_alu_out = {{24{rdata[31]}}, rdata[31:24]};
                             endcase
                         end 
                         1: begin // LH
                             case (bus_in_alu_out[1])
-                                1'b0: nx_alu_out = {{16{rdata[15]}}, rdata[15:0]};
-                                1'b1: nx_alu_out = {{16{rdata[31]}}, rdata[31:16]};
+                                1'b0: bus_out_alu_out = {{16{rdata[15]}}, rdata[15:0]};
+                                1'b1: bus_out_alu_out = {{16{rdata[31]}}, rdata[31:16]};
                             endcase
                         end 
                         2: begin // LW
-                            nx_alu_out = rdata[31:0];
+                            bus_out_alu_out = rdata[31:0];
                         end 
                         4: begin // LBU
                             case (bus_in_alu_out[1:0])
-                                2'b00: nx_alu_out = {{24'b0}, rdata[7:0]};
-                                2'b01: nx_alu_out = {{24'b0}, rdata[15:8]};
-                                2'b10: nx_alu_out = {{24'b0}, rdata[23:16]};
-                                2'b11: nx_alu_out = {{24'b0}, rdata[31:24]};
+                                2'b00: bus_out_alu_out = {{24'b0}, rdata[7:0]};
+                                2'b01: bus_out_alu_out = {{24'b0}, rdata[15:8]};
+                                2'b10: bus_out_alu_out = {{24'b0}, rdata[23:16]};
+                                2'b11: bus_out_alu_out = {{24'b0}, rdata[31:24]};
                             endcase
                         end 
                         5: begin // LHU
                             case (bus_in_alu_out[1])
-                                1'b0: nx_alu_out = {{16'b0}, rdata[15:0]};
-                                1'b1: nx_alu_out = {{16'b0}, rdata[31:16]};
+                                1'b0: bus_out_alu_out = {{16'b0}, rdata[15:0]};
+                                1'b1: bus_out_alu_out = {{16'b0}, rdata[31:16]};
                             endcase
                         end 
                     endcase
@@ -1241,20 +1192,20 @@ module ysyx_26060184_lsu (
         case(lsu_w)
             IDLE_W: begin
                 if (bus_in_lsu_we && valid_left && !flush) begin
-                    nx_awaddr  = bus_in_alu_out; 
-                    nx_awvalid = 1;
-                    nx_wdata   = (bus_in_data_rs2 << (bus_in_alu_out[1:0] * 8));
-                    nx_wvalid  = 1;
+                    awaddr  = bus_in_alu_out; 
+                    awvalid = 1;
+                    wdata   = (bus_in_data_rs2 << (bus_in_alu_out[1:0] * 8));
+                    wvalid  = 1;
                 end
             end
             WAIT_W: begin
-                nx_awaddr  = bus_in_alu_out; 
-                nx_awvalid = 1;
-                nx_wdata   = (bus_in_data_rs2 << (bus_in_alu_out[1:0] * 8));
-                nx_wvalid  = 1;
+                awaddr  = bus_in_alu_out; 
+                awvalid = 1;
+                wdata   = (bus_in_data_rs2 << (bus_in_alu_out[1:0] * 8));
+                wvalid  = 1;
             end
             WAIT_WRESP: begin
-                nx_bready = 1;
+                bready = 1;
             end
             WAIT_COMMIT: begin
                 done_w = 1;
@@ -1262,16 +1213,6 @@ module ysyx_26060184_lsu (
         endcase
         end
         end
-
-        arvalid         = nx_arvalid;
-        araddr          = nx_araddr;
-        rready          = nx_rready;
-        awvalid         = nx_awvalid;
-        awaddr          = nx_awaddr;
-        wvalid          = nx_wvalid;
-        wdata           = nx_wdata;
-        bready          = nx_bready;
-        bus_out_alu_out = nx_alu_out;
 
         valid_right   = valid_left && (!bus_in_lsu_re || done_r) && (!bus_in_lsu_we || done_w); 
         ready_left    = ready_right && (!bus_in_lsu_re || done_r) && (!bus_in_lsu_we || done_w);
@@ -1386,6 +1327,295 @@ module ysyx_26060184_lsu (
     end
 
 endmodule
+module ysyx_26060184 (
+    input  logic        clock,
+    input  logic        reset,
+    input  logic        io_interrupt,
+
+    input  logic        io_master_awready,
+    output logic        io_master_awvalid,
+    output logic [31:0] io_master_awaddr, 
+    output logic [3:0]  io_master_awid,
+    output logic [7:0]  io_master_awlen,
+    output logic [2:0]  io_master_awsize,
+    output logic [1:0]  io_master_awburst,
+    input  logic        io_master_wready,
+    output logic        io_master_wvalid,
+    output logic [31:0] io_master_wdata,
+    output logic [3:0]  io_master_wstrb,
+    output logic        io_master_wlast,
+    output logic        io_master_bready,
+    input  logic        io_master_bvalid,
+    input  logic [1:0]  io_master_bresp,
+    input  logic [3:0]  io_master_bid,
+    input  logic        io_master_arready,
+    output logic        io_master_arvalid,
+    output logic [31:0] io_master_araddr,
+    output logic [3:0]  io_master_arid,
+    output logic [7:0]  io_master_arlen,
+    output logic [2:0]  io_master_arsize,
+    output logic [1:0]  io_master_arburst,
+    output logic        io_master_rready,
+    input  logic        io_master_rvalid,
+    input  logic [1:0]  io_master_rresp,
+    input  logic [31:0] io_master_rdata,
+    input  logic        io_master_rlast,
+    input  logic [3:0]  io_master_rid,
+
+    output logic        io_slave_awready,
+    input  logic        io_slave_awvalid,
+    input  logic [31:0] io_slave_awaddr,
+    input  logic [3:0]  io_slave_awid,
+    input  logic [7:0]  io_slave_awlen,
+    input  logic [2:0]  io_slave_awsize,
+    input  logic [1:0]  io_slave_awburst,
+    output logic        io_slave_wready,
+    input  logic        io_slave_wvalid,
+    input  logic [31:0] io_slave_wdata,
+    input  logic [3:0]  io_slave_wstrb,
+    input  logic        io_slave_wlast,
+    input  logic        io_slave_bready,
+    output logic        io_slave_bvalid,
+    output logic [1:0]  io_slave_bresp,
+    output logic [3:0]  io_slave_bid,
+    output logic        io_slave_arready,
+    input  logic        io_slave_arvalid,
+    input  logic [31:0] io_slave_araddr,
+    input  logic [3:0]  io_slave_arid,
+    input  logic [7:0]  io_slave_arlen,
+    input  logic [2:0]  io_slave_arsize,
+    input  logic [1:0]  io_slave_arburst,
+    input  logic        io_slave_rready,
+    output logic        io_slave_rvalid,
+    output logic [1:0]  io_slave_rresp,
+    output logic [31:0] io_slave_rdata,
+    output logic        io_slave_rlast,
+    output logic [3:0]  io_slave_rid
+);
+
+    logic        core_awvalid;
+    logic [31:0] core_awaddr;
+    logic [3:0]  core_awid;
+    logic [7:0]  core_awlen;
+    logic [2:0]  core_awsize;
+    logic [1:0]  core_awburst;
+    logic        core_awready;
+
+    logic        core_wvalid;
+    logic [31:0] core_wdata;
+    logic [3:0]  core_wstrb;
+    logic        core_wlast;
+    logic        core_wready;
+
+    logic        core_bready;
+    logic        core_bvalid;
+    logic [1:0]  core_bresp;
+    logic [3:0]  core_bid;
+
+    logic        core_arvalid;
+    logic [31:0] core_araddr;
+    logic [3:0]  core_arid;
+    logic [7:0]  core_arlen;
+    logic [2:0]  core_arsize;
+    logic [1:0]  core_arburst;
+    logic        core_arready;
+
+    logic        core_rready;
+    logic        core_rvalid;
+    logic [1:0]  core_rresp;
+    logic [31:0] core_rdata;
+    logic        core_rlast;
+    logic [3:0]  core_rid;
+
+    logic [31:0] cwdata, crdata, caddr;
+    logic        cwvalid, crvalid;
+    logic        cawvalid, carvalid;
+    logic        cawready, cwready; 
+    logic        carready, crready; 
+    logic        crlast;
+
+    logic match_aw, match_ar;
+    assign match_aw = (core_awaddr[31:16] == 16'h0200) || trans[0];
+    assign match_ar = (core_araddr[31:16] == 16'h0200) || trans[1];
+
+    assign caddr = match_ar ? core_araddr : core_awaddr;
+
+    always_comb begin
+        if (match_aw) begin
+            io_master_awvalid = 1'b0;
+            io_master_awaddr  = 32'b0;
+            io_master_awid    = 4'b0;
+            io_master_awlen   = 8'b0;
+            io_master_awsize  = 3'b0;
+            io_master_awburst = 2'b0;
+            core_awready      = cawready;
+            io_master_wvalid  = 1'b0;
+            io_master_wdata   = 32'b0;
+            io_master_wstrb   = 4'b0;
+            io_master_wlast   = 1'b0;
+            core_wready       = cwready;   
+            io_master_bready  = 1'b0;
+            core_bvalid       = 1'b1; 
+            core_bresp        = 2'b00;
+            core_bid          = core_awid;
+        end else begin
+            io_master_awvalid = core_awvalid;
+            io_master_awaddr  = core_awaddr;
+            io_master_awid    = core_awid;
+            io_master_awlen   = core_awlen;
+            io_master_awsize  = core_awsize;
+            io_master_awburst = core_awburst;
+            core_awready      = io_master_awready;
+            io_master_wvalid  = core_wvalid;
+            io_master_wdata   = core_wdata;
+            io_master_wstrb   = core_wstrb;
+            io_master_wlast   = core_wlast;
+            core_wready       = io_master_wready;    
+            io_master_bready  = core_bready;
+            core_bvalid       = io_master_bvalid;
+            core_bresp        = io_master_bresp;
+            core_bid          = io_master_bid;
+        end
+
+        if (match_ar) begin
+            io_master_arvalid = 1'b0;
+            io_master_araddr  = 32'b0;
+            io_master_arid    = 4'b0;
+            io_master_arlen   = 8'b0;
+            io_master_arsize  = 3'b0;
+            io_master_arburst = 2'b0;
+            core_arready      = carready; 
+        end else begin
+            io_master_arvalid = core_arvalid;
+            io_master_araddr  = core_araddr;
+            io_master_arid    = core_arid;
+            io_master_arlen   = core_arlen;
+            io_master_arsize  = core_arsize;
+            io_master_arburst = core_arburst;
+            core_arready      = io_master_arready;
+        end
+
+        if (trans[1]) begin
+            io_master_rready  = 1'b0;
+            core_rvalid       = crvalid;
+            core_rdata        = crdata;
+            core_rresp        = 2'b00;
+            core_rlast        = crlast;
+            core_rid          = core_arid;
+        end else begin
+            io_master_rready  = core_rready;
+            core_rvalid       = io_master_rvalid;
+            core_rdata        = io_master_rdata;
+            core_rresp        = io_master_rresp;
+            core_rlast        = io_master_rlast;
+            core_rid          = io_master_rid;
+        end
+    
+        cwvalid  = core_wvalid && match_aw;
+        cawvalid = core_awvalid && match_aw;
+        cwdata   = core_wdata;
+        carvalid = core_arvalid && match_ar;
+        crready  = core_rready; 
+    end
+
+    logic[1:0] trans; // 0-write 1-read
+
+    always_ff @(posedge clock) begin
+        if(reset)begin
+            trans<=0;
+        end else begin
+            if((match_ar) && ((carvalid && carready))) trans<=2;
+            if((match_aw) && ((cawvalid && cawready))) trans<=1;
+            
+            if(trans[1] && crready && crvalid) trans<=0;
+            if(trans[0] && core_bready && core_bvalid) trans<=0;
+        end
+    end
+
+    ysyx_26060184_core ysyx_26060184_core (
+        .clock(clock),
+        .reset(reset),
+        .io_interrupt(io_interrupt),
+
+        .io_master_awready(core_awready),
+        .io_master_awvalid(core_awvalid),
+        .io_master_awaddr(core_awaddr),
+        .io_master_awid(core_awid),
+        .io_master_awlen(core_awlen),
+        .io_master_awsize(core_awsize),
+        .io_master_awburst(core_awburst),
+        .io_master_wready(core_wready),
+        .io_master_wvalid(core_wvalid),
+        .io_master_wdata(core_wdata),
+        .io_master_wstrb(core_wstrb),
+        .io_master_wlast(core_wlast),
+        .io_master_bready(core_bready),
+        .io_master_bvalid(core_bvalid),
+        .io_master_bresp(core_bresp),
+        .io_master_bid(core_bid),
+        .io_master_arready(core_arready),
+        .io_master_arvalid(core_arvalid),
+        .io_master_araddr(core_araddr),
+        .io_master_arid(core_arid),
+        .io_master_arlen(core_arlen),
+        .io_master_arsize(core_arsize),
+        .io_master_arburst(core_arburst),
+        .io_master_rready(core_rready),
+        .io_master_rvalid(core_rvalid),
+        .io_master_rresp(core_rresp),
+        .io_master_rdata(core_rdata),
+        .io_master_rlast(core_rlast),
+        .io_master_rid(core_rid),
+
+        .io_slave_awready(io_slave_awready),
+        .io_slave_awvalid(io_slave_awvalid),
+        .io_slave_awaddr(io_slave_awaddr),
+        .io_slave_awid(io_slave_awid),
+        .io_slave_awlen(io_slave_awlen),
+        .io_slave_awsize(io_slave_awsize),
+        .io_slave_awburst(io_slave_awburst),
+        .io_slave_wready(io_slave_wready),
+        .io_slave_wvalid(io_slave_wvalid),
+        .io_slave_wdata(io_slave_wdata),
+        .io_slave_wstrb(io_slave_wstrb),
+        .io_slave_wlast(io_slave_wlast),
+        .io_slave_bready(io_slave_bready),
+        .io_slave_bvalid(io_slave_bvalid),
+        .io_slave_bresp(io_slave_bresp),
+        .io_slave_bid(io_slave_bid),
+        .io_slave_arready(io_slave_arready),
+        .io_slave_arvalid(io_slave_arvalid),
+        .io_slave_araddr(io_slave_araddr),
+        .io_slave_arid(io_slave_arid),
+        .io_slave_arlen(io_slave_arlen),
+        .io_slave_arsize(io_slave_arsize),
+        .io_slave_arburst(io_slave_arburst),
+        .io_slave_rready(io_slave_rready),
+        .io_slave_rvalid(io_slave_rvalid),
+        .io_slave_rresp(io_slave_rresp),
+        .io_slave_rdata(io_slave_rdata),
+        .io_slave_rlast(io_slave_rlast),
+        .io_slave_rid(io_slave_rid)
+    );
+
+    CLINT ysyx_26060184_CLINT (
+        .clk(clock),
+        .rst(reset),
+        .caddr(caddr),
+        .cwdata(cwdata),
+        .crdata(crdata),
+        .carvalid(carvalid),
+        .cwvalid(cwvalid),
+        .cawvalid(cawvalid),
+        .carready(carready),
+        .cawready(cawready),
+        .cwready(cwready),
+        .crready(crready),
+        .crvalid(crvalid),
+        .crlast(crlast)
+    );
+
+endmodule
 module ysyx_26060184_core (
     input  logic         clock,
     input  logic         reset,
@@ -1477,9 +1707,9 @@ module ysyx_26060184_core (
     always_ff @(posedge clock) begin
         if (reset) begin
             reg_valid <= 1'b0;
-            pc        <= 32'b0;
-            prev_pc   <= 32'b0;
-            opcode    <= 32'b0;
+            pc   <= 32'b0;
+            prev_pc<=0;
+            opcode <= 0 ;
         end else begin
             prev_pc   <= 0;
             reg_valid <= 0;
@@ -1631,7 +1861,7 @@ module ysyx_26060184_core (
     logic fencei_commit;         // single-cycle-effective: safe to invalidate + flush
     logic pipeline_drained_for_fencei, store_idle_for_fencei;
 
-    ysyx_26060184_pc pc_mod (
+    pc ysyx_26060184_pc (
         .clk(clock), 
         .rst(reset), 
         .do_spec(do_spec),
@@ -1660,7 +1890,7 @@ module ysyx_26060184_core (
     logic [11:0] addr_spec;
 
     // IFU
-    ysyx_26060184_ifu ifu_mod (
+    ifu ysyx_26060184_ifu (
         .clk(clock), .rst(reset),
         .pc(pc_ifu), .next_pc(next_pc),
         .bus_out_pc(if_de_bus_pc_if),
@@ -1676,7 +1906,7 @@ module ysyx_26060184_core (
         .fencei(fencei)
     );
 
-    ysyx_26060184_icache icache_mod(
+    icache ysyx_26060184_icache(
         .clk(clock), .rst(reset), .fencei(fencei_commit),
         .ifu_addr(cache_addr), .valid(cache_valid & !(flush | flush_ex)), .opcode(cache_opcode), .ready(cache_ready),
         .araddr(araddr_ifu), .arvalid(arvalid_ifu), .arready(arready_ifu), 
@@ -1687,7 +1917,7 @@ module ysyx_26060184_core (
         .hit(cache_hit), .miss(cache_miss)
     );
 
-    ysyx_26060184_if_de_pipeline if_de_pipeline_mod (
+    if_de_pipeline ysyx_26060184_if_de_pipeline (
         .clk(clock),
         .rst(reset),
         .flush(flush | flush_ex),
@@ -1714,7 +1944,7 @@ module ysyx_26060184_core (
     );
 
     // Decoder
-    ysyx_26060184_decode decode_mod (
+    decode ysyx_26060184_decode (
         .bus_in_pc(if_de_bus_pc_de),
         .bus_in_next_pc(if_de_bus_next_pc_de),
         .bus_in_opcode(if_de_bus_opcode_de),
@@ -1776,7 +2006,7 @@ module ysyx_26060184_core (
     //finish routing
     logic finish_de,finish_ex,finish_ls,finish_wb;
 
-    ysyx_26060184_de_ex_pipeline de_ex_pipeline_mod (
+    de_ex_pipeline ysyx_26060184_de_ex_pipeline (
         .clk                        (clock),
         .rst                        (reset),
         .flush                      (flush | flush_ex),
@@ -1834,7 +2064,7 @@ module ysyx_26060184_core (
     );
 
     // ALU module block
-    ysyx_26060184_alu alu_mod (
+    alu ysyx_26060184_alu (
         .bus_in_pc(de_ex_bus_pc_ex),
         .bus_in_next_pc(de_ex_bus_next_pc_ex),
         .bus_in_imm(de_ex_bus_imm_ex),
@@ -1874,7 +2104,7 @@ module ysyx_26060184_core (
         .branch(branch)
     );
 
-    ysyx_26060184_ex_ls_pipeline ex_ls_pipeline_mod (
+    ex_ls_pipeline ysyx_26060184_ex_ls_pipeline (
         .clk                        (clock),
         .rst                        (reset),
         .flush                      (flush),
@@ -1930,7 +2160,7 @@ module ysyx_26060184_core (
     );
 
     // LSU Instance
-    ysyx_26060184_lsu lsu_mod (
+    lsu ysyx_26060184_lsu (
         .clk(clock), .rst(reset), .flush(flush),
         .bus_in_pc(ex_ls_bus_pc_ls),
         .bus_in_next_pc(ex_ls_bus_next_pc_ls),
@@ -1968,7 +2198,7 @@ module ysyx_26060184_core (
         .active_trans(active_trans)
     );
 
-    ysyx_26060184_ls_wb_pipeline ls_wb_pipeline_mod (
+    ls_wb_pipeline ysyx_26060184_ls_wb_pipeline (
         .clk                        (clock),
         .rst                        (reset),
         .flush                      (flush),
@@ -2017,7 +2247,7 @@ module ysyx_26060184_core (
 
     // WB / Regfile Instance
     logic [31:0] reg_in;
-    ysyx_26060184_regs reg_mod (
+    regs ysyx_26060184_reg (
         .clk(clock), .rst(reset), .data_in(reg_in), 
         .rs1(de_ex_bus_rs1_de), .rs2(de_ex_bus_rs2_de), .rd(ls_wb_bus_rd_wb), 
         .data_rs1(de_ex_bus_data_rs1_reg), .data_rs2(de_ex_bus_data_rs2_reg), 
@@ -2025,7 +2255,7 @@ module ysyx_26060184_core (
         .finish(finish_wb)
     );
 
-    ysyx_26060184_csr csr_mod (
+    csr ysyx_26060184_csr (
         .clk(clock), .rst(reset), .raddr(de_ex_bus_csr_de), .waddr(ls_wb_bus_csr_wb),
         .data_in(ls_wb_bus_alu_out_wb), .data_out(de_ex_bus_data_csr_de), .pc(ls_wb_bus_pc_wb), .data_pc_out(ls_wb_bus_csr_pc_wb),
         .cause(ls_wb_bus_mcause_wb), .exception(ls_wb_bus_exception_wb),
@@ -2061,7 +2291,7 @@ module ysyx_26060184_core (
 
 
     // Arbiter Module
-    ysyx_26060184_arbiter arbiter_mod (
+    arbiter ysyx_26060184_arbiter (
         .clk(clock), .rst(reset),
         .araddr_lsu(araddr_lsu), .arvalid_lsu(arvalid_lsu), .arready_lsu(arready_lsu), .rdata_lsu(rdata_lsu), .rresp_lsu(rresp_lsu), .rvalid_lsu(rvalid_lsu), .rready_lsu(rready_lsu),
         .awaddr_lsu(awaddr_lsu), .awvalid_lsu(awvalid_lsu), .awready_lsu(awready_lsu), .wdata_lsu(wdata_lsu), .wstrb_lsu(wstrb_lsu), .wvalid_lsu(wvalid_lsu), .wready_lsu(wready_lsu),
@@ -2143,7 +2373,7 @@ module ysyx_26060184_core (
 
 endmodule
 
-module ysyx_26060184_if_de_pipeline(
+module if_de_pipeline(
     input logic clk,
     input logic rst,
     input logic flush,
@@ -2217,7 +2447,7 @@ end
 
 endmodule
 
-module ysyx_26060184_de_ex_pipeline(
+module de_ex_pipeline(
     input  logic clk,
     input  logic rst,
     input  logic flush,
@@ -2392,7 +2622,7 @@ end
 
 endmodule
 
-module ysyx_26060184_ex_ls_pipeline(
+module ex_ls_pipeline(
     input  logic clk,
     input  logic rst,
     input  logic flush,
@@ -2562,7 +2792,7 @@ end
 
 endmodule
 
-module ysyx_26060184_ls_wb_pipeline(
+module ls_wb_pipeline(
     input  logic clk,
     input  logic rst,
 
@@ -2724,7 +2954,7 @@ always_ff @(posedge clk) begin
 end
 
 endmodule
-module ysyx_26060184_pc(
+module pc(
     input logic clk,
     input logic rst,
 
@@ -2751,7 +2981,7 @@ module ysyx_26060184_pc(
 
     always_ff @(posedge clk) begin
         if(rst) begin
-            pc<=32'h80000000;
+        pc <= 32'h80000000;
         end else begin
             if(wb_valid && csr_branch) begin
                 pc <= csr_branch_addr;
@@ -2768,7 +2998,7 @@ module ysyx_26060184_pc(
     end
 
 endmodule
-module ysyx_26060184_regs (
+module regs (
     input logic clk,
     input logic rst,
     input logic [31:0] data_in,
