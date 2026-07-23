@@ -12,9 +12,9 @@ INCLUDES = -I$(SOC_HOME)/perip/uart16550/rtl -I$(SOC_HOME)/perip/spi/rtl
 .DEFAULT_GOAL  := lint
 VERILATOR = verilator
 VERILOG_SRC = $(filter-out vsrc/osoc% vsrc/CLINT.sv, $(wildcard vsrc/*.sv))
-OSOC_SRC = vsrc/osoc_26000003_core.sv vsrc/osoc_26000003.sv vsrc/CLINT.sv $(VERILOG_SRC) $(SoC_VSRC)
-NPC_SRC = vsrc/osoc_26000003_func.sv vsrc/osoc_26000003_core.sv vsrc/CLINT.sv $(VERILOG_SRC)
-STA_SRC = vsrc/osoc_26000003_core.sv $(filter-out vsrc/axi%, $(VERILOG_SRC))
+OSOC_SRC = vsrc/ysyx_26060184_core.sv vsrc/ysyx_26060184.sv vsrc/CLINT.sv $(VERILOG_SRC) $(SoC_VSRC)
+NPC_SRC = vsrc/ysyx_26060184_func.sv vsrc/ysyx_26060184_core.sv vsrc/CLINT.sv $(VERILOG_SRC)
+STA_SRC = vsrc/ysyx_26060184_core.sv $(filter-out vsrc/axi%, $(VERILOG_SRC))
 CPP_SRC = $(shell find csrc/ -name "*.cpp" -not -name "main.cpp" -not -name "main_npc.cpp" -not -name "main_nvb.cpp")
 OSOC_CPP_SRC = csrc/main_nvb.cpp $(CPP_SRC)
 NPC_CPP_SRC = csrc/main_npc.cpp $(CPP_SRC)
@@ -48,7 +48,7 @@ sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 
 lint:
-	$(VERILATOR) --lint-only vsrc/osoc_26000003_core.sv vsrc/osoc_26000003.sv vsrc/CLINT.sv $(VERILOG_SRC) $(VERILOG_FLAGS) -Wall -Wno-UNUSEDSIGNAL -Wno-EOFNEWLINE --top-module osoc_26000003 -Wno-DECLFILENAME
+	$(VERILATOR) --lint-only vsrc/ysyx_26060184_core.sv vsrc/ysyx_26060184.sv vsrc/CLINT.sv $(VERILOG_SRC) $(VERILOG_FLAGS) -Wall -Wno-UNUSEDSIGNAL -Wno-EOFNEWLINE --top-module ysyx_26060184 -Wno-DECLFILENAME
 
 build: sim $(NVBOARD_ARCHIVE)
 	mkdir -p obj_dir
@@ -64,15 +64,15 @@ IDK_CPP_SRC =
 npc_build: sim 
 	@mkdir -p obj_dir_npc
 	@gcc -c $(VERILATOR_CFLAGS) -O2 $(NEMU_HOME)/src/utils/disasm.c -o obj_dir_npc/disasm.o
-	@$(VERILATOR) $(NPC_SRC) -LDFLAGS "$(abspath obj_dir_npc/disasm.o)" $(VERILOG_FLAGS) --top-module osoc_26000003_func  $(NPC_CPP_SRC) $(addprefix -CFLAGS , $(INCFLAGS)) -CFLAGS "-DNPC" -DNPC=1 --Mdir obj_dir_npc
-	@$(MAKE) -j -C obj_dir_npc -f Vosoc_26000003_func.mk 
+	@$(VERILATOR) $(NPC_SRC) -LDFLAGS "$(abspath obj_dir_npc/disasm.o)" $(VERILOG_FLAGS) --top-module ysyx_26060184_func  $(NPC_CPP_SRC) $(addprefix -CFLAGS , $(INCFLAGS)) -CFLAGS "-DNPC" -DNPC=1 --Mdir obj_dir_npc
+	@$(MAKE) -j -C obj_dir_npc -f Vysyx_26060184_func.mk 
 
 npc_run: npc_build
-	@LD_LIBRARY_PATH=$(NEMU_HOME)/tools/capstone/repo:$(NEMU_HOME)/build obj_dir_npc/Vosoc_26000003_func $(ARGS) $(IMG)
+	@LD_LIBRARY_PATH=$(NEMU_HOME)/tools/capstone/repo:$(NEMU_HOME)/build obj_dir_npc/Vysyx_26060184_func $(ARGS) $(IMG)
 
 sta:
 	make -C /home/dsx99/osoc/ysyx-workbench/yosys-sta sta \
-		DESIGN=osoc_26000003_core \
+		DESIGN=ysyx_26060184_core \
 		SDC_FILE=/home/dsx99/osoc/ysyx-workbench/npc/sta_res/default.sdc \
 		CLK_FREQ_MHZ=565 \
 		CLK_PORT_NAME=clock \
