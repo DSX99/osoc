@@ -436,6 +436,9 @@ always_ff @(posedge clk) begin
         for(int i = 0; i < 32; i++) begin
             regs[i] <= 32'h0;
         end
+        regs[MSTATUS] <= 32'h00001800;
+        regs[MVENDORID] <= 32'h20445358;
+        regs[MARCHID] <= 32'h20393920;
     end else begin
         if(valid) begin
             if(exception && cause!=10) begin
@@ -447,9 +450,6 @@ always_ff @(posedge clk) begin
         end
         regs[MEPS][0]<=0;
     end
-    regs[MSTATUS] <= 32'h00001800;
-    regs[MVENDORID] <= 32'h20445358;
-    regs[MARCHID] <= 32'h20393920;
 end
 
 
@@ -751,52 +751,31 @@ logic unused_bits;
 assign unused_bits = |rresp | |word_align;
 
 parameter BLOCK_SIZE = 16;
-parameter NUMBER_OF_BLOCKS = 4;
+parameter NUMBER_OF_BLOCKS = 2;
 // here i use 2 rows
 
-localparam int OFF_W          = $clog2(BLOCK_SIZE);        
-localparam int SET_W          = $clog2(NUMBER_OF_BLOCKS);  
-localparam int WORDS_IN_BLOCK = BLOCK_SIZE / 4;            
-localparam int WORD_W         = $clog2(WORDS_IN_BLOCK);    
-localparam int WAY_W          = $clog2(2);            
-localparam int TAG_W          = 32 - SET_W - OFF_W;        
+localparam int off = $clog2(BLOCK_SIZE);
+localparam int index_off = $clog2(NUMBER_OF_BLOCKS);
+localparam int WORDS_IN_BLOCK = BLOCK_SIZE/4;
 
-localparam int TAG_IDX_W  = SET_W + WAY_W;              
-localparam int DATA_IDX_W = SET_W + WORD_W + WAY_W;     
-localparam int TAG_DEPTH  = 1 << TAG_IDX_W;             
-localparam int DATA_DEPTH = 1 << DATA_IDX_W;            
+logic [31:0] block_cache [NUMBER_OF_BLOCKS][WORDS_IN_BLOCK][2];
+logic latest_row;
 
-                logic [31:0]      block_cache [0:DATA_DEPTH-1];
-(* mem2reg *)   logic [TAG_W-1:0] block_tag   [0:TAG_DEPTH-1];
-                logic [TAG_DEPTH-1:0] block_valid;   
+logic [31:0] miss_addr;
+logic trans;
 
-logic [31:0]        miss_addr;
-logic               trans;
+logic [32-index_off-off-1:0] tag;
+logic [index_off-1:0] index;
+logic [off-3:0] word_select;
+logic [1:0] word_align;
 
-logic [TAG_W-1:0]   tag;
-logic [SET_W-1:0]   index;
-logic [WORD_W-1:0]  word_select;
-logic [1:0]         word_align;
-
+logic [32-index_off-off-1:0] block_tag [NUMBER_OF_BLOCKS][2];
+logic block_valid[NUMBER_OF_BLOCKS][2];
 logic do_burst, burst_reg, burst_addr;
 
 assign burst_addr = ifu_addr >= 32'ha0000000 && ifu_addr < 32'hc0000000;
 assign {tag, index, word_select, word_align} = trans ? miss_addr : ifu_addr;
 assign do_burst = trans ? burst_reg : burst_addr;
-
-logic [TAG_IDX_W-1:0]  tag_idx_w0, tag_idx_w1; 
-logic [TAG_IDX_W-1:0]  tag_idx_fill;             
-logic [DATA_IDX_W-1:0] data_idx_rd, data_idx_fill;
-
-logic [WORD_W-1:0] fill_count;
-logic hit_0, hit_1;
-
-assign tag_idx_w0   = {index, {WAY_W{1'b0}}};
-assign tag_idx_w1   = {index, {WAY_W{1'b1}}};
-assign tag_idx_fill = {index, ~latest_row};
-
-assign data_idx_rd   = {index, word_select, hit_1};
-assign data_idx_fill = {index, fill_count,  ~latest_row};
 
 typedef enum {
    WAIT_AR, WAIT_R
@@ -805,9 +784,10 @@ cache_state_t state;
 logic [1:0] fill_count; 
 
 logic hit_0, hit_1;
-assign hit_0 = block_valid[tag_idx_w0] && (tag == block_tag[tag_idx_w0]);
-assign hit_1 = block_valid[tag_idx_w1] && (tag == block_tag[tag_idx_w1]);
-assign hit   = hit_0 | hit_1;
+assign hit_0 = block_valid[index][0] && (tag == block_tag[index][0]);
+assign hit_1 = block_valid[index][1] && (tag == block_tag[index][1]);
+
+assign hit = hit_0 | hit_1;
 
 
 always_comb begin
@@ -818,13 +798,13 @@ always_comb begin
     opcode  = 0;
     miss    = 0;
 
-    arburst=2'b1;
+    arburst=0;
     arlen=0;
-    arsize=3'b0;
+    arsize=0;
 
     if ((valid && !rst) || trans) begin
         if (hit & !trans) begin
-            opcode = block_cache[data_idx_rd]; //hit_1 is 0 if hit and hit_0 and 1 if hit_1
+            opcode = block_cache[index][word_select][hit_1]; //hit_1 is 0 if hit and hit_0 and 1 if hit_1
             ready  = 1'b1;
         end else begin
             miss=1;
@@ -833,8 +813,8 @@ always_comb begin
                     arvalid = 1'b1;
                     if(do_burst)begin
                         arburst = 2'b01;
-                        arsize  = 3'b010;
-                        arlen   = WORDS_IN_BLOCK - 1;
+                        arsize = 3'b010;
+                        arlen = 8'd3;
                     end
                     araddr  = {tag, index, fill_count, 2'b00};
                 end
@@ -855,7 +835,10 @@ always_ff @(posedge clk) begin
         burst_reg<=0;
         miss_addr<=0;
         state <= WAIT_AR;
-        block_valid <= 0;
+        for(int i = 0; i < NUMBER_OF_BLOCKS; i = i + 1) begin
+            block_valid[i][0] <= 1'b0;
+            block_valid[i][1] <= 1'b0;
+        end
     end else begin
         if (hit) begin
             latest_row<=hit_1;
@@ -875,14 +858,14 @@ always_ff @(posedge clk) begin
                 WAIT_R: begin
                     if (rvalid && rready) begin
                         if(fill_count==2'b11) begin
-                            block_cache[data_idx_fill] <= rdata;
-                            block_tag[tag_idx_fill] <= tag;
-                            block_valid[tag_idx_fill] <= 1'b1;
+                            block_cache[index][fill_count][~latest_row] <= rdata;
+                            block_tag[index][~latest_row] <= tag;
+                            block_valid[index][~latest_row] <= 1'b1;
                             fill_count <= 0;
                             trans<=0;
                             state <= WAIT_AR;
                         end else begin
-                            block_cache[data_idx_fill] <= rdata;
+                            block_cache[index][fill_count][~latest_row] <= rdata;
                             fill_count <= fill_count + 1;
                             if(do_burst) state <= WAIT_R;
                             else state <= WAIT_AR;
@@ -893,7 +876,10 @@ always_ff @(posedge clk) begin
             endcase
         end
         if (fencei) begin
-            block_valid <= 0;
+            for(int i = 0; i < NUMBER_OF_BLOCKS; i = i + 1) begin
+                block_valid[i][0] <= 1'b0;
+                block_valid[i][1] <= 1'b0;
+            end
         end
     end
 end
@@ -952,43 +938,28 @@ module ifu (
     parameter SIZE_OF_OFFSET = 12;
     // here i use 2 rows
 
-    localparam int OFF_W = 2;                           
-    localparam int SET_W = $clog2(NUMBER_OF_BLOCKS);     
-    localparam int WAY_W = $clog2(2);               
-    localparam int TAG_W = 32 - SET_W - OFF_W;           
- 
-    localparam int IDX_W = SET_W + WAY_W;                
-    localparam int DEPTH = 1 << IDX_W;                   
+    localparam int OFF = 2;
+    localparam int INDEX_OFF = $clog2(NUMBER_OF_BLOCKS);
 
-    (* mem2reg *) logic [TAG_W-1:0]           block_tag    [0:DEPTH-1];
-    (* mem2reg *) logic [SIZE_OF_OFFSET-1:0]  block_offset [0:DEPTH-1];
-                  logic [DEPTH-1:0]           block_valid;   // packed -> flops
- 
+    logic [32-INDEX_OFF-OFF-1:0] block_tag [NUMBER_OF_BLOCKS][2];
+    logic [SIZE_OF_OFFSET - 1:0] block_offset [NUMBER_OF_BLOCKS][2];
+    logic block_valid [NUMBER_OF_BLOCKS][2];
     logic latest_row;
 
-    logic [TAG_W-1:0] tag;
-    logic [SET_W-1:0] index;
-    logic [OFF_W-1:0] word_align;
+    logic [32-INDEX_OFF-OFF-1:0] tag;
+    logic [INDEX_OFF-1:0] index;
+    logic [OFF-1:0] word_align;
 
     assign {tag, index, word_align} = pc;
 
-    logic [IDX_W-1:0] idx_w0, idx_w1;
-    assign idx_w0 = {index, {WAY_W{1'b0}}};
-    assign idx_w1 = {index, {WAY_W{1'b1}}};
-
     logic hit, hit_0, hit_1;
+
     assign hit_0 = (block_tag[index][0] == tag) && block_valid[index][0];
     assign hit_1 = (block_tag[index][1] == tag) && block_valid[index][1];
 
     assign hit = (hit_0 | hit_1) & !fencei;
 
-    logic [SET_W-1:0] wr_set;
-    logic [IDX_W-1:0] wr_idx;
- 
-    assign wr_set = pc_to_write[SET_W+OFF_W-1:OFF_W];
-    assign wr_idx = {wr_set, ~latest_row};
-
-    always_comb begin
+    always @(*) begin
         bus_out_pc      = pc;
         bus_out_next_pc = next_pc;
 
@@ -1018,10 +989,10 @@ module ifu (
             bus_out_speculate = 1'b1;
             do_spec=1;
             if(hit_0)begin
-                addr_spec = block_offset[idx_w0];
+                addr_spec = block_offset[index][0];
             end
             if(hit_1)begin
-                addr_spec = block_offset[idx_w1];
+                addr_spec = block_offset[index][1];
             end
         end else
             bus_out_speculate = 1'b0;
@@ -1029,20 +1000,26 @@ module ifu (
 
     always_ff @(posedge clk) begin
         if(rst)begin
-            block_valid <= '0;
+            for(int i = 0; i < NUMBER_OF_BLOCKS; i = i + 1) begin
+                block_valid[i][0] <= 1'b0;
+                block_valid[i][1] <= 1'b0;
+            end
             latest_row<=0;
         end else begin
             if(fencei) begin
-               block_valid <= '0;
+               for(int i = 0; i < NUMBER_OF_BLOCKS; i = i + 1) begin
+                    block_valid[i][0] <= 1'b0;
+                    block_valid[i][1] <= 1'b0;
+                end 
             end
             if(hit)begin
                 latest_row<=hit_1;
             end
 
             if(write) begin
-                block_tag   [wr_idx] <= pc_to_write[31:SET_W+OFF_W];
-                block_offset[wr_idx] <= offset_to_write;
-                block_valid [wr_idx] <= 1'b1;
+                block_tag[pc_to_write[INDEX_OFF+OFF-1:OFF]][!latest_row]<=pc_to_write[31:INDEX_OFF+OFF];
+                block_offset[pc_to_write[INDEX_OFF+OFF-1:OFF]][!latest_row]<=offset_to_write;
+                block_valid[pc_to_write[INDEX_OFF+OFF-1:OFF]][!latest_row]<=1;
             end
         end
     end

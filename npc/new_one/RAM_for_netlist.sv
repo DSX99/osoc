@@ -1,4 +1,4 @@
-module ysyx_26060184_ram(
+module ram(
     input logic clk, rst,
     
         // Read Addr Channel (AR)

@@ -87,7 +87,7 @@ sim-iverilog:
 
 gen_netlist:
 	make -C /home/dsx99/osoc/ysyx-workbench/yosys-sta sta \
-		DESIGN=ysyx_26060184_core \
+		DESIGN=ysyx_26060184 \
 		SDC_FILE=/home/dsx99/osoc/ysyx-workbench/npc/sta_res/default.sdc \
 		CLK_FREQ_MHZ=565 \
 		CLK_PORT_NAME=clock \
@@ -97,7 +97,7 @@ gen_netlist:
 sim-iverilog-netlist:
 	mkdir -p icarus_netlist
 	riscv64-linux-gnu-objcopy -I binary -O verilog $(IMG) $(IMG).hex
-	iverilog -g2012 -DMEM_ADDR=\"$(IMG).hex\" -o icarus/sim.vvp ./iverilog_vsrc/RAM_for_netlist.sv ./iverilog_vsrc/top_module.sv ./iverilog_vsrc/CLINT.sv $(NETLIST) $(CELLS)
+	iverilog -g2012 -DMEM_ADDR=\"$(IMG).hex\" -o icarus/sim.vvp ./iverilog_vsrc/RAM_for_netlist.sv ./iverilog_vsrc/top_module.sv $(NETLIST) $(CELLS)
 	vvp ./icarus/sim.vvp -fst
 
 clean:

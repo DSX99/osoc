@@ -148,19 +148,6 @@ assign io_slave_rready  = 1'b0;
     logic        io_master_rlast;
     logic [3:0]  io_master_rid;
 
-    logic [31:0] cwdata, crdata, caddr;
-    logic        cwvalid, crvalid;
-    logic        cawvalid, carvalid;
-    logic        cawready, cwready; 
-    logic        carready, crready; 
-    logic        crlast;
-
-    logic match_aw, match_ar;
-    assign match_aw = (core_awaddr[31:16] == 16'h0200) || trans[0];
-    assign match_ar = (core_araddr[31:16] == 16'h0200) || trans[1];
-
-    assign caddr = match_ar ? core_araddr : core_awaddr;
-
     always @(*) begin
 
         io_master_awvalid = core_awvalid;
