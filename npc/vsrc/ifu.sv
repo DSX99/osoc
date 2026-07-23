@@ -32,7 +32,8 @@ module ifu (
 
     input logic [31:0] pc_to_write,
     input logic [11:0] offset_to_write,
-    input logic write
+    input logic write,
+    input logic fencei
 );
 
     typedef enum {
@@ -69,7 +70,7 @@ module ifu (
     assign hit_0 = (block_tag[index][0] == tag) && block_valid[index][0];
     assign hit_1 = (block_tag[index][1] == tag) && block_valid[index][1];
 
-    assign hit = hit_0 | hit_1;
+    assign hit = (hit_0 | hit_1) & !fencei;
 
     always_comb begin
         bus_out_pc      = pc;
@@ -118,6 +119,12 @@ module ifu (
             end
             latest_row<=0;
         end else begin
+            if(fencei) begin
+               for(int i = 0; i < NUMBER_OF_BLOCKS; i = i + 1) begin
+                    block_valid[i][0] <= 1'b0;
+                    block_valid[i][1] <= 1'b0;
+                end 
+            end
             if(hit)begin
                 latest_row<=hit_1;
             end
