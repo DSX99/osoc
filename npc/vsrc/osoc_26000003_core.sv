@@ -308,7 +308,7 @@ module osoc_26000003_core (
     if_de_pipeline if_de_pipeline_mod (
         .clk(clock),
         .rst(reset),
-        .flush(flush | flush_ex | fencei_commit),
+        .flush(flush | flush_ex),
 
         .if_de_bus_pc_if(if_de_bus_pc_if),
         .if_de_bus_next_pc_if(if_de_bus_next_pc_if),
