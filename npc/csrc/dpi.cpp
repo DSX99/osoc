@@ -35,7 +35,7 @@ uint8_t flash[FLASH_SIZE];
 uint8_t psram[PSRAM_SIZE];
 uint8_t sdram[SDRAM_SIZE];
 
-extern VysyxSoCFull_osoc_26000003_core *top;
+extern VysyxSoCFull_ysyx_26060184_core *top;
 
 #define MROM_OFFSET 0x20000000
 #define FLASH_OFFSET 0x30000000

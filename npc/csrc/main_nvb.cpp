@@ -126,7 +126,7 @@ int main(int argc, char** argv) {
   // contextp->threads(4); // can be used in future to increase speed
 
   soc = new VysyxSoCFull{contextp};
-  top = soc->ysyxSoCFull->asic->cpu->cpu->core;
+  top = soc->ysyxSoCFull->asic->cpu->cpu->ysyx_26060184_core;
 
   nvboard_bind_all_pins();
   nvboard_init();
