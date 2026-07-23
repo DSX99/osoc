@@ -251,8 +251,11 @@ void Vosoc_26000003_func_osoc_26000003_core___ico_sequent__TOP__osoc_26000003_fu
                            != (IData)(vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__de_ex_bus_speculate)) 
                           & (IData)(vlSelfRef.__PVT__pc_mod__DOT__ex_valid));
     vlSelfRef.if_de_ready_if = vlSelfRef.__PVT__if_de_ready_de;
-    vlSelfRef.__PVT__if_de_pipeline_mod__DOT__flush 
+    vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__flush 
         = ((IData)(vlSelfRef.flush) | (IData)(vlSelfRef.flush_ex));
+    vlSelfRef.__PVT__if_de_pipeline_mod__DOT__flush 
+        = ((IData)(vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__flush) 
+           | (IData)(vlSelfRef.__PVT__fencei));
     vlSelfRef.cache_miss = 0U;
     vlSelfRef.__PVT__cache_opcode = 0U;
     vlSelfRef.__PVT__cache_ready = 0U;
@@ -262,7 +265,7 @@ void Vosoc_26000003_func_osoc_26000003_core___ico_sequent__TOP__osoc_26000003_fu
     vlSelfRef.__PVT__arlen_ifu = 0U;
     vlSelfRef.__PVT__arvalid_ifu = 0U;
     vlSelfRef.__PVT__araddr_ifu = 0U;
-    if ((1U & (((~ (IData)(vlSelfRef.__PVT__if_de_pipeline_mod__DOT__flush)) 
+    if ((1U & (((~ (IData)(vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__flush)) 
                 & (~ (IData)(vlSymsp->TOP.reset))) 
                | (IData)(vlSelfRef.__PVT__icache_mod__DOT__trans)))) {
         if ((1U & (~ ((IData)(vlSelfRef.cache_hit) 
@@ -488,11 +491,11 @@ void Vosoc_26000003_func_osoc_26000003_core___nba_sequent__TOP__osoc_26000003_fu
         vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_diff_pc = 0U;
         vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_branch = 0U;
         vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr = 0U;
+        vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_mux_select_pc = 0U;
         __Vdly__lsu_mod__DOT__done_aw = 0U;
         __Vdly__lsu_mod__DOT__done_wdata = 0U;
         __Vdly__lsu_mod__DOT__lsu_w = 0U;
         vlSelfRef.__PVT__lsu_mod__DOT__trans_w = 0U;
-        vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_mux_select_pc = 0U;
         vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_mcause = 0U;
         vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_mux_select = 0U;
         vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr_out = 0U;
@@ -501,8 +504,8 @@ void Vosoc_26000003_func_osoc_26000003_core___nba_sequent__TOP__osoc_26000003_fu
         vlSelfRef.__PVT__lsu_mod__DOT__trans_r = 0U;
         __Vdly__arbiter_mod__DOT__read_busy = 0U;
         vlSelfRef.__PVT__arbiter_mod__DOT__read_select = 0U;
-        vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_exception = 0U;
         vlSelfRef.opcode = 0U;
+        vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_exception = 0U;
         vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_pc = 0U;
         vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_next_pc = 0U;
         __Vdly__icache_mod__DOT__fill_count = 0U;
@@ -699,7 +702,7 @@ void Vosoc_26000003_func_osoc_26000003_core___nba_sequent__TOP__osoc_26000003_fu
         }
         if (vlSelfRef.__PVT__fencei) {
             __VdlySet__icache_mod__DOT__block_valid__v8 = 1U;
-        } else if ((1U & (((~ (IData)(vlSelfRef.__PVT__if_de_pipeline_mod__DOT__flush)) 
+        } else if ((1U & (((~ (IData)(vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__flush)) 
                            & (~ (IData)(vlSelfRef.cache_hit))) 
                           | (IData)(vlSelfRef.__PVT__icache_mod__DOT__trans)))) {
             if ((0U == vlSelfRef.__PVT__icache_mod__DOT__state)) {
@@ -783,6 +786,15 @@ void Vosoc_26000003_func_osoc_26000003_core___nba_sequent__TOP__osoc_26000003_fu
     }
     vlSelfRef.reg_valid = ((1U & (~ (IData)(vlSymsp->TOP.reset))) 
                            && (IData)(vlSelfRef.reg_valid_e));
+    if (((IData)(vlSymsp->TOP.reset) | (IData)(vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__flush))) {
+        vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__de_ex_bus_rs1 = 0U;
+        vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__de_ex_bus_next_pc = 0U;
+    } else if (((IData)(vlSelfRef.ex_ls_ready_ls) & (IData)(vlSelfRef.__PVT__de_ex_valid_de))) {
+        vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__de_ex_bus_rs1 
+            = vlSelfRef.__PVT__de_ex_bus_rs1_de;
+        vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__de_ex_bus_next_pc 
+            = vlSelfRef.__PVT__if_de_pipeline_mod__DOT__if_de_bus_next_pc;
+    }
     if (((IData)(vlSymsp->TOP.reset) | (IData)(vlSelfRef.flush))) {
         vlSelfRef.__PVT__ex_ls_pipeline_mod__DOT__ex_ls_valid = 0U;
         vlSelfRef.__PVT__ex_ls_pipeline_mod__DOT__ex_ls_bus_lsu_we = 0U;
@@ -999,17 +1011,11 @@ void Vosoc_26000003_func_osoc_26000003_core___nba_sequent__TOP__osoc_26000003_fu
             __VdlyMask__pc_ifu = 0xffffffffU;
         }
     }
-    if (((IData)(vlSymsp->TOP.reset) | (IData)(vlSelfRef.__PVT__if_de_pipeline_mod__DOT__flush))) {
-        vlSelfRef.__PVT__if_de_pipeline_mod__DOT__if_de_valid = 0U;
-        vlSelfRef.__PVT__if_de_pipeline_mod__DOT__if_de_bus_mcause = 0U;
-        vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__de_ex_bus_rs1 = 0U;
-        vlSelfRef.__PVT__if_de_pipeline_mod__DOT__if_de_bus_exception = 0U;
-        vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__de_ex_bus_next_pc = 0U;
+    if (((IData)(vlSymsp->TOP.reset) | (IData)(vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__flush))) {
         vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__de_ex_valid = 0U;
         vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__de_ex_bus_data_rs1 = 0U;
         vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__de_ex_bus_imm = 0U;
         vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__de_ex_bus_alu_op = 0U;
-        vlSelfRef.__PVT__if_de_pipeline_mod__DOT__if_de_bus_next_pc = 0U;
         vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__de_ex_bus_lsu_we = 0U;
         vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__de_ex_bus_lsu_re = 0U;
         vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__de_ex_bus_data_rs2 = 0U;
@@ -1021,20 +1027,9 @@ void Vosoc_26000003_func_osoc_26000003_core___nba_sequent__TOP__osoc_26000003_fu
         vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__de_ex_bus_speculate = 0U;
         vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__de_ex_bus_exception = 0U;
         vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__de_ex_bus_pc = 0U;
-        vlSelfRef.__PVT__if_de_pipeline_mod__DOT__if_de_bus_speculate = 0U;
         vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__opcode = 0U;
-        vlSelfRef.__PVT__if_de_pipeline_mod__DOT__if_de_bus_pc = 0U;
-        vlSelfRef.__PVT__if_de_pipeline_mod__DOT__if_de_bus_opcode = 0U;
     } else {
-        if (vlSelfRef.__PVT__if_de_ready_de) {
-            vlSelfRef.__PVT__if_de_pipeline_mod__DOT__if_de_valid 
-                = vlSelfRef.if_de_valid_if;
-        }
         if (((IData)(vlSelfRef.ex_ls_ready_ls) & (IData)(vlSelfRef.__PVT__de_ex_valid_de))) {
-            vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__de_ex_bus_rs1 
-                = vlSelfRef.__PVT__de_ex_bus_rs1_de;
-            vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__de_ex_bus_next_pc 
-                = vlSelfRef.__PVT__if_de_pipeline_mod__DOT__if_de_bus_next_pc;
             vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__de_ex_bus_data_rs1 
                 = vlSelfRef.__PVT__de_ex_bus_data_rs1_de;
             vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__de_ex_bus_imm 
@@ -1066,6 +1061,27 @@ void Vosoc_26000003_func_osoc_26000003_core___nba_sequent__TOP__osoc_26000003_fu
             vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__opcode 
                 = vlSelfRef.__PVT__if_de_pipeline_mod__DOT__if_de_bus_opcode;
         }
+        if (vlSelfRef.ex_ls_ready_ls) {
+            vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__de_ex_valid 
+                = vlSelfRef.__PVT__de_ex_valid_de;
+            if ((1U & (~ (IData)(vlSelfRef.__PVT__de_ex_valid_de)))) {
+                vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__de_ex_bus_csr = 0U;
+            }
+        }
+    }
+    if (((IData)(vlSymsp->TOP.reset) | (IData)(vlSelfRef.__PVT__if_de_pipeline_mod__DOT__flush))) {
+        vlSelfRef.__PVT__if_de_pipeline_mod__DOT__if_de_valid = 0U;
+        vlSelfRef.__PVT__if_de_pipeline_mod__DOT__if_de_bus_mcause = 0U;
+        vlSelfRef.__PVT__if_de_pipeline_mod__DOT__if_de_bus_exception = 0U;
+        vlSelfRef.__PVT__if_de_pipeline_mod__DOT__if_de_bus_next_pc = 0U;
+        vlSelfRef.__PVT__if_de_pipeline_mod__DOT__if_de_bus_speculate = 0U;
+        vlSelfRef.__PVT__if_de_pipeline_mod__DOT__if_de_bus_pc = 0U;
+        vlSelfRef.__PVT__if_de_pipeline_mod__DOT__if_de_bus_opcode = 0U;
+    } else {
+        if (vlSelfRef.__PVT__if_de_ready_de) {
+            vlSelfRef.__PVT__if_de_pipeline_mod__DOT__if_de_valid 
+                = vlSelfRef.if_de_valid_if;
+        }
         if (((IData)(vlSelfRef.if_de_ready_if) & (IData)(vlSelfRef.if_de_valid_if))) {
             vlSelfRef.__PVT__if_de_pipeline_mod__DOT__if_de_bus_mcause = 0U;
             vlSelfRef.__PVT__if_de_pipeline_mod__DOT__if_de_bus_exception 
@@ -1078,13 +1094,6 @@ void Vosoc_26000003_func_osoc_26000003_core___nba_sequent__TOP__osoc_26000003_fu
                 = vlSelfRef.__PVT__pc_ifu;
             vlSelfRef.__PVT__if_de_pipeline_mod__DOT__if_de_bus_opcode 
                 = vlSelfRef.__PVT__cache_opcode;
-        }
-        if (vlSelfRef.ex_ls_ready_ls) {
-            vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__de_ex_valid 
-                = vlSelfRef.__PVT__de_ex_valid_de;
-            if ((1U & (~ (IData)(vlSelfRef.__PVT__de_ex_valid_de)))) {
-                vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__de_ex_bus_csr = 0U;
-            }
         }
     }
     vlSelfRef.ls_wb_bus_exception_wb = vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_exception;
@@ -1817,7 +1826,7 @@ void Vosoc_26000003_func_osoc_26000003_core___nba_sequent__TOP__osoc_26000003_fu
         }
     }
     vlSelfRef.__PVT__ls_wb_bus_alu_out_ls = vlSelfRef.__PVT__ex_ls_pipeline_mod__DOT__ex_ls_bus_alu_out;
-    if (((IData)(vlSymsp->TOP.reset) | (IData)(vlSelfRef.__PVT__if_de_pipeline_mod__DOT__flush))) {
+    if (((IData)(vlSymsp->TOP.reset) | (IData)(vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__flush))) {
         vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__de_ex_bus_lsu_oper = 0U;
         vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__finish = 0U;
         vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__de_ex_bus_rd = 0U;
@@ -2242,9 +2251,12 @@ void Vosoc_26000003_func_osoc_26000003_core___nba_sequent__TOP__osoc_26000003_fu
                                        & (IData)(vlSelfRef.__PVT__if_de_pipeline_mod__DOT__if_de_valid));
     vlSelfRef.__PVT__if_de_ready_de = ((~ (IData)(vlSelfRef.__PVT__decode_mod__DOT__reg_match)) 
                                        & (IData)(vlSelfRef.ex_ls_ready_ls));
-    vlSelfRef.__PVT__if_de_pipeline_mod__DOT__flush 
+    vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__flush 
         = ((IData)(vlSelfRef.flush) | (IData)(vlSelfRef.flush_ex));
     vlSelfRef.if_de_ready_if = vlSelfRef.__PVT__if_de_ready_de;
+    vlSelfRef.__PVT__if_de_pipeline_mod__DOT__flush 
+        = ((IData)(vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__flush) 
+           | (IData)(vlSelfRef.__PVT__fencei));
     vlSelfRef.cache_miss = 0U;
     vlSelfRef.__PVT__cache_opcode = 0U;
     vlSelfRef.__PVT__cache_ready = 0U;
@@ -2254,7 +2266,7 @@ void Vosoc_26000003_func_osoc_26000003_core___nba_sequent__TOP__osoc_26000003_fu
     vlSelfRef.__PVT__arlen_ifu = 0U;
     vlSelfRef.__PVT__arvalid_ifu = 0U;
     vlSelfRef.__PVT__araddr_ifu = 0U;
-    if ((1U & (((~ (IData)(vlSelfRef.__PVT__if_de_pipeline_mod__DOT__flush)) 
+    if ((1U & (((~ (IData)(vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__flush)) 
                 & (~ (IData)(vlSymsp->TOP.reset))) 
                | (IData)(vlSelfRef.__PVT__icache_mod__DOT__trans)))) {
         if ((1U & (~ ((IData)(vlSelfRef.cache_hit) 

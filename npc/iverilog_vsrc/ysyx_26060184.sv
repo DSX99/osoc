@@ -395,15 +395,6 @@ typedef enum bit [4:0]{
 
 logic [4:0] working_reg_r,working_reg_w;
 
-initial begin
-    for(int i = 0; i < 32; i++) begin
-        regs[i] = 32'h0;
-    end
-    regs[MSTATUS] = 32'h00001800;
-    regs[MVENDORID] = 32'h20445358;
-    regs[MARCHID] = 32'h20393920;
-end
-
 always_comb begin
     working_reg_r =0;
     working_reg_w =0;
@@ -1338,6 +1329,7 @@ module ysyx_26060184_core (
     input  logic         clock,
     input  logic         reset,
     input  logic         io_interrupt,
+    output logic         finish_top,
 
     // AXI4 Master Interface
     input  logic         io_master_awready,
@@ -1411,6 +1403,7 @@ module ysyx_26060184_core (
     logic ex_ls_valid_ex /* verilator public */;
 
     assign rst = reset;
+    assign finish_top = finish_wb;
 
     logic [31:0] opcode_over_ex, opcode_over_ls, opcode_over_wb;
 
@@ -1427,18 +1420,10 @@ module ysyx_26060184_core (
             prev_pc<=0;
             opcode <= 0 ;
         end else begin
-            `ifndef SYNTHESIS
-            reg_valid <= reg_valid_e;
-            pc   <=  ls_wb_bus_exception_wb ?  ls_wb_bus_csr_pc_wb : pc_e;
-            prev_pc <= pc;
-            opcode <= opcode_over_wb;
-            `endif
-            `ifdef SYNTHESIS
             prev_pc <= 0;
             reg_valid <= 0;
             pc <= 0;
             opcode <=0;
-            `endif
         end
     end
 
@@ -2687,18 +2672,6 @@ module ysyx_26060184_pc(
     output logic [31:0] pc,
     output logic [31:0] next_pc
 );
-
-    initial begin
-        `ifdef SOC
-            pc = 32'h30000000;
-        `endif
-        `ifdef NPC
-            pc = 32'h80000000;
-        `endif
-        `ifdef __ICARUS__
-            pc = 32'h80000000;
-        `endif
-    end
 
     assign next_pc = pc + (do_spec ? {{19{addr_spec[11]}}, addr_spec, 1'b0} : 4);
 

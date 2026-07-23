@@ -20,6 +20,13 @@ module top_module;
         $dumpvars(0, top_module);
     end
 
+    logic finish;
+
+    always_ff @(posedge clock) begin
+        if(finish) $finish;
+    end
+
+
     logic        io_interrupt;
     logic        io_slave_awvalid;
     logic [31:0] io_slave_awaddr;
@@ -250,6 +257,7 @@ assign io_slave_rready  = 1'b0;
         .clock(clock),
         .reset(reset),
         .io_interrupt(io_interrupt),
+        .finish_top(finish),
 
         .io_master_awready(core_awready),
         .io_master_awvalid(core_awvalid),

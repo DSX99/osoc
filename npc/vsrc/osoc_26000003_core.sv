@@ -244,7 +244,10 @@ module osoc_26000003_core (
     logic [31:0] ls_wb_bus_diff_pc_wb;
     logic        ls_wb_valid_wb, ls_wb_ready_wb;
 
-    logic fencei;
+    logic fencei;                // level signal: valid FENCE.I sitting in DE
+    logic fencei_stall;          // hold FENCE.I stationary in DE while draining
+    logic fencei_commit;         // single-cycle-effective: safe to invalidate + flush
+    logic pipeline_drained_for_fencei, store_idle_for_fencei;
 
     pc pc_mod (
         .clk(clock), 
@@ -291,7 +294,7 @@ module osoc_26000003_core (
     );
 
     icache icache_mod(
-        .clk(clock), .rst(reset), .fencei(fencei),
+        .clk(clock), .rst(reset), .fencei(fencei_commit),
         .ifu_addr(cache_addr), .valid(cache_valid & !(flush | flush_ex)), .opcode(cache_opcode), .ready(cache_ready),
         .araddr(araddr_ifu), .arvalid(arvalid_ifu), .arready(arready_ifu), 
         .arlen(arlen_ifu), .arsize(arsize_ifu), .arburst(arburst_ifu),
@@ -304,7 +307,7 @@ module osoc_26000003_core (
     if_de_pipeline if_de_pipeline_mod (
         .clk(clock),
         .rst(reset),
-        .flush(flush | flush_ex | fencei),
+        .flush(flush | flush_ex | fencei_commit),
 
         .if_de_bus_pc_if(if_de_bus_pc_if),
         .if_de_bus_next_pc_if(if_de_bus_next_pc_if),
@@ -376,8 +379,23 @@ module osoc_26000003_core (
         .wb_csr(ls_wb_bus_csr_wb),
 
         .finish(finish_de),
-        .fencei(fencei)
+        .fencei(fencei),
+        .fencei_stall(fencei_stall)
     );
+
+    // --- FENCE.I barrier ---------------------------------------------
+    // `fencei` from decode is a LEVEL signal: it's true every cycle a
+    // valid FENCE.I instruction sits in DE, and it STAYS there for as
+    // long as we hold it stationary via fencei_stall. We only let it
+    // actually invalidate the icache / flush IF-DE (fencei_commit) once
+    // every OLDER instruction has drained out of EX/LS/WB *and* any
+    // outstanding store write has been acknowledged by the memory
+    // system -- otherwise a refill triggered by fence.i can race a
+    // still-in-flight store and read a half-old/half-new cache line.
+    assign pipeline_drained_for_fencei = !de_ex_valid_ex && !ex_ls_valid_ls && !ls_wb_valid_wb;
+    assign store_idle_for_fencei       = !awvalid_lsu && !wvalid_lsu && !bvalid_lsu;
+    assign fencei_commit = fencei && pipeline_drained_for_fencei && store_idle_for_fencei;
+    assign fencei_stall  = fencei && !fencei_commit;
 
     //finish routing
     logic finish_de,finish_ex,finish_ls,finish_wb;

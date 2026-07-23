@@ -116,12 +116,15 @@ always_ff @(posedge clk) begin
             block_valid[i][0] <= 1'b0;
             block_valid[i][1] <= 1'b0;
         end
-    end else if(fencei) begin
-        for(int i = 0; i < NUMBER_OF_BLOCKS; i = i + 1) begin
-            block_valid[i][0] <= 1'b0;
-            block_valid[i][1] <= 1'b0;
-        end
     end else begin
+        // Let an in-flight AXI fill keep making progress even on a
+        // fence.i cycle, so the beat/burst bookkeeping never desyncs
+        // from the bus (the comb block's rready isn't gated by fencei
+        // either, so the transfer is happening on the wire regardless).
+        // If a fill happens to complete on the very same cycle as
+        // fence.i, the invalidate below wins and the just-fetched line
+        // is discarded -- safe, since it will simply be re-fetched on
+        // the next access.
         if (hit) begin
             latest_row<=hit_1;
         end
@@ -142,7 +145,9 @@ always_ff @(posedge clk) begin
                         if(fill_count==2'b11) begin
                             block_cache[index][fill_count][~latest_row] <= rdata;
                             block_tag[index][~latest_row] <= tag;
-                            block_valid[index][~latest_row] <= 1'b1;
+                            if (!fencei) begin
+                                block_valid[index][~latest_row] <= 1'b1;
+                            end
                             fill_count <= 0;
                             trans<=0;
                             state <= WAIT_AR;
@@ -156,6 +161,16 @@ always_ff @(posedge clk) begin
                 end
                 default: state <= WAIT_AR;
             endcase
+        end
+
+        // fence.i: invalidate everything. Kept unconditional and placed
+        // last so it always overrides any "mark valid" write attempted
+        // above in this same cycle.
+        if (fencei) begin
+            for(int i = 0; i < NUMBER_OF_BLOCKS; i = i + 1) begin
+                block_valid[i][0] <= 1'b0;
+                block_valid[i][1] <= 1'b0;
+            end
         end
     end
 end

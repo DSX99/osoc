@@ -71,6 +71,41 @@ VL_ATTR_COLD void Vosoc_26000003_func_osoc_26000003_core___stl_sequent__TOP__oso
     vlSelfRef.__PVT__de_ex_bus_lsu_re_de = 0U;
     vlSelfRef.__PVT__de_ex_bus_mux_select_de = 0U;
     vlSelfRef.__PVT__de_ex_bus_lsu_we_de = 0U;
+    vlSelfRef.rst = vlSymsp->TOP.reset;
+    vlSelfRef.branch = (1U == (3U & ((IData)(vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__de_ex_bus_alu_op) 
+                                     >> 4U)));
+    vlSelfRef.__PVT__csr_mod__DOT__working_reg_w = 
+        ((((0x0300U == (IData)(vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr)) 
+           | (0x0305U == (IData)(vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr))) 
+          | (((0x0340U == (IData)(vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr)) 
+              | (0x0341U == (IData)(vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr))) 
+             | ((0x0342U == (IData)(vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr)) 
+                | ((0x0343U == (IData)(vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr)) 
+                   | ((0x0f11U == (IData)(vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr)) 
+                      | (0x0f12U == (IData)(vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr)))))))
+          ? ((0x0300U == (IData)(vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr))
+              ? 2U : ((0x0305U == (IData)(vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr))
+                       ? 4U : ((0x0340U == (IData)(vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr))
+                                ? 7U : ((0x0341U == (IData)(vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr))
+                                         ? 1U : ((0x0342U 
+                                                  == (IData)(vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr))
+                                                  ? 3U
+                                                  : 
+                                                 ((0x0343U 
+                                                   == (IData)(vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr))
+                                                   ? 8U
+                                                   : 
+                                                  ((0x0f11U 
+                                                    == (IData)(vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr))
+                                                    ? 5U
+                                                    : 6U)))))))
+          : 0U);
+    vlSelfRef.reg_valid_e = vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_valid;
+    vlSelfRef.ls_wb_bus_pc_wb = vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_pc;
+    vlSelfRef.branch_taken = vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_branch;
+    vlSelfRef.pc_e = vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_diff_pc;
+    vlSelfRef.ls_wb_bus_speculate_wb = vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_speculate;
+    vlSelfRef.__PVT__de_ex_bus_rd_de = 0U;
     vlSelfRef.__PVT__fencei = 0U;
     if ((1U & (~ (vlSelfRef.__PVT__if_de_pipeline_mod__DOT__if_de_bus_opcode 
                   >> 6U)))) {
@@ -138,41 +173,6 @@ VL_ATTR_COLD void Vosoc_26000003_func_osoc_26000003_core___stl_sequent__TOP__oso
             }
         }
     }
-    vlSelfRef.rst = vlSymsp->TOP.reset;
-    vlSelfRef.branch = (1U == (3U & ((IData)(vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__de_ex_bus_alu_op) 
-                                     >> 4U)));
-    vlSelfRef.__PVT__csr_mod__DOT__working_reg_w = 
-        ((((0x0300U == (IData)(vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr)) 
-           | (0x0305U == (IData)(vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr))) 
-          | (((0x0340U == (IData)(vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr)) 
-              | (0x0341U == (IData)(vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr))) 
-             | ((0x0342U == (IData)(vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr)) 
-                | ((0x0343U == (IData)(vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr)) 
-                   | ((0x0f11U == (IData)(vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr)) 
-                      | (0x0f12U == (IData)(vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr)))))))
-          ? ((0x0300U == (IData)(vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr))
-              ? 2U : ((0x0305U == (IData)(vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr))
-                       ? 4U : ((0x0340U == (IData)(vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr))
-                                ? 7U : ((0x0341U == (IData)(vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr))
-                                         ? 1U : ((0x0342U 
-                                                  == (IData)(vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr))
-                                                  ? 3U
-                                                  : 
-                                                 ((0x0343U 
-                                                   == (IData)(vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr))
-                                                   ? 8U
-                                                   : 
-                                                  ((0x0f11U 
-                                                    == (IData)(vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr))
-                                                    ? 5U
-                                                    : 6U)))))))
-          : 0U);
-    vlSelfRef.reg_valid_e = vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_valid;
-    vlSelfRef.ls_wb_bus_pc_wb = vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_pc;
-    vlSelfRef.branch_taken = vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_branch;
-    vlSelfRef.pc_e = vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_diff_pc;
-    vlSelfRef.ls_wb_bus_speculate_wb = vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_speculate;
-    vlSelfRef.__PVT__de_ex_bus_rd_de = 0U;
     decode_mod__DOT____VdfgRegularize_h901acc23_0_2 
         = ((8U & (vlSelfRef.__PVT__if_de_pipeline_mod__DOT__if_de_bus_opcode 
                   >> 0x0000001bU)) | (7U & (vlSelfRef.__PVT__if_de_pipeline_mod__DOT__if_de_bus_opcode 
@@ -1106,8 +1106,11 @@ VL_ATTR_COLD void Vosoc_26000003_func_osoc_26000003_core___stl_sequent__TOP__oso
                            != (IData)(vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__de_ex_bus_speculate)) 
                           & (IData)(vlSelfRef.__PVT__pc_mod__DOT__ex_valid));
     vlSelfRef.if_de_ready_if = vlSelfRef.__PVT__if_de_ready_de;
-    vlSelfRef.__PVT__if_de_pipeline_mod__DOT__flush 
+    vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__flush 
         = ((IData)(vlSelfRef.flush) | (IData)(vlSelfRef.flush_ex));
+    vlSelfRef.__PVT__if_de_pipeline_mod__DOT__flush 
+        = ((IData)(vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__flush) 
+           | (IData)(vlSelfRef.__PVT__fencei));
     vlSelfRef.cache_miss = 0U;
     vlSelfRef.__PVT__cache_opcode = 0U;
     vlSelfRef.__PVT__cache_ready = 0U;
@@ -1117,7 +1120,7 @@ VL_ATTR_COLD void Vosoc_26000003_func_osoc_26000003_core___stl_sequent__TOP__oso
     vlSelfRef.__PVT__arlen_ifu = 0U;
     vlSelfRef.__PVT__arvalid_ifu = 0U;
     vlSelfRef.__PVT__araddr_ifu = 0U;
-    if ((1U & (((~ (IData)(vlSelfRef.__PVT__if_de_pipeline_mod__DOT__flush)) 
+    if ((1U & (((~ (IData)(vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__flush)) 
                 & (~ (IData)(vlSymsp->TOP.reset))) 
                | (IData)(vlSelfRef.__PVT__icache_mod__DOT__trans)))) {
         if ((1U & (~ ((IData)(vlSelfRef.cache_hit) 
@@ -1410,6 +1413,7 @@ VL_ATTR_COLD void Vosoc_26000003_func_osoc_26000003_core___ctor_var_reset(Vosoc_
     vlSelf->__PVT__decode_mod__DOT__wb_match_rs2 = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 16724503956981412264ull);
     vlSelf->__PVT__decode_mod__DOT__reg_match = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 9995895582641188268ull);
     vlSelf->decode_mod__DOT____VdfgExtracted_h4e467bd8__0 = 0;
+    vlSelf->__PVT__de_ex_pipeline_mod__DOT__flush = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 14136551510039121065ull);
     vlSelf->__PVT__de_ex_pipeline_mod__DOT__de_ex_bus_pc = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 552812029351010529ull);
     vlSelf->__PVT__de_ex_pipeline_mod__DOT__de_ex_bus_next_pc = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 11531077982812605786ull);
     vlSelf->__PVT__de_ex_pipeline_mod__DOT__de_ex_bus_imm = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 1208084716488567851ull);
