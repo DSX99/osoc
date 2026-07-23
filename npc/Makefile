@@ -11,7 +11,7 @@ INCLUDES = -I$(SOC_HOME)/perip/uart16550/rtl -I$(SOC_HOME)/perip/spi/rtl
 
 .DEFAULT_GOAL  := lint
 VERILATOR = verilator
-VERILOG_SRC = $(filter-out vsrc/osoc% vsrc/CLINT.sv, $(wildcard vsrc/*.sv))
+VERILOG_SRC = $(filter-out vsrc/ysyx% vsrc/CLINT.sv, $(wildcard vsrc/*.sv))
 OSOC_SRC = vsrc/ysyx_26060184_core.sv vsrc/ysyx_26060184.sv vsrc/CLINT.sv $(VERILOG_SRC) $(SoC_VSRC)
 NPC_SRC = vsrc/ysyx_26060184_func.sv vsrc/ysyx_26060184_core.sv vsrc/CLINT.sv $(VERILOG_SRC)
 STA_SRC = vsrc/ysyx_26060184_core.sv $(filter-out vsrc/axi%, $(VERILOG_SRC))
