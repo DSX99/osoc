@@ -109,7 +109,7 @@ always_comb begin
                     if(do_burst)begin
                         arburst = 2'b01;
                         arsize  = 3'b010;
-                        arlen   = WORDS_IN_BLOCK - 1;
+                        arlen   = WORDS_IN_BLOCK - 8'd1;
                     end
                     araddr  = {tag, index, fill_count, 2'b00};
                 end
