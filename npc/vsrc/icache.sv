@@ -35,7 +35,7 @@ localparam int OFF_W          = $clog2(BLOCK_SIZE);
 localparam int SET_W          = $clog2(NUMBER_OF_BLOCKS);  
 localparam int WORDS_IN_BLOCK = BLOCK_SIZE / 4;            
 localparam int WORD_W         = $clog2(WORDS_IN_BLOCK);    
-localparam int WAY_W          = $clog2(N_WAYS);            
+localparam int WAY_W          = $clog2(2);            
 localparam int TAG_W          = 32 - SET_W - OFF_W;        
 
 localparam int TAG_IDX_W  = SET_W + WAY_W;              
