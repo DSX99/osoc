@@ -50,7 +50,7 @@ sim:
 lint:
 	$(VERILATOR) --lint-only vsrc/osoc_26000003_core.sv vsrc/osoc_26000003.sv vsrc/CLINT.sv $(VERILOG_SRC) $(VERILOG_FLAGS) -Wall -Wno-UNUSEDSIGNAL -Wno-EOFNEWLINE --top-module osoc_26000003 -Wno-DECLFILENAME
 
-build: sim 
+build: sim $(NVBOARD_ARCHIVE)
 	mkdir -p obj_dir
 	gcc -c $(VERILATOR_CFLAGS) -O2 $(NEMU_HOME)/src/utils/disasm.c -o obj_dir/disasm.o
 	$(VERILATOR) $(OSOC_SRC) -LDFLAGS "$(NVBOARD_ARCHIVE) $(abspath obj_dir/disasm.o)" $(VERILOG_FLAGS) --top-module ysyxSoCFull  $(OSOC_CPP_SRC) $(addprefix -CFLAGS , $(INCFLAGS)) -CFLAGS "-DSOC" -DSOC=1 --Mdir obj_dir
@@ -71,15 +71,33 @@ npc_run: npc_build
 	@LD_LIBRARY_PATH=$(NEMU_HOME)/tools/capstone/repo:$(NEMU_HOME)/build obj_dir_npc/Vosoc_26000003_func $(ARGS) $(IMG)
 
 sta:
-	make -C /home/dsx99/osoc/ysyx-workbench/yosys-sta sta\
-	DESIGN=osoc_26000003_core SDC_FILE=/home/dsx99/osoc/ysyx-workbench/npc/sta_res/default.sdc\
-	CLK_FREQ_MHZ=565 CLK_PORT_NAME=clock O=/home/dsx99/osoc/ysyx-workbench/npc/sta_res\
-	RTL_FILES='$(foreach file, $(STA_SRC), $(abspath $(file)))'
+	make -C /home/dsx99/osoc/ysyx-workbench/yosys-sta sta \
+		DESIGN=osoc_26000003_core \
+		SDC_FILE=/home/dsx99/osoc/ysyx-workbench/npc/sta_res/default.sdc \
+		CLK_FREQ_MHZ=565 \
+		CLK_PORT_NAME=clock \
+		O=/home/dsx99/osoc/ysyx-workbench/npc/sta_res \
+		RTL_FILES='$(foreach file, $(STA_SRC), $(abspath $(file)))'
 
-sim_iverilog:
+sim-iverilog:
 	mkdir -p icarus
 	riscv64-linux-gnu-objcopy -I binary -O verilog $(IMG) $(IMG).hex
 	iverilog -g2012 -DMEM_ADDR=\"$(IMG).hex\" -o icarus/sim.vvp ./iverilog_vsrc/RAM_for_netlist.sv ./iverilog_vsrc/top_module.sv ./iverilog_vsrc/ysyx_26060184.sv
+	vvp ./icarus/sim.vvp -fst
+
+gen_netlist:
+	make -C /home/dsx99/osoc/ysyx-workbench/yosys-sta sta \
+		DESIGN=ysyx_26060184_core \
+		SDC_FILE=/home/dsx99/osoc/ysyx-workbench/npc/sta_res/default.sdc \
+		CLK_FREQ_MHZ=565 \
+		CLK_PORT_NAME=clock \
+		O=/home/dsx99/osoc/ysyx-workbench/npc/net_list_res \
+		RTL_FILES='$(abspath ./iverilog_vsrc/ysyx_26060184.sv)'
+
+sim-iverilog-netlist:
+	mkdir -p icarus_netlist
+	riscv64-linux-gnu-objcopy -I binary -O verilog $(IMG) $(IMG).hex
+	iverilog -g2012 -DMEM_ADDR=\"$(IMG).hex\" -o icarus/sim.vvp ./iverilog_vsrc/RAM_for_netlist.sv ./iverilog_vsrc/top_module.sv ./iverilog_vsrc/CLINT.sv $(NETLIST) $(CELLS)
 	vvp ./icarus/sim.vvp -fst
 
 clean:
