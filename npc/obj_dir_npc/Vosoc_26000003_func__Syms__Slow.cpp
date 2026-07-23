@@ -11,7 +11,7 @@ Vosoc_26000003_func__Syms::Vosoc_26000003_func__Syms(VerilatedContext* contextp,
     , TOP{this, namep}
 {
     // Check resources
-    Verilated::stackCheck(646);
+    Verilated::stackCheck(644);
     // Setup sub module instances
     TOP__osoc_26000003_func.ctor(this, "osoc_26000003_func");
     TOP__osoc_26000003_func__core.ctor(this, "osoc_26000003_func.core");

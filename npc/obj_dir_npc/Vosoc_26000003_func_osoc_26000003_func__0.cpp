@@ -48,6 +48,8 @@ void Vosoc_26000003_func_osoc_26000003_func___ico_sequent__TOP__osoc_26000003_fu
                                           & (IData)(vlSymsp->TOP__osoc_26000003_func__core.__PVT__awvalid_lsu));
     vlSelfRef.__PVT__io_master_wvalid = ((~ (IData)(vlSelfRef.__PVT__match_aw)) 
                                          & (IData)(vlSymsp->TOP__osoc_26000003_func__core.__PVT__wvalid_lsu));
+    vlSelfRef.__PVT__core_bvalid = ((IData)(vlSelfRef.__PVT__match_aw) 
+                                    | (IData)(vlSelfRef.__PVT__io_master_bvalid));
     if (vlSelfRef.__PVT__match_aw) {
         vlSelfRef.__PVT__cawvalid = vlSymsp->TOP__osoc_26000003_func__core.__PVT__awvalid_lsu;
         vlSelfRef.__PVT__core_wready = ((IData)(vlSymsp->TOP__osoc_26000003_func__core.__PVT__wvalid_lsu) 
@@ -58,8 +60,6 @@ void Vosoc_26000003_func_osoc_26000003_func___ico_sequent__TOP__osoc_26000003_fu
         vlSelfRef.__PVT__core_wready = vlSelfRef.__PVT__io_master_wready;
         vlSelfRef.__PVT__core_awready = vlSelfRef.__PVT__io_master_awready;
     }
-    vlSelfRef.__PVT__core_bvalid = ((IData)(vlSelfRef.__PVT__match_aw) 
-                                    | (IData)(vlSelfRef.__PVT__io_master_bvalid));
     if (vlSelfRef.__PVT__match_ar) {
         vlSelfRef.__PVT__carvalid = vlSymsp->TOP__osoc_26000003_func__core.__PVT__io_master_arvalid;
         vlSelfRef.__PVT__io_master_araddr = 0U;

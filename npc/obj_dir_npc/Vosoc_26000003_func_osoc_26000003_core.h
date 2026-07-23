@@ -270,7 +270,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vosoc_26000003_func_osoc_26000003_core final 
         IData/*31:0*/ __PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr_out;
         IData/*31:0*/ __PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_diff_pc;
         IData/*31:0*/ __PVT__ls_wb_pipeline_mod__DOT__opcode;
-        IData/*31:0*/ __VdfgRegularize_h6e95ff9d_0_8;
+        IData/*31:0*/ __VdfgRegularize_h6e95ff9d_0_0;
         VlUnpacked<VlUnpacked<IData/*28:0*/, 2>, 2> __PVT__ifu_mod__DOT__block_tag;
         VlUnpacked<VlUnpacked<SData/*11:0*/, 2>, 2> __PVT__ifu_mod__DOT__block_offset;
         VlUnpacked<VlUnpacked<CData/*0:0*/, 2>, 2> __PVT__ifu_mod__DOT__block_valid;
