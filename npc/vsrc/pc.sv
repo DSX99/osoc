@@ -28,6 +28,9 @@ module pc(
         `ifdef NPC
             pc = 32'h80000000;
         `endif
+        `ifdef __ICARUS__
+            pc = 32'h80000000;
+        `endif
     end
 
     assign next_pc = pc + (do_spec ? {{19{addr_spec[11]}}, addr_spec, 1'b0} : 4);
@@ -38,6 +41,9 @@ module pc(
             pc = 32'h30000000;
         `endif
         `ifdef NPC
+            pc = 32'h80000000;
+        `endif
+        `ifdef __ICARUS__
             pc = 32'h80000000;
         `endif
         end else begin

@@ -46,7 +46,7 @@ module ifu (
 
     
     //branch pred
-    parameter NUMBER_OF_BLOCKS = 4;
+    parameter NUMBER_OF_BLOCKS = 2;
     parameter SIZE_OF_OFFSET = 12;
     // here i use 2 rows
 
