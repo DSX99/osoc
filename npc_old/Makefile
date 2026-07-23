@@ -91,7 +91,7 @@ gen_netlist:
 		SDC_FILE=/home/dsx99/osoc/ysyx-workbench/npc/sta_res/default.sdc \
 		CLK_FREQ_MHZ=565 \
 		CLK_PORT_NAME=clock \
-		O=./net_list_res \
+		O=/home/dsx99/osoc/ysyx-workbench/npc/net_list_res \
 		RTL_FILES='$(abspath ./iverilog_vsrc/ysyx_26060184.sv)'
 
 sim-iverilog-netlist:

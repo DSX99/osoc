@@ -1,4 +1,4 @@
-module ram(
+module axi_slave_lsu(
     input logic clk, rst,
     
         // Read Addr Channel (AR)
@@ -33,6 +33,9 @@ module ram(
     input logic        bready
 );
 
+import "DPI-C" function int memread(int addr);
+import "DPI-C" function void memwrite(int addr, int data, int idk);
+
 typedef enum{
     IDLE, WAIT_R
 } IFU_state_t;
@@ -46,12 +49,6 @@ logic [31:0] addr_increment;
 always_comb begin
     addr_increment = (1 << r_size_reg); 
 end
-
-logic [7:0] mem [134217728];
-
-initial begin
-    $readmemh(`MEM_ADDR, mem);
-  end
 
 //reading
 always_ff @(posedge clk) begin
@@ -72,11 +69,11 @@ always_ff @(posedge clk) begin
                 rvalid <= 1'b0;
 
                 if(arvalid && arready) begin
-                    r_addr_reg <= {araddr[31:2],2'b0};
+                    r_addr_reg <= araddr;
                     r_len_reg  <= arlen;
                     r_size_reg <= arsize;
                     
-                    rdata      <= {mem[{araddr[31:2],2'b0}-32'h80000000+3],mem[{araddr[31:2],2'b0}-32'h80000000+2],mem[{araddr[31:2],2'b0}-32'h80000000+1],mem[{araddr[31:2],2'b0}-32'h80000000]};
+                    rdata      <= memread(araddr);
                     rvalid     <= 1'b1;
                     arready    <= 1'b0; 
                     
@@ -101,7 +98,7 @@ always_ff @(posedge clk) begin
                         r_len_reg  <= r_len_reg - 1'b1;
                         r_addr_reg <= r_addr_reg + addr_increment;
                         
-                        rdata  <= {mem[r_addr_reg + addr_increment -32'h80000000+3],mem[r_addr_reg + addr_increment -32'h80000000+2],mem[r_addr_reg + addr_increment -32'h80000000+1],mem[r_addr_reg + addr_increment -32'h80000000]};
+                        rdata  <= memread(r_addr_reg + addr_increment);
                         rvalid <= 1'b1;
                         
                         if (r_len_reg == 8'h01) begin
@@ -123,8 +120,6 @@ IFU_state_s_t slave_w;
 logic done_aw, done_w;
 logic [31:0] w,aw;
 logic [3:0] mask;
-logic [31:0] w_base;
-assign w_base = {aw[31:2], 2'b00} - 32'h80000000;
 //writing
 always_ff @(posedge clk) begin
     if(rst) begin
@@ -153,18 +148,7 @@ always_ff @(posedge clk) begin
                 if((done_aw || awvalid)&&(done_w || wvalid)) slave_w<=WAIT;
             end
             WAIT: begin
-                if({aw[31:2], 2'b00} == 32'ha00003f8) begin
-                    if      (mask[0]) $write("%c", w[7:0]);
-                    else if (mask[1]) $write("%c", w[15:8]);
-                    else if (mask[2]) $write("%c", w[23:16]);
-                    else if (mask[3]) $write("%c", w[31:24]);
-                    $fflush();
-                end else begin
-                    if (mask[0]) mem[w_base]     <= w[7:0];
-                    if (mask[1]) mem[w_base + 1] <= w[15:8];
-                    if (mask[2]) mem[w_base + 2] <= w[23:16];
-                    if (mask[3]) mem[w_base + 3] <= w[31:24];
-                end
+                memwrite(aw, w, {28'b0, mask});
                 done_aw<=0;
                 done_w<=0;
                 bvalid<=1;

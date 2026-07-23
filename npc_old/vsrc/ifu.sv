@@ -53,7 +53,7 @@ module ifu (
 
     localparam int OFF_W = 2;                           
     localparam int SET_W = $clog2(NUMBER_OF_BLOCKS);     
-    localparam int WAY_W = $clog2(N_WAYS);               
+    localparam int WAY_W = $clog2(2);               
     localparam int TAG_W = 32 - SET_W - OFF_W;           
  
     localparam int IDX_W = SET_W + WAY_W;                

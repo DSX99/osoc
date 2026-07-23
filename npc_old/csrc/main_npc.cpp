@@ -5,7 +5,6 @@
 #include "dpi.h"
 #include "common.h"
 
-
 #ifdef CONFIG_FST
 #include <verilated_fst_c.h>
 #endif
@@ -31,8 +30,9 @@ uint32_t ret = 0;
 static uint32_t qexit = 0;
 VerilatedContext *contextp;
 VerilatedFstC *tracep;
-VysyxSoCFull* soc; 
-VysyxSoCFull_osoc_26000003_core *top;
+Vosoc_26000003_func* soc; 
+Vosoc_26000003_func_osoc_26000003_core *top;
+bool skip_inst=0;
 CPU_state cpu;
 bool fail=0;
 
@@ -59,7 +59,7 @@ void init_disasm();
 void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 }
 
-void reset(VysyxSoCFull *soc,int n){
+void reset(Vosoc_26000003_func *soc,int n){
   soc->reset=1;
   for(int i=0; i<n; i++){
     #ifdef CONFIG_FST
@@ -115,7 +115,7 @@ int main(int argc, char** argv) {
   }
   loadmemory(img_file, batch);
   memset(&cpu, 0, sizeof(CPU_state));
-  cpu.pc = 0x30000000;
+  cpu.pc = 0x80000000;
 
   if(!batch && do_diff){
     difftest_regcpy(&cpu, 1);
@@ -124,8 +124,8 @@ int main(int argc, char** argv) {
   contextp = new VerilatedContext;
   // contextp->threads(4); // can be used in future to increase speed
 
-  soc = new VysyxSoCFull{contextp};
-  top = soc->ysyxSoCFull->asic->cpu->cpu->core;
+  soc = new Vosoc_26000003_func{contextp};
+  top = soc->osoc_26000003_func->core;
   
 #ifdef CONFIG_FST
   Verilated::traceEverOn(true);
@@ -176,7 +176,8 @@ const char *regs[] = {
 
 void execute(uint64_t n){
 
-  char str[128];
+  char str[100];
+  char str2[128];
   uint8_t inst[4];
   CPU_state ref_cpu;
   int device_access = 0;
@@ -213,36 +214,37 @@ void execute(uint64_t n){
 
     
     // if(contextp->time() > MAX_SIM_TIME){
-      //   printf("MAX SIMTIME\n");
-      //   ret = top->reg_mod->regs[10];
-      //   break;
-      // }
-      
+    //   printf("MAX SIMTIME\n");
+    //   ret = top->reg_mod->regs[10];
+    //   break;
+    // }
+
     if(!((contextp->time()) % 100000000)&&batch){
       printf("time:%lu\n", contextp->time());
     }
-    
+
     if(!batch && top->opcode!=0 && top->reg_valid){
       inst[0] = (top->opcode) & 0xff;
       inst[1] = (top->opcode >> 8) & 0xff;
       inst[2] = (top->opcode >> 16) & 0xff;
       inst[3] = (top->opcode >> 24) & 0xff;
       if(top->opcode!=0){
-        disassemble(str, 128, top->pc, inst, 4);
+      disassemble(str, 100, top->prev_pc, inst, 4);
       } else {
         printf("zero opcode\n");
         return;
       }
       if(n<10){
-        printf("0x%08x: %02x %02x %02x %02x ", top->pc, inst[3], inst[2], inst[1], inst[0]);
+        printf("0x%08x: %02x %02x %02x %02x ", top->prev_pc, inst[3], inst[2], inst[1], inst[0]);
         printf("%s\n", str);
       }
       #ifdef ITRACE
-      strcpy(itrace[point],str);
+      snprintf(str2,128,"0x%08x: %02x %02x %02x %02x %s", top->prev_pc, inst[3], inst[2], inst[1], inst[0], str);
+      strcpy(itrace[point],str2);
       point = (point+1)%ITRACE_VAL;
       #endif
     }
-    
+
     #ifdef CONFIG_FST
     tracep->dump(contextp->time());
     #endif
@@ -272,7 +274,6 @@ void execute(uint64_t n){
     }
     
     //couting performance
-
     bool is_lsu_stall    = (top->ex_ls_valid_ls && !top->ex_ls_ready_ls);
     bool is_ifu_transfer = (top->if_de_valid_if && top->if_de_ready_if);
     bool is_ls_transfer  = (top->ex_ls_valid_ls && top->ex_ls_ready_ls);
@@ -352,17 +353,18 @@ void execute(uint64_t n){
         inst[1] = (top->opcode >> 8) & 0xff;
         inst[2] = (top->opcode >> 16) & 0xff;
         inst[3] = (top->opcode >> 24) & 0xff;
-        printf("0x%08x: %02x %02x %02x %02x ", top->pc, inst[3], inst[2], inst[1], inst[0]);
+        printf("0x%08x: %02x %02x %02x %02x ", top->prev_pc, inst[3], inst[2], inst[1], inst[0]);
         if(top->opcode!=0){
-          disassemble(str, 128, top->pc, inst, 4);
-          printf("%s\n", str);
+        disassemble(str, 100, top->prev_pc, inst, 4);
+        printf("%s\n", str);
         }else{
           printf("zero opcode\n");
         }
-        #ifdef ITRACE
-        strcpy(itrace[point],str);
-        point = (point+1)%ITRACE_VAL;
-        #endif
+      #ifdef ITRACE
+      snprintf(str2,128,"0x%08x: %02x %02x %02x %02x %s", top->prev_pc, inst[3], inst[2], inst[1], inst[0], str);
+      strcpy(itrace[point],str2);
+      point = (point+1)%ITRACE_VAL;
+      #endif
       }
       finished = 1;
       ret = top->reg_mod->regs[10];
@@ -379,15 +381,16 @@ void execute(uint64_t n){
       inst[1] = (top->opcode >> 8) & 0xff;
       inst[2] = (top->opcode >> 16) & 0xff;
       inst[3] = (top->opcode >> 24) & 0xff;
-      printf("0x%08x: %02x %02x %02x %02x ", top->pc, inst[3], inst[2], inst[1], inst[0]);
+      printf("0x%08x: %02x %02x %02x %02x ", top->prev_pc, inst[3], inst[2], inst[1], inst[0]);
       if(top->opcode!=0){
-        disassemble(str, 128, top->pc, inst, 4);
-        printf("%s\n", str);
+      disassemble(str, 100, top->prev_pc, inst, 4);
+      printf("%s\n", str);
       }else{
         printf("zero opcode\n");
       }
       #ifdef ITRACE
-      strcpy(itrace[point],str);
+      snprintf(str2,128,"0x%08x: %02x %02x %02x %02x %s", top->prev_pc, inst[3], inst[2], inst[1], inst[0], str);
+      strcpy(itrace[point],str2);
       point = (point+1)%ITRACE_VAL;
       #endif
       break;
@@ -395,72 +398,86 @@ void execute(uint64_t n){
     n--;
     
     if(!batch && do_diff && top->reg_valid) {
+        // printf("CHECK\n");
+        soc->eval();
+
         if(device_access){
           for(int i = 0; i < 16; i++){
             cpu.gpr[i] = top->reg_mod->regs[i];
-            // printf("regs %d:%x\n",i, cpu.gpr[i]);
+            // printf("regs %d:%x, npc:%x\n",i, cpu.gpr[i], top->reg_mod->regs[i]);
           }for(int i = 0; i < 16; i++){
             cpu.gpr[i+16] = 0;
             // printf("regs %d:%x\n",i+16, cpu.gpr[i+16]);
           }
           cpu.pc = top->pc;
-          // printf("pc:%x\n", cpu.pc);
+          // printf("spike pc:%x, npc pc:%x\n", cpu.pc, top->pc);
           difftest_regcpy(&cpu, 1);
           device_access--;
-          // printf("device call opcode:%x, value:%d\n", top->opcode, device_access);
+          // printf("device call -- value:%d\n", device_access);
         }
 
         difftest_regcpy(&ref_cpu, 0);
 
         if (ref_cpu.pc != top->pc) {
           printf("Difference with REF pc, should:0x%08x, actually:0x%08x\n", ref_cpu.pc, top->pc);
-          printf("%lu\n",contextp->time());
+          printf("%d\n",contextp->time());
           ret = 1;
           inst[0] = (top->opcode) & 0xff;
           inst[1] = (top->opcode >> 8) & 0xff;
           inst[2] = (top->opcode >> 16) & 0xff;
           inst[3] = (top->opcode >> 24) & 0xff;
-          printf("0x%08x: %02x %02x %02x %02x ", top->pc, inst[3], inst[2], inst[1], inst[0]);
+          printf("0x%08x: %02x %02x %02x %02x ", top->prev_pc, inst[3], inst[2], inst[1], inst[0]);
           if(top->opcode!=0){
-            disassemble(str, 128, top->pc, inst, 4);
+            disassemble(str, 100, top->prev_pc, inst, 4);
             printf("%s\n", str);
           }else{
             printf("zero opcode\n");
           }
           #ifdef ITRACE
-          strcpy(itrace[point],str);
+          snprintf(str2,128,"0x%08x: %02x %02x %02x %02x %s", top->prev_pc, inst[3], inst[2], inst[1], inst[0], str);
+          strcpy(itrace[point],str2);
           point = (point+1)%ITRACE_VAL;
           #endif
+          #ifdef CONFIG_FST 
+          tracep->dump(contextp->time());
+          #endif
+          contextp->timeInc(1);
           return; 
         }
-
+        
         for(int i = 0; i < 16; i++){
           if(ref_cpu.gpr[i] != top->reg_mod->regs[i]){
-            printf("Difference with REF %s, should:0x%08x, actually:0x%08x, pc: 0x%08x\n", 
-                   regs[i], ref_cpu.gpr[i], top->reg_mod->regs[i], top->pc);
+            printf("Difference with REF %s(%d), should:0x%08x, actually:0x%08x, pc: 0x%08x\n", 
+                   regs[i], i, ref_cpu.gpr[i], top->reg_mod->regs[i], top->pc);
             ret = 1;
             inst[0] = (top->opcode) & 0xff;
             inst[1] = (top->opcode >> 8) & 0xff;
             inst[2] = (top->opcode >> 16) & 0xff;
             inst[3] = (top->opcode >> 24) & 0xff;
-            printf("0x%08x: %02x %02x %02x %02x ", top->pc, inst[3], inst[2], inst[1], inst[0]);
+            printf("0x%08x: %02x %02x %02x %02x ", top->prev_pc, inst[3], inst[2], inst[1], inst[0]);
             if(top->opcode!=0){
-              disassemble(str, 128, top->pc, inst, 4);
+              disassemble(str, 100, top->prev_pc, inst, 4);
               printf("%s\n", str);
             }else{
               printf("zero opcode\n");
             }
             #ifdef ITRACE
-            strcpy(itrace[point],str);
+            snprintf(str2,128,"0x%08x: %02x %02x %02x %02x %s", top->prev_pc, inst[3], inst[2], inst[1], inst[0], str);
+            strcpy(itrace[point],str2);
             point = (point+1)%ITRACE_VAL;
             #endif
+            
+            #ifdef CONFIG_FST 
+            tracep->dump(contextp->time());
+            #endif
+            contextp->timeInc(1);
             return;
           }
-        }
+      }
     }
     if((top->__PVT__io_master_araddr == 0x200bff8) || (top->__PVT__io_master_araddr == 0x200bffc) || (top->__PVT__io_master_araddr == 0x10000005)){
-      device_access++;
-      // printf("device call opcode:%x, value:%d\n", top->opcode, device_access);
+      device_access+=2;
+      // printf("device call ++ value:%d\n", device_access);
     }
   }
 }
@@ -597,11 +614,6 @@ void print_stage_performance_table(const uint64_t cycles[3], const Performance_t
     std::snprintf(buf1, sizeof(buf1), "%3.1f", avg_miss_latency[1] * cache_miss_pct[1]/100);
     std::snprintf(buf2, sizeof(buf2), "%3.1f", avg_miss_latency[2] * cache_miss_pct[2]/100);
     std::printf(" %-36s | %-20s | %-20s | %-20s \n", "AMAT (cycles)", buf0, buf1, buf2);
-    std::printf("=========================================================================================================\n");
-    std::snprintf(buf0, sizeof(buf0), "%ld", perf[0].flush);
-    std::snprintf(buf1, sizeof(buf1), "%ld", perf[1].flush);
-    std::snprintf(buf2, sizeof(buf2), "%ld", perf[2].flush);
-    std::printf(" %-36s | %-20s | %-20s | %-20s \n", "Flushes (count)", buf0, buf1, buf2);
     std::printf("=========================================================================================================\n\n");
               
 }

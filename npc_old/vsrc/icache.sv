@@ -35,7 +35,7 @@ localparam int OFF_W          = $clog2(BLOCK_SIZE);
 localparam int SET_W          = $clog2(NUMBER_OF_BLOCKS);  
 localparam int WORDS_IN_BLOCK = BLOCK_SIZE / 4;            
 localparam int WORD_W         = $clog2(WORDS_IN_BLOCK);    
-localparam int WAY_W          = $clog2(N_WAYS);            
+localparam int WAY_W          = $clog2(2);            
 localparam int TAG_W          = 32 - SET_W - OFF_W;        
 
 localparam int TAG_IDX_W  = SET_W + WAY_W;              
@@ -109,7 +109,7 @@ always_comb begin
                     if(do_burst)begin
                         arburst = 2'b01;
                         arsize  = 3'b010;
-                        arlen   = WORDS_IN_BLOCK - 1;
+                        arlen   = 8'(WORDS_IN_BLOCK - 1);
                     end
                     araddr  = {tag, index, fill_count, 2'b00};
                 end

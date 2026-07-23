@@ -1,8 +1,8 @@
 #ifdef SOC
     #include "VysyxSoCFull.h"
     #include "VysyxSoCFull___024root.h"
-    #include "VysyxSoCFull_ysyx_26060184.h"
-    #include "VysyxSoCFull_ysyx_26060184_core.h"
+    #include "VysyxSoCFull_osoc_26000003.h"
+    #include "VysyxSoCFull_osoc_26000003_core.h"
     #include "VysyxSoCFull_ysyxSoCFull.h"
     #include "VysyxSoCFull_ysyxSoCASIC.h"
     #include "VysyxSoCFull_CPU.h"
@@ -11,11 +11,11 @@
 
 
 #ifdef NPC
-    #include "Vysyx_26060184_func.h"
-    #include "Vysyx_26060184_func___024root.h"
-    #include "Vysyx_26060184_func_ysyx_26060184_func.h"
-    #include "Vysyx_26060184_func_ysyx_26060184_core.h"
-    #include "Vysyx_26060184_func_regs.h"
+    #include "Vosoc_26000003_func.h"
+    #include "Vosoc_26000003_func___024root.h"
+    #include "Vosoc_26000003_func_osoc_26000003_func.h"
+    #include "Vosoc_26000003_func_osoc_26000003_core.h"
+    #include "Vosoc_26000003_func_regs.h"
 #endif
 
 
