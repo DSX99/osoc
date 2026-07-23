@@ -51,7 +51,8 @@ module decode (
     input logic [11:0] ls_csr,
     input logic [11:0] wb_csr,
 
-    output logic finish
+    output logic finish,
+    output logic fencei
 );
 
     logic [31:0] imm_i, imm_s, imm_b, imm_u, imm_j;
@@ -132,6 +133,7 @@ module decode (
         bus_out_mux_select_pc = '0;
 
         finish = 0;
+        fencei=0;
 
         case(inst[6:0])
             7'b0110111: begin // LUI
@@ -240,6 +242,11 @@ module decode (
                         bus_out_alu_op    = {5'b00110, func3};
                     end
                 endcase 
+            end
+            7'b0001111:begin //fencei
+                if(func3==3'b001) begin
+                    fencei=1;
+                end
             end
             default: ;
         endcase

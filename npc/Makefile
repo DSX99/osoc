@@ -59,6 +59,8 @@ build: sim
 run: build
 	LD_LIBRARY_PATH=$(NEMU_HOME)/tools/capstone/repo:$(NEMU_HOME)/build obj_dir/VysyxSoCFull $(ARGS) $(IMG)
 
+IDK_CPP_SRC = 
+
 npc_build: sim 
 	@mkdir -p obj_dir_npc
 	@gcc -c $(VERILATOR_CFLAGS) -O2 $(NEMU_HOME)/src/utils/disasm.c -o obj_dir_npc/disasm.o
@@ -70,12 +72,18 @@ npc_run: npc_build
 
 sta:
 	make -C /home/dsx99/osoc/ysyx-workbench/yosys-sta sta\
-	 DESIGN=osoc_26000003_core SDC_FILE=/home/dsx99/osoc/ysyx-workbench/npc/sta_res/default.sdc\
-	  CLK_FREQ_MHZ=565 CLK_PORT_NAME=clock O=/home/dsx99/osoc/ysyx-workbench/npc/sta_res\
-	  RTL_FILES='$(foreach file, $(STA_SRC), $(abspath $(file)))'
+	DESIGN=osoc_26000003_core SDC_FILE=/home/dsx99/osoc/ysyx-workbench/npc/sta_res/default.sdc\
+	CLK_FREQ_MHZ=565 CLK_PORT_NAME=clock O=/home/dsx99/osoc/ysyx-workbench/npc/sta_res\
+	RTL_FILES='$(foreach file, $(STA_SRC), $(abspath $(file)))'
+
+sim_iverilog:
+	mkdir -p icarus
+	riscv64-linux-gnu-objcopy -I binary -O verilog $(IMG) $(IMG).hex
+	iverilog -g2012 -DMEM_ADDR=\"$(IMG).hex\" -o icarus/sim.vvp ./iverilog_vsrc/RAM_for_netlist.sv ./iverilog_vsrc/top_module.sv ./iverilog_vsrc/ysyx_26060184.sv
+	vvp ./icarus/sim.vvp -fst
 
 clean:
 	rm -rf obj_dir
 	rm -rf obj_dir_npc
 
-.PHONY: sim build run lint clean disasm sta npc_run npc_build
+.PHONY: sim build run lint clean disasm sta npc_run npc_build sim_iverilog

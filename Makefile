@@ -1,4 +1,4 @@
-STUID = ysyx_22040000
+STUID = ysyx_26060184
 STUNAME = Nikita
 
 # DO NOT modify the following code!!!

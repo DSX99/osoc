@@ -198,6 +198,7 @@ module lsu (
     always_ff @(posedge clk) begin
         if (rst) begin
             lsu_r           <= IDLE_R;
+            trans_r<=0;
         end else begin
             case (lsu_r)
                 IDLE_R: begin

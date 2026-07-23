@@ -1,5 +1,5 @@
 module icache(
-    input logic clk, rst,
+    input logic clk, rst, fencei,
 
     input logic [31:0] ifu_addr,
     input logic valid,
@@ -107,7 +107,16 @@ end
 always_ff @(posedge clk) begin
     if (rst) begin
         fill_count<=0;
+        trans<=0;
+        latest_row<=0;
+        burst_reg<=0;
+        miss_addr<=0;
         state <= WAIT_AR;
+        for(int i = 0; i < NUMBER_OF_BLOCKS; i = i + 1) begin
+            block_valid[i][0] <= 1'b0;
+            block_valid[i][1] <= 1'b0;
+        end
+    end else if(fencei) begin
         for(int i = 0; i < NUMBER_OF_BLOCKS; i = i + 1) begin
             block_valid[i][0] <= 1'b0;
             block_valid[i][1] <= 1'b0;
