@@ -635,8 +635,9 @@ VL_ATTR_COLD void Vosoc_26000003_func_osoc_26000003_core___stl_sequent__TOP__oso
         vlSelfRef.__PVT__de_ex_bus_exception_de = vlSelfRef.__PVT__if_de_pipeline_mod__DOT__if_de_bus_exception;
         vlSelfRef.__PVT__de_ex_bus_mcause_de = vlSelfRef.__PVT__if_de_pipeline_mod__DOT__if_de_bus_mcause;
     }
-    vlSelfRef.__PVT__if_de_bus_speculate_if = ((IData)(vlSelfRef.__PVT__ifu_mod__DOT__hit_0) 
-                                               | (IData)(vlSelfRef.__PVT__ifu_mod__DOT__hit_1));
+    vlSelfRef.__PVT__if_de_bus_speculate_if = ((~ (IData)(vlSelfRef.__PVT__fencei)) 
+                                               & ((IData)(vlSelfRef.__PVT__ifu_mod__DOT__hit_0) 
+                                                  | (IData)(vlSelfRef.__PVT__ifu_mod__DOT__hit_1)));
     vlSelfRef.__PVT__decode_mod__DOT__ex_match_rs1 
         = (((IData)(vlSelfRef.__PVT__de_ex_bus_rs1_de) 
             == (IData)(vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__de_ex_bus_rd)) 

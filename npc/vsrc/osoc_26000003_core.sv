@@ -290,7 +290,7 @@ module osoc_26000003_core (
         .valid(if_de_valid_if), .ready(if_de_ready_if),
         .cache_addr(cache_addr), .cache_valid(cache_valid), .cache_opcode(cache_opcode), .cache_ready(cache_ready),
         .do_spec(do_spec), .addr_spec(addr_spec),
-        .pc_to_write(de_ex_bus_pc_ex), .offset_to_write(de_ex_bus_imm_ex[12:1]), .write(ex_ls_bus_branch_ex && !ex_ls_bus_speculate_ex && de_ex_bus_alu_op_ex[6] & ( !(|de_ex_bus_imm_ex[31:12]) | &de_ex_bus_imm_ex[31:12])),
+        .pc_to_write(de_ex_bus_pc_ex), .offset_to_write(de_ex_bus_imm_ex[12:1]), .write(0),//.write(ex_ls_bus_branch_ex && !ex_ls_bus_speculate_ex && de_ex_bus_alu_op_ex[6] & ( !(|de_ex_bus_imm_ex[31:12]) | &de_ex_bus_imm_ex[31:12])),
         .fencei(fencei)
     );
 

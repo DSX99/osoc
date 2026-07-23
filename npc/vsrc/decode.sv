@@ -81,9 +81,6 @@ module decode (
     // alu_op[5:3] branch or arithmetics (5:4): 11-csr, 10-mult, 01-branch, 00-arithmetic, 3-extra (sub/srai)
     // alu_op[2:0] directly operation, alu_op[2:0] copied from instr
 
-    // True only when a *valid* FENCE.I actually sits in DE this cycle.
-    // (Previously this wasn't gated by valid_left at all, so a bubble
-    // with stale opcode bits could spuriously look like FENCE.I.)
     logic is_fencei;
     assign is_fencei = valid_left && (inst[6:0] == 7'b0001111) && (func3 == 3'b001);
 
@@ -104,9 +101,6 @@ module decode (
     assign reg_match = (((ex_match_rs1 | ex_match_rs2) && ((!ex_valid) | ex_lsu_re) ) | ((ls_match_rs1 | ls_match_rs2) && !ls_valid) | ((wb_match_rs1 | wb_match_rs2) && !wb_valid)) | (|ex_csr | |ls_csr | |wb_csr);
 
     always_comb begin
-        // Hold FENCE.I stationary in DE (don't let it into EX, and don't
-        // accept a new instruction behind it) until the core-level
-        // barrier says it's safe to commit (fencei_stall drops to 0).
         valid_right = valid_left & !reg_match & !(is_fencei & fencei_stall);
         ready_left  = ready_right & !reg_match & !(is_fencei & fencei_stall);
 
