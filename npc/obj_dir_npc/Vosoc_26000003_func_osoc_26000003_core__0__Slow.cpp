@@ -74,8 +74,6 @@ VL_ATTR_COLD void Vosoc_26000003_func_osoc_26000003_core___stl_sequent__TOP__oso
     vlSelfRef.__PVT__de_ex_bus_lsu_re_de = 0U;
     vlSelfRef.__PVT__de_ex_bus_lsu_we_de = 0U;
     vlSelfRef.rst = vlSymsp->TOP.reset;
-    vlSelfRef.branch = (1U == (3U & ((IData)(vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__de_ex_bus_alu_op) 
-                                     >> 4U)));
     vlSelfRef.__PVT__csr_mod__DOT__working_reg_w = 
         ((((0x0300U == (IData)(vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr)) 
            | (0x0305U == (IData)(vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_csr))) 
@@ -103,6 +101,8 @@ VL_ATTR_COLD void Vosoc_26000003_func_osoc_26000003_core___stl_sequent__TOP__oso
                                                     : 6U)))))))
           : 0U);
     vlSelfRef.reg_valid_e = vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_valid;
+    vlSelfRef.branch = (1U == (3U & ((IData)(vlSelfRef.__PVT__de_ex_pipeline_mod__DOT__de_ex_bus_alu_op) 
+                                     >> 4U)));
     vlSelfRef.ls_wb_bus_pc_wb = vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_pc;
     vlSelfRef.branch_taken = vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_branch;
     vlSelfRef.pc_e = vlSelfRef.__PVT__ls_wb_pipeline_mod__DOT__ls_wb_bus_diff_pc;
