@@ -189,9 +189,9 @@ void execute(uint64_t n){
     }
 
     for(int i = 0; i < 32; i++){
-      if(ref_cpu.gpr[i] != top->reg_mod->regs[i]){
+      if(ref_cpu.gpr[i] != top->ysyx_26060184_reg->regs[i]){
         printf("Difference with REF %s, should:0x%08x, actually:0x%08x, pc: 0x%08x\n", 
-                regs[i], ref_cpu.gpr[i], top->reg_mod->regs[i], top->pc);
+                regs[i], ref_cpu.gpr[i], top->ysyx_26060184_reg->regs[i], top->pc);
         ret = 1;
         return;
       }
@@ -213,7 +213,7 @@ void execute(uint64_t n){
     #endif
     
     if(contextp->time() > MAX_SIM_TIME){
-      ret = top->reg_mod->regs[10];
+      ret = top->ysyx_26060184_reg->regs[10];
       break;
     }
     if(!((contextp->time()) % 100000000)&&batch){
@@ -275,7 +275,7 @@ void execute(uint64_t n){
         #endif
       }
       finished = 1;
-      ret = top->reg_mod->regs[10];
+      ret = top->ysyx_26060184_reg->regs[10];
       if(ret){
         printf("\033[1m\033[31mNOT GOOD\033[0m\n");
       }else{
@@ -303,7 +303,7 @@ void execute(uint64_t n){
     if(!batch && do_diff && top->reg_valid) {
       if(device_access){
         for(int i = 0; i < 32; i++){
-          cpu.gpr[i] = top->reg_mod->regs[i];
+          cpu.gpr[i] = top->ysyx_26060184_reg->regs[i];
         }
         cpu.pc = top->pc;
         difftest_regcpy(&cpu, 1);
@@ -330,9 +330,9 @@ void execute(uint64_t n){
       }
 
       for(int i = 0; i < 32; i++){
-        if(ref_cpu.gpr[i] != top->reg_mod->regs[i]){
+        if(ref_cpu.gpr[i] != top->ysyx_26060184_reg->regs[i]){
           printf("Difference with REF %s, should:0x%08x, actually:0x%08x, pc: 0x%08x\n",
-                 regs[i], ref_cpu.gpr[i], top->reg_mod->regs[i], top->prev_pc);
+                 regs[i], ref_cpu.gpr[i], top->ysyx_26060184_reg->regs[i], top->prev_pc);
           ret = 1;
           inst[0] = (top->opcode) & 0xff;
           inst[1] = (top->opcode >> 8) & 0xff;
@@ -359,7 +359,7 @@ void reg_display() {
   printf("Regs values:\n");
   for(int i = 0; i<4; i++){
     for(int j = 0; j<8; j++){
-      printf("%s(%02d):%08x   ", regs[8*i+j],8*i+j,top->reg_mod->regs[8*i+j]);
+      printf("%s(%02d):%08x   ", regs[8*i+j],8*i+j,top->ysyx_26060184_reg->regs[8*i+j]);
     }
     printf("\n");
   }
@@ -372,7 +372,7 @@ uint32_t reg_str2val(const char *s, bool *success) {
   }
   for(int i=0;i<32;i++){
     if(strcmp(s,regs[i])==0){
-      return top->reg_mod->regs[i];
+      return top->ysyx_26060184_reg->regs[i];
     }
   }
 
