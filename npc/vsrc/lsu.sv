@@ -54,7 +54,9 @@ module lsu (
     input  logic        wready,
     input  logic [1:0]  bresp,
     input  logic        bvalid,
-    output logic        bready
+    output logic        bready,
+
+    output logic active_trans
 
 );
 
@@ -65,6 +67,8 @@ module lsu (
     logic trans_r, trans_w;
 
     assign wlast = wvalid;
+
+    assign active_trans = trans_r | trans_w;
 
     always_comb begin
 

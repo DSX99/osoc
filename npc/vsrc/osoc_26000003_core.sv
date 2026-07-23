@@ -383,17 +383,10 @@ module osoc_26000003_core (
         .fencei_stall(fencei_stall)
     );
 
-    // --- FENCE.I barrier ---------------------------------------------
-    // `fencei` from decode is a LEVEL signal: it's true every cycle a
-    // valid FENCE.I instruction sits in DE, and it STAYS there for as
-    // long as we hold it stationary via fencei_stall. We only let it
-    // actually invalidate the icache / flush IF-DE (fencei_commit) once
-    // every OLDER instruction has drained out of EX/LS/WB *and* any
-    // outstanding store write has been acknowledged by the memory
-    // system -- otherwise a refill triggered by fence.i can race a
-    // still-in-flight store and read a half-old/half-new cache line.
+    logic active_trans;
+
     assign pipeline_drained_for_fencei = !de_ex_valid_ex && !ex_ls_valid_ls && !ls_wb_valid_wb;
-    assign store_idle_for_fencei       = !awvalid_lsu && !wvalid_lsu && !bvalid_lsu;
+    assign store_idle_for_fencei       = !active_trans;
     assign fencei_commit = fencei && pipeline_drained_for_fencei && store_idle_for_fencei;
     assign fencei_stall  = fencei && !fencei_commit;
 
@@ -588,7 +581,8 @@ module osoc_26000003_core (
         .rdata(rdata_lsu), .rresp(rresp_lsu), .rvalid(rvalid_lsu), .rready(rready_lsu),
         .awaddr(awaddr_lsu), .awvalid(awvalid_lsu), .awready(awready_lsu), 
         .wdata(wdata_lsu), .wstrb(wstrb_lsu), .wvalid(wvalid_lsu), .wready(wready_lsu), .wlast(wlast_lsu),
-        .bresp(bresp_lsu), .bvalid(bvalid_lsu), .bready(bready_lsu)
+        .bresp(bresp_lsu), .bvalid(bvalid_lsu), .bready(bready_lsu),
+        .active_trans(active_trans)
     );
 
     ls_wb_pipeline ls_wb_pipeline_mod (
